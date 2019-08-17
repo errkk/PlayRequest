@@ -2,3 +2,16 @@
 
 @import "./phoenix.css";
 @import "../../../../deps/phoenix_live_view/assets/css/live_view.css";
+
+.page-heading {
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.is-pending {
+  opacity: 0.5;
+}
+
+progress {
+  width: 100%;
+}

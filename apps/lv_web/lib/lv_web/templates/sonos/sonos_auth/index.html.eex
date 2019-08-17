@@ -1,10 +1,8 @@
 <section class="phx-hero">
-  <h1><%= gettext "Welcome to %{name}!", name: "Phoenix" %></h1>
-  <p>A productive web framework that<br/>does not compromise speed or maintainability.</p>
-</section>
-
-<section class="row">
-  <article class="column">
-    Link: <%= link "Authorise", to: @auth_link %>
-  </article>
+  <h1>PlayRequest</h1>
+  <p>Because we can't have nice things</p>
+  <p>
+  <br />
+    <%= link "Authorise Sonos", to: @auth_link, class: "button" %>
+  </p>
 </section>

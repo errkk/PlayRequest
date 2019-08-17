@@ -18,16 +18,20 @@ defmodule EWeb.Router do
   scope "/", EWeb do
     pipe_through :browser
 
-    get "/", Sonos.SonosAuthController, :index
-    get "/authorized", Sonos.SonosAuthController, :authorized
-    get "/token-callback", Sonos.SonosAuthController, :token_callback
+    get "/page", PageController, :index
 
-    live "/clock", ClockLive
+    live "/", PlaybackLive
+  end
+
+  scope "/sonos", EWeb.Sonos do
+    pipe_through :browser
+    get "/connect", SonosAuthController, :index
+    get "/authorized", SonosAuthController, :authorized
   end
 
   scope "/sonos", EWeb.Sonos do
     pipe_through :api
-    get "/callback", SonosWebhookController, :callback
+    post "/callback", SonosWebhookController, :callback
   end
 
   # Other scopes may use custom stacks.
