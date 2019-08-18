@@ -85,6 +85,7 @@ defmodule E.SonosAPI do
     |> Client.authorize_url!()
   end
 
+  @spec handle_auth_callback(map()) :: {:error, atom()} | {:ok}
   def handle_auth_callback(%{"code" => code, "state" => state}) do
     try do
       get_auth_client()
@@ -119,6 +120,7 @@ defmodule E.SonosAPI do
       redirect_uri: @sonos[:redirect_uri])
   end
 
+  @spec get_auth_client() :: Client.t()
   defp get_auth_client do
     Client.new([
       strategy: Strategy.AuthCode,
@@ -143,6 +145,7 @@ defmodule E.SonosAPI do
     |> Client.put_header("X-Sonos-Api-Key", @sonos[:key])
   end
 
+  @spec convert_result(map()) :: map()
   def convert_result(result) do
     result
     |> Map.Helpers.underscore_keys()
