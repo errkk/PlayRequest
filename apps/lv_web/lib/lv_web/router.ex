@@ -17,9 +17,7 @@ defmodule EWeb.Router do
 
   scope "/", EWeb do
     pipe_through :browser
-
     get "/page", PageController, :index
-
     live "/", PlaybackLive
   end
 
@@ -34,8 +32,12 @@ defmodule EWeb.Router do
     post "/callback", SonosWebhookController, :callback
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", EWeb do
-  #   pipe_through :api
-  # end
+  scope "/sonos/cloud-queue", EWeb.Sonos do
+    pipe_through :api
+    get "/context", SonosCloudQueueController, :context
+    get "/itemWindow", SonosCloudQueueController, :item_window
+    get "/version", SonosCloudQueueController, :version
+    post "/timePlayed", SonosCloudQueueController, :time_played
+  end
+
 end
