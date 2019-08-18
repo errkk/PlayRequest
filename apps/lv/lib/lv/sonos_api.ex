@@ -4,13 +4,23 @@ defmodule E.SonosAPI do
 
   require Logger
   alias OAuth2.{Client, Strategy, Response, Error, AccessToken}
-  alias E.Sonos
+  alias E.{SonosAuth, SonosHouseholds}
 
   @household_id "Sonos_tzRfiKzs5k7zdAz15qxl6JGuqY.NP8UdSZBTkrhfgUAv3wC"
   @group_id "RINCON_B8E9378F13B001400:2815415479"
 
   def get_households do
-    get("/households")
+   get("/households")
+  end
+
+  def save_households() do
+    case get_households() do
+      %{households: households} ->
+        households
+        |> Enum.map(fn %{id: id} -> %{household_id: id} end)
+        |> Enum.map(&SonosHouseholds.insert_or_update_household(&1))
+      _ -> nil
+    end
   end
 
   def get_groups do
@@ -65,7 +75,7 @@ defmodule E.SonosAPI do
 
   @spec get_stored_credentials() :: Client.t() :: {:error, atom()}
   defp get_stored_credentials do
-    case Sonos.get_auth() do
+    case SonosAuth.get_auth() do
       %{access_token: _, refresh_token: _} = params ->
         params
         |> Map.take([:access_token, :refresh_token])
@@ -103,7 +113,7 @@ defmodule E.SonosAPI do
       params ->
         params
         |> Map.put("activated_at", DateTime.utc_now())
-        |> Sonos.create_auth()
+        |> SonosAuth.create_auth()
       {:ok}
     end
   end

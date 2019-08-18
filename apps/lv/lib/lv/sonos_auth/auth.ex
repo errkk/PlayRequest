@@ -1,4 +1,4 @@
-defmodule E.Sonos.Auth do
+defmodule E.SonosAuth.Auth do
   use Ecto.Schema
   import Ecto.Changeset
 

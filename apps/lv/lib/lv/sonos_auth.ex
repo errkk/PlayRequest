@@ -1,4 +1,4 @@
-defmodule E.Sonos do
+defmodule E.SonosAuth do
   @moduledoc """
   The Sonos context.
   """
@@ -6,7 +6,7 @@ defmodule E.Sonos do
   import Ecto.Query, warn: false
   alias E.Repo
 
-  alias E.Sonos.Auth
+  alias E.SonosAuth.Auth
 
   def list_tokens do
     Repo.all(Auth)
