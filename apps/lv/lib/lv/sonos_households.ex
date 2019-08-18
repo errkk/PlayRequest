@@ -13,7 +13,14 @@ defmodule E.SonosHouseholds do
     Repo.all(Household)
   end
 
-  def get_households!(id), do: Repo.get!(Household, id)
+  def get_household!(id), do: Repo.get!(Household, id)
+
+  def get_active_household!() do
+    Household
+    |> where([h], h.is_active)
+    |> limit(1)
+    |> Repo.one!()
+  end
 
   def create_households(attrs \\ %{}) do
     %Household{}
@@ -30,18 +37,18 @@ defmodule E.SonosHouseholds do
     |> Repo.insert_or_update()
   end
 
-  def update_households(%Household{} = households, attrs) do
-    households
+  def update_household(%Household{} = household, attrs) do
+    household
     |> Household.changeset(attrs)
     |> Repo.update()
   end
 
-  def delete_households(%Household{} = households) do
-    Repo.delete(households)
+  def delete_household(%Household{} = household) do
+    Repo.delete(household)
   end
 
-  def change_households(%Household{} = households) do
-    Household.changeset(households, %{})
+  def change_household(%Household{} = household) do
+    Household.changeset(household, %{})
   end
 
 

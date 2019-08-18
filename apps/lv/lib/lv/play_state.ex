@@ -7,12 +7,11 @@ defmodule E.PlayState do
 
   @topic inspect(__MODULE__)
 
-  def start_link() do
+  def start_link(_) do
     Agent.start_link(fn -> %{play_state: %{}, metadata: %{}} end, name: __MODULE__)
-    get_initial_state()
   end
 
-  def get_initial_state do
+  def get_initial_state() do
     Logger.info "Fetching inital state"
     SonosAPI.get_playback()
     |> update_state(:play_state)

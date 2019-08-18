@@ -10,7 +10,11 @@ defmodule E.SonosAPI do
   @group_id "RINCON_B8E9378F13B001400:2815415479"
 
   def get_households do
-   get("/households")
+    get("/households")
+  end
+
+  def household do
+    SonosHouseholds.get_active_household!()
   end
 
   def save_households() do
@@ -23,8 +27,22 @@ defmodule E.SonosAPI do
     end
   end
 
+  def save_players() do
+    case get_groups() do
+      %{players: players} ->
+        players
+        |> Enum.map(fn %{id: id, name: name} -> %{player_id: id, label: name, household_id: household().id} end)
+        |> Enum.map(&SonosHouseholds.insert_or_update_player(&1))
+      _ -> nil
+    end
+  end
+
   def get_groups do
     get("/households/#{@household_id}/groups")
+  end
+
+  def get_service_account do
+    get("/households/#{@household_id}/musicServiceAccounts/match")
   end
 
   def subscribe_playback do

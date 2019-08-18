@@ -14,7 +14,7 @@ defmodule EWeb.PlaybackLive do
   def render(assigns) do
     ~L"""
     <div>
-      <%= unless is_nil(assigns[:play_state]) or is_nil(assigns[:metadata]) do %>
+      <%= unless %{} == @play_state or %{} == @metadata do %>
       <p>
         <button phx-click="toggle" class="<%= @toggling %> button"><%= play_label @play_state.playback_state %></button>
         <%= if assigns[:metadata], do: "#{@metadata.current_item.track.name} – #{@metadata.current_item.track.artist.name}" %>
