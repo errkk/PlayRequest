@@ -13,6 +13,18 @@ defmodule E.SonosAPI do
     get("/households")
   end
 
+  def favs do
+    get("/households/#{@household_id}/favorites")
+  end
+
+  def fav do
+    %{
+      favoriteId: "3",
+      playOnCompletion: true,
+    }
+    |> post("/groups/#{@group_id}/favorites")
+  end
+
   def household do
     SonosHouseholds.get_active_household!()
   end
