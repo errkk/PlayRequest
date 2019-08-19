@@ -11,10 +11,9 @@ defmodule EWeb.PlaybackLive do
     "PLAYBACK_STATE_PLAYING" => "Pause"
   }
 
-  def render(assigns) do
+  def render(%{metadata: %{current_item: current_item}} = assigns) do
     ~L"""
     <div>
-      <%= unless %{} == @play_state or %{} == @metadata do %>
       <p>
         <button phx-click="toggle" class="<%= @toggling %> button"><%= play_label @play_state.playback_state %></button>
         <%= if assigns[:metadata], do: "#{@metadata.current_item.track.name} – #{@metadata.current_item.track.artist.name}" %>
@@ -22,7 +21,13 @@ defmodule EWeb.PlaybackLive do
       <progress max="<%= @metadata.current_item.track.duration_millis %>" value="<%= @play_state.position_millis %>"></progress>
 
       <p><%= if assigns[:metadata], do: img_tag(@metadata.current_item.track.image_url, width: 200, height: 200) %></p>
-      <%= end %>
+    </div>
+    """
+  end
+
+  def render(assigns) do
+    ~L"""
+    <div>
     </div>
     """
   end
