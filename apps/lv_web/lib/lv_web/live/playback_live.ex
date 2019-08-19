@@ -28,6 +28,7 @@ defmodule EWeb.PlaybackLive do
   def render(assigns) do
     ~L"""
     <div>
+      <button phx-click="toggle" class="<%= @toggling %> button"><%= play_label @play_state.playback_state %></button>
     </div>
     """
   end

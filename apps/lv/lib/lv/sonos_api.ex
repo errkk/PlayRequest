@@ -72,7 +72,14 @@ defmodule E.SonosAPI do
     |> handle_api_response()
   end
 
-  @spec post(String.t()) :: any() | nil
+  @spec post(String.t(), map()) :: any() | nil
+  defp post(%{} = params, resource) do
+    params = Jason.encode!(params)
+    get_stored_credentials()
+    |> Client.post(resource, params)
+    |> handle_api_response()
+  end
+
   defp post(resource) do
     get_stored_credentials()
     |> Client.post(resource)
