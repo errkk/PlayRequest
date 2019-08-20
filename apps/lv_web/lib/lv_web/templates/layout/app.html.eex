@@ -16,7 +16,7 @@
               <%= link "Home", to: Routes.page_path(@conn, :index) %>
             </li>
             <li>
-              <%= link "Connect", to: Routes.sonos_auth_path(@conn, :index) %>
+              <%= link "Connect", to: Routes.service_auth_path(@conn, :index) %>
             </li>
           </ul>
         </nav>

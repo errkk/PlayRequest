@@ -21,23 +21,16 @@ defmodule EWeb.Router do
     live "/", PlaybackLive
   end
 
-  scope "/sonos", EWeb.Sonos do
+  scope "/", EWeb.Service do
     pipe_through :browser
-    get "/connect", SonosAuthController, :index
-    get "/authorized", SonosAuthController, :authorized
+    get "/connect", ServiceAuthController, :index
+    get "/sonos/authorized", ServiceAuthController, :authorized_sonos, as: :sonos_auth
+    get "/spotify/authorized", ServiceAuthController, :authorized_spotify, as: :spotify_auth
   end
 
-  scope "/sonos", EWeb.Sonos do
+  scope "/sonos", EWeb.Service do
     pipe_through :api
     post "/callback", SonosWebhookController, :callback
-  end
-
-  scope "/sonos/cloud-queue", EWeb.Sonos do
-    pipe_through :api
-    get "/context", SonosCloudQueueController, :context
-    get "/itemWindow", SonosCloudQueueController, :item_window
-    get "/version", SonosCloudQueueController, :version
-    post "/timePlayed", SonosCloudQueueController, :time_played
   end
 
 end

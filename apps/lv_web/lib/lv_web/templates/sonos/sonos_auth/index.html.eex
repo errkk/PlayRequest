@@ -1,8 +1,0 @@
-<section class="phx-hero">
-  <h1>PlayRequest</h1>
-  <p>Because we can't have nice things</p>
-  <p>
-  <br />
-    <%= link "Authorise Sonos", to: @auth_link, class: "button" %>
-  </p>
-</section>

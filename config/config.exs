@@ -7,7 +7,7 @@
 # all use the same configuration file. If you want different
 # configurations or dependencies per app, it is best to
 # move said applications out of the umbrella.
-use Mix.Config
+import Config
 
 # Configure Mix tasks and generators
 config :lv,
@@ -40,3 +40,7 @@ config :phoenix, :json_library, Jason
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"
+
+# Load env vars
+import_config "../rel/envvars.exs"
+

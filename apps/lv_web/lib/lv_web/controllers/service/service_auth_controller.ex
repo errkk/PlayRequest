@@ -1,14 +1,15 @@
-defmodule EWeb.Sonos.SonosAuthController do
+defmodule EWeb.Service.ServiceAuthController do
   use EWeb, :controller
 
-  alias E.SonosAPI
+  alias E.{SonosAPI, SpotifyAPI}
 
   def index(conn, _params) do
-    login = SonosAPI.get_auth_link!()
-    render(conn, "index.html", auth_link: login)
+    sonos_auth_link = SonosAPI.get_auth_link!()
+    spotify_auth_link = SpotifyAPI.get_auth_link!()
+    render(conn, "index.html", sonos_auth_link: sonos_auth_link, spotify_auth_link: spotify_auth_link)
   end
 
-  def authorized(conn, params) do
+  def authorized_sonos(conn, params) do
     case SonosAPI.handle_auth_callback(params) do
       {:error, _} ->
         conn

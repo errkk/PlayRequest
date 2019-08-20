@@ -24,4 +24,22 @@ defmodule E.Umbrella.MixProject do
   defp deps do
     []
   end
+
+  defp releases() do
+    [
+      lv: [
+        include_executables_for: [:unix],
+        steps: [:assemble, &copy_rel_files/1]
+      ],
+      lv_web: [
+        include_executables_for: [:unix],
+        steps: [:assemble, &copy_rel_files/1]
+      ]
+    ]
+  end
+
+  defp copy_rel_files(release) do
+    File.cp("rel/envvars.exs", Path.join(release.path, "envvars.exs"))
+    release
+  end
 end

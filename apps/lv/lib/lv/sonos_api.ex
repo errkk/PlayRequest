@@ -1,7 +1,4 @@
 defmodule E.SonosAPI do
-
-  @sonos Application.get_env(:lv, :sonos)
-
   require Logger
   alias OAuth2.{Client, Strategy, Response, Error, AccessToken}
   alias E.{SonosAuth, SonosHouseholds}
@@ -164,16 +161,16 @@ defmodule E.SonosAPI do
     Client.get_token!(
       get_auth_client(),
       code: code,
-      redirect_uri: @sonos[:redirect_uri])
+      redirect_uri: get_config(:redirect_uri))
   end
 
   @spec get_auth_client() :: Client.t()
   defp get_auth_client do
     Client.new([
       strategy: Strategy.AuthCode,
-      client_id: @sonos[:key],
-      client_secret: @sonos[:secret],
-      redirect_uri: @sonos[:redirect_uri],
+      client_id: get_config(:key),
+      client_secret: get_config(:secret),
+      redirect_uri: get_config(:redirect_uri),
       grant_type: "authorization_code",
       site: "https://api.sonos.com",
       authorize_url: "/login/v3/oauth",
@@ -184,12 +181,12 @@ defmodule E.SonosAPI do
   @spec get_api_client(AccessToken.t()) :: Client.t()
   defp get_api_client(token) do
     Client.new([
-      client_id: @sonos[:key],
-      client_secret: @sonos[:secret],
+      client_id: get_config(:key),
+      client_secret: get_config(:secret),
       site: "https://api.ws.sonos.com/control/api/v1",
       token: token,
     ])
-    |> Client.put_header("X-Sonos-Api-Key", @sonos[:key])
+    |> Client.put_header("X-Sonos-Api-Key", get_config(:key))
   end
 
   @spec convert_result(map()) :: map()
@@ -197,5 +194,9 @@ defmodule E.SonosAPI do
     result
     |> Map.Helpers.underscore_keys()
     |> Map.Helpers.atomize_keys()
+  end
+
+  defp get_config(key) do
+    Application.get_env(:lv, :sonos)[key]
   end
 end

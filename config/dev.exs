@@ -10,9 +10,11 @@ config :lv, E.Repo,
   pool_size: 10
 
 config :lv, :sonos,
-  key: "4e0eef7a-51aa-44b9-93cf-d7927fd38ac3",
-  secret: "d71e6c16-d8a0-4870-8217-d406b32744d1",
   redirect_uri: "https://playrequest.serveo.net/sonos/authorized"
+
+config :spotify_ex,
+  scopes: ~w(user-modify-playback-state user-read-currently-playing user-read-playback-state),
+  callback_url: "https://playrequest.serveo.net/spotify/authorized"
 
 config :oauth2, debug: true
 
