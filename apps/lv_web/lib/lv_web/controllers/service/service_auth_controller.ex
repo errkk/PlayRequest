@@ -11,14 +11,27 @@ defmodule EWeb.Service.ServiceAuthController do
 
   def authorized_sonos(conn, params) do
     case SonosAPI.handle_auth_callback(params) do
-      {:error, _} ->
-        conn
-        |> put_flash(:error, "Didn't work")
-        |> redirect(to: Routes.sonos_auth_path(conn, :index))
       {:ok} ->
         conn
         |> put_flash(:info, "That worked fine")
         |> redirect(to: Routes.page_path(conn, :index))
+      {:error, _} ->
+        conn
+        |> put_flash(:error, "Didn't work")
+        |> redirect(to: Routes.service_auth_path(conn, :index))
+    end
+  end
+
+  def authorized_spotify(conn, params) do
+    case SpotifyAPI.handle_auth_callback(conn, params) do
+      {:ok, conn} ->
+        conn
+        |> put_flash(:info, "That worked fine")
+        |> redirect(to: Routes.page_path(conn, :index))
+      {:error, reason, conn} ->
+        conn
+        |> put_flash(:error, "Didn't work")
+        |> redirect(to: Routes.service_auth_path(conn, :index))
     end
   end
 end
