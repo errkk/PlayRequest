@@ -1,13 +1,12 @@
 defmodule E.SpotifyAPI do
 
-  use E.ExternalAuth.TokenHelper
-  use E.ExternalAuth.EndpointHelper
+  use E.Apis.TokenHelper
+  use E.Apis.EndpointHelper
 
   alias OAuth2.{Client, Strategy}
 
   def get_devices do
-    client()
-    |> get("/v1/me/player/devices")
+    get("/v1/me/player/devices")
   end
 
   @spec client() :: Client.t()

@@ -1,37 +1,37 @@
-defmodule E.ExternalAuth.EndpointHelper do
+defmodule E.Apis.EndpointHelper do
   defmacro __using__(_) do
     quote do
       require Logger
       alias OAuth2.{Client, Strategy, Response, Error, AccessToken}
 
-      @spec get(Client.t(), String.t()) :: any() | nil
-      def get(client, resource) do
-        client
+      @spec get(String.t()) :: any() | nil
+      def get(resource) do
+        client()
         |> authenticated_client()
         |> Client.get(resource)
         |> handle_api_response()
       end
 
-      @spec post(Client.t(), String.t(), map()) :: any() | nil
-      def post(client, %{} = params, resource) do
+      @spec post(String.t(), map()) :: any() | nil
+      def post(%{} = params, resource) do
         params = Jason.encode!(params)
-        client
+        client()
         |> authenticated_client()
         |> Client.post(resource, params)
         |> handle_api_response()
       end
 
-      @spec post(Client.t(), String.t()) :: any() | nil
-      def post(client, resource) do
-        client
+      @spec post(String.t()) :: any() | nil
+      def post(resource) do
+        client()
         |> authenticated_client()
         |> Client.post(resource)
         |> handle_api_response()
       end
 
-      @spec delete(Client.t(), String.t()) :: any() | nil
-      def delete(client, resource) do
-        client
+      @spec delete(String.t()) :: any() | nil
+      def delete(resource) do
+        client()
         |> authenticated_client()
         |> Client.delete(resource)
         |> handle_api_response()

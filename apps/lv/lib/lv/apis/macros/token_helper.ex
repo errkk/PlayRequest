@@ -1,4 +1,4 @@
-defmodule E.ExternalAuth.TokenHelper do
+defmodule E.Apis.TokenHelper do
   defmacro __using__(_) do
     quote do
       require Logger
