@@ -10,6 +10,8 @@ defmodule E.Application do
     children = [
       E.Repo,
       E.PlayState,
+      E.SonosAPI,
+      E.SpotifyAPI,
       worker(Task, [&E.PlayState.get_initial_state/0], restart: :temporary),
     ]
 

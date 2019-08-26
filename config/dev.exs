@@ -10,11 +10,12 @@ config :lv, E.Repo,
   pool_size: 10
 
 config :lv, :sonos,
+  scopes: "playback-control-all",
   redirect_uri: "https://playrequest.serveo.net/sonos/authorized"
 
-config :spotify_ex,
+config :lv, :spotify,
   scopes: ~w(user-modify-playback-state user-read-currently-playing user-read-playback-state),
-  callback_url: "https://playrequest.serveo.net/spotify/authorized"
+  redirect_uri: "https://playrequest.serveo.net/spotify/authorized"
 
 config :oauth2, debug: true
 

@@ -1,4 +1,4 @@
-defmodule E.SonosAuth do
+defmodule E.ExternalAuth do
   @moduledoc """
   The Sonos context.
   """
@@ -6,17 +6,30 @@ defmodule E.SonosAuth do
   import Ecto.Query, warn: false
   alias E.Repo
 
-  alias E.SonosAuth.Auth
+  alias E.ExternalAuth.Auth
 
   def list_tokens do
     Repo.all(Auth)
   end
 
-  def get_auth() do
-    Auth
-    |> order_by([a], desc: a.activated_at)
-    |> limit(1)
-    |> Repo.one()
+  def get_auth(service) when is_atom(service) do
+    service
+    |> Atom.to_string()
+    |> get_auth()
+  end
+
+  def get_auth(service) do
+    Repo.get_by(Auth, service: service)
+  end
+
+  def insert_or_update_auth(%{"service" => service} = changes) do
+    case Repo.get_by(Auth, service: service) do
+      nil  -> %Auth{service: service}
+      auth -> auth
+    end
+    |> Auth.changeset(changes)
+    |> IO.inspect
+    |> Repo.insert_or_update()
   end
 
   def create_auth(attrs \\ %{}) do

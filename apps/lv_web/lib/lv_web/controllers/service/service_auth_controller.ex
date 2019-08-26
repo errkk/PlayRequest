@@ -1,7 +1,8 @@
 defmodule EWeb.Service.ServiceAuthController do
   use EWeb, :controller
 
-  alias E.{SonosAPI, SpotifyAPI}
+  alias E.SonosAPI
+  alias E.SpotifyAPI
 
   def index(conn, _params) do
     sonos_auth_link = SonosAPI.get_auth_link!()
@@ -23,12 +24,12 @@ defmodule EWeb.Service.ServiceAuthController do
   end
 
   def authorized_spotify(conn, params) do
-    case SpotifyAPI.handle_auth_callback(conn, params) do
-      {:ok, conn} ->
+    case SpotifyAPI.handle_auth_callback(params) do
+      {:ok} ->
         conn
         |> put_flash(:info, "That worked fine")
         |> redirect(to: Routes.page_path(conn, :index))
-      {:error, reason, conn} ->
+      {:error, _} ->
         conn
         |> put_flash(:error, "Didn't work")
         |> redirect(to: Routes.service_auth_path(conn, :index))
