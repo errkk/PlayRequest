@@ -9,6 +9,34 @@ defmodule E.SpotifyAPI do
     get("/v1/me/player/devices")
   end
 
+  def get_track(id) do
+    get("/v1/tracks/#{id}")
+  end
+
+  def search(q) do
+    query = %{
+      q: q,
+      type: "track",
+      market: "GB",
+      limit: 2
+    }
+    |> URI.encode_query()
+
+    case get("/v1/search/?#{query}") do
+      %{tracks: %{items: tracks}} ->
+        tracks = Enum.map(tracks, &get_track_fields(&1))
+        {:ok, tracks}
+      _ -> {:error}
+    end
+  end
+
+  defp get_track_fields(%{name: name, artists: [%{name: artist} | _]}) do
+    %{
+      name: name,
+      artist: artist
+    }
+  end
+
   @spec client() :: Client.t()
   defp client do
     Client.new([
