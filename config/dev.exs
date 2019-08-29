@@ -11,11 +11,11 @@ config :lv, E.Repo,
 
 config :lv, :sonos,
   scopes: "playback-control-all",
-  redirect_uri: "https://playrequest.serveo.net/sonos/authorized"
+  redirect_uri: "http://localhost:4000/sonos/authorized"
 
 config :lv, :spotify,
   scopes: ~w(user-modify-playback-state user-read-currently-playing user-read-playback-state),
-  redirect_uri: "https://playrequest.serveo.net/spotify/authorized"
+  redirect_uri: "http://localhost:4000/spotify/authorized"
 
 config :oauth2, debug: true
 
