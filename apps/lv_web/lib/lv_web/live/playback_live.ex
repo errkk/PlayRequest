@@ -4,7 +4,7 @@ defmodule EWeb.PlaybackLive do
   use Phoenix.LiveView
   use Phoenix.HTML
 
-  alias E.{SonosAPI, SpotifyAPI, PlayState}
+  alias E.{SonosAPI, Music, PlayState}
 
   @states %{
     "PLAYBACK_STATE_PAUSED" => "Play",
@@ -63,7 +63,7 @@ defmodule EWeb.PlaybackLive do
   end
 
   def handle_info({:search, q}, socket) do
-    case SpotifyAPI.search(q) do
+    case Music.search(q) do
       {:ok, tracks} ->
         {:noreply, assign(socket, loading: false, result: tracks)}
       _ ->
