@@ -9,6 +9,11 @@ defmodule E.SpotifyAPI do
     get("/v1/me/player/devices")
   end
 
+  def set_device(id) do
+    %{device_ids: [id], play: true}
+    |> put("/v1/me/player")
+  end
+
   def get_track(id) do
     get("/v1/tracks/#{id}")
   end

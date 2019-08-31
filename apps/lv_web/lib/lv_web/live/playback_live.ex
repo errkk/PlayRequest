@@ -34,6 +34,7 @@ defmodule EWeb.PlaybackLive do
       </form>
       <div>
         <%= for track <- @result do %>
+          <%= img_tag track.img, width: 100 %>
           <p>
             <%= track.name %><br />
             <%= track.artist %>
