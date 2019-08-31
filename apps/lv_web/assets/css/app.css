@@ -3,6 +3,10 @@
 @import "./phoenix.css";
 @import "../../../../deps/phoenix_live_view/assets/css/live_view.css";
 
+.container {
+  max-width: 100%;
+}
+
 .page-heading {
   font-weight: bold;
   font-size: 25px;
@@ -14,4 +18,16 @@
 
 progress {
   width: 100%;
+}
+
+.track {
+  display: flex;
+}
+
+
+.track__details {
+  flex: 1;
+}
+.track__img {
+  flex: 0;
 }

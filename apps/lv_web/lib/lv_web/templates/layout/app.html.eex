@@ -13,14 +13,14 @@
         <nav role="navigation">
           <ul>
             <li>
-              <%= link "Home", to: Routes.page_path(@conn, :index) %>
+              <%= link "Home", to: Routes.live_path(@conn, EWeb.PlaybackLive) %>
             </li>
             <li>
               <%= link "Connect", to: Routes.service_auth_path(@conn, :index) %>
             </li>
           </ul>
         </nav>
-        <%= link "PlayRequest", to: Routes.page_path(@conn, :index), class: "page-heading" %>
+        <%= link "PlayRequest", to: Routes.live_path(@conn, EWeb.PlaybackLive), class: "page-heading" %>
       </section>
     </header>
     <main role="main" class="container">

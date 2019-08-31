@@ -26,6 +26,11 @@ defmodule E.Music do
     end
   end
 
+  @spec get_playlist() :: [Track.t()]
+  def get_playlist() do
+    Queue.list_tracks()
+  end
+
   @spec create_track(SearchTrack.t()) :: {:ok, Track.t()}
   defp create_track(search_track) do
     search_track

@@ -12,35 +12,41 @@ defmodule EWeb.PlaybackLive do
     "PLAYBACK_STATE_PLAYING" => "Pause"
   }
 
-  def render(%{metadata: %{current_item: current_item}} = assigns) do
-    ~L"""
-    <div>
-      <p>
-        <button phx-click="toggle" class="<%= @toggling %> button"><%= play_label @play_state.playback_state %></button>
-        <%= if assigns[:metadata], do: "#{@metadata.current_item.track.name} – #{@metadata.current_item.track.artist.name}" %>
-      </p>
-      <progress max="<%= @metadata.current_item.track.duration_millis %>" value="<%= @play_state.position_millis %>"></progress>
-
-      <p><%= if assigns[:metadata], do: img_tag(@metadata.current_item.track.image_url, width: 200, height: 200) %></p>
-    </div>
-    """
-  end
-
   def render(assigns) do
     ~L"""
-    <div>
-      <form phx-submit="search">
-        <input type="text" name="q" value="<%= @q %>" <%= if @loading, do: "readonly" %>/>
-      </form>
-      <div>
-        <%= for track <- @result do %>
-          <%= img_tag track.img, width: 100 %>
-          <p>
-            <%= track.name %><br />
-            <%= track.artist %>
-          </p>
-          <button phx-click="queue" value="<%= track.spotify_id %>">Queue</button>
-        <% end %>
+    <div class="row">
+      <div class="column column-50">
+        <h2>Search</h2>
+        <form phx-submit="search">
+          <input type="text" name="q" value="<%= @q %>" <%= if @loading, do: "readonly" %>/>
+        </form>
+        <div class="search-results">
+          <%= for track <- @result do %>
+            <div class="track">
+              <%= img_tag track.img, width: 100, class: "track__img" %>
+              <div class="track__details">
+                <%= track.name %><br />
+                <%= track.artist %>
+              </div>
+              <button phx-click="queue" value="<%= track.spotify_id %>">Queue</button>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="column column-50">
+        <h2>Queue</h2>
+        <div class="queue">
+          <%= for track <- @playlist do %>
+            <div class="track">
+              <%= img_tag track.img, width: 100, class: "track__img" %>
+              <div class="track__details">
+                <%= track.name %><br />
+                <%= track.artist %>
+              </div>
+            </div>
+          <% end %>
+        </div>
       </div>
     </div>
     """
@@ -53,7 +59,16 @@ defmodule EWeb.PlaybackLive do
     play_state = PlayState.get(:play_state)
     metadata = PlayState.get(:metadata)
 
-    {:ok, assign(socket, toggling: "", metadata: metadata, play_state: play_state, result: [], q: nil, loading: nil)}
+    {:ok, assign(
+      socket,
+      toggling: "",
+      metadata: metadata,
+      play_state: play_state,
+      result: [],
+      q: nil,
+      loading: nil,
+      playlist: Music.get_playlist()
+    )}
   end
 
   def handle_info({PlayState, %{} = play_state, :play_state}, socket) do
@@ -73,10 +88,16 @@ defmodule EWeb.PlaybackLive do
     end
   end
 
+  def handle_info({:get_playlist, _}, socket) do
+    items = Music.get_playlist()
+    {:noreply, assign(socket, playlist: items)}
+  end
+
   def handle_info({:queue, spotify_id}, socket) do
     Logger.info("Queuing #{spotify_id}")
     case Music.queue(spotify_id) do
       {:ok, track} ->
+        send(self(), {:get_playlist, nil})
         {:noreply, assign(socket, loading: false, result: [])}
       _ ->
         {:noreply, assign(socket, loading: false)}
