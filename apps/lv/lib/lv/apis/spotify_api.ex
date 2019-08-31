@@ -14,6 +14,7 @@ defmodule E.SpotifyAPI do
     |> put("/v1/me/player")
   end
 
+  @spec get_track(String.t()) :: map()
   def get_track(id) do
     get("/v1/tracks/#{id}")
   end

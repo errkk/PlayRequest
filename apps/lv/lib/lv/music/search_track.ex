@@ -1,8 +1,9 @@
-defmodule E.Music.Track do
-  defstruct [:name, :artist, :duration, :img]
+defmodule E.Music.SearchTrack do
+  defstruct [:name, :artist, :duration, :img, :spotify_id]
 
-  @spec new(map()) :: Track.t()
+  @spec new(map()) :: SearchTrack.t()
   def new(%{
+    id: id,
     name: name,
     duration_ms: duration,
     artists: [%{name: artist} | _]
@@ -11,6 +12,7 @@ defmodule E.Music.Track do
       name: name,
       artist: artist,
       duration: duration,
+      spotify_id: id
     }
     |> Map.merge(get_image(params))
   end

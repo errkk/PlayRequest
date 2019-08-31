@@ -39,6 +39,7 @@ defmodule EWeb.PlaybackLive do
             <%= track.name %><br />
             <%= track.artist %>
           </p>
+          <button phx-click="queue" value="<%= track.spotify_id %>">Queue</button>
         <% end %>
       </div>
     </div>
@@ -70,6 +71,21 @@ defmodule EWeb.PlaybackLive do
       _ ->
         {:noreply, assign(socket, loading: false, result: [])}
     end
+  end
+
+  def handle_info({:queue, spotify_id}, socket) do
+    Logger.info("Queuing #{spotify_id}")
+    case Music.queue(spotify_id) do
+      {:ok, track} ->
+        {:noreply, assign(socket, loading: false, result: [])}
+      _ ->
+        {:noreply, assign(socket, loading: false)}
+    end
+  end
+
+  def handle_event("queue", spotify_id, socket) do
+    send(self(), {:queue, spotify_id})
+    {:noreply, socket}
   end
 
   def handle_event("toggle", _, socket) do
