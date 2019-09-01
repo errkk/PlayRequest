@@ -1,7 +1,14 @@
 .track {
   display: flex;
-  padding: 10px 0 0;
+  padding: 10px 10px;
+  margin: 10px 0 0;
   align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 2px;
+
+  &:first-child {
+    margin-top: 0;
+  }
 
   &__details {
     flex: 1;
@@ -25,7 +32,7 @@
     width: 60px;
     height: auto;
     display: block;
-    border-radius: 100px;
     margin-right: 20px;
+    border-radius: 2px;
   }
 }

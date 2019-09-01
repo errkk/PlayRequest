@@ -1,0 +1,24 @@
+input {
+  background: none;
+  border: none;
+  font-size: inherit;
+}
+
+input[type="text"] {
+  display: block;
+  padding: 10px 5px;
+  width: 100%;
+  box-sizing: border-box;
+
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  outline: none;
+  border-radius: 2px;
+
+  color: inherit;
+  font-family: inherit;
+  transition: border 200ms ease;
+
+  &:focus {
+    border-color: #fff;
+  }
+}

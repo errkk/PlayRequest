@@ -14,19 +14,25 @@ defmodule EWeb.PlaybackLive do
 
   def render(assigns) do
     ~L"""
-    <div class="row">
-      <div class="column column-50">
+    <div class="container">
+      <div class="col--header--left">
         <h2>Search</h2>
+      </div>
+      <div class="col--search">
         <form phx-submit="search">
-          <input type="text" name="q" value="<%= @q %>" <%= if @loading, do: "readonly" %>/>
+          <input autocomplete="off" type="text" name="q" value="<%= @q %>" <%= if @loading, do: "readonly" %>/>
         </form>
         <div class="search-results">
           <%= for track <- @result do %>
             <div class="track">
               <%= img_tag track.img, width: 100, class: "track__img" %>
               <div class="track__details">
-                <%= track.name %><br />
-                <%= track.artist %>
+                <h3 class="track__name">
+                  <%= track.name %>
+                </h3>
+                <p class="track__artist">
+                  <%= track.artist %>
+                </p>
               </div>
               <button phx-click="queue" value="<%= track.spotify_id %>">Queue</button>
             </div>
@@ -34,15 +40,21 @@ defmodule EWeb.PlaybackLive do
         </div>
       </div>
 
-      <div class="column column-50">
+      <div class="col--header--right">
         <h2>Queue</h2>
+      </div>
+      <div class="col--playlist">
         <div class="queue">
           <%= for track <- @playlist do %>
             <div class="track">
               <%= img_tag track.img, width: 100, class: "track__img" %>
               <div class="track__details">
-                <%= track.name %><br />
-                <%= track.artist %>
+                <h3 class="track__name">
+                  <%= track.name %>
+                </h3>
+                <p class="track__artist">
+                  <%= track.artist %>
+                </p>
               </div>
             </div>
           <% end %>

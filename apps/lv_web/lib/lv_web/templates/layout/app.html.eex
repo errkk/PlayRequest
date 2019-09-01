@@ -4,13 +4,14 @@
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href="https://fonts.googleapis.com/css?family=Merriweather:400,700|Source+Sans+Pro:400,700&display=swap" rel="stylesheet">
     <title>PlayRequest</title>
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
   </head>
   <body>
-    <header>
-      <section class="container">
-        <nav role="navigation">
+    <header class="container container--header">
+      <div class="col--header">
+        <nav role="navigation" class="nav">
           <ul>
             <li>
               <%= link "Home", to: Routes.live_path(@conn, EWeb.PlaybackLive) %>
@@ -20,10 +21,14 @@
             </li>
           </ul>
         </nav>
-        <%= link "PlayRequest", to: Routes.live_path(@conn, EWeb.PlaybackLive), class: "page-heading" %>
-      </section>
+      </div>
+      <div class="col--logo">
+        <h1>
+          <%= link "PlayRequest", to: Routes.live_path(@conn, EWeb.PlaybackLive) %>
+        </h1>
+      </div>
     </header>
-    <main role="main" class="container">
+    <main role="main">
       <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
       <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
       <%= render @view_module, @view_template, assigns %>
