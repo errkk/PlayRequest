@@ -47,10 +47,10 @@ defmodule E.Apis.EndpointHelper do
       @spec put(String.t(), map()) :: any() | nil
       def put(%{} = params, resource) do
         params = Jason.encode!(params)
-        case client()
-        |> authenticated_client()
-        |> Client.put(resource, params)
-        |> handle_api_response() do
+        case client() do
+          |> authenticated_client()
+          |> Client.put(resource, params)
+          |> handle_api_response() do
             {:unauthorized} ->
               get_refresh_token()
               put(params, resource)
