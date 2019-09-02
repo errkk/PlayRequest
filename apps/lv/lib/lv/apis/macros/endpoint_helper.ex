@@ -36,7 +36,7 @@ defmodule E.Apis.EndpointHelper do
         case client()
           |> authenticated_client()
           |> Client.post(resource)
-          |> handle_api_response()
+          |> handle_api_response() do
             {:unauthorized} ->
               get_refresh_token()
               post(resource)
@@ -47,7 +47,7 @@ defmodule E.Apis.EndpointHelper do
       @spec put(String.t(), map()) :: any() | nil
       def put(%{} = params, resource) do
         params = Jason.encode!(params)
-        case client() do
+        case client()
           |> authenticated_client()
           |> Client.put(resource, params)
           |> handle_api_response() do
