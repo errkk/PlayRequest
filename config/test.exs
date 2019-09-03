@@ -1,16 +1,16 @@
 use Mix.Config
 
 # Configure your database
-config :lv, E.Repo,
+config :pr, PR.Repo,
   username: "postgres",
   password: "postgres",
-  database: "lv_test",
+  database: "pr_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
-config :lv_web, EWeb.Endpoint,
+config :pr_web, PRWeb.Endpoint,
   http: [port: 4002],
   server: false
 

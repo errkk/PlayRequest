@@ -1,19 +1,19 @@
 use Mix.Config
 
 # Configure your database
-config :lv, E.Repo,
+config :pr, PR.Repo,
   username: "postgres",
   password: "postgres",
-  database: "lv_dev",
+  database: "pr_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
-config :lv, :sonos,
+config :pr, :sonos,
   scopes: "playback-control-all",
   redirect_uri: "http://localhost:4000/sonos/authorized"
 
-config :lv, :spotify,
+config :pr, :spotify,
   scopes: ~w(user-modify-playback-state user-read-currently-playing user-read-playback-state),
   redirect_uri: "http://localhost:4000/spotify/authorized"
 
@@ -25,7 +25,7 @@ config :oauth2, debug: true
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.
-config :lv_web, EWeb.Endpoint,
+config :pr_web, PRWeb.Endpoint,
   http: [port: 4000],
   debug_errors: true,
   code_reloader: true,
@@ -36,7 +36,7 @@ config :lv_web, EWeb.Endpoint,
       "--mode",
       "development",
       "--watch-stdin",
-      cd: Path.expand("../apps/lv_web/assets", __DIR__)
+      cd: Path.expand("../apps/pr_web/assets", __DIR__)
     ]
   ]
 
@@ -65,14 +65,14 @@ config :lv_web, EWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :lv_web, EWeb.Endpoint,
+config :pr_web, PRWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/lv_web/{live,views}/.*(ex)$",
-      ~r"lib/lv_web/templates/.*(eex)$",
-      ~r{lib/lv_web/live/.*(ex)$}
+      ~r"lib/pr_web/{live,views}/.*(ex)$",
+      ~r"lib/pr_web/templates/.*(eex)$",
+      ~r{lib/pr_web/live/.*(ex)$}
     ]
   ]
 

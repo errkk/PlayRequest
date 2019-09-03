@@ -1,4 +1,4 @@
-defmodule E.Umbrella.MixProject do
+defmodule PR.Umbrella.MixProject do
   use Mix.Project
 
   def project do
@@ -27,11 +27,11 @@ defmodule E.Umbrella.MixProject do
 
   defp releases() do
     [
-      lv: [
+      pr: [
         include_executables_for: [:unix],
         steps: [:assemble, &copy_rel_files/1]
       ],
-      lv_web: [
+      pr_web: [
         include_executables_for: [:unix],
         steps: [:assemble, &copy_rel_files/1]
       ]
