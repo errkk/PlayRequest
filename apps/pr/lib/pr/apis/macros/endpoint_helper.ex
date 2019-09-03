@@ -9,10 +9,9 @@ defmodule PR.Apis.EndpointHelper do
         request(resource, :get)
       end
 
-      @spec post(String.t(), map()) :: any() | nil
+      @spec post(map(), String.t()) :: any() | nil
       def post(%{} = params, resource) do
-        Jason.encode!(params)
-        |> request(resource, :post)
+        request(resource, :post, params)
       end
 
       @spec post(String.t()) :: any() | nil
@@ -20,10 +19,9 @@ defmodule PR.Apis.EndpointHelper do
         request(resource, :post)
       end
 
-      @spec put(String.t(), map()) :: any() | nil
+      @spec put(map(), String.t()) :: any() | nil
       def put(%{} = params, resource) do
-        Jason.encode!(params)
-        |> request(resource, :put)
+        request(resource, :put, params)
       end
 
       @spec delete(String.t()) :: any() | nil
@@ -45,10 +43,12 @@ defmodule PR.Apis.EndpointHelper do
       end
 
       @spec request(String.t(), atom(), map()) :: any() | nil
-      defp request(resource, method, params) do
+      defp request(resource, method, %{} = params) do
+        params = Jason.encode!(params)
+
         case client()
           |> authenticated_client()
-          |> client_request(method, params)
+          |> client_request(resource, method, params)
           |> handle_api_response() do
             {:unauthorized} ->
               get_refresh_token()
@@ -65,6 +65,7 @@ defmodule PR.Apis.EndpointHelper do
       end
       defp handle_api_response({:ok, %Response{status_code: 200, body: body}}), do: Jason.decode!(body) |> convert_result()
       defp handle_api_response({:ok, %Response{status_code: 204, body: body}}), do: {:ok, nil}
+      defp handle_api_response({:ok, %Response{status_code: 201, body: body}}), do: Jason.decode!(body) |> convert_result()
       defp handle_api_response({:error, %Response{status_code: 404, body: body}}), do: Logger.error("Not found")
       defp handle_api_response({:error, %Response{status_code: status_code, body: body}}), do: Logger.error("error: #{status_code}")
       defp handle_api_response({:error, %Error{reason: reason}}), do: Logger.error("Error: #{inspect reason}")

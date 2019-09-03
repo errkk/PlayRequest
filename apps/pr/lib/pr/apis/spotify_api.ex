@@ -5,8 +5,25 @@ defmodule PR.SpotifyAPI do
 
   alias OAuth2.{Client, Strategy}
 
+  @tmp_playlist_id "6ebt0TJ6e4CDQVi52gfXt3"
+
   def get_devices do
     get("/v1/me/player/devices")
+  end
+
+  def get_playlists do
+    get("/v1/me/playlists")
+  end
+
+  def create_playlist do
+    %{name: "PlayRequest", public: false}
+    |> post("/v1/users/errkkgeorge/playlists")
+    |> Map.get(:id)
+  end
+
+  def replace_playlist(uris) do
+    %{uris: uris}
+    |> put("/v1/playlists/#{@tmp_playlist_id}/tracks")
   end
 
   def set_device(id) do

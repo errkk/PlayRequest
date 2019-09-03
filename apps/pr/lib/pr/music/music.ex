@@ -20,15 +20,22 @@ defmodule PR.Music do
   def queue(id) do
     with {:ok, search_track} <- get_track(id),
          {:ok, queued_track} <- create_track(search_track) do
+      sync_playlist()
       {:ok, queued_track}
     else
       err -> err
     end
   end
 
+  def sync_playlist do
+    Queue.list_track_uris()
+    |> Enum.map(fn {id} -> "spotify:track:" <> id end)
+    |> SpotifyAPI.replace_playlist()
+  end
+
   @spec get_playlist() :: [Track.t()]
   def get_playlist() do
-    Queue.list_tracks()
+    Queue.list_unplayed()
   end
 
   @spec create_track(SearchTrack.t()) :: {:ok, Track.t()}
