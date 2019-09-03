@@ -6,71 +6,59 @@ defmodule PR.Apis.EndpointHelper do
 
       @spec get(String.t()) :: any() | nil
       def get(resource) do
-        case client()
-          |> authenticated_client()
-          |> Client.get(resource)
-          |> handle_api_response() do
-            {:unauthorized} ->
-              get_refresh_token()
-              get(resource)
-            res -> res
-          end
+        request(resource, :get)
       end
 
       @spec post(String.t(), map()) :: any() | nil
       def post(%{} = params, resource) do
-        params = Jason.encode!(params)
-        case client()
-          |> authenticated_client()
-          |> Client.post(resource, params)
-          |> handle_api_response() do
-            {:unauthorized} ->
-              get_refresh_token()
-              post(params, resource)
-            res -> res
-          end
+        Jason.encode!(params)
+        |> request(resource, :post)
       end
 
       @spec post(String.t()) :: any() | nil
       def post(resource) do
-        case client()
-          |> authenticated_client()
-          |> Client.post(resource)
-          |> handle_api_response() do
-            {:unauthorized} ->
-              get_refresh_token()
-              post(resource)
-            res -> res
-          end
+        request(resource, :post)
       end
 
       @spec put(String.t(), map()) :: any() | nil
       def put(%{} = params, resource) do
-        params = Jason.encode!(params)
-        case client()
-          |> authenticated_client()
-          |> Client.put(resource, params)
-          |> handle_api_response() do
-            {:unauthorized} ->
-              get_refresh_token()
-              put(params, resource)
-            res -> res
-          end
+        Jason.encode!(params)
+        |> request(resource, :put)
       end
 
       @spec delete(String.t()) :: any() | nil
       def delete(resource) do
+        request(resource, :delete)
+      end
+
+      @spec request(String.t(), atom()) :: any() | nil
+      defp request(resource, method) do
         case client()
           |> authenticated_client()
-          |> Client.delete(resource)
+          |> client_request(resource, method)
           |> handle_api_response() do
             {:unauthorized} ->
               get_refresh_token()
-              delete(resource)
+              request(resource, method)
             res -> res
           end
       end
 
+      @spec request(String.t(), atom(), map()) :: any() | nil
+      defp request(resource, method, params) do
+        case client()
+          |> authenticated_client()
+          |> client_request(method, params)
+          |> handle_api_response() do
+            {:unauthorized} ->
+              get_refresh_token()
+              request(resource, method, params)
+            res -> res
+          end
+      end
+
+
+      @spec handle_api_response({:error | :ok, Response.t() | Error.t()}) :: map() | nil
       defp handle_api_response({:error, %Response{status_code: 401, body: body}}) do
         Logger.error("Unauthorized token")
         {:unauthorized}
@@ -80,6 +68,17 @@ defmodule PR.Apis.EndpointHelper do
       defp handle_api_response({:error, %Response{status_code: 404, body: body}}), do: Logger.error("Not found")
       defp handle_api_response({:error, %Response{status_code: status_code, body: body}}), do: Logger.error("error: #{status_code}")
       defp handle_api_response({:error, %Error{reason: reason}}), do: Logger.error("Error: #{inspect reason}")
+
+
+      @spec client_request(Client.t(), String.t(), atom()) :: any() | nil
+      defp client_request(client, resource, :get), do: Client.get(client, resource)
+      defp client_request(client, resource, :delete), do: Client.delete(client, resource)
+      defp client_request(client, resource, :post), do: Client.post(client, resource)
+      defp client_request(client, resource, :put), do: Client.post(client, resource)
+
+      @spec client_request(Client.t(), String.t(), atom(), map()) :: any() | nil
+      defp client_request(client, resource, :post, params), do: Client.post(client, resource, params)
+      defp client_request(client, resource, :put, params), do: Client.put(client, resource, params)
 
 
       @spec authenticated_client(Client.t()) :: Client.t() | {:error, atom()}
