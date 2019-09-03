@@ -51,6 +51,7 @@ defmodule PRWeb.PlaybackLive do
               <div class="track__details">
                 <h3 class="track__name">
                   <%= track.name %>
+                  <%= if playing?(assigns, track), do: "▸" %>
                 </h3>
                 <p class="track__artist">
                   <%= track.artist %>
@@ -63,6 +64,11 @@ defmodule PRWeb.PlaybackLive do
     </div>
     """
   end
+
+  def playing?(%{metadata: %{current_item: %{spotify_id: playing_id}}}, %{spotify_id: spotify_id}) do
+    playing_id == "spotify:track:" <> spotify_id
+  end
+  def playing?(_, _), do: false
 
   def mount(_session, socket) do
     if connected?(socket), do: PlayState.subscribe()
@@ -108,7 +114,7 @@ defmodule PRWeb.PlaybackLive do
   def handle_info({:queue, spotify_id}, socket) do
     Logger.info("Queuing #{spotify_id}")
     case Music.queue(spotify_id) do
-      {:ok, track} ->
+      {:ok, _track} ->
         send(self(), {:get_playlist, nil})
         {:noreply, assign(socket, loading: false, result: [])}
       _ ->

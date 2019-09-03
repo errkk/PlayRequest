@@ -2,7 +2,8 @@ defmodule PRWeb.Service.SonosWebhookController do
   use PRWeb, :controller
 
   require Logger
-  alias PR.PlayState
+  alias PR.{PlayState, SonosAPI}
+  alias PR.Music.SonosItem
 
   def callback(conn, %{"playbackState" => _} = params) do
     params
@@ -13,6 +14,7 @@ defmodule PRWeb.Service.SonosWebhookController do
   def callback(conn, %{"currentItem" => _} = params) do
     params
     |> PlayState.handle_metadata()
+
     render(conn, "index.json")
   end
 

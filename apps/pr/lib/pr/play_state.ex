@@ -4,6 +4,7 @@ defmodule PR.PlayState do
   require Logger
   use Agent
   alias PR.SonosAPI
+  alias PR.Music.SonosItem
 
   @topic inspect(__MODULE__)
 
@@ -16,6 +17,7 @@ defmodule PR.PlayState do
     SonosAPI.get_playback()
     |> update_state(:play_state)
     SonosAPI.get_metadata()
+    |> cast_metadata()
     |> update_state(:metadata)
   end
 
@@ -54,8 +56,16 @@ defmodule PR.PlayState do
   def handle_metadata(data) do
     data
     |> SonosAPI.convert_result()
+    |> cast_metadata()
     |> update_state(:metadata)
     |> broadcast(:metadata)
+  end
+
+  defp cast_metadata(data) do
+    data
+    |> Map.update(:next_item, %{}, &SonosItem.new/1)
+    |> Map.update(:current_item, %{}, &SonosItem.new/1)
+    |> Map.delete(:container)
   end
 
 end

@@ -22,3 +22,20 @@ a {
   color: #fff;
   text-decoration: none;
 }
+
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  transition: border 200ms ease;
+  font-size: 12px;
+
+  &:hover {
+    border-color: #fff;
+  }
+
+  & + & {
+    margin-left: 20px;
+  }
+}
