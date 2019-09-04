@@ -7,6 +7,7 @@ defmodule PR.Queue do
   alias PR.Repo
 
   alias PR.Queue.Track
+  alias PR.Music.SonosItem
 
   def list_tracks do
     Repo.all(Track)
@@ -51,6 +52,21 @@ defmodule PR.Queue do
 
   def change_track(%Track{} = track) do
     Track.changeset(track, %{})
+  end
+
+  def set_current(%SonosItem{spotify_id: spotify_id}) do
+    now = DateTime.utc_now()
+
+    Repo.transaction(fn ->
+      Track
+      |> where([t], not is_nil(t.playing_since))
+      |> where([t], t.spotify_id != ^spotify_id)
+      |> Repo.update_all(set: [playing_since: nil, played_at: now])
+
+      Track
+      |> where([t], t.spotify_id == ^spotify_id)
+      |> Repo.update_all(set: [playing_since: now])
+    end)
   end
 
   defp query_unplayed(query) do

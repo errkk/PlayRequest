@@ -9,6 +9,7 @@ defmodule PR.Queue.Track do
     field :spotify_id, :string
     field :name, :string
     field :played_at, :utc_datetime
+    field :playing_since, :utc_datetime
 
     timestamps()
   end
@@ -16,7 +17,7 @@ defmodule PR.Queue.Track do
   @doc false
   def changeset(track, attrs) do
     track
-    |> cast(attrs, [:name, :artist, :img, :spotify_id, :duration, :played_at])
+    |> cast(attrs, [:name, :artist, :img, :spotify_id, :duration, :played_at, :playing_since])
     |> validate_required([:name, :artist, :img, :spotify_id, :duration])
   end
 end

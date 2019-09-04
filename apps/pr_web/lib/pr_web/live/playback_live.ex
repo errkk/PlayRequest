@@ -51,7 +51,7 @@ defmodule PRWeb.PlaybackLive do
               <div class="track__details">
                 <h3 class="track__name">
                   <%= track.name %>
-                  <%= if playing?(assigns, track), do: "▸" %>
+                  <%= unless is_nil(track.playing_since), do: "▸" %>
                 </h3>
                 <p class="track__artist">
                   <%= track.artist %>
@@ -65,15 +65,9 @@ defmodule PRWeb.PlaybackLive do
     """
   end
 
-  def playing?(%{metadata: %{current_item: %{spotify_id: playing_id}}}, %{spotify_id: spotify_id}) do
-    playing_id == "spotify:track:" <> spotify_id
-  end
-  def playing?(_, _), do: false
-
   def mount(_session, socket) do
     if connected?(socket), do: PlayState.subscribe()
     Logger.info "Mounting a new live view"
-    # Set inital values from agent?
     play_state = PlayState.get(:play_state)
     metadata = PlayState.get(:metadata)
 

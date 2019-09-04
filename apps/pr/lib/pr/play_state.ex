@@ -5,6 +5,7 @@ defmodule PR.PlayState do
   use Agent
   alias PR.SonosAPI
   alias PR.Music.SonosItem
+  alias PR.Queue
 
   @topic inspect(__MODULE__)
 
@@ -18,6 +19,7 @@ defmodule PR.PlayState do
     |> update_state(:play_state)
     SonosAPI.get_metadata()
     |> cast_metadata()
+    |> update_playing()
     |> update_state(:metadata)
   end
 
@@ -61,10 +63,15 @@ defmodule PR.PlayState do
     |> broadcast(:metadata)
   end
 
-  defp cast_metadata(data) do
+  defp update_playing(%{current_item: current} = state) do
+    Queue.set_current(current)
+    state
+  end
+
+  defp cast_metadata(%{} = data) do
     data
-    |> Map.update(:next_item, %{}, &SonosItem.new/1)
     |> Map.update(:current_item, %{}, &SonosItem.new/1)
+    |> Map.update(:next_item, %{}, &SonosItem.new/1)
     |> Map.delete(:container)
   end
 

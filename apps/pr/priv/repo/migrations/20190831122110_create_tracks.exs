@@ -9,6 +9,7 @@ defmodule PR.Repo.Migrations.CreateTracks do
       add :spotify_id, :string
       add :duration, :integer
       add :played_at, :utc_datetime
+      add :playing_since, :utc_datetime
 
       timestamps()
     end

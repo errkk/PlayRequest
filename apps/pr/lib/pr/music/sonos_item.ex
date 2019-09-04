@@ -1,10 +1,10 @@
 defmodule PR.Music.SonosItem do
-  defstruct [:name, :artist, :duration, :spotify_id]
+  defstruct [:name, :artist, :duration, :spotify_id, :spotify_uri]
 
   @spec new(map()) :: SonosItem.t()
   def new(%{
     track: %{
-      id: %{object_id: spotify_id},
+      id: %{object_id: "spotify:track:" <> spotify_id},
       name: name,
       artist: %{name: artist},
       duration_millis: duration
@@ -14,6 +14,7 @@ defmodule PR.Music.SonosItem do
       name: name,
       artist: artist,
       duration: duration,
+      spotify_uri: "spotify:track:" <> spotify_id,
       spotify_id: spotify_id
     }
   end
