@@ -11,7 +11,7 @@ config :pr, PR.Repo,
 
 config :pr, :sonos,
   scopes: "playback-control-all",
-  redirect_uri: "http://localhost:4000/sonos/authorized"
+  redirect_uri: "https://eric-v5tg.localhost.run/sonos/authorized"
 
 config :pr, :spotify,
   scopes: ~w(user-modify-playback-state user-read-currently-playing user-read-playback-state playlist-modify-private playlist-read-private),

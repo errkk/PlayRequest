@@ -4,7 +4,7 @@ defmodule PR.PlayState do
   require Logger
   use Agent
   alias PR.SonosAPI
-  alias PR.Music.SonosItem
+  alias PR.Music.{SonosItem, PlaybackState}
   alias PR.Queue
 
   @topic inspect(__MODULE__)
@@ -16,11 +16,9 @@ defmodule PR.PlayState do
   def get_initial_state() do
     Logger.info "Fetching inital state"
     SonosAPI.get_playback()
-    |> update_state(:play_state)
+    |> process_play_state()
     SonosAPI.get_metadata()
-    |> cast_metadata()
-    |> update_playing()
-    |> update_state(:metadata)
+    |> process_metadata()
   end
 
   def get(key) do
@@ -48,19 +46,32 @@ defmodule PR.PlayState do
   end
 
   @doc "Update the state from the webhook controller"
-  def handle_playstate(data) do
+  def handle_play_state_webhook(data) do
     data
     |> SonosAPI.convert_result()
-    |> update_state(:play_state)
-    |> broadcast(:play_state)
+    |> process_play_state()
   end
 
-  def handle_metadata(data) do
+  @doc "Called by webhook"
+  def handle_metadata_webhook(data) do
     data
     |> SonosAPI.convert_result()
+    |> process_metadata()
+  end
+
+  defp process_metadata(data) do
+    data
     |> cast_metadata()
+    |> update_playing()
     |> update_state(:metadata)
     |> broadcast(:metadata)
+  end
+
+  defp process_play_state(data) do
+    data
+    |> PlaybackState.new()
+    |> update_state(:play_state)
+    |> broadcast(:play_state)
   end
 
   defp update_playing(%{current_item: current} = state) do

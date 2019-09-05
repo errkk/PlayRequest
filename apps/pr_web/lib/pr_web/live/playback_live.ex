@@ -5,12 +5,8 @@ defmodule PRWeb.PlaybackLive do
   use Phoenix.HTML
 
   alias PR.{SonosAPI, Music, PlayState}
-
-  @states %{
-    "PLAYBACK_STATE_PAUSED" => "Play",
-    "PLAYBACK_STATE_BUFFERING" => "Pause",
-    "PLAYBACK_STATE_PLAYING" => "Pause"
-  }
+  alias PR.Music.PlaybackState
+  alias PR.Queue.Track
 
   def render(assigns) do
     ~L"""
@@ -51,7 +47,7 @@ defmodule PRWeb.PlaybackLive do
               <div class="track__details">
                 <h3 class="track__name">
                   <%= track.name %>
-                  <%= unless is_nil(track.playing_since), do: "▸" %>
+                  <%= if playing?(track, @play_state), do: "▸" %>
                 </h3>
                 <p class="track__artist">
                   <%= track.artist %>
@@ -64,6 +60,9 @@ defmodule PRWeb.PlaybackLive do
     </div>
     """
   end
+
+  def playing?(%Track{playing_since: playing}, %PlaybackState{state: :playing}) when not is_nil(playing), do: true
+  def playing?(_, _), do: false
 
   def mount(_session, socket) do
     if connected?(socket), do: PlayState.subscribe()
@@ -130,7 +129,5 @@ defmodule PRWeb.PlaybackLive do
     send(self(), {:search, q})
     {:noreply, assign(socket, q: q, result: [], loading: true)}
   end
-
-  defp play_label(state), do: Map.get(@states, state, "Play")
 end
 
