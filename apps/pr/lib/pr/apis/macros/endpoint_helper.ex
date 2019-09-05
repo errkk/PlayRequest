@@ -42,9 +42,9 @@ defmodule PR.Apis.EndpointHelper do
           end
       end
 
-      @spec request(String.t(), atom(), map()) :: any() | nil
-      defp request(resource, method, %{} = params) do
-        params = Jason.encode!(params)
+      @spec request(String.t(), atom(), map() | String.t()) :: any() | nil
+      defp request(resource, method, params) do
+        params = encode_params(params)
 
         case client()
           |> authenticated_client()
@@ -56,6 +56,9 @@ defmodule PR.Apis.EndpointHelper do
             res -> res
           end
       end
+
+      defp encode_params(%{} = params), do: Jason.encode!(params)
+      defp encode_params(params), do: params
 
 
       @spec handle_api_response({:error | :ok, Response.t() | Error.t()}) :: map() | nil
