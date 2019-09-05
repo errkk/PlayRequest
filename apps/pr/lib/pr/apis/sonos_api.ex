@@ -4,12 +4,30 @@ defmodule PR.SonosAPI do
   use PR.Apis.EndpointHelper
 
   alias OAuth2.{Client, Strategy}
+  alias PR.SonosHouseholds
 
-  @household_id "Sonos_tzRfiKzs5k7zdAz15qxl6JGuqY.NP8UdSZBTkrhfgUAv3wC"
   @group_id "RINCON_B8E9378F13B001400:2815415479"
 
   def get_groups do
-    get("/households/#{@household_id}/groups")
+    get("/households/#{household().household_id}/groups")
+  end
+
+  def get_favorites do
+    get("/households/#{household().household_id}/favorites")
+    |> Map.get(:items)
+    |> Enum.find(& match?(%{name: "PlayRequest"}, &1))
+  end
+
+  def load_playlist do
+    case get_favorites() do
+      %{id: id} ->
+        %{
+          favoriteId: "12",
+          playOnCompletion: true
+        }
+        |> post("/groups/#{@group_id}/favorites")
+      _ -> {:error, "playlist not created"}
+    end
   end
 
   def get_households do
@@ -42,6 +60,16 @@ defmodule PR.SonosAPI do
         players
         |> Enum.map(fn %{id: id, name: name} -> %{player_id: id, label: name, household_id: household().id} end)
         |> Enum.map(&SonosHouseholds.insert_or_update_player(&1))
+      _ -> nil
+    end
+  end
+
+  def save_households() do
+    case get_households() do
+      %{households: households} ->
+        households
+        |> Enum.map(fn %{id: id} -> %{household_id: id} end)
+        |> Enum.map(&SonosHouseholds.insert_or_update_household(&1))
       _ -> nil
     end
   end
