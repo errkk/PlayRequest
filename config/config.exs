@@ -10,21 +10,21 @@
 import Config
 
 # Configure Mix tasks and generators
-config :lv,
-  namespace: E,
-  ecto_repos: [E.Repo]
+config :pr,
+  namespace: PR,
+  ecto_repos: [PR.Repo]
 
-config :lv_web,
-  namespace: EWeb,
-  ecto_repos: [E.Repo],
-  generators: [context_app: :lv]
+config :pr_web,
+  namespace: PRWeb,
+  ecto_repos: [PR.Repo],
+  generators: [context_app: :pr]
 
 # Configures the endpoint
-config :lv_web, EWeb.Endpoint,
+config :pr_web, PRWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "MBQFquRClfM/IuOPei8yy0dwxawJRGOnuEH4zbPsKx7+PPc3UWVYJqKufr76yDbe",
-  render_errors: [view: EWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: EWeb.PubSub, adapter: Phoenix.PubSub.PG2],
+  render_errors: [view: PRWeb.ErrorView, accepts: ~w(html json)],
+  pubsub: [name: PRWeb.PubSub, adapter: Phoenix.PubSub.PG2],
   live_view: [
      signing_salt: "SECRET_SALT"
    ]

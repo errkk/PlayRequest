@@ -1,0 +1,41 @@
+
+h1, h2, h3, h4 {
+  font-family: 'Merriweather', serif;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+h1 {
+  font-size: 50px;
+}
+h2 {
+  font-size: 35px;
+  margin-bottom: 10px;
+}
+h3 {
+  font-size: 18px;
+}
+p {
+  line-height: 1;
+}
+a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  transition: border 200ms ease;
+  font-size: 12px;
+
+  &:hover {
+    border-color: #fff;
+  }
+
+  & + & {
+    margin-left: 20px;
+  }
+}
