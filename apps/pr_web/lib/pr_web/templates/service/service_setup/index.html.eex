@@ -1,0 +1,11 @@
+<div class="container container--middle">
+  <div class="col--header--left">
+    <h2>Households</h2>
+  </div>
+  <div class="col--left">
+    <%= for item <- @households do %>
+      <%= item.label %>
+      <%= if item.is_active, do: "🥦" %>
+    <% end %>
+  </div>
+</div>

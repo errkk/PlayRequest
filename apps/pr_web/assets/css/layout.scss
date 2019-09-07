@@ -10,6 +10,12 @@
     "left-header left-header right-header right-header"
     "left left right right"
     "footer footer footer footer";
+
+  &.container--middle {
+    grid-template-areas:
+      "left-header_ left-header right-header right-header_"
+      "left_ left right right_";
+    }
 }
 
 .container--header {

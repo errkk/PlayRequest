@@ -1,2 +1,18 @@
-<%= link "Authorise Sonos", to: @sonos_auth_link, class: "button" %>
-<%= link "Authorise Spotify", to: @spotify_auth_link, class: "button" %>
+<div class="container container--middle">
+  <div class="col--header--left">
+    <h2>Connect</h2>
+  </div>
+  <div class="col--left">
+    <p>
+      <%= link "Authorise Sonos", to: @sonos_auth_link, class: "button" %>
+    </p>
+    <p>
+      <%= link "Authorise Spotify", to: @spotify_auth_link, class: "button" %>
+    </p>
+
+    <p>
+      <%= link "Setup Sonos", to: Routes.service_setup_path(@conn, :index), class: "button" %>
+    </p>
+  </div>
+</div>
+

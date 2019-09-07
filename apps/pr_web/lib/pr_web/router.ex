@@ -24,6 +24,7 @@ defmodule PRWeb.Router do
   scope "/", PRWeb.Service do
     pipe_through :browser
     get "/connect", ServiceAuthController, :index
+    get "/setup", ServiceSetupController, :index
     get "/sonos/authorized", ServiceAuthController, :authorized_sonos, as: :sonos_auth
     get "/spotify/authorized", ServiceAuthController, :authorized_spotify, as: :spotify_auth
   end
