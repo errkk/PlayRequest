@@ -29,24 +29,6 @@ defmodule PR.SonosAPI do
     end
   end
 
-  defp find_playlist(sonos_favorites) do
-    case Enum.find(sonos_favorites, & match?(%{name: "PlayRequest"}, &1)) do
-      %{id: id} -> {:ok, id}
-      _ -> {:error, :playlist_not_created}
-    end
-  end
-
-  def load_playlist do
-    with {:ok, %{items: sonos_favorites}, _} <- get_favorites(),
-         {:ok, fav_id} <- find_playlist(sonos_favorites) do
-      post(%{favoriteId: fav_id, playOnCompletion: true}, "/groups/#{@group_id}/favorites")
-    else
-      {:error, :playlist_not_created} -> {:error, "Couldn't find PlayRequest in Sonos favorites"}
-      {:error, msg} -> {:error, msg}
-      _ -> {:error, "Could not load playlist"}
-    end
-  end
-
   def get_households do
     get("/households")
   end
@@ -69,6 +51,11 @@ defmodule PR.SonosAPI do
 
   def toggle_playback do
     post("/groups/#{@group_id}/playback/togglePlayPause")
+  end
+
+  def set_favorite(fav_id, group_id) do
+    %{favoriteId: fav_id, playOnCompletion: true}
+    |> post("/groups/#{group_id}/favorites")
   end
 
   def save_players() do

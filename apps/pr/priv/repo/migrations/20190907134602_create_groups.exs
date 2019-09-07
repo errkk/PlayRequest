@@ -6,6 +6,8 @@ defmodule PR.Repo.Migrations.CreateGroups do
       add :group_id, :string
       add :name, :string
       add :player_ids, {:array, :string}
+      add :is_active, :boolean, default: false, null: false
+
       add :household_id, references(:households, on_delete: :nothing)
 
       timestamps()

@@ -101,6 +101,14 @@ defmodule PR.SonosHouseholds do
 
   def get_groups!(id), do: Repo.get!(Group, id)
 
+  def get_active_group!() do
+    Group
+    |> where([h], h.is_active)
+    |> limit(1)
+    |> Repo.one!()
+  end
+
+
   def create_groups(attrs \\ %{}) do
     %Group{}
     |> Group.changeset(attrs)
