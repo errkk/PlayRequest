@@ -3,6 +3,7 @@ defmodule PR.Queue do
   The Queue context.
   """
 
+  require Logger
   import Ecto.Query, warn: false
   alias PR.Repo
 
@@ -55,11 +56,12 @@ defmodule PR.Queue do
   end
 
   def set_current(%SonosItem{spotify_id: spotify_id}) do
+    Logger.info("Updating current track")
     now = DateTime.utc_now()
 
     Repo.transaction(fn ->
       Track
-      |> where([t], not is_nil(t.playing_since))
+      |> query_is_playing()
       |> where([t], t.spotify_id != ^spotify_id)
       |> Repo.update_all(set: [playing_since: nil, played_at: now])
 
@@ -67,6 +69,22 @@ defmodule PR.Queue do
       |> where([t], t.spotify_id == ^spotify_id)
       |> Repo.update_all(set: [playing_since: now])
     end)
+  end
+
+  def set_current(_) do
+    Logger.info("Nothing playing, clearing playing_since")
+
+    Track
+    |> query_is_playing()
+    |> Repo.update_all(set: [
+      playing_since: nil,
+      played_at: dynamic([i], date_add(i.playing_since, i.duration, "millisecond"))
+    ])
+  end
+
+  defp query_is_playing(query) do
+    query
+    |> where([t], not is_nil(t.playing_since))
   end
 
   defp query_unplayed(query) do

@@ -63,4 +63,67 @@ defmodule PR.SonosHouseholdsTest do
       assert %Ecto.Changeset{} = SonosHouseholds.change_players(players)
     end
   end
+
+  describe "groups" do
+    alias PR.SonosHouseholds.Group
+
+    @valid_attrs %{group_id: "some group_id", name: "some name", player_ids: []}
+    @update_attrs %{group_id: "some updated group_id", name: "some updated name", player_ids: []}
+    @invalid_attrs %{group_id: nil, name: nil, player_ids: nil}
+
+    def group_fixture(attrs \\ %{}) do
+      {:ok, group} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> SonosHouseholds.create_group()
+
+      group
+    end
+
+    test "list_groups/0 returns all groups" do
+      group = group_fixture()
+      assert SonosHouseholds.list_groups() == [group]
+    end
+
+    test "get_group!/1 returns the group with given id" do
+      group = group_fixture()
+      assert SonosHouseholds.get_group!(group.id) == group
+    end
+
+    test "create_group/1 with valid data creates a group" do
+      assert {:ok, %Group{} = group} = SonosHouseholds.create_group(@valid_attrs)
+      assert group.group_id == "some group_id"
+      assert group.name == "some name"
+      assert group.player_ids == []
+    end
+
+    test "create_group/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = SonosHouseholds.create_group(@invalid_attrs)
+    end
+
+    test "update_group/2 with valid data updates the group" do
+      group = group_fixture()
+      assert {:ok, %Group{} = group} = SonosHouseholds.update_group(group, @update_attrs)
+      assert group.group_id == "some updated group_id"
+      assert group.name == "some updated name"
+      assert group.player_ids == []
+    end
+
+    test "update_group/2 with invalid data returns error changeset" do
+      group = group_fixture()
+      assert {:error, %Ecto.Changeset{}} = SonosHouseholds.update_group(group, @invalid_attrs)
+      assert group == SonosHouseholds.get_group!(group.id)
+    end
+
+    test "delete_group/1 deletes the group" do
+      group = group_fixture()
+      assert {:ok, %Group{}} = SonosHouseholds.delete_group(group)
+      assert_raise Ecto.NoResultsError, fn -> SonosHouseholds.get_group!(group.id) end
+    end
+
+    test "change_group/1 returns a group changeset" do
+      group = group_fixture()
+      assert %Ecto.Changeset{} = SonosHouseholds.change_group(group)
+    end
+  end
 end

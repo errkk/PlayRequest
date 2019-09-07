@@ -5,28 +5,45 @@ defmodule PR.SonosAPI do
 
   alias OAuth2.{Client, Strategy}
   alias PR.SonosHouseholds
+  alias PR.SonosHouseholds.Household
 
   @group_id "RINCON_B8E9378F13B001400:2815415479"
 
   def get_groups do
-    get("/households/#{household().household_id}/groups")
+    case household() do
+      %Household{household_id: household_id, id: id} ->
+        res = get("/households/#{household_id}/groups")
+        {:ok, res, id}
+      _ ->
+        {:error, :no_household_activated}
+    end
   end
 
   def get_favorites do
-    get("/households/#{household().household_id}/favorites")
-    |> Map.get(:items)
-    |> Enum.find(& match?(%{name: "PlayRequest"}, &1))
+    case household() do
+      %Household{household_id: household_id, id: id} ->
+        res = get("/households/#{household_id}/favorites")
+        {:ok, res, id}
+      _ ->
+        {:error, :no_household_activated}
+    end
+  end
+
+  defp find_playlist(sonos_favorites) do
+    case Enum.find(sonos_favorites, & match?(%{name: "PlayRequest"}, &1)) do
+      %{id: id} -> {:ok, id}
+      _ -> {:error, :playlist_not_created}
+    end
   end
 
   def load_playlist do
-    case get_favorites() do
-      %{id: id} ->
-        %{
-          favoriteId: "12",
-          playOnCompletion: true
-        }
-        |> post("/groups/#{@group_id}/favorites")
-      _ -> {:error, "playlist not created"}
+    with {:ok, %{items: sonos_favorites}, _} <- get_favorites(),
+         {:ok, fav_id} <- find_playlist(sonos_favorites) do
+      post(%{favoriteId: fav_id, playOnCompletion: true}, "/groups/#{@group_id}/favorites")
+    else
+      {:error, :playlist_not_created} -> {:error, "Couldn't find PlayRequest in Sonos favorites"}
+      {:error, msg} -> {:error, msg}
+      _ -> {:error, "Could not load playlist"}
     end
   end
 
@@ -56,10 +73,11 @@ defmodule PR.SonosAPI do
 
   def save_players() do
     case get_groups() do
-      %{players: players} ->
+      {:ok, %{players: players}, household_id} ->
         players
-        |> Enum.map(fn %{id: id, name: name} -> %{player_id: id, label: name, household_id: household().id} end)
+        |> Enum.map(fn %{id: id, name: name} -> %{player_id: id, label: name, household_id: household_id} end)
         |> Enum.map(&SonosHouseholds.insert_or_update_player(&1))
+      {:error, msg} -> {:error, msg}
       _ -> nil
     end
   end
@@ -70,6 +88,18 @@ defmodule PR.SonosAPI do
         households
         |> Enum.map(fn %{id: id} -> %{household_id: id} end)
         |> Enum.map(&SonosHouseholds.insert_or_update_household(&1))
+      _ -> nil
+    end
+  end
+
+  def save_groups() do
+    case get_groups() do
+      {:ok, %{groups: groups}, household_id} ->
+        groups
+        |> Enum.map(fn %{id: id, name: name, player_ids: player_ids} -> %{group_id: id, name: name, player_ids: player_ids, household_id: household_id} end)
+        |> IO.inspect
+        |> Enum.map(&SonosHouseholds.insert_or_update_group(&1))
+      {:error, msg} -> {:error, msg}
       _ -> nil
     end
   end
