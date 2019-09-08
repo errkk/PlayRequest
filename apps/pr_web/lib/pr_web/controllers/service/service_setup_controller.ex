@@ -98,15 +98,11 @@ defmodule PRWeb.Service.ServiceSetupController do
   end
 
   def subscribe_sonos_webhooks(conn, _) do
-    group = SonosHouseholds.get_active_group!()
-
-    with {:ok, _} = SonosAPI.subscribe_metadata(),
-         {:ok, _} = SonosAPI.subscribe_playback() do
-      SonosHouseholds.update_group(group, %{subscribed_at: DateTime.utc_now()})
-      conn
-      |> put_flash(:info, "Subscribed to playback and metadata")
-      |> redirect(to: Routes.service_setup_path(conn, :index))
-    else
+    case SonosAPI.subscribe_webhooks() do
+      {:ok} ->
+        conn
+        |> put_flash(:info, "Subscribed to playback and metadata")
+        |> redirect(to: Routes.service_setup_path(conn, :index))
       _ ->
         conn
         |> put_flash(:error, "Didn't work")

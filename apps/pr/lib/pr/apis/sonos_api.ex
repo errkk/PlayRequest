@@ -7,6 +7,28 @@ defmodule PR.SonosAPI do
   alias PR.SonosHouseholds
   alias PR.SonosHouseholds.{Household, Group}
 
+  def subscribe_webhooks do
+    with %Group{} = group <- SonosHouseholds.get_active_group(),
+         {:ok, _} <- subscribe_metadata(),
+         {:ok, _} <- subscribe_playback() do
+      SonosHouseholds.update_group(group, %{subscribed_at: DateTime.utc_now()})
+      {:ok}
+    else
+      res -> res
+    end
+  end
+
+  def unsubscribe_webhooks do
+    with %Group{} = group <- SonosHouseholds.get_active_group(),
+         {:ok, _} <- unsubscribe_metadata(),
+         {:ok, _} <- unsubscribe_playback() do
+      SonosHouseholds.update_group(group, %{subscribed_at: nil})
+      {:ok}
+    else
+      res -> res
+    end
+  end
+
   def get_groups do
     case household() do
       %Household{household_id: household_id, id: id} ->
@@ -41,8 +63,18 @@ defmodule PR.SonosAPI do
     end
   end
 
+  def unsubscribe_playback do
+    with %Group{group_id: group_id} <- group(),
+         %{} <- delete("/groups/#{group_id}/playback/subscription") do
+        {:ok, %{}}
+    else
+      err ->
+        err
+    end
+  end
+
   def get_playback do
-    get("/groups/#{group!()}/playback")
+    get("/groups/#{group_id!()}/playback")
   end
 
   def subscribe_metadata do
@@ -55,12 +87,23 @@ defmodule PR.SonosAPI do
     end
   end
 
+
+  def unsubscribe_metadata do
+    with %Group{group_id: group_id} <- group(),
+         %{} <- delete("/groups/#{group_id}/playbackMetadata/subscription") do
+        {:ok, %{}}
+    else
+      err ->
+        err
+    end
+  end
+
   def get_metadata do
-    get("/groups/#{group!()}/playbackMetadata")
+    get("/groups/#{group_id!()}/playbackMetadata")
   end
 
   def toggle_playback do
-    post("/groups/#{group!()}/playback/togglePlayPause")
+    post("/groups/#{group_id!()}/playback/togglePlayPause")
   end
 
   def set_favorite(fav_id, group_id) do
@@ -121,8 +164,8 @@ defmodule PR.SonosAPI do
     end
   end
 
-  def group! do
-    SonosHouseholds.get_active_group!()
+  def group_id! do
+    SonosHouseholds.get_active_group!().group_id
   end
 
   @spec client() :: Client.t()
