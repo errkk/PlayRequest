@@ -21,6 +21,9 @@ defmodule PRWeb.Service.ServiceSetupController do
     has_active_groups = groups
     |> Enum.any?(& &1.is_active)
 
+    active_group_subscribed = groups
+    |> Enum.any?(& &1.is_active and not is_nil(&1.subscribed_at))
+
     render(
       conn,
       "index.html",
@@ -33,7 +36,8 @@ defmodule PRWeb.Service.ServiceSetupController do
       has_households: [] != households,
       has_groups: [] != groups,
       has_active_households: has_active_households,
-      has_active_groups: has_active_groups
+      has_active_groups: has_active_groups,
+      active_group_subscribed: active_group_subscribed
     )
   end
 
@@ -87,6 +91,23 @@ defmodule PRWeb.Service.ServiceSetupController do
 
     conn
     |> redirect(to: Routes.service_setup_path(conn, :index))
+  end
+
+  def subscribe_sonos_webhooks(conn, _) do
+    group = SonosHouseholds.get_active_group!()
+
+    with {:ok, _} = SonosAPI.subscribe_metadata(),
+         {:ok, _} = SonosAPI.subscribe_playback() do
+      SonosHouseholds.update_group(group, %{subscribed_at: DateTime.utc_now()})
+      conn
+      |> put_flash(:info, "Subscribed to playback and metadata")
+      |> redirect(to: Routes.service_setup_path(conn, :index))
+    else
+      _ ->
+        conn
+        |> put_flash(:error, "Didn't work")
+        |> redirect(to: Routes.service_setup_path(conn, :index))
+    end
   end
 end
 

@@ -5,9 +5,7 @@ defmodule PR.SonosAPI do
 
   alias OAuth2.{Client, Strategy}
   alias PR.SonosHouseholds
-  alias PR.SonosHouseholds.Household
-
-  @group_id "RINCON_B8E9378F13B001400:2815415479"
+  alias PR.SonosHouseholds.{Household, Group}
 
   def get_groups do
     case household() do
@@ -34,23 +32,35 @@ defmodule PR.SonosAPI do
   end
 
   def subscribe_playback do
-    post("/groups/#{@group_id}/playback/subscription")
+    with %Group{group_id: group_id} <- group(),
+         %{} <- post("/groups/#{group_id}/playback/subscription") do
+        {:ok, %{}}
+    else
+      err ->
+        err
+    end
   end
 
   def get_playback do
-    get("/groups/#{@group_id}/playback")
+    get("/groups/#{group!()}/playback")
   end
 
   def subscribe_metadata do
-    post("/groups/#{@group_id}/playbackMetadata/subscription")
+    with %Group{group_id: group_id} <- group(),
+         %{} <- post("/groups/#{group_id}/playbackMetadata/subscription") do
+        {:ok, %{}}
+    else
+      err ->
+        err
+    end
   end
 
   def get_metadata do
-    get("/groups/#{@group_id}/playbackMetadata")
+    get("/groups/#{group!()}/playbackMetadata")
   end
 
   def toggle_playback do
-    post("/groups/#{@group_id}/playback/togglePlayPause")
+    post("/groups/#{group!()}/playback/togglePlayPause")
   end
 
   def set_favorite(fav_id, group_id) do
@@ -99,6 +109,17 @@ defmodule PR.SonosAPI do
 
   def household do
     SonosHouseholds.get_active_household!()
+  end
+
+  def group do
+    case SonosHouseholds.get_active_group() do
+      %Group{} = group -> group
+      _ -> {:error, :no_active_group}
+    end
+  end
+
+  def group! do
+    SonosHouseholds.get_active_group!()
   end
 
   @spec client() :: Client.t()

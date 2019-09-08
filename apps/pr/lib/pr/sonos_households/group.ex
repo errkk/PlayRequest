@@ -9,6 +9,7 @@ defmodule PR.SonosHouseholds.Group do
     field :name, :string
     field :player_ids, {:array, :string}
     field :is_active, :boolean
+    field :subscribed_at, :utc_datetime
 
     belongs_to :household, Household
 
@@ -18,7 +19,7 @@ defmodule PR.SonosHouseholds.Group do
   @doc false
   def changeset(group, attrs) do
     group
-    |> cast(attrs, [:group_id, :name, :player_ids, :household_id, :is_active])
+    |> cast(attrs, [:group_id, :name, :player_ids, :household_id, :is_active, :subscribed_at])
     |> validate_required([:group_id, :name, :player_ids, :household_id])
     |> unique_constraint(:group_id)
   end

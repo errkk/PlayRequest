@@ -16,7 +16,7 @@ defmodule PR.SonosHouseholds do
 
   def get_active_household!() do
     Household
-    |> where([h], h.is_active)
+    |> query_is_active()
     |> limit(1)
     |> Repo.one!()
   end
@@ -103,7 +103,14 @@ defmodule PR.SonosHouseholds do
 
   def get_active_group!() do
     Group
-    |> where([h], h.is_active)
+    |> query_is_active()
+    |> limit(1)
+    |> Repo.one!()
+  end
+
+  def get_active_group() do
+    Group
+    |> query_is_active()
     |> limit(1)
     |> Repo.one!()
   end
@@ -136,5 +143,10 @@ defmodule PR.SonosHouseholds do
 
   def change_group(%Group{} = group) do
     Group.changeset(group, %{})
+  end
+
+  defp query_is_active(query) do
+    query
+    |> where([h], h.is_active)
   end
 end

@@ -38,48 +38,59 @@
           Activate household and groups
         </h3>
 
-        <%= if @has_households and @has_groups do %>
-          <div class="box">
-            <h3>Households</h3>
-            <%= for item <- @households do %>
-              <%= link if(item.is_active, do: "🙋‍♂️", else: "🙅‍♀️"),
-                  to: Routes.service_setup_path(@conn, :toggle_household, item),
-                  method: :put %>
-              <%= unless is_nil(item.label), do: item.label, else: item.household_id %>
-            <% end %>
-            <p>
-              All sonos stuff done via this household id
-            </p>
+        <%= unless @has_active_households and @has_active_groups do %>
+          <%= if @has_households and @has_groups do %>
+            <div class="box">
+              <h3>Households</h3>
+              <%= for item <- @households do %>
+                <%= link if(item.is_active, do: "🙋‍♂️", else: "🙅‍♀️"),
+                    to: Routes.service_setup_path(@conn, :toggle_household, item),
+                    method: :put %>
+                <%= unless is_nil(item.label), do: item.label, else: item.household_id %>
+              <% end %>
+              <p>
+                All sonos stuff done via this household id
+              </p>
 
-            <h3>Groups</h3>
-            <%= for item <- @groups do %>
-              <%= link if(item.is_active, do: "🙋‍♂️", else: "🙅‍♀️"),
-                  to: Routes.service_setup_path(@conn, :toggle_group, item),
-                  method: :put %>
-              <%= item.name %>
-            <% end %>
-            <p>
-              Pick a group that this thing will play to.
-              Make sure to create a group that has the speakers you want in it.
-            </p>
-          </div>
+              <h3>Groups</h3>
+              <%= for item <- @groups do %>
+                <%= link if(item.is_active, do: "🙋‍♂️", else: "🙅‍♀️"),
+                    to: Routes.service_setup_path(@conn, :toggle_group, item),
+                    method: :put %>
+                <%= item.name %>
+              <% end %>
+              <p>
+                Pick a group that this thing will play to.
+                Make sure to create a group that has the speakers you want in it.
+              </p>
+            </div>
+          <% end %>
         <% end %>
       </li>
       <li>
         <h3>
+          <%= check @active_group_subscribed %>
           Setup subscription for metadata and playstate
         </h3>
-        <p>
-          No way to tell if this worked
-        </p>
+        <%= if @has_groups and @has_active_groups and not @active_group_subscribed do %>
+          <%= link "Subscribe webooks",
+              to: Routes.service_setup_path(@conn, :subscribe_sonos_webhooks),
+              method: :post,
+              class: "button" %>
+          <p>
+            Request webhook callbacks for group
+          </p>
+        <% end %>
       </li>
       <li>
         <h3>
+          <%= check false %>
           Create PlayRequest playlist
         </h3>
       </li>
       <li>
         <h3>
+          <%= check false %>
           Fav it on Sonos
         </h3>
         <p>

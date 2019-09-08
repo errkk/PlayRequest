@@ -30,6 +30,7 @@ defmodule PRWeb.Router do
       post "/save-groups", ServiceSetupController, :save_groups
       put "/household/:id", ServiceSetupController, :toggle_household
       put "/group/:id", ServiceSetupController, :toggle_group
+      post "/subscribe", ServiceSetupController, :subscribe_sonos_webhooks
     end
 
     get "/sonos/authorized", ServiceAuthController, :authorized_sonos, as: :sonos_auth
