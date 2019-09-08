@@ -133,7 +133,7 @@
             method: :post,
             class: "button" %>
         <p>
-          Queue syncs to spotify playlist
+          Sync queue to Spotify playlist, this happens automatically when tracks are added or played.
         </p>
       </li>
       <li>
