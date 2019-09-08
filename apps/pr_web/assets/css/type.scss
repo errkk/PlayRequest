@@ -1,9 +1,13 @@
+body {
+  line-height: 1.4;
+}
 
 h1, h2, h3, h4 {
-  font-family: 'Merriweather', serif;
+  font-family: 'Raleway', serif;
   margin: 0;
   padding: 0;
   line-height: 1;
+  color: #66fcf1;
 }
 h1 {
   font-size: 50px;
@@ -14,13 +18,13 @@ h2 {
 }
 h3 {
   font-size: 18px;
+  margin: 10px 0 4px;
 }
 p {
-  line-height: 1;
 }
 a {
-  color: #fff;
   text-decoration: none;
+  color: #fff;
 }
 
 .button {

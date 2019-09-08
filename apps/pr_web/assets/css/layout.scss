@@ -14,7 +14,7 @@
   &.container--middle {
     grid-template-areas:
       "left-header_ left-header right-header right-header_"
-      "left_ left right right_";
+      "left_ main main right_";
     }
 }
 
@@ -29,6 +29,9 @@
 .col--right,
 .col--playlist {
   grid-area: right;
+}
+.col--main {
+  grid-area: main;
 }
 .col--logo {
   grid-area: logo;

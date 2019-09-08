@@ -4,20 +4,20 @@
 @import "./layout.scss";
 @import "./track.scss";
 @import "./form.scss";
+@import "./setup-list.scss";
 @import "../../../../deps/phoenix_live_view/assets/css/live_view.css";
 
 html {
   height: 100%;
   padding: 0;
-  background: blue;
 }
 
 body {
-  background-color: #21D4FD;
-  background-image: linear-gradient(19deg, #21D4FD 0%, #B721FF 100%);
+  background-color: #0b0c10;
+  background-image: linear-gradient(45deg, #1f2833, #0b0c10);
+  color: #c5c6c7;
   height: 100%;
   margin: 0;
-  color: #fff;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 18px;
 }

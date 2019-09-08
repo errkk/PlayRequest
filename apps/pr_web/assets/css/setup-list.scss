@@ -1,0 +1,35 @@
+.setup-list {
+  margin: 30px 0 0;
+  padding: 0;
+
+  li {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+  }
+}
+
+.box {
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 15px 20px 10px;
+  margin: 10px 0;
+  border-radius: 4px;
+}
+
+.check {
+  width: 32px;
+  height: 32px;
+  margin: 2px 0 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.check--false {
+  width: 22px;
+  height: 22px;
+  margin: 3px 4px 6px;
+  border: 1px solid #fff;
+  border-radius: 30px;
+  display: inline-block;
+  vertical-align: middle;
+}

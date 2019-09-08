@@ -72,9 +72,13 @@ defmodule PR.SonosAPI do
   def save_households() do
     case get_households() do
       %{households: households} ->
-        households
-        |> Enum.map(fn %{id: id} -> %{household_id: id} end)
-        |> Enum.map(&SonosHouseholds.insert_or_update_household(&1))
+        total =
+          households
+          |> Enum.map(fn %{id: id} -> %{household_id: id} end)
+          |> Enum.map(&SonosHouseholds.insert_or_update_household(&1))
+          |> length()
+        {:ok, total}
+      {:error, msg} -> {:error, msg}
       _ -> nil
     end
   end
@@ -82,10 +86,12 @@ defmodule PR.SonosAPI do
   def save_groups() do
     case get_groups() do
       {:ok, %{groups: groups}, household_id} ->
-        groups
-        |> Enum.map(fn %{id: id, name: name, player_ids: player_ids} -> %{group_id: id, name: name, player_ids: player_ids, household_id: household_id} end)
-        |> IO.inspect
-        |> Enum.map(&SonosHouseholds.insert_or_update_group(&1))
+        total =
+          groups
+          |> Enum.map(fn %{id: id, name: name, player_ids: player_ids} -> %{group_id: id, name: name, player_ids: player_ids, household_id: household_id} end)
+          |> Enum.map(&SonosHouseholds.insert_or_update_group(&1))
+          |> length()
+        {:ok, total}
       {:error, msg} -> {:error, msg}
       _ -> nil
     end

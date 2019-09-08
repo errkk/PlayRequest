@@ -1,11 +1,98 @@
 <div class="container container--middle">
-  <div class="col--header--left">
-    <h2>Households</h2>
-  </div>
-  <div class="col--left">
-    <%= for item <- @households do %>
-      <%= item.label %>
-      <%= if item.is_active, do: "🥦" %>
-    <% end %>
+  <div class="col--main">
+    <h2>Setup</h2>
+    <ol class="setup-list">
+      <li>
+        <h3>
+          <%= check @has_token_sonos and @has_token_spotify %>
+          Authenticate accounts
+        </h3>
+        <p>
+          <%= unless @has_token_sonos, do: link "Authorise Sonos",
+              to: @sonos_auth_link,
+              class: "button" %>
+          <%= unless @has_token_sonos, do: link "Authorise Spotify",
+              to: @spotify_auth_link,
+              class: "button" %>
+        </p>
+      </li>
+      <li>
+        <h3>
+          <%= check @has_households and @has_groups %>
+          Save households and groups
+        </h3>
+        <p>
+          <%= unless @has_households, do: link "Save households",
+              to: Routes.service_setup_path(@conn, :save_households),
+              method: :post,
+              class: "button" %>
+          <%= unless @has_groups, do: link "Save groups",
+              to: Routes.service_setup_path(@conn, :save_groups),
+              method: :post,
+              class: "button" %>
+        </p>
+      </li>
+      <li>
+        <h3>
+          <%= check @has_active_households and @has_active_groups %>
+          Activate household and groups
+        </h3>
+
+        <%= if @has_households and @has_groups do %>
+          <div class="box">
+            <h3>Households</h3>
+            <%= for item <- @households do %>
+              <%= link if(item.is_active, do: "🙋‍♂️", else: "🙅‍♀️"),
+                  to: Routes.service_setup_path(@conn, :toggle_household, item),
+                  method: :put %>
+              <%= unless is_nil(item.label), do: item.label, else: item.household_id %>
+            <% end %>
+            <p>
+              All sonos stuff done via this household id
+            </p>
+
+            <h3>Groups</h3>
+            <%= for item <- @groups do %>
+              <%= link if(item.is_active, do: "🙋‍♂️", else: "🙅‍♀️"),
+                  to: Routes.service_setup_path(@conn, :toggle_group, item),
+                  method: :put %>
+              <%= item.name %>
+            <% end %>
+            <p>
+              Pick a group that this thing will play to.
+              Make sure to create a group that has the speakers you want in it.
+            </p>
+          </div>
+        <% end %>
+      </li>
+      <li>
+        <h3>
+          Setup subscription for metadata and playstate
+        </h3>
+        <p>
+          No way to tell if this worked
+        </p>
+      </li>
+      <li>
+        <h3>
+          Create PlayRequest playlist
+        </h3>
+      </li>
+      <li>
+        <h3>
+          Fav it on Sonos
+        </h3>
+        <p>
+          Do that in the app,
+          It will find it by the name
+        </p>
+      </li>
+    </ol>
+
+    <h2>Make it play</h2>
+    <ol>
+      <li>Sync queue</li>
+      <li>Load fav</li>
+    </ol>
   </div>
 </div>

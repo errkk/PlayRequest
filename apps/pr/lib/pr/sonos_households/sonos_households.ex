@@ -99,7 +99,7 @@ defmodule PR.SonosHouseholds do
     Repo.all(Group)
   end
 
-  def get_groups!(id), do: Repo.get!(Group, id)
+  def get_group!(id), do: Repo.get!(Group, id)
 
   def get_active_group!() do
     Group
@@ -124,17 +124,17 @@ defmodule PR.SonosHouseholds do
     |> Repo.insert_or_update()
   end
 
-  def update_groups(%Group{} = groups, attrs) do
-    groups
+  def update_group(%Group{} = group, attrs) do
+    group
     |> Group.changeset(attrs)
     |> Repo.update()
   end
 
-  def delete_groups(%Group{} = groups) do
-    Repo.delete(groups)
+  def delete_group(%Group{} = group) do
+    Repo.delete(group)
   end
 
-  def change_groups(%Group{} = groups) do
-    Group.changeset(groups, %{})
+  def change_group(%Group{} = group) do
+    Group.changeset(group, %{})
   end
 end
