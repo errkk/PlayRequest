@@ -4,8 +4,8 @@ defmodule PR.SpotifyAPI do
   use PR.Apis.EndpointHelper
 
   alias OAuth2.{Client, Strategy}
-
-  @tmp_playlist_id "6ebt0TJ6e4CDQVi52gfXt3"
+  alias PR.SpotifyData
+  alias PR.SpotifyData.Playlist
 
   def get_devices do
     get("/v1/me/player/devices")
@@ -15,16 +15,27 @@ defmodule PR.SpotifyAPI do
     get("/v1/me/playlists")
   end
 
+  def get_current_user do
+    get("/v1/me")
+  end
+
   def create_playlist do
-    %{name: "PlayRequest", public: false}
-    |> post("/v1/users/errkkgeorge/playlists")
-    |> Map.get(:id)
+    with %{id: spotify_id} <- get_current_user(),
+         %{id: playlist_id} <- post(%{name: "PlayRequest", public: false}, "/v1/users/#{spotify_id}/playlists") do
+        SpotifyData.create_playlist(%{playlist_id: playlist_id, spotify_id: spotify_id})
+        {:ok, playlist_id, spotify_id}
+    else
+      _ ->
+        {:error, :cant_make_playlist}
+    end
   end
 
   def replace_playlist(uris) do
-    case put(%{uris: uris}, "/v1/playlists/#{@tmp_playlist_id}/tracks") do
-      %{snapshot_id: id} -> {:ok, id}
-      _ -> {:error, :error_syncing}
+    with [%Playlist{playlist_id: playlist_id} | _] <- SpotifyData.list_playlists(),
+        %{snapshot_id: id} <- put(%{uris: uris}, "/v1/playlists/#{playlist_id}/tracks") do
+      {:ok, id}
+    else
+      _ -> {:error, :cant_replace}
     end
   end
 
