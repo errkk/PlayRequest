@@ -14,13 +14,16 @@ h1 {
 }
 h2 {
   font-size: 35px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 h3 {
   font-size: 18px;
-  margin: 10px 0 4px;
+  margin: 10px 0 8px;
 }
 p {
+  h3 + & {
+    margin-top: 5px;
+  }
 }
 a {
   text-decoration: none;
@@ -41,5 +44,9 @@ a {
 
   & + & {
     margin-left: 20px;
+  }
+
+  h3 + & {
+    margin-top: 10px;
   }
 }

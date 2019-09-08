@@ -33,6 +33,7 @@ defmodule PRWeb.Router do
       post "/subscribe", ServiceSetupController, :subscribe_sonos_webhooks
       post "/sync-playlist", ServiceSetupController, :sync_playlist
       post "/load-playlist", ServiceSetupController, :load_playlist
+      post "/create-playlist", ServiceSetupController, :create_spotify_playlist
     end
 
     get "/sonos/authorized", ServiceAuthController, :authorized_sonos, as: :sonos_auth

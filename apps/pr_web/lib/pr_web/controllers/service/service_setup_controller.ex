@@ -3,6 +3,7 @@ defmodule PRWeb.Service.ServiceSetupController do
 
   alias PR.SonosAPI
   alias PR.SpotifyAPI
+  alias PR.SpotifyData
   alias PR.SonosHouseholds
   alias PR.ExternalAuth
   alias PR.Music
@@ -10,6 +11,7 @@ defmodule PRWeb.Service.ServiceSetupController do
   def index(conn, _params) do
     households = SonosHouseholds.list_houeholds()
     groups = SonosHouseholds.list_groups()
+    spotify_playlists = SpotifyData.list_playlists()
 
     sonos_auth_link = SonosAPI.get_auth_link!()
     spotify_auth_link = SpotifyAPI.get_auth_link!()
@@ -38,7 +40,8 @@ defmodule PRWeb.Service.ServiceSetupController do
       has_groups: [] != groups,
       has_active_households: has_active_households,
       has_active_groups: has_active_groups,
-      active_group_subscribed: active_group_subscribed
+      active_group_subscribed: active_group_subscribed,
+      spotify_playlist_created: [] != spotify_playlists
     )
   end
 
@@ -111,6 +114,19 @@ defmodule PRWeb.Service.ServiceSetupController do
     end
   end
 
+  def create_spotify_playlist(conn, _) do
+    case SpotifyAPI.create_playlist() do
+      {:ok, _, spotify_id} ->
+        conn
+        |> put_flash(:info, "Playlist created on Spotify (#{spotify_id})")
+        |> redirect(to: Routes.service_setup_path(conn, :index))
+      {:error, msg} ->
+        conn
+        |> put_flash(:error, msg)
+        |> redirect(to: Routes.service_setup_path(conn, :index))
+    end
+  end
+
   def sync_playlist(conn, _) do
     case Music.sync_playlist() do
       {:ok, _} ->
@@ -136,5 +152,6 @@ defmodule PRWeb.Service.ServiceSetupController do
         |> redirect(to: Routes.service_setup_path(conn, :index))
     end
   end
+
 end
 
