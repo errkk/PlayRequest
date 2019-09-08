@@ -108,7 +108,10 @@ defmodule PR.SonosAPI do
   end
 
   def household do
-    SonosHouseholds.get_active_household!()
+    case SonosHouseholds.get_active_household() do
+      %Household{} = household -> household
+      _ -> {:error, :no_active_household}
+    end
   end
 
   def group do

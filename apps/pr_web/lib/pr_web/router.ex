@@ -31,6 +31,8 @@ defmodule PRWeb.Router do
       put "/household/:id", ServiceSetupController, :toggle_household
       put "/group/:id", ServiceSetupController, :toggle_group
       post "/subscribe", ServiceSetupController, :subscribe_sonos_webhooks
+      post "/sync-playlist", ServiceSetupController, :sync_playlist
+      post "/load-playlist", ServiceSetupController, :load_playlist
     end
 
     get "/sonos/authorized", ServiceAuthController, :authorized_sonos, as: :sonos_auth

@@ -14,6 +14,13 @@ defmodule PR.SonosHouseholds do
 
   def get_household!(id), do: Repo.get!(Household, id)
 
+  def get_active_household() do
+    Household
+    |> query_is_active()
+    |> limit(1)
+    |> Repo.one()
+  end
+
   def get_active_household!() do
     Household
     |> query_is_active()

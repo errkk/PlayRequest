@@ -5,6 +5,7 @@ defmodule PRWeb.Service.ServiceSetupController do
   alias PR.SpotifyAPI
   alias PR.SonosHouseholds
   alias PR.ExternalAuth
+  alias PR.Music
 
   def index(conn, _params) do
     households = SonosHouseholds.list_houeholds()
@@ -106,6 +107,32 @@ defmodule PRWeb.Service.ServiceSetupController do
       _ ->
         conn
         |> put_flash(:error, "Didn't work")
+        |> redirect(to: Routes.service_setup_path(conn, :index))
+    end
+  end
+
+  def sync_playlist(conn, _) do
+    case Music.sync_playlist() do
+      {:ok, _} ->
+        conn
+        |> put_flash(:info, "Playlist synced")
+        |> redirect(to: Routes.service_setup_path(conn, :index))
+      _ ->
+        conn
+        |> put_flash(:error, "There was an error syncing the playlist")
+        |> redirect(to: Routes.service_setup_path(conn, :index))
+    end
+  end
+
+  def load_playlist(conn, _) do
+    case Music.load_playlist() do
+      {:ok} ->
+        conn
+        |> put_flash(:info, "That seemed to work")
+        |> redirect(to: Routes.service_setup_path(conn, :index))
+      {:error, msg} ->
+        conn
+        |> put_flash(:error, msg)
         |> redirect(to: Routes.service_setup_path(conn, :index))
     end
   end

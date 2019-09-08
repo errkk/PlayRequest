@@ -22,8 +22,10 @@ defmodule PR.SpotifyAPI do
   end
 
   def replace_playlist(uris) do
-    %{uris: uris}
-    |> put("/v1/playlists/#{@tmp_playlist_id}/tracks")
+    case put(%{uris: uris}, "/v1/playlists/#{@tmp_playlist_id}/tracks") do
+      %{snapshot_id: id} -> {:ok, id}
+      _ -> {:error, :error_syncing}
+    end
   end
 
   def set_device(id) do
