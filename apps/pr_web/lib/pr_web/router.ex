@@ -23,7 +23,19 @@ defmodule PRWeb.Router do
 
   scope "/", PRWeb.Service do
     pipe_through :browser
-    get "/connect", ServiceAuthController, :index
+
+    scope "/setup" do
+      get "/", ServiceSetupController, :index
+      post "/save-households", ServiceSetupController, :save_households
+      post "/save-groups", ServiceSetupController, :save_groups
+      put "/household/:id", ServiceSetupController, :toggle_household
+      put "/group/:id", ServiceSetupController, :toggle_group
+      post "/subscribe", ServiceSetupController, :subscribe_sonos_webhooks
+      post "/sync-playlist", ServiceSetupController, :sync_playlist
+      post "/load-playlist", ServiceSetupController, :load_playlist
+      post "/create-playlist", ServiceSetupController, :create_spotify_playlist
+    end
+
     get "/sonos/authorized", ServiceAuthController, :authorized_sonos, as: :sonos_auth
     get "/spotify/authorized", ServiceAuthController, :authorized_spotify, as: :spotify_auth
   end

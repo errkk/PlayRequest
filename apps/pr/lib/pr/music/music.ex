@@ -1,8 +1,11 @@
 defmodule PR.Music do
+  alias PR.SonosAPI
   alias PR.SpotifyAPI
   alias PR.Music.SearchTrack
   alias PR.Queue
   alias PR.Queue.Track
+  alias PR.SonosHouseholds
+  alias PR.SonosHouseholds.Group
 
   @spec search(String.t()) :: {:ok, [SearchTrack.t()]} | {:error}
   def search(q) do
@@ -31,6 +34,26 @@ defmodule PR.Music do
     Queue.list_track_uris()
     |> Enum.map(fn {id} -> "spotify:track:" <> id end)
     |> SpotifyAPI.replace_playlist()
+  end
+
+  defp find_playlist(sonos_favorites) do
+    case Enum.find(sonos_favorites, & match?(%{name: "PlayRequest"}, &1)) do
+      %{id: id} -> {:ok, id}
+      _ -> {:error, :playlist_not_created}
+    end
+  end
+
+  def load_playlist do
+    with %Group{group_id: group_id} <- SonosHouseholds.get_active_group!(),
+         {:ok, %{items: sonos_favorites}, _} <- SonosAPI.get_favorites(),
+         {:ok, fav_id} <- find_playlist(sonos_favorites) do
+      SonosAPI.set_favorite(fav_id, group_id)
+      {:ok}
+    else
+      {:error, :playlist_not_created} -> {:error, "Couldn't find PlayRequest in Sonos favorites"}
+      {:error, msg} -> {:error, msg}
+      _ -> {:error, "Could not load playlist"}
+    end
   end
 
   @spec get_playlist() :: [Track.t()]

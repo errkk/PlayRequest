@@ -1,2 +1,0 @@
-<%= link "Authorise Sonos", to: @sonos_auth_link, class: "button" %>
-<%= link "Authorise Spotify", to: @spotify_auth_link, class: "button" %>

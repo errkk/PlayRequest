@@ -4,7 +4,7 @@
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link href="https://fonts.googleapis.com/css?family=Merriweather:400,700|Source+Sans+Pro:400,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,500,700|Source+Sans+Pro:400,700&display=swap" rel="stylesheet">
     <title>PlayRequest</title>
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
   </head>
@@ -17,7 +17,7 @@
               <%= link "Home", to: Routes.live_path(@conn, PRWeb.PlaybackLive) %>
             </li>
             <li>
-              <%= link "Connect", to: Routes.service_auth_path(@conn, :index) %>
+              <%= link "Setup", to: Routes.service_setup_path(@conn, :index) %>
             </li>
           </ul>
         </nav>

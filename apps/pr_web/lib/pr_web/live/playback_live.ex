@@ -48,6 +48,9 @@ defmodule PRWeb.PlaybackLive do
                 <h3 class="track__name">
                   <%= track.name %>
                   <%= if playing?(track, @play_state), do: "▸" %>
+                  <%= if playing?(track, @play_state) do %>
+                    <progress value="<%= @play_state.position %>" max="<%= track.duration %>" />
+                  <% end %>
                 </h3>
                 <p class="track__artist">
                   <%= track.artist %>
@@ -87,6 +90,7 @@ defmodule PRWeb.PlaybackLive do
   end
 
   def handle_info({PlayState, %{} = metadata, :metadata}, socket) do
+    send(self(), {:get_playlist, nil})
     {:noreply, assign(socket, metadata: metadata)}
   end
 

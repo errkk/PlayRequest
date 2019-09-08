@@ -4,12 +4,49 @@ defmodule PR.SonosAPI do
   use PR.Apis.EndpointHelper
 
   alias OAuth2.{Client, Strategy}
+  alias PR.SonosHouseholds
+  alias PR.SonosHouseholds.{Household, Group}
 
-  @household_id "Sonos_tzRfiKzs5k7zdAz15qxl6JGuqY.NP8UdSZBTkrhfgUAv3wC"
-  @group_id "RINCON_B8E9378F13B001400:2815415479"
+  def subscribe_webhooks do
+    with %Group{} = group <- SonosHouseholds.get_active_group(),
+         {:ok, _} <- subscribe_metadata(),
+         {:ok, _} <- subscribe_playback() do
+      SonosHouseholds.update_group(group, %{subscribed_at: DateTime.utc_now()})
+      {:ok}
+    else
+      res -> res
+    end
+  end
+
+  def unsubscribe_webhooks do
+    with %Group{} = group <- SonosHouseholds.get_active_group(),
+         {:ok, _} <- unsubscribe_metadata(),
+         {:ok, _} <- unsubscribe_playback() do
+      SonosHouseholds.update_group(group, %{subscribed_at: nil})
+      {:ok}
+    else
+      res -> res
+    end
+  end
 
   def get_groups do
-    get("/households/#{@household_id}/groups")
+    case household() do
+      %Household{household_id: household_id, id: id} ->
+        res = get("/households/#{household_id}/groups")
+        {:ok, res, id}
+      _ ->
+        {:error, :no_household_activated}
+    end
+  end
+
+  def get_favorites do
+    case household() do
+      %Household{household_id: household_id, id: id} ->
+        res = get("/households/#{household_id}/favorites")
+        {:ok, res, id}
+      _ ->
+        {:error, :no_household_activated}
+    end
   end
 
   def get_households do
@@ -17,37 +54,118 @@ defmodule PR.SonosAPI do
   end
 
   def subscribe_playback do
-    post("/groups/#{@group_id}/playback/subscription")
+    with %Group{group_id: group_id} <- group(),
+         %{} <- post("/groups/#{group_id}/playback/subscription") do
+        {:ok, %{}}
+    else
+      err ->
+        err
+    end
+  end
+
+  def unsubscribe_playback do
+    with %Group{group_id: group_id} <- group(),
+         %{} <- delete("/groups/#{group_id}/playback/subscription") do
+        {:ok, %{}}
+    else
+      err ->
+        err
+    end
   end
 
   def get_playback do
-    get("/groups/#{@group_id}/playback")
+    get("/groups/#{group_id!()}/playback")
   end
 
   def subscribe_metadata do
-    post("/groups/#{@group_id}/playbackMetadata/subscription")
+    with %Group{group_id: group_id} <- group(),
+         %{} <- post("/groups/#{group_id}/playbackMetadata/subscription") do
+        {:ok, %{}}
+    else
+      err ->
+        err
+    end
+  end
+
+
+  def unsubscribe_metadata do
+    with %Group{group_id: group_id} <- group(),
+         %{} <- delete("/groups/#{group_id}/playbackMetadata/subscription") do
+        {:ok, %{}}
+    else
+      err ->
+        err
+    end
   end
 
   def get_metadata do
-    get("/groups/#{@group_id}/playbackMetadata")
+    get("/groups/#{group_id!()}/playbackMetadata")
   end
 
   def toggle_playback do
-    post("/groups/#{@group_id}/playback/togglePlayPause")
+    post("/groups/#{group_id!()}/playback/togglePlayPause")
+  end
+
+  def set_favorite(fav_id, group_id) do
+    %{favoriteId: fav_id, playOnCompletion: true}
+    |> post("/groups/#{group_id}/favorites")
   end
 
   def save_players() do
     case get_groups() do
-      %{players: players} ->
+      {:ok, %{players: players}, household_id} ->
         players
-        |> Enum.map(fn %{id: id, name: name} -> %{player_id: id, label: name, household_id: household().id} end)
+        |> Enum.map(fn %{id: id, name: name} -> %{player_id: id, label: name, household_id: household_id} end)
         |> Enum.map(&SonosHouseholds.insert_or_update_player(&1))
+      {:error, msg} -> {:error, msg}
+      _ -> nil
+    end
+  end
+
+  def save_households() do
+    case get_households() do
+      %{households: households} ->
+        total =
+          households
+          |> Enum.map(fn %{id: id} -> %{household_id: id} end)
+          |> Enum.map(&SonosHouseholds.insert_or_update_household(&1))
+          |> length()
+        {:ok, total}
+      {:error, msg} -> {:error, msg}
+      _ -> nil
+    end
+  end
+
+  def save_groups() do
+    case get_groups() do
+      {:ok, %{groups: groups}, household_id} ->
+        total =
+          groups
+          |> Enum.map(fn %{id: id, name: name, player_ids: player_ids} -> %{group_id: id, name: name, player_ids: player_ids, household_id: household_id} end)
+          |> Enum.map(&SonosHouseholds.insert_or_update_group(&1))
+          |> length()
+        {:ok, total}
+      {:error, msg} -> {:error, msg}
       _ -> nil
     end
   end
 
   def household do
-    SonosHouseholds.get_active_household!()
+    case SonosHouseholds.get_active_household() do
+      %Household{} = household -> household
+      _ -> {:error, :no_active_household}
+    end
+  end
+
+  def group do
+    case SonosHouseholds.get_active_group() do
+      %Group{} = group -> group
+      _ -> {:error, :no_active_group}
+    end
+  end
+
+  def group_id! do
+    SonosHouseholds.get_active_group!().group_id
   end
 
   @spec client() :: Client.t()

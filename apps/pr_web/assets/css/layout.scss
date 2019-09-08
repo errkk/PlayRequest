@@ -10,6 +10,12 @@
     "left-header left-header right-header right-header"
     "left left right right"
     "footer footer footer footer";
+
+  &.container--middle {
+    grid-template-areas:
+      "left-header_ left-header right-header right-header_"
+      "left_ main main right_";
+    }
 }
 
 .container--header {
@@ -23,6 +29,9 @@
 .col--right,
 .col--playlist {
   grid-area: right;
+}
+.col--main {
+  grid-area: main;
 }
 .col--logo {
   grid-area: logo;

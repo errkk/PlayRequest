@@ -15,7 +15,7 @@ defmodule PR.Repo.Migrations.CreateHoueholds do
     create table(:players) do
       add :player_id, :string
       add :label, :string
-      add :household_id, references(:households)
+      add :household_id, references(:households), on_delete: :cascade
       add :is_active, :boolean, default: false, null: false
 
       timestamps()

@@ -1,8 +1,5 @@
 defmodule PR.Music.PlaybackState do
   defstruct [
-    :queue_version,
-    :item_id,
-    :previous_item_id,
     :position,
     :state
   ]
@@ -11,16 +8,10 @@ defmodule PR.Music.PlaybackState do
 
   @spec new(map()) :: PlaybackState.t()
   def new(%{
-    queue_version: queue_version,
-    item_id: item_id,
-    previous_item_id: previous_item_id,
     position_millis: position,
     playback_state: playback_state
   }) do
     %__MODULE__{
-      queue_version: queue_version,
-      item_id: item_id,
-      previous_item_id: previous_item_id,
       position: position,
       state: state(playback_state)
     }
