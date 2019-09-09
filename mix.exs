@@ -5,7 +5,8 @@ defmodule PR.Umbrella.MixProject do
     [
       apps_path: "apps",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      releases: releases()
     ]
   end
 
@@ -28,12 +29,10 @@ defmodule PR.Umbrella.MixProject do
   defp releases() do
     [
       pr: [
+        version: "0.0.1",
         include_executables_for: [:unix],
-        steps: [:assemble, &copy_rel_files/1]
-      ],
-      pr_web: [
-        include_executables_for: [:unix],
-        steps: [:assemble, &copy_rel_files/1]
+        steps: [:assemble, &copy_rel_files/1],
+        applications: [pr: :permanent, pr_web: :permanent]
       ]
     ]
   end
