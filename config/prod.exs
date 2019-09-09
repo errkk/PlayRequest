@@ -10,8 +10,14 @@ use Mix.Config
 # which you should run after static files are built and
 # before starting your production server.
 config :pr_web, PRWeb.Endpoint,
-  url: [host: "example.com", port: 80],
+  url: [scheme: "https", host: "playrequest.herokuapp.com", port: 443],
+  force_ssl: [rewrite_on: [:x_forwarded_proto]],
   cache_static_manifest: "priv/static/cache_manifest.json"
+
+config :pr, PR.Repo,
+  ssl: true,
+  url: database_url,
+  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10")
 
 # ## SSL Support
 #
@@ -47,9 +53,4 @@ config :pr_web, PRWeb.Endpoint,
 #
 # Check `Plug.SSL` for all available options in `force_ssl`.
 
-# Do not print debug messages in production
 config :logger, level: :info
-
-# Finally import the config/prod.secret.exs which loads secrets
-# and configuration from environment variables.
-import_config "prod.secret.exs"
