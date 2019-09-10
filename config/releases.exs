@@ -9,7 +9,7 @@ config :pr_web, PRWeb.Endpoint,
   http: [port: System.get_env("PORT")],
   url: [host: System.get_env("HOSTNAME"), port: 80],
   server: true,
-  root: ".",
+  root: "/app/apps/pr_web/priv/static",
   version: Application.spec(:pr_web, :vsn),
   cache_static_manifest: "/app/apps/pr_web/priv/static/cache_manifest.json"
 
