@@ -9,7 +9,7 @@ defmodule PR.ReleaseTasks do
     :ecto_sql
   ]
 
-  @repos Application.get_env(:adapt, :ecto_repos, [])
+  @repos Application.get_env(:pr, :ecto_repos, [])
 
   require Logger
 
@@ -33,7 +33,7 @@ defmodule PR.ReleaseTasks do
 
     # Start the Repo(s) for app
     Logger.info("Starting repos..")
-    :ok = Application.load(:adapt)
+    :ok = Application.load(:pr)
 
     # Switch pool_size to 2 for ecto > 3.0
     Enum.each(@repos, & &1.start_link(pool_size: 2))
