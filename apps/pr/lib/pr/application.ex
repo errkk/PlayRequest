@@ -12,7 +12,7 @@ defmodule PR.Application do
       PR.PlayState,
       PR.SonosAPI,
       PR.SpotifyAPI,
-      worker(Task, [&PR.PlayState.get_initial_state/0], restart: :temporary),
+      #worker(Task, [&PR.PlayState.get_initial_state/0], restart: :temporary),
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: PR.Supervisor)
