@@ -7,8 +7,8 @@ config :pr, PR.Repo,
 
 config :pr_web, PRWeb.Endpoint,
   server: true,
-  http: [scheme: "http", port: String.to_integer(System.get_env("PORT")],
-  url: [scheme: "http", host: "0.0.0.0", port: String.to_integer(System.get_env("PORT"))],
+  http: [port: String.to_integer(System.get_env("PORT")],
+  url: [scheme: "http", host: "0.0.0.0"],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 import_config "../../envvars.exs"
