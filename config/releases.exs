@@ -7,8 +7,11 @@ config :pr, PR.Repo,
 
 config :pr_web, PRWeb.Endpoint,
   server: true,
+  http: [port: System.get_env("PORT")],
   url: [scheme: "https", host: System.get_env("HOSTNAME"), port: 443],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
+  root: ".",
+  version: Application.spec(:pr_web, :vsn)
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 config :logger, level: :info
