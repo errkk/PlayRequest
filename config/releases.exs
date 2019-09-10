@@ -8,7 +8,7 @@ config :pr, PR.Repo,
 config :pr_web, PRWeb.Endpoint,
   server: true,
   http: [port: System.get_env("PORT")],
-  url: [scheme: "https", host: System.get_env("HOSTNAME"), port: 443],
+  url: [scheme: "http", host: System.get_env("HOSTNAME"), port: 80],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
   root: ".",
   version: Application.spec(:pr_web, :vsn)
