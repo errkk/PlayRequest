@@ -9,9 +9,9 @@ config :pr_web, PRWeb.Endpoint,
   http: [port: System.get_env("PORT")],
   url: [host: System.get_env("HOSTNAME"), port: 80],
   server: true,
-  root: "/app/apps/pr_web/priv/static",
+  root: ".",
   version: Application.spec(:pr_web, :vsn),
-  cache_static_manifest: "/app/apps/pr_web/priv/static/cache_manifest.json"
+  cache_static_manifest: "/priv/static/cache_manifest.json"
 
 config :logger, level: :info
 
