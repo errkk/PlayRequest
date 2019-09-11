@@ -12,7 +12,8 @@ import Config
 # Configure Mix tasks and generators
 config :pr,
   namespace: PR,
-  ecto_repos: [PR.Repo]
+  ecto_repos: [PR.Repo],
+  playlist_name: "PlayRequestDev"
 
 config :pr_web,
   namespace: PRWeb,

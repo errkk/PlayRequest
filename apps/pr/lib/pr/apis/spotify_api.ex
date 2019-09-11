@@ -21,7 +21,7 @@ defmodule PR.SpotifyAPI do
 
   def create_playlist do
     with %{id: spotify_id} <- get_current_user(),
-         %{id: playlist_id} <- post(%{name: "PlayRequest", public: false}, "/v1/users/#{spotify_id}/playlists") do
+         %{id: playlist_id} <- post(%{name: get_playlist_name(), public: false}, "/v1/users/#{spotify_id}/playlists") do
         SpotifyData.create_playlist(%{playlist_id: playlist_id, spotify_id: spotify_id})
         {:ok, playlist_id, spotify_id}
     else
@@ -82,6 +82,10 @@ defmodule PR.SpotifyAPI do
 
   defp get_config(key) do
     Application.get_env(:pr, :spotify)[key]
+  end
+
+  defp get_playlist_name do
+    Application.get_env(:pr, :playlist_name)
   end
 end
 

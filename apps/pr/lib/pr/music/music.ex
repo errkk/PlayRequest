@@ -37,20 +37,22 @@ defmodule PR.Music do
   end
 
   defp find_playlist(sonos_favorites) do
-    case Enum.find(sonos_favorites, & match?(%{name: "PlayRequest"}, &1)) do
-      %{id: id} -> {:ok, id}
-      _ -> {:error, :playlist_not_created}
+    case Enum.find(sonos_favorites, & &1.name == get_playlist_name()) do
+      %{id: id} ->
+        {:ok, id}
+      _ ->
+        {:error, :playlist_not_created}
     end
   end
 
   def load_playlist do
     with %Group{group_id: group_id} <- SonosHouseholds.get_active_group!(),
          {:ok, %{items: sonos_favorites}, _} <- SonosAPI.get_favorites(),
-         {:ok, fav_id} <- find_playlist(sonos_favorites) do
-      SonosAPI.set_favorite(fav_id, group_id)
+         {:ok, fav_id} <- find_playlist(sonos_favorites),
+         {:ok, body}  <- SonosAPI.set_favorite(fav_id, group_id) do
       {:ok}
     else
-      {:error, :playlist_not_created} -> {:error, "Couldn't find PlayRequest in Sonos favorites"}
+      {:error, :playlist_not_created} -> {:error, "Couldn't find #{get_playlist_name()} in Sonos favorites"}
       {:error, msg} -> {:error, msg}
       _ -> {:error, "Could not load playlist"}
     end
@@ -76,5 +78,9 @@ defmodule PR.Music do
     else
       err -> err
     end
+  end
+
+  defp get_playlist_name do
+    Application.get_env(:pr, :playlist_name)
   end
 end
