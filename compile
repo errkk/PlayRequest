@@ -2,7 +2,9 @@ npm run deploy
 
 cd $phoenix_dir
 
-mix "${phoenix_ex}.digest"
+mkdir -p /app/_build/prod/rel/pr/lib/pr_web-0.1.0/priv
+
+mix "${phoenix_ex}.digest" -o /app/_build/prod/rel/pr/lib/pr_web-0.1.0/priv
 
 if mix help "${phoenix_ex}.digest.clean" 1>/dev/null 2>&1; then
   mix "${phoenix_ex}.digest.clean" -o /app/_build/prod/rel/pr/lib/pr_web-0.1.0/priv
