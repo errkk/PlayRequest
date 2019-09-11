@@ -13,12 +13,6 @@ config :pr_web, PRWeb.Endpoint,
   version: Application.spec(:pr_web, :vsn),
   cache_static_manifest: "priv/static/cache_manifest.json"
 
-config :pr, :sonos,
-  redirect_uri: "https://#{System.get_env("HOSTNAME")}/sonos/authorized"
-
-config :pr, :spotify,
-  redirect_uri: "https://#{System.get_env("HOSTNAME")}/spotify/authorized"
-
 config :logger, level: :info
 
 import_config "../../envvars.exs"

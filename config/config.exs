@@ -34,13 +34,6 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
-# Common OAuth Settings
-config :pr, :sonos,
-  scopes: "playback-control-all"
-
-config :pr, :spotify,
-  scopes: ~w(user-modify-playback-state user-read-currently-playing user-read-playback-state playlist-modify-private playlist-read-private)
-
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
