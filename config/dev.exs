@@ -10,12 +10,10 @@ config :pr, PR.Repo,
   pool_size: 10
 
 config :pr, :sonos,
-  scopes: "playback-control-all",
-  redirect_uri: "http://localhost:4000/sonos/authorized"
+  scopes: "playback-control-all"
 
 config :pr, :spotify,
-  scopes: ~w(user-modify-playback-state user-read-currently-playing user-read-playback-state playlist-modify-private playlist-read-private),
-  redirect_uri: "http://localhost:4000/spotify/authorized"
+  scopes: ~w(user-modify-playback-state user-read-currently-playing user-read-playback-state playlist-modify-private playlist-read-private)
 
 config :oauth2, debug: true
 
