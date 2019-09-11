@@ -53,8 +53,8 @@ defmodule PR.Music do
       {:ok}
     else
       {:error, :playlist_not_created} -> {:error, "Couldn't find #{get_playlist_name()} in Sonos favorites"}
-      {:error, msg} -> {:error, msg}
-      _ -> {:error, "Could not load playlist"}
+      _ ->
+      {:error, "Could not load playlist"}
     end
   end
 
