@@ -14,11 +14,16 @@ defmodule PR.PlayState do
   end
 
   def get_initial_state() do
-    Logger.info "Fetching inital state"
-    SonosAPI.get_playback()
-    |> process_play_state()
-    SonosAPI.get_metadata()
-    |> process_metadata()
+    try do
+      Logger.info "Fetching inital state"
+      SonosAPI.get_playback()
+      |> process_play_state()
+      SonosAPI.get_metadata()
+      |> process_metadata()
+    rescue
+      _ ->
+      Logger.error "PlayState could not fetch initial state"
+    end
   end
 
   def get(key) do
