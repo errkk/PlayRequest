@@ -30,21 +30,21 @@
                 method: :post,
                 class: "button" %>
           </p>
+        <% end %>
 
-          <%= unless @has_active_households do %>
-            <div class="box">
-              <h3>Households</h3>
-              <%= for item <- @households do %>
-                <%= link if(item.is_active, do: "🙋‍♂️", else: "🙅‍♀️"),
-                    to: Routes.service_setup_path(@conn, :toggle_household, item),
-                    method: :put %>
-                <%= unless is_nil(item.label), do: item.label, else: item.household_id %>
-              <% end %>
-              <p>
-                All sonos stuff done via this household id
-              </p>
-            </div>
-          <% end %>
+        <%= unless @has_active_households do %>
+          <div class="box">
+            <h3>Households</h3>
+            <%= for item <- @households do %>
+              <%= link if(item.is_active, do: "🙋‍♂️", else: "🙅‍♀️"),
+                  to: Routes.service_setup_path(@conn, :toggle_household, item),
+                  method: :put %>
+              <%= unless is_nil(item.label), do: item.label, else: item.household_id %>
+            <% end %>
+            <p>
+              All sonos stuff done via this household id
+            </p>
+          </div>
         <% end %>
       </li>
       <li>
