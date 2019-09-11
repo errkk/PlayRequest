@@ -1,5 +1,8 @@
 use Mix.Config
 
+config :pr,
+  playlist_name: "PlayRequestDev"
+
 # Configure your database
 config :pr, PR.Repo,
   username: "postgres",

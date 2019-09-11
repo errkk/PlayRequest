@@ -13,7 +13,7 @@ import Config
 config :pr,
   namespace: PR,
   ecto_repos: [PR.Repo],
-  playlist_name: "PlayRequestDev"
+  playlist_name: "PlayRequest"
 
 config :pr_web,
   namespace: PRWeb,
@@ -40,11 +40,7 @@ config :phoenix, :json_library, Jason
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
-case Mix.env() do
-  :dev ->
-    import_config "#{Mix.env()}.exs"
-  _ -> nil
-end
+import_config "#{Mix.env()}.exs"
 
 # Load env vars
 import_config "../rel/envvars.exs"
