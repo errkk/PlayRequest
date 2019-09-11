@@ -52,9 +52,10 @@ defmodule PR.Music do
          {:ok, body}  <- SonosAPI.set_favorite(fav_id, group_id) do
       {:ok}
     else
-      {:error, :playlist_not_created} -> {:error, "Couldn't find #{get_playlist_name()} in Sonos favorites"}
+      {:error, :playlist_not_created} ->
+        {:error, "Couldn't find #{get_playlist_name()} in Sonos favorites"}
       _ ->
-      {:error, "Could not load playlist #{get_playlist_name()}"}
+        {:error, "Could not load playlist #{get_playlist_name()}"}
     end
   end
 
