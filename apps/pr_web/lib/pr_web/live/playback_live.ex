@@ -102,7 +102,6 @@ defmodule PRWeb.PlaybackLive do
 
   # Queue updated
   def handle_info({Music, %{} = track, :added}, socket) do
-    IO.puts "Track added requesting playlist again"
     send(self(), {:get_playlist, nil})
     {:noreply, socket}
   end
@@ -126,7 +125,6 @@ defmodule PRWeb.PlaybackLive do
   end
 
   def handle_info({:queue, spotify_id}, socket) do
-    Logger.info("Queuing #{spotify_id}")
     case Music.queue(spotify_id) do
       {:ok, _track} ->
         {:noreply, assign(socket, loading: false, result: [])}

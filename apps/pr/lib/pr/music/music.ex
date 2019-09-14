@@ -1,4 +1,6 @@
 defmodule PR.Music do
+  require Logger
+
   alias PR.SonosAPI
   alias PR.SpotifyAPI
   alias PR.Music.SearchTrack
@@ -30,6 +32,8 @@ defmodule PR.Music do
 
   @spec queue(String.t()) :: {:ok, Track.t()}
   def queue(id) do
+    Logger.info("Queuing #{id}")
+
     with {:ok, search_track} <- get_track(id),
          {:ok, queued_track} <- create_track(search_track) do
       broadcast(queued_track, :added)
@@ -50,7 +54,7 @@ defmodule PR.Music do
     with %Group{group_id: group_id} <- SonosHouseholds.get_active_group!(),
          {:ok, %{items: sonos_favorites}, _} <- SonosAPI.get_favorites(),
          {:ok, fav_id} <- find_playlist(sonos_favorites),
-         {:ok, body}  <- SonosAPI.set_favorite(fav_id, group_id) do
+         %{}  <- SonosAPI.set_favorite(fav_id, group_id) do
       {:ok}
     else
       {:error, :playlist_not_created} ->

@@ -4,6 +4,7 @@ defmodule PR.PlayState do
   require Logger
   use Agent
   alias PR.SonosAPI
+  alias PR.Music
   alias PR.Music.{SonosItem, PlaybackState}
   alias PR.Queue
 
@@ -42,6 +43,7 @@ defmodule PR.PlayState do
   @spec broadcast(any(), :atom) :: no_return()
   defp broadcast(data, key) do
     Phoenix.PubSub.broadcast(PRWeb.PubSub, @topic, {__MODULE__, data, key})
+    data
   end
 
   # API functions
@@ -65,12 +67,25 @@ defmodule PR.PlayState do
     |> process_metadata()
   end
 
+  defp watch_metadata(%{current_item: %SonosItem{}, next_item: %{}}) do
+    # Metadta tells us there's nothing up next
+    case Queue.has_unplayed do
+      num when num > 0 ->
+        Logger.info "Sonos queus missing tracks. re-triggering"
+        Music.load_playlist()
+      _ ->
+        nil
+    end
+
+  end
+
   defp process_metadata(data) do
     data
     |> cast_metadata()
     |> update_playing()
     |> update_state(:metadata)
     |> broadcast(:metadata)
+    |> watch_metadata()
   end
 
   defp process_play_state(data) do

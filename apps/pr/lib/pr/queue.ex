@@ -21,6 +21,13 @@ defmodule PR.Queue do
     |> Repo.all()
   end
 
+  def has_unplayed do
+    Track
+    |> query_unplayed()
+    |> query_unplaying()
+    |> Repo.aggregate(:count, :id)
+  end
+
   def list_track_uris do
     Track
     |> query_unplayed()
@@ -91,5 +98,10 @@ defmodule PR.Queue do
     query
     |> where([t], is_nil(t.played_at))
     |> order_by([t], asc: t.inserted_at)
+  end
+
+  defp query_unplaying(query) do
+    query
+    |> where([t], is_nil(t.playing_since))
   end
 end
