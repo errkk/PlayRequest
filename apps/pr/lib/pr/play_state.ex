@@ -101,10 +101,15 @@ defmodule PR.PlayState do
   end
 
   defp cast_metadata(%{} = data) do
-    data
-    |> Map.update(:current_item, %{}, &SonosItem.new/1)
-    |> Map.update(:next_item, %{}, &SonosItem.new/1)
-    |> Map.delete(:container)
+    try do
+      data
+      |> Map.update(:current_item, %{}, &SonosItem.new/1)
+      |> Map.update(:next_item, %{}, &SonosItem.new/1)
+      |> Map.delete(:container)
+    rescue
+      _ ->
+      %{current_item: %{}, next_item: %{}}
+    end
   end
 end
 
