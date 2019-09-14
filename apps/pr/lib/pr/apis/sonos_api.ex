@@ -111,17 +111,6 @@ defmodule PR.SonosAPI do
     |> post("/groups/#{group_id}/favorites")
   end
 
-  def save_players() do
-    case get_groups() do
-      {:ok, %{players: players}, household_id} ->
-        players
-        |> Enum.map(fn %{id: id, name: name} -> %{player_id: id, label: name, household_id: household_id} end)
-        |> Enum.map(&SonosHouseholds.insert_or_update_player(&1))
-      {:error, msg} -> {:error, msg}
-      _ -> nil
-    end
-  end
-
   def save_households() do
     case get_households() do
       %{households: households} ->

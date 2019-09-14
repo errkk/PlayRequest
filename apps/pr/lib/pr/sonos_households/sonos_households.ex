@@ -6,7 +6,7 @@ defmodule PR.SonosHouseholds do
   import Ecto.Query, warn: false
   alias PR.Repo
 
-  alias PR.SonosHouseholds.{Household, Player, Group}
+  alias PR.SonosHouseholds.{Household, Group}
 
   def list_houeholds do
     Repo.all(Household)
@@ -56,47 +56,6 @@ defmodule PR.SonosHouseholds do
   def change_household(%Household{} = household) do
     Household.changeset(household, %{})
   end
-
-
-  #
-  # Players
-  #
-
-  def list_players do
-    Repo.all(Player)
-  end
-
-  def get_players!(id), do: Repo.get!(Player, id)
-
-  def create_players(attrs \\ %{}) do
-    %Player{}
-    |> Player.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  def insert_or_update_player(%{player_id: player_id} = changes) do
-    case Repo.get_by(Player, player_id: player_id) do
-      nil  -> %Player{player_id: player_id}
-      player -> player
-    end
-    |> Player.changeset(changes)
-    |> Repo.insert_or_update()
-  end
-
-  def update_players(%Player{} = players, attrs) do
-    players
-    |> Player.changeset(attrs)
-    |> Repo.update()
-  end
-
-  def delete_players(%Player{} = players) do
-    Repo.delete(players)
-  end
-
-  def change_players(%Player{} = players) do
-    Player.changeset(players, %{})
-  end
-
 
   #
   # Groups

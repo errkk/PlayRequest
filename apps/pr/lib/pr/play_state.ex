@@ -39,6 +39,7 @@ defmodule PR.PlayState do
     data
   end
 
+  @spec broadcast(any(), :atom) :: no_return()
   defp broadcast(data, key) do
     Phoenix.PubSub.broadcast(PRWeb.PubSub, @topic, {__MODULE__, data, key})
   end
@@ -90,6 +91,5 @@ defmodule PR.PlayState do
     |> Map.update(:next_item, %{}, &SonosItem.new/1)
     |> Map.delete(:container)
   end
-
 end
 
