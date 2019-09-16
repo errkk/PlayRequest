@@ -146,6 +146,13 @@
         <p>
           Load the playlist into Sonos, it's kept as a favorite and needs to be activated
         </p>
+        <%= link "Bump",
+            to: Routes.service_setup_path(@conn, :bump),
+            method: :post,
+            class: "button" %>
+        <p>
+          Skip to next track, re-sync the playlist and load it up to play on Sonos.
+        </p>
       </li>
     </ol>
   </div>

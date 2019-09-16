@@ -1,5 +1,4 @@
 defmodule PRWeb.PlaybackLive do
-  require IEx
   require Logger
   use Phoenix.LiveView
   use Phoenix.HTML

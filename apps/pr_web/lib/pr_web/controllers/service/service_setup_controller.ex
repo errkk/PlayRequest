@@ -149,5 +149,18 @@ defmodule PRWeb.Service.ServiceSetupController do
     end
   end
 
+  def bump(conn, _) do
+    case Music.bump_and_reload() do
+      {:ok} ->
+        conn
+        |> put_flash(:info, "That seemed to work")
+        |> redirect(to: Routes.service_setup_path(conn, :index))
+      {:error, msg} ->
+        conn
+        |> put_flash(:error, "⚠️ #{msg}")
+        |> redirect(to: Routes.service_setup_path(conn, :index))
+    end
+  end
+
 end
 

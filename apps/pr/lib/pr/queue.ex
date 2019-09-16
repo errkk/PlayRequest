@@ -7,6 +7,7 @@ defmodule PR.Queue do
   import Ecto.Query, warn: false
   alias PR.Repo
 
+  alias PR.Queue
   alias PR.Queue.Track
   alias PR.Music.SonosItem
 
@@ -87,6 +88,10 @@ defmodule PR.Queue do
       playing_since: nil,
       played_at: dynamic([i], date_add(i.playing_since, i.duration, "millisecond"))
     ])
+  end
+
+  def bump do
+    set_current(%{})
   end
 
   defp query_is_playing(query) do

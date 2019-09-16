@@ -37,7 +37,7 @@ defmodule PR.Music do
     with {:ok, search_track} <- get_track(id),
          {:ok, queued_track} <- create_track(search_track) do
       broadcast(queued_track, :added)
-      #sync_playlist()
+      sync_playlist()
       {:ok, queued_track}
     else
       err -> err
@@ -51,6 +51,7 @@ defmodule PR.Music do
   end
 
   def load_playlist do
+    sync_playlist()
     with %Group{group_id: group_id} <- SonosHouseholds.get_active_group!(),
          {:ok, %{items: sonos_favorites}, _} <- SonosAPI.get_favorites(),
          {:ok, fav_id} <- find_playlist(sonos_favorites),
@@ -67,6 +68,11 @@ defmodule PR.Music do
   @spec get_playlist() :: [Track.t()]
   def get_playlist() do
     Queue.list_unplayed()
+  end
+
+  def bump_and_reload do
+    Queue.bump()
+    load_playlist()
   end
 
   @spec find_playlist([map()]) :: {:ok, String.t()} | {:error, atom()}

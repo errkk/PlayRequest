@@ -67,17 +67,19 @@ defmodule PR.PlayState do
     |> process_metadata()
   end
 
-  defp watch_metadata(%{current_item: %SonosItem{}, next_item: %{}}) do
+  defp watch_play_state(%{state: :idle} = d) do
     # Metadta tells us there's nothing up next
     case Queue.has_unplayed do
       num when num > 0 ->
-        Logger.info "Sonos queus missing tracks. re-triggering"
-        Music.load_playlist()
+        Logger.info "Idle, more tracks. Bump and reload."
+        Music.bump_and_reload()
       _ ->
         nil
     end
 
   end
+
+  defp watch_play_state(data), do: data
 
   defp process_metadata(data) do
     data
@@ -85,7 +87,6 @@ defmodule PR.PlayState do
     |> update_playing()
     |> update_state(:metadata)
     |> broadcast(:metadata)
-    |> watch_metadata()
   end
 
   defp process_play_state(data) do
@@ -93,6 +94,7 @@ defmodule PR.PlayState do
     |> PlaybackState.new()
     |> update_state(:play_state)
     |> broadcast(:play_state)
+    |> watch_play_state()
   end
 
   defp update_playing(%{current_item: current} = state) do

@@ -34,6 +34,7 @@ defmodule PRWeb.Router do
       post "/sync-playlist", ServiceSetupController, :sync_playlist
       post "/load-playlist", ServiceSetupController, :load_playlist
       post "/create-playlist", ServiceSetupController, :create_spotify_playlist
+      post "/bump", ServiceSetupController, :bump
     end
 
     get "/sonos/authorized", ServiceAuthController, :authorized_sonos, as: :sonos_auth
