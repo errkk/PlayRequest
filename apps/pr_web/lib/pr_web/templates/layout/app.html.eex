@@ -26,6 +26,9 @@
         <h1>
           <%= link "PlayRequest", to: Routes.live_path(@conn, PRWeb.PlaybackLive) %>
         </h1>
+        <p>
+          Like the Weatherspoons app, but for music
+        </p>
       </div>
     </header>
     <main role="main">
