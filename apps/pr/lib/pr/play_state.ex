@@ -4,6 +4,7 @@ defmodule PR.PlayState do
   require Logger
   use Agent
   alias PR.SonosAPI
+  alias PR.Music
   alias PR.Music.{SonosItem, PlaybackState}
   alias PR.Queue
 
@@ -39,8 +40,10 @@ defmodule PR.PlayState do
     data
   end
 
+  @spec broadcast(any(), :atom) :: no_return()
   defp broadcast(data, key) do
     Phoenix.PubSub.broadcast(PRWeb.PubSub, @topic, {__MODULE__, data, key})
+    data
   end
 
   # API functions
@@ -64,6 +67,20 @@ defmodule PR.PlayState do
     |> process_metadata()
   end
 
+  defp watch_play_state(%{state: :idle} = d) do
+    # Metadta tells us there's nothing up next
+    case Queue.has_unplayed do
+      num when num > 0 ->
+        Logger.info "Idle, more tracks. Bump and reload."
+        Music.bump_and_reload()
+      _ ->
+        nil
+    end
+
+  end
+
+  defp watch_play_state(data), do: data
+
   defp process_metadata(data) do
     data
     |> cast_metadata()
@@ -77,6 +94,7 @@ defmodule PR.PlayState do
     |> PlaybackState.new()
     |> update_state(:play_state)
     |> broadcast(:play_state)
+    |> watch_play_state()
   end
 
   defp update_playing(%{current_item: current} = state) do
@@ -85,11 +103,15 @@ defmodule PR.PlayState do
   end
 
   defp cast_metadata(%{} = data) do
-    data
-    |> Map.update(:current_item, %{}, &SonosItem.new/1)
-    |> Map.update(:next_item, %{}, &SonosItem.new/1)
-    |> Map.delete(:container)
+    try do
+      data
+      |> Map.update(:current_item, %{}, &SonosItem.new/1)
+      |> Map.update(:next_item, %{}, &SonosItem.new/1)
+      |> Map.delete(:container)
+    rescue
+      _ ->
+      %{current_item: %{}, next_item: %{}}
+    end
   end
-
 end
 

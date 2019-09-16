@@ -1,4 +1,6 @@
 defmodule PR.Music do
+  require Logger
+
   alias PR.SonosAPI
   alias PR.SpotifyAPI
   alias PR.Music.SearchTrack
@@ -6,6 +8,15 @@ defmodule PR.Music do
   alias PR.Queue.Track
   alias PR.SonosHouseholds
   alias PR.SonosHouseholds.Group
+
+  @topic inspect(__MODULE__)
+
+  # API functions
+
+  @doc "Use in the live view to receive updates"
+  def subscribe do
+    Phoenix.PubSub.subscribe(PRWeb.PubSub, @topic)
+  end
 
   @spec search(String.t()) :: {:ok, [SearchTrack.t()]} | {:error}
   def search(q) do
@@ -21,8 +32,11 @@ defmodule PR.Music do
 
   @spec queue(String.t()) :: {:ok, Track.t()}
   def queue(id) do
+    Logger.info("Queuing #{id}")
+
     with {:ok, search_track} <- get_track(id),
          {:ok, queued_track} <- create_track(search_track) do
+      broadcast(queued_track, :added)
       sync_playlist()
       {:ok, queued_track}
     else
@@ -36,20 +50,12 @@ defmodule PR.Music do
     |> SpotifyAPI.replace_playlist()
   end
 
-  defp find_playlist(sonos_favorites) do
-    case Enum.find(sonos_favorites, & &1.name == get_playlist_name()) do
-      %{id: id} ->
-        {:ok, id}
-      _ ->
-        {:error, :playlist_not_created}
-    end
-  end
-
   def load_playlist do
+    sync_playlist()
     with %Group{group_id: group_id} <- SonosHouseholds.get_active_group!(),
          {:ok, %{items: sonos_favorites}, _} <- SonosAPI.get_favorites(),
          {:ok, fav_id} <- find_playlist(sonos_favorites),
-         {:ok, body}  <- SonosAPI.set_favorite(fav_id, group_id) do
+         %{}  <- SonosAPI.set_favorite(fav_id, group_id) do
       {:ok}
     else
       {:error, :playlist_not_created} ->
@@ -62,6 +68,21 @@ defmodule PR.Music do
   @spec get_playlist() :: [Track.t()]
   def get_playlist() do
     Queue.list_unplayed()
+  end
+
+  def bump_and_reload do
+    Queue.bump()
+    load_playlist()
+  end
+
+  @spec find_playlist([map()]) :: {:ok, String.t()} | {:error, atom()}
+  defp find_playlist(sonos_favorites) do
+    case Enum.find(sonos_favorites, & &1.name == get_playlist_name()) do
+      %{id: id} ->
+        {:ok, id}
+      _ ->
+        {:error, :playlist_not_created}
+    end
   end
 
   @spec create_track(SearchTrack.t()) :: {:ok, Track.t()}
@@ -79,6 +100,11 @@ defmodule PR.Music do
     else
       err -> err
     end
+  end
+
+  @spec broadcast(any(), :atom) :: no_return()
+  defp broadcast(data, key) do
+    Phoenix.PubSub.broadcast(PRWeb.PubSub, @topic, {__MODULE__, data, key})
   end
 
   defp get_playlist_name do

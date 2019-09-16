@@ -53,11 +53,11 @@ defmodule PRWeb.Service.ServiceSetupController do
         |> redirect(to: Routes.service_setup_path(conn, :index))
       {:error, msg} ->
         conn
-        |> put_flash(:error, msg)
+        |> put_flash(:error, "⚠️ #{msg}")
         |> redirect(to: Routes.service_setup_path(conn, :index))
       _ ->
         conn
-        |> put_flash(:error, "Didn't work")
+        |> put_flash(:error, "⚠️ Didn't work")
         |> redirect(to: Routes.service_setup_path(conn, :index))
     end
   end
@@ -70,11 +70,11 @@ defmodule PRWeb.Service.ServiceSetupController do
         |> redirect(to: Routes.service_setup_path(conn, :index))
       {:error, msg} ->
         conn
-        |> put_flash(:error, msg)
+        |> put_flash(:error, "⚠️ #{msg}")
         |> redirect(to: Routes.service_setup_path(conn, :index))
       _ ->
         conn
-        |> put_flash(:error, "Didn't work")
+        |> put_flash(:error, "⚠️ Didn't work")
         |> redirect(to: Routes.service_setup_path(conn, :index))
     end
   end
@@ -105,7 +105,7 @@ defmodule PRWeb.Service.ServiceSetupController do
         |> redirect(to: Routes.service_setup_path(conn, :index))
       _ ->
         conn
-        |> put_flash(:error, "Didn't work")
+        |> put_flash(:error, "⚠️ Didn't work")
         |> redirect(to: Routes.service_setup_path(conn, :index))
     end
   end
@@ -118,7 +118,7 @@ defmodule PRWeb.Service.ServiceSetupController do
         |> redirect(to: Routes.service_setup_path(conn, :index))
       {:error, msg} ->
         conn
-        |> put_flash(:error, msg)
+        |> put_flash(:error, "⚠️ #{msg}")
         |> redirect(to: Routes.service_setup_path(conn, :index))
     end
   end
@@ -131,7 +131,7 @@ defmodule PRWeb.Service.ServiceSetupController do
         |> redirect(to: Routes.service_setup_path(conn, :index))
       _ ->
         conn
-        |> put_flash(:error, "There was an error syncing the playlist")
+        |> put_flash(:error, "⚠️ There was an error syncing the playlist")
         |> redirect(to: Routes.service_setup_path(conn, :index))
     end
   end
@@ -144,7 +144,20 @@ defmodule PRWeb.Service.ServiceSetupController do
         |> redirect(to: Routes.service_setup_path(conn, :index))
       {:error, msg} ->
         conn
-        |> put_flash(:error, msg)
+        |> put_flash(:error, "⚠️ #{msg}")
+        |> redirect(to: Routes.service_setup_path(conn, :index))
+    end
+  end
+
+  def bump(conn, _) do
+    case Music.bump_and_reload() do
+      {:ok} ->
+        conn
+        |> put_flash(:info, "That seemed to work")
+        |> redirect(to: Routes.service_setup_path(conn, :index))
+      {:error, msg} ->
+        conn
+        |> put_flash(:error, "⚠️ #{msg}")
         |> redirect(to: Routes.service_setup_path(conn, :index))
     end
   end

@@ -1,5 +1,4 @@
 defmodule PRWeb.PlaybackLive do
-  require IEx
   require Logger
   use Phoenix.LiveView
   use Phoenix.HTML
@@ -69,13 +68,13 @@ defmodule PRWeb.PlaybackLive do
 
   def mount(_session, socket) do
     if connected?(socket), do: PlayState.subscribe()
+    if connected?(socket), do: Music.subscribe()
     Logger.info "Mounting a new live view"
     play_state = PlayState.get(:play_state)
     metadata = PlayState.get(:metadata)
 
     {:ok, assign(
       socket,
-      toggling: "",
       metadata: metadata,
       play_state: play_state,
       result: [],
@@ -85,14 +84,30 @@ defmodule PRWeb.PlaybackLive do
     )}
   end
 
+  #
+  # Subscription handlers
+  #
+
+  # Progress update
   def handle_info({PlayState, %{} = play_state, :play_state}, socket) do
-    {:noreply, assign(socket, play_state: play_state, toggling: "")}
+    {:noreply, assign(socket, play_state: play_state)}
   end
 
+  # Metadata webhook. Player is playing something else now
   def handle_info({PlayState, %{} = metadata, :metadata}, socket) do
     send(self(), {:get_playlist, nil})
     {:noreply, assign(socket, metadata: metadata)}
   end
+
+  # Queue updated
+  def handle_info({Music, %{} = track, :added}, socket) do
+    send(self(), {:get_playlist, nil})
+    {:noreply, socket}
+  end
+
+  #
+  # Async UI functions
+  #
 
   def handle_info({:search, q}, socket) do
     case Music.search(q) do
@@ -109,24 +124,19 @@ defmodule PRWeb.PlaybackLive do
   end
 
   def handle_info({:queue, spotify_id}, socket) do
-    Logger.info("Queuing #{spotify_id}")
     case Music.queue(spotify_id) do
       {:ok, _track} ->
-        send(self(), {:get_playlist, nil})
         {:noreply, assign(socket, loading: false, result: [])}
       _ ->
         {:noreply, assign(socket, loading: false)}
     end
   end
 
+  ## User events
+
   def handle_event("queue", spotify_id, socket) do
     send(self(), {:queue, spotify_id})
     {:noreply, socket}
-  end
-
-  def handle_event("toggle", _, socket) do
-    SonosAPI.toggle_playback()
-    {:noreply, assign(socket, toggling: "is-pending")}
   end
 
   def handle_event("search", %{"q" => q}, socket) when byte_size(q) <= 100 do

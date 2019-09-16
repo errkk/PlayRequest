@@ -25,6 +25,7 @@ defmodule PR.Music.PlaybackState do
   defp state("PLAYBACK_STATE_PAUSED"), do: :paused
   defp state("PLAYBACK_STATE_BUFFERING"), do: :buffering
   defp state("PLAYBACK_STATE_PLAYING"), do: :playing
+  defp state("PLAYBACK_STATE_IDLE"), do: :idle
   defp state(_), do: nil
 
 end

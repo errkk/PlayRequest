@@ -77,6 +77,10 @@ defmodule PR.Apis.EndpointHelper do
         Logger.error("Gone")
         {:error, :gone}
       end
+      defp handle_api_response({:error, %Response{status_code: code, body: body}}) do
+        res = Jason.decode!(body) |> convert_result()
+        {:error, res}
+      end
       defp handle_api_response({:error, %Error{reason: reason}}) do
         Logger.error("Error: #{inspect reason}")
         {:error, reason}

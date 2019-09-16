@@ -7,6 +7,7 @@ defmodule PR.Queue do
   import Ecto.Query, warn: false
   alias PR.Repo
 
+  alias PR.Queue
   alias PR.Queue.Track
   alias PR.Music.SonosItem
 
@@ -19,6 +20,13 @@ defmodule PR.Queue do
     |> query_unplayed()
     |> limit(100)
     |> Repo.all()
+  end
+
+  def has_unplayed do
+    Track
+    |> query_unplayed()
+    |> query_unplaying()
+    |> Repo.aggregate(:count, :id)
   end
 
   def list_track_uris do
@@ -82,6 +90,10 @@ defmodule PR.Queue do
     ])
   end
 
+  def bump do
+    set_current(%{})
+  end
+
   defp query_is_playing(query) do
     query
     |> where([t], not is_nil(t.playing_since))
@@ -91,5 +103,10 @@ defmodule PR.Queue do
     query
     |> where([t], is_nil(t.played_at))
     |> order_by([t], asc: t.inserted_at)
+  end
+
+  defp query_unplaying(query) do
+    query
+    |> where([t], is_nil(t.playing_since))
   end
 end
