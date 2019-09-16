@@ -30,6 +30,7 @@ defmodule PRWeb.Service.ServiceSetupController do
     render(
       conn,
       "index.html",
+      [
       households: households,
       groups: groups,
       sonos_auth_link: sonos_auth_link,
@@ -41,7 +42,8 @@ defmodule PRWeb.Service.ServiceSetupController do
       has_active_households: has_active_households,
       has_active_groups: has_active_groups,
       active_group_subscribed: active_group_subscribed,
-      spotify_playlist_created: [] != spotify_playlists
+      spotify_playlist_created: [] != spotify_playlists,
+      ] ++ get_release_metadata()
     )
   end
 
@@ -160,6 +162,13 @@ defmodule PRWeb.Service.ServiceSetupController do
         |> put_flash(:error, "⚠️ #{msg}")
         |> redirect(to: Routes.service_setup_path(conn, :index))
     end
+  end
+
+  defp get_release_metadata do
+    [
+      version: System.get_env("HEROKU_RELEASE_VERSION", "dev"),
+      commit: System.get_env("HEROKU_SLUG_COMMIT", "dev")
+    ]
   end
 
 end

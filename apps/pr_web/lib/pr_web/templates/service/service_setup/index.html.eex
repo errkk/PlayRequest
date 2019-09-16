@@ -155,5 +155,9 @@
         </p>
       </li>
     </ol>
+    <p class="version">
+      Version: <%= @version %><br />
+      Commit: <%= @commit %>
+    </p>
   </div>
 </div>
