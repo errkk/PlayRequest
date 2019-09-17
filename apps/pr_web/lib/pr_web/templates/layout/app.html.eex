@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css?family=Raleway:400,500,700|Source+Sans+Pro:400,600,700&display=swap" rel="stylesheet">
     <title>PlayRequest</title>
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
+    <link rel="shortcut icon" href="<%= Routes.static_path(@conn, "/images/favicon.png") %>"/>
   </head>
   <body>
     <header class="container container--header">
@@ -18,6 +19,13 @@
             </li>
             <li>
               <%= link "Setup", to: Routes.service_setup_path(@conn, :index) %>
+            </li>
+            <li>
+              <%= if @current_user do %>
+                <%= link "Logout #{@current_user.first_name}", to: Routes.auth_path(@conn, :delete) %>
+              <% else %>
+                <%= link "Login", to: Routes.auth_path(@conn, :request, :google) %>
+              <% end %>
             </li>
           </ul>
         </nav>

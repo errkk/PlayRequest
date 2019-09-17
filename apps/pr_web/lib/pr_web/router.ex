@@ -15,14 +15,25 @@ defmodule PRWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :auth do
+    plug PRWeb.Plug.AuthPlug
+  end
+
   scope "/", PRWeb do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
     get "/page", PageController, :index
     live "/", PlaybackLive
   end
 
-  scope "/", PRWeb.Service do
+  scope "/auth", PRWeb do
     pipe_through :browser
+    get "/delete", AuthController, :delete
+    get "/:provider", AuthController, :request
+    get "/:provider/callback", AuthController, :callback
+  end
+
+  scope "/", PRWeb.Service do
+    pipe_through [:browser, :auth]
 
     scope "/setup" do
       get "/", ServiceSetupController, :index

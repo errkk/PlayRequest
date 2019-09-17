@@ -1,0 +1,5 @@
+<section class="row">
+  <article class="column">
+    <%= @callback_url %>
+  </article>
+</section>
