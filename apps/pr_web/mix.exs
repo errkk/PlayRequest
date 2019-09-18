@@ -48,6 +48,7 @@ defmodule PRWeb.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:phoenix_live_view, github: "phoenixframework/phoenix_live_view"},
       {:ueberauth_google, "~> 0.8"},
+      {:ex_machina, "~> 2.3", only: :test},
     ]
   end
 

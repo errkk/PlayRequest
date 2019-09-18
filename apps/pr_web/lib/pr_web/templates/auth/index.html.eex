@@ -1,5 +1,10 @@
-<section class="row">
-  <article class="column">
-    <%= @callback_url %>
-  </article>
-</section>
+<div class="container container--middle">
+  <div class="col--main">
+    <h2>Setup</h2>
+    <p>
+      <%= link "Login with Google",
+          to: Routes.auth_path(@conn, :request, :google),
+          class: "button" %>
+    </p>
+  </div>
+</div>

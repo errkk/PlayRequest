@@ -27,6 +27,7 @@ defmodule PRWeb.Router do
 
   scope "/auth", PRWeb do
     pipe_through :browser
+    get "/", AuthController, :index
     get "/delete", AuthController, :delete
     get "/:provider", AuthController, :request
     get "/:provider/callback", AuthController, :callback

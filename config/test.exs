@@ -1,5 +1,8 @@
 use Mix.Config
 
+config :pr,
+  allowed_user_domains: "example.com"
+
 # Configure your database
 config :pr, PR.Repo,
   username: "postgres",

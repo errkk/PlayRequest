@@ -17,7 +17,7 @@ defmodule PRWeb.Plug.AuthPlug do
           |> assign(:current_user, user)
         _ ->
           conn
-          |> redirect(to: Routes.auth_path(conn, :request, :google))
+          |> redirect(to: Routes.auth_path(conn, :index))
       end
   end
 end

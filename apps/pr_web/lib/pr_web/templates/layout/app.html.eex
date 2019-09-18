@@ -14,17 +14,21 @@
       <div class="col--header">
         <nav role="navigation" class="nav">
           <ul>
+            <%= if assigns[:current_user] do %>
+              <li>
+                <%= link "Home", to: Routes.live_path(@conn, PRWeb.PlaybackLive) %>
+              </li>
+              <li>
+                <%= link "Setup", to: Routes.service_setup_path(@conn, :index) %>
+              </li>
+            <% end %>
             <li>
-              <%= link "Home", to: Routes.live_path(@conn, PRWeb.PlaybackLive) %>
-            </li>
-            <li>
-              <%= link "Setup", to: Routes.service_setup_path(@conn, :index) %>
-            </li>
-            <li>
-              <%= if @current_user do %>
-                <%= link "Logout #{@current_user.first_name}", to: Routes.auth_path(@conn, :delete) %>
+              <%= if assigns[:current_user] do %>
+                <%= link "Logout #{@current_user.first_name}",
+                    to: Routes.auth_path(@conn, :delete) %>
               <% else %>
-                <%= link "Login", to: Routes.auth_path(@conn, :request, :google) %>
+                <%= link "Login",
+                    to: Routes.auth_path(@conn, :index) %>
               <% end %>
             </li>
           </ul>
