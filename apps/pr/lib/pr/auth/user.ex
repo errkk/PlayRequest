@@ -9,6 +9,7 @@ defmodule PR.Auth.User do
     field :image, :string
     field :last_name, :string
     field :token, :string
+    field :is_trusted, :boolean
 
     timestamps()
   end
@@ -16,7 +17,7 @@ defmodule PR.Auth.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:first_name, :last_name, :display_name, :token, :image, :email])
+    |> cast(attrs, [:first_name, :last_name, :display_name, :token, :image, :email, :is_trusted])
     |> validate_required([:token, :email])
     |> unique_constraint(:email)
     |> validate_email_domain()

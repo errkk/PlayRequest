@@ -9,11 +9,12 @@ defmodule PRWeb.Plug.AuthPlug do
 
   def call(conn, _) do
     case get_session(conn, :current_user) do
-        %User{} = user ->
+        %User{id: id} = user ->
           user = user
           |> Map.delete(:token)
 
           conn
+          |> put_session(:user_id, id)
           |> assign(:current_user, user)
         _ ->
           conn

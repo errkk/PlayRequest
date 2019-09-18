@@ -18,9 +18,11 @@
               <li>
                 <%= link "Home", to: Routes.live_path(@conn, PRWeb.PlaybackLive) %>
               </li>
-              <li>
-                <%= link "Setup", to: Routes.service_setup_path(@conn, :index) %>
-              </li>
+              <%= if @current_user.is_trusted do %>
+                <li>
+                  <%= link "Setup", to: Routes.service_setup_path(@conn, :index) %>
+                </li>
+              <% end %>
             <% end %>
             <li>
               <%= if assigns[:current_user] do %>

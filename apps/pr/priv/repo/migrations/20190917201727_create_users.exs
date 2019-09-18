@@ -9,10 +9,15 @@ defmodule PR.Repo.Migrations.CreateUsers do
       add :token, :string
       add :image, :string
       add :email, :string
+      add :is_trusted, :boolean
 
       timestamps()
     end
 
     create unique_index(:users, [:email])
+
+    alter table(:tracks) do
+      add :user_id, references(:users)
+    end
   end
 end

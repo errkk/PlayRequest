@@ -19,6 +19,7 @@ defmodule PR.Queue do
     Track
     |> query_unplayed()
     |> limit(100)
+    |> preload(:user)
     |> Repo.all()
   end
 
@@ -75,6 +76,7 @@ defmodule PR.Queue do
 
       Track
       |> where([t], t.spotify_id == ^spotify_id)
+      |> where([t], is_nil(t.played_at))
       |> Repo.update_all(set: [playing_since: now])
     end)
   end

@@ -21,8 +21,7 @@ defmodule PRWeb.Router do
 
   scope "/", PRWeb do
     pipe_through [:browser, :auth]
-    get "/page", PageController, :index
-    live "/", PlaybackLive
+    live "/", PlaybackLive, session: [:user_id]
   end
 
   scope "/auth", PRWeb do

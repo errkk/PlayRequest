@@ -6,6 +6,8 @@ defmodule PRWeb.PlaybackLive do
   alias PR.{SonosAPI, Music, PlayState}
   alias PR.Music.PlaybackState
   alias PR.Queue.Track
+  alias PR.Auth
+  alias PR.Auth.User
 
   def render(assigns) do
     ~L"""
@@ -29,7 +31,7 @@ defmodule PRWeb.PlaybackLive do
                   <%= track.artist %>
                 </p>
               </div>
-              <button phx-click="queue" value="<%= track.spotify_id %>">Queue</button>
+              <button class="button" phx-click="queue" value="<%= track.spotify_id %>">Queue</button>
             </div>
           <% end %>
         </div>
@@ -47,12 +49,16 @@ defmodule PRWeb.PlaybackLive do
                 <h3 class="track__name">
                   <%= track.name %>
                   <%= if playing?(track, @play_state), do: "▸" %>
-                  <%= if playing?(track, @play_state) do %>
-                    <progress value="<%= @play_state.position %>" max="<%= track.duration %>" />
-                  <% end %>
                 </h3>
                 <p class="track__artist">
                   <%= track.artist %>
+                  <%= if playing?(track, @play_state) do %>
+                    <progress value="<%= @play_state.position %>" max="<%= track.duration %>" />
+                  <% end %>
+                </p>
+
+                <p>
+                  <%= track.user.first_name %>
                 </p>
               </div>
             </div>
@@ -66,22 +72,24 @@ defmodule PRWeb.PlaybackLive do
   def playing?(%Track{playing_since: playing}, %PlaybackState{state: :playing}) when not is_nil(playing), do: true
   def playing?(_, _), do: false
 
-  def mount(_session, socket) do
+  def mount(%{user_id: user_id}, socket) do
     if connected?(socket), do: PlayState.subscribe()
     if connected?(socket), do: Music.subscribe()
     Logger.info "Mounting a new live view"
     play_state = PlayState.get(:play_state)
     metadata = PlayState.get(:metadata)
 
-    {:ok, assign(
+    socket = assign(
       socket,
       metadata: metadata,
       play_state: play_state,
       result: [],
       q: nil,
       loading: nil,
-      playlist: Music.get_playlist()
-    )}
+      playlist: Music.get_playlist(),
+    )
+
+    {:ok, assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)}
   end
 
   #
@@ -123,8 +131,8 @@ defmodule PRWeb.PlaybackLive do
     {:noreply, assign(socket, playlist: items)}
   end
 
-  def handle_info({:queue, spotify_id}, socket) do
-    case Music.queue(spotify_id) do
+  def handle_info({:queue, spotify_id}, %{assigns: %{current_user: user}} = socket) do
+    case Music.queue(user, spotify_id) do
       {:ok, _track} ->
         {:noreply, assign(socket, loading: false, result: [])}
       _ ->
@@ -143,5 +151,6 @@ defmodule PRWeb.PlaybackLive do
     send(self(), {:search, q})
     {:noreply, assign(socket, q: q, result: [], loading: true)}
   end
+
 end
 
