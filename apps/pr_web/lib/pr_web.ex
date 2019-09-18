@@ -55,6 +55,14 @@ defmodule PRWeb do
     end
   end
 
+  def plug do
+    quote do
+      import Plug.Conn
+      use Phoenix.Controller, namespace: PRWeb
+      alias PRWeb.Router.Helpers, as: Routes
+    end
+  end
+
   def channel do
     quote do
       use Phoenix.Channel

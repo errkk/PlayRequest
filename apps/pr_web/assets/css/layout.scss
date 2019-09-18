@@ -20,7 +20,7 @@
 
 .container--header {
   grid-template-areas:
-    "logo header header header";
+    "logo logo header header";
 }
 .col--left,
 .col--search {
@@ -65,3 +65,10 @@
   }
 }
 
+.profile-image {
+  width: 40px;
+  height: auto;
+  border-radius: 30px;
+  vertical-align: middle;
+  margin-left: 10px;
+}

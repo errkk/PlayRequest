@@ -40,6 +40,9 @@ a {
   border: 1px solid rgba(255, 255, 255, 0.5);
   transition: border 200ms ease;
   font-size: 12px;
+  background: none;
+  color: inherit;
+  cursor: pointer;
 
   &:hover {
     border-color: #fff;
@@ -52,4 +55,16 @@ a {
   h3 + & {
     margin-top: 10px;
   }
+}
+
+.logo-heading {
+}
+.logo {
+  display: inline-block;
+  width: 70px;
+  height: auto;
+  vertical-align: bottom;
+  margin-bottom: -2px;
+}
+.nav {
 }

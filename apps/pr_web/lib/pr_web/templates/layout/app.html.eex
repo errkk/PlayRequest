@@ -7,28 +7,40 @@
     <link href="https://fonts.googleapis.com/css?family=Raleway:400,500,700|Source+Sans+Pro:400,600,700&display=swap" rel="stylesheet">
     <title>PlayRequest</title>
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
+    <link rel="shortcut icon" href="<%= Routes.static_path(@conn, "/images/favicon.png") %>"/>
   </head>
   <body>
     <header class="container container--header">
       <div class="col--header">
         <nav role="navigation" class="nav">
           <ul>
+            <%= if assigns[:current_user] do %>
+              <%= if @current_user.is_trusted do %>
+                <li>
+                  <%= link "Setup", to: Routes.service_setup_path(@conn, :index) %>
+                </li>
+              <% end %>
+            <% end %>
             <li>
-              <%= link "Home", to: Routes.live_path(@conn, PRWeb.PlaybackLive) %>
-            </li>
-            <li>
-              <%= link "Setup", to: Routes.service_setup_path(@conn, :index) %>
+              <%= if assigns[:current_user] do %>
+                <%= link "Logout #{@current_user.first_name}",
+                    to: Routes.auth_path(@conn, :delete) %>
+                <%= img_tag @current_user.image, class: "profile-image" %>
+              <% else %>
+                <%= link "Login",
+                    to: Routes.auth_path(@conn, :index) %>
+              <% end %>
             </li>
           </ul>
         </nav>
       </div>
       <div class="col--logo">
-        <h1>
-          <%= link "PlayRequest", to: Routes.live_path(@conn, PRWeb.PlaybackLive) %>
+        <h1 class="logo-heading">
+          <%= link to: Routes.live_path(@conn, PRWeb.PlaybackLive), class: "logo-link" do %>
+            <%= img_tag(Routes.static_path(@conn, "/images/pr.svg"), class: "logo") %>
+            PlayRequest
+          <% end %>
         </h1>
-        <p>
-          Like the Weatherspoons app, but for music
-        </p>
       </div>
     </header>
     <main role="main">

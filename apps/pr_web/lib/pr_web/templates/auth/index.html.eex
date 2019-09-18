@@ -1,0 +1,10 @@
+<div class="container">
+  <div class="col--left">
+    <h2>Login</h2>
+    <p>
+      <%= link "Login with Google",
+          to: Routes.auth_path(@conn, :request, :google),
+          class: "button" %>
+    </p>
+  </div>
+</div>

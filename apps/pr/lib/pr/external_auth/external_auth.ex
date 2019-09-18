@@ -28,7 +28,6 @@ defmodule PR.ExternalAuth do
       auth -> auth
     end
     |> Auth.changeset(changes)
-    |> IO.inspect
     |> Repo.insert_or_update()
   end
 

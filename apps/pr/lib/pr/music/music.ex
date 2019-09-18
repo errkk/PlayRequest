@@ -8,6 +8,7 @@ defmodule PR.Music do
   alias PR.Queue.Track
   alias PR.SonosHouseholds
   alias PR.SonosHouseholds.Group
+  alias PR.Auth.User
 
   @topic inspect(__MODULE__)
 
@@ -30,11 +31,12 @@ defmodule PR.Music do
     end
   end
 
-  @spec queue(String.t()) :: {:ok, Track.t()}
-  def queue(id) do
+  @spec queue(User.t(), String.t()) :: {:ok, Track.t()}
+  def queue(%User{id: user_id}, id) do
     Logger.info("Queuing #{id}")
 
     with {:ok, search_track} <- get_track(id),
+         search_track <- Map.put(search_track, :user_id, user_id),
          {:ok, queued_track} <- create_track(search_track) do
       broadcast(queued_track, :added)
       sync_playlist()
