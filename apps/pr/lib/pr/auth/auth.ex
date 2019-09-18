@@ -13,6 +13,7 @@ defmodule PR.Auth do
   end
 
   def get_user!(id), do: Repo.get!(User, id)
+  def get_user(id), do: Repo.get(User, id)
 
   def find_or_create_user(%{email: email} = params) do
     case Repo.get_by(User, email: email) do

@@ -30,7 +30,7 @@ defmodule PRWeb.AuthController do
     with flattened <- Auth.User.from_auth(auth),
       {:ok, user} <- Auth.find_or_create_user(flattened) do
         conn
-        |> put_session(:current_user, user)
+        |> put_session(:user_id, user.id)
         |> configure_session(renew: true)
         |> redirect(to: Routes.live_path(conn, PRWeb.PlaybackLive))
     else

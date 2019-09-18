@@ -1,6 +1,6 @@
-<div class="container container--middle">
-  <div class="col--main">
-    <h2>Setup</h2>
+<div class="container">
+  <div class="col--left">
+    <h2>Login</h2>
     <p>
       <%= link "Login with Google",
           to: Routes.auth_path(@conn, :request, :google),

@@ -4,17 +4,16 @@ defmodule PRWeb.Plug.AuthPlug do
 
   use PRWeb, :plug
   alias PR.Auth.User
+  alias PR.Auth
 
   def init(opts), do: opts
 
   def call(conn, _) do
-    case get_session(conn, :current_user) do
-        %User{id: id} = user ->
-          user = user
-          |> Map.delete(:token)
-
+    user_id = get_session(conn, :user_id)
+    case Auth.get_user(user_id) do
+        %User{} = user ->
           conn
-          |> put_session(:user_id, id)
+          |> put_session(:user_id, user_id)
           |> assign(:current_user, user)
         _ ->
           conn
