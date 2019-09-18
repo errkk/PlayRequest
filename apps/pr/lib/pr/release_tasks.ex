@@ -44,7 +44,7 @@ defmodule PR.ReleaseTasks do
     :init.stop()
   end
 
-  defp run_migrations do
+  def run_migrations do
     Enum.each(@repos, &run_migrations_for/1)
   end
 
