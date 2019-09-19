@@ -10,54 +10,62 @@
     <link rel="shortcut icon" href="<%= Routes.static_path(@conn, "/images/favicon.png") %>"/>
   </head>
   <body>
-    <header class="container container--header">
-      <div class="col--header">
-        <nav role="navigation" class="nav">
-          <ul>
-            <%= if assigns[:current_user] do %>
-              <%= if @current_user.is_trusted do %>
-                <li>
-                  <%= link "Load playlist on Sonos",
-                      to: Routes.service_setup_path(@conn, :load_playlist),
-                      method: :post,
-                      class: "button",
-                      data: [confirm: "U sure?"]
-                      %>
-                </li>
-                <li class="nav__item">
-                  <%= link "Setup", to: Routes.service_setup_path(@conn, :index) %>
-                </li>
-              <% end %>
-            <% end %>
-            <li class="nav__item">
+    <div class="content">
+      <header class="container container--header">
+        <div class="col--header">
+          <nav role="navigation" class="nav">
+            <ul>
               <%= if assigns[:current_user] do %>
-                <%= link "Logout #{@current_user.first_name}",
-                    to: Routes.auth_path(@conn, :delete) %>
-                <%= img_tag @current_user.image, class: "profile-image" %>
-              <% else %>
-                <%= link "Login",
-                    to: Routes.auth_path(@conn, :index) %>
+                <%= if @current_user.is_trusted do %>
+                  <li>
+                    <%= link "Load playlist on Sonos",
+                        to: Routes.service_setup_path(@conn, :load_playlist),
+                        method: :post,
+                        class: "button",
+                        data: [confirm: "U sure?"]
+                        %>
+                  </li>
+                  <li class="nav__item">
+                    <%= link "Setup", to: Routes.service_setup_path(@conn, :index) %>
+                  </li>
+                <% end %>
               <% end %>
-            </li>
-          </ul>
-        </nav>
-      </div>
-      <div class="col--logo">
-        <h1 class="logo-heading">
-          <%= link to: Routes.live_path(@conn, PRWeb.PlaybackLive), class: "logo-link" do %>
-            <%= img_tag(Routes.static_path(@conn, "/images/pr.svg"), class: "logo") %>
-            PlayRequest
-          <% end %>
-        </h1>
-      </div>
-    </header>
-    <main role="main">
-      <div class="alert-container">
-        <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-        <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
-      </div>
-      <%= render @view_module, @view_template, assigns %>
-    </main>
+              <li class="nav__item">
+                <%= if assigns[:current_user] do %>
+                  <%= link "Logout #{@current_user.first_name}",
+                      to: Routes.auth_path(@conn, :delete) %>
+                  <%= img_tag @current_user.image, class: "profile-image" %>
+                <% else %>
+                  <%= link "Login",
+                      to: Routes.auth_path(@conn, :index) %>
+                <% end %>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <div class="col--logo">
+          <h1 class="logo-heading">
+            <%= link to: Routes.live_path(@conn, PRWeb.PlaybackLive), class: "logo-link" do %>
+              <%= img_tag(Routes.static_path(@conn, "/images/pr.svg"), class: "logo") %>
+              PlayRequest
+            <% end %>
+          </h1>
+        </div>
+      </header>
+      <main role="main">
+        <div class="alert-container">
+          <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
+          <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+        </div>
+          <%= render @view_module, @view_template, assigns %>
+      </main>
+    </div>
+    <footer class="footer">
+      <p class="version">
+        Version: <%= @version %><br />
+        Commit: <%= @commit %>
+      </p>
+    </footer>
     <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>

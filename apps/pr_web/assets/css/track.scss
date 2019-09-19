@@ -68,6 +68,10 @@
     transition: background 200ms ease-out;
     cursor: pointer;
 
+    &:focus {
+      outline: none;
+    }
+
     &:hover {
       background-position: 70% 50%;
     }

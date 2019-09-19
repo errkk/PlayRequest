@@ -9,6 +9,7 @@ defmodule PRWeb.Router do
     plug :put_secure_browser_headers
     plug :fetch_flash
     plug Phoenix.LiveView.Flash
+    plug PRWeb.Plug.ReleaseMetadataPlug
   end
 
   pipeline :api do
