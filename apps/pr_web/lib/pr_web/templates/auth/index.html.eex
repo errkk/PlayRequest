@@ -1,6 +1,17 @@
 <div class="container">
   <div class="col--left">
+    <h2>Wat dis?</h2>
+    <p>
+      <strong>PlayRequest</strong> is an inclusive shared playlist that aims to solve the problem of Sonos's shit interface.
+    </p>
+    <p>
+      As you can see its MVP, so your patience and cooperation is appreciated.
+      What kind of a product studio would we be if we didn't.
+    </p>
     <h2>Login</h2>
+    <p>
+      Prove you work here with Google to get started!
+    </p>
     <p>
       <%= link "Login with Google",
           to: Routes.auth_path(@conn, :request, :google),

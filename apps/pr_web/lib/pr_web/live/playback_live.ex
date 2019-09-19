@@ -55,11 +55,7 @@ defmodule PRWeb.PlaybackLive do
                   <%= if playing?(track, @play_state) do %>
                     <progress value="<%= @play_state.position %>" max="<%= track.duration %>" />
                   <% end %>
-                </p>
-
-                <p>
-                  <%= track.user.first_name %>
-                </p>
+               </p>
               </div>
             </div>
           <% end %>
