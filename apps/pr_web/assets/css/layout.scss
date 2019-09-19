@@ -1,6 +1,6 @@
 
 .container {
-  padding: 0 20px 0;
+  padding: 20px 40px 0;
   display: grid;
   grid-column-gap: 20px;
   grid-row-gap: 20px;
@@ -61,7 +61,7 @@
   }
 
   a {
-    padding: 0 0 0 20px;
+    margin-right: 20px;
   }
 }
 

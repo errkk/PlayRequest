@@ -18,6 +18,8 @@ h1 {
 h2 {
   font-size: 35px;
   margin-bottom: 5px;
+  font-weight: 400;
+  letter-spacing: 0.15ex;
 }
 h3 {
   font-size: 18px;
@@ -61,10 +63,8 @@ a {
 }
 .logo {
   display: inline-block;
-  width: 70px;
+  width: 40px;
   height: auto;
   vertical-align: bottom;
-  margin-bottom: -2px;
-}
-.nav {
+  margin: 0 10px 2px 0;
 }

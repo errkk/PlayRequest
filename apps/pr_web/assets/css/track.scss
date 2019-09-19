@@ -4,12 +4,13 @@
 }
 
 .track {
+  position: relative;
   display: flex;
-  padding: 10px 10px;
   margin: 10px 0 0;
   align-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 2px;
+  background: transparentize($white, 0.99);
 
   &:first-child {
     margin-top: 0;
@@ -25,6 +26,7 @@
   }
 
   &__name {
+    margin-top: 0;
     font-weight: bold;
     margin-bottom: 0.2em;
   }
@@ -32,12 +34,68 @@
   &__artist {
   }
 
-  &__img {
+  &__img__container {
+    position: relative;
     flex: 0;
-    width: 60px;
+    width: 80px;
+    margin-right: 20px;
+  }
+  &__img {
+    width: 80px;
     height: auto;
     display: block;
     margin-right: 20px;
     border-radius: 2px;
   }
+
+  &__user__img {
+    flex: 0;
+    width: 30px;
+    height: auto;
+    display: block;
+    border-radius: 40px;
+    margin-right: 20px;
+  }
+
+  &__queue {
+    width: 60px;
+    justify-self: flex-end;
+    align-self: stretch;
+    background: $teal;
+    border: none;
+    background: url(/images/arrow.svg) 50% 50% no-repeat;
+    background-size: 60% 60%;
+    transition: background 200ms ease-out;
+    cursor: pointer;
+
+    &:hover {
+      background-position: 70% 50%;
+    }
+  }
 }
+
+.progress {
+  position: absolute;
+  bottom: -2px;
+  z-index: 0;
+  left: 0;
+  right: 0;
+  display: block;
+  height: 2px;
+  width: 100%;
+
+  background: rgba(255, 255, 255, 0.1);
+
+  &__bar {
+    position: absolute;
+    height: 100%;
+    width: 50%;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    transition: width 200ms ease-out;
+
+    background: $pink;
+  }
+}
+

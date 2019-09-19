@@ -17,11 +17,19 @@
             <%= if assigns[:current_user] do %>
               <%= if @current_user.is_trusted do %>
                 <li>
+                  <%= link "Load playlist on Sonos",
+                      to: Routes.service_setup_path(@conn, :load_playlist),
+                      method: :post,
+                      class: "button",
+                      data: [confirm: "U sure?"]
+                      %>
+                </li>
+                <li class="nav__item">
                   <%= link "Setup", to: Routes.service_setup_path(@conn, :index) %>
                 </li>
               <% end %>
             <% end %>
-            <li>
+            <li class="nav__item">
               <%= if assigns[:current_user] do %>
                 <%= link "Logout #{@current_user.first_name}",
                     to: Routes.auth_path(@conn, :delete) %>

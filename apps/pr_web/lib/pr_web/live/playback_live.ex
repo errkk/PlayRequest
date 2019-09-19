@@ -4,69 +4,13 @@ defmodule PRWeb.PlaybackLive do
   use Phoenix.HTML
 
   alias PR.{SonosAPI, Music, PlayState}
-  alias PR.Music.PlaybackState
-  alias PR.Queue.Track
   alias PR.Auth
   alias PR.Auth.User
+  alias PRWeb.PlaybackView
 
   def render(assigns) do
-    ~L"""
-    <div class="container">
-      <div class="col--header--left">
-        <h2>Search</h2>
-      </div>
-      <div class="col--search">
-        <form phx-submit="search">
-          <input autocomplete="off" type="text" name="q" value="<%= @q %>" <%= if @loading, do: "readonly" %>/>
-        </form>
-        <div class="search-results">
-          <%= for track <- @result do %>
-            <div class="track">
-              <%= img_tag track.img, width: 100, class: "track__img" %>
-              <div class="track__details">
-                <h3 class="track__name">
-                  <%= track.name %>
-                </h3>
-                <p class="track__artist">
-                  <%= track.artist %>
-                </p>
-              </div>
-              <button class="button" phx-click="queue" value="<%= track.spotify_id %>">Queue</button>
-            </div>
-          <% end %>
-        </div>
-      </div>
-
-      <div class="col--header--right">
-        <h2>Queue</h2>
-      </div>
-      <div class="col--playlist">
-        <div class="queue">
-          <%= for track <- @playlist do %>
-            <div class="track">
-              <%= img_tag track.img, width: 100, class: "track__img" %>
-              <div class="track__details">
-                <h3 class="track__name">
-                  <%= track.name %>
-                  <%= if playing?(track, @play_state), do: "▸" %>
-                </h3>
-                <p class="track__artist">
-                  <%= track.artist %>
-                  <%= if playing?(track, @play_state) do %>
-                    <progress value="<%= @play_state.position %>" max="<%= track.duration %>" />
-                  <% end %>
-               </p>
-              </div>
-            </div>
-          <% end %>
-        </div>
-      </div>
-    </div>
-    """
+    PlaybackView.render("index.html", assigns)
   end
-
-  def playing?(%Track{playing_since: playing}, %PlaybackState{state: :playing}) when not is_nil(playing), do: true
-  def playing?(_, _), do: false
 
   def mount(%{user_id: user_id}, socket) do
     if connected?(socket), do: PlayState.subscribe()
