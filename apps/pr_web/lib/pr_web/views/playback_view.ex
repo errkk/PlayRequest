@@ -11,7 +11,7 @@ defmodule PRWeb.PlaybackView do
     if playing?(track, play_state) do
       value = map_range(position, 0, duration, 0, 100)
       content_tag(:span, class: "progress") do
-        content_tag(:span, "", class: "progress__bar", width: "#{value}%")
+        content_tag(:span, "", class: "progress__bar", style: "width: #{value}%;")
       end
     end
   end
