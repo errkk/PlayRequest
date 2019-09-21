@@ -13,6 +13,9 @@ defmodule PR.Queue.Track do
     field :played_at, :utc_datetime
     field :playing_since, :utc_datetime
 
+    field :has_pointed, :boolean, virtual: true
+    field :points, :integer, virtual: true
+
     belongs_to :user, User
 
     timestamps()

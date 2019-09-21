@@ -6,6 +6,7 @@ defmodule PRWeb.PlaybackLive do
   alias PR.{SonosAPI, Music, PlayState}
   alias PR.Auth
   alias PR.Auth.User
+  alias PR.Scoring
   alias PRWeb.PlaybackView
 
   def render(assigns) do
@@ -26,7 +27,7 @@ defmodule PRWeb.PlaybackLive do
       result: [],
       q: nil,
       loading: nil,
-      playlist: Music.get_playlist(),
+      playlist: Music.get_playlist(%User{id: user_id}),
     )
 
     {:ok, assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)}
@@ -66,8 +67,8 @@ defmodule PRWeb.PlaybackLive do
     end
   end
 
-  def handle_info({:get_playlist, _}, socket) do
-    items = Music.get_playlist()
+  def handle_info({:get_playlist, _}, %{assigns: %{current_user: user}} = socket) do
+    items = Music.get_playlist(user)
     {:noreply, assign(socket, playlist: items)}
   end
 
@@ -80,6 +81,12 @@ defmodule PRWeb.PlaybackLive do
     end
   end
 
+  def handle_info({:like, track_id}, %{assigns: %{current_user: %User{id: user_id}}} = socket) do
+    Scoring.create_point(%{track_id: track_id, user_id: user_id})
+    send(self(), {:get_playlist, nil})
+    {:noreply, socket}
+  end
+
   ## User events
 
   def handle_event("queue", spotify_id, socket) do
@@ -90,6 +97,11 @@ defmodule PRWeb.PlaybackLive do
   def handle_event("search", %{"q" => q}, socket) when byte_size(q) <= 100 do
     send(self(), {:search, q})
     {:noreply, assign(socket, q: q, result: [], loading: true)}
+  end
+
+  def handle_event("like", track_id, socket) do
+    send(self(), {:like, track_id})
+    {:noreply, socket}
   end
 
 end

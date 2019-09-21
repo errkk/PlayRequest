@@ -43,6 +43,11 @@
             <p class="track__artist">
               <%= track.artist %>
             </p>
+            <%= unless track.has_pointed do %>
+              <button class="track__like" phx-click="like" value="<%= track.id %>">
+                🥰
+              </button>
+            <% end %>
           </div>
           <%= img_tag track.user.image, width: 50, class: "track__user__img" %>
           <%= progress(track, @play_state) %>

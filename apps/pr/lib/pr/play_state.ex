@@ -76,7 +76,11 @@ defmodule PR.PlayState do
       _ ->
         nil
     end
+  end
 
+  defp watch_progress(%{progress: progress} = d) do
+    Logger.info "Progress: #{progress}"
+    d
   end
 
   defp watch_play_state(data), do: data
@@ -95,6 +99,7 @@ defmodule PR.PlayState do
     |> update_state(:play_state)
     |> broadcast(:play_state)
     |> watch_play_state()
+    |> watch_progress()
   end
 
   defp update_playing(%{current_item: current} = state) do

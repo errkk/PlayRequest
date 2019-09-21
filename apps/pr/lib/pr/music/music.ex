@@ -67,9 +67,9 @@ defmodule PR.Music do
     end
   end
 
-  @spec get_playlist() :: [Track.t()]
-  def get_playlist() do
-    Queue.list_unplayed()
+  @spec get_playlist(User.t()) :: [Track.t()]
+  def get_playlist(current_user) do
+    Queue.list_unplayed(current_user)
   end
 
   def bump_and_reload do

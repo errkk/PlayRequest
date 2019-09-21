@@ -10,17 +10,22 @@ defmodule PR.Queue do
   alias PR.Queue
   alias PR.Queue.Track
   alias PR.Music.SonosItem
+  alias PR.Auth.User
+  alias PR.Scoring.Point
 
   def list_tracks do
     Repo.all(Track)
   end
 
-  def list_unplayed do
+  def list_unplayed(%User{id: user_id}) do
     Track
     |> query_unplayed()
+    |> query_given_points(user_id)
+    |> select_user_facing_fields()
     |> limit(100)
     |> preload(:user)
     |> Repo.all()
+    |> IO.inspect
   end
 
   def has_unplayed do
@@ -110,5 +115,34 @@ defmodule PR.Queue do
   defp query_unplaying(query) do
     query
     |> where([t], is_nil(t.playing_since))
+  end
+
+  defp query_given_points(query, user_id) do
+    query
+    |> join(
+      :left, [t],
+      p in Point,
+      on: t.id == p.track_id and t.user_id == ^user_id,
+      as: :given_point
+    )
+  end
+
+  #defp query_received_points(query, user_id) do
+    #query
+    #|> join(
+      #:left, [t],
+      #p in Point,
+      #on: t.id == p.track_id and t.user_id == ^user_id,
+      #as: :received_points
+    #)
+  #end
+
+  defp select_user_facing_fields(query) do
+    query
+    |> select([t, given_point: p], %{
+      t |
+      has_pointed: not is_nil(p.id)
+    })
+
   end
 end
