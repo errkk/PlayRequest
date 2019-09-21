@@ -43,7 +43,7 @@
             <p class="track__artist">
               <%= track.artist %>
             </p>
-            <%= unless track.has_pointed do %>
+            <%= if can_vote?(track, @current_user) do %>
               <button class="track__like" phx-click="like" value="<%= track.id %>">
                 🥰
               </button>

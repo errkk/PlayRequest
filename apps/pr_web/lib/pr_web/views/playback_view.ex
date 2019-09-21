@@ -3,6 +3,8 @@ defmodule PRWeb.PlaybackView do
 
   alias PR.Queue.Track
   alias PR.Music.PlaybackState
+  alias PR.Queue.Track
+  alias PR.Auth.User
 
   def playing?(%Track{playing_since: playing}, %PlaybackState{state: :playing}) when not is_nil(playing), do: true
   def playing?(_, _), do: false
@@ -15,6 +17,10 @@ defmodule PRWeb.PlaybackView do
       end
     end
   end
+
+  def can_vote?(%Track{user_id: user_id}, %User{id: id}) when id == user_id, do: false
+  def can_vote?(%Track{has_pointed: true}, _), do: false
+  def can_vote?(_, _), do: true
 
   defp map_range(x, in_min, in_max, out_min, out_max) do
     (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
