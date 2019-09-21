@@ -48,6 +48,7 @@
                 🥰
               </button>
             <% end %>
+            <%= track.points %>
           </div>
           <%= img_tag track.user.image, width: 50, class: "track__user__img" %>
           <%= progress(track, @play_state) %>

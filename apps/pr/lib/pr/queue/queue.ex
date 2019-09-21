@@ -21,11 +21,11 @@ defmodule PR.Queue do
     Track
     |> query_unplayed()
     |> query_given_points(user_id)
+    |> query_received_points()
     |> select_user_facing_fields()
     |> limit(100)
     |> preload(:user)
     |> Repo.all()
-    |> IO.inspect
   end
 
   def has_unplayed do
@@ -44,6 +44,7 @@ defmodule PR.Queue do
   end
 
   def get_track!(id), do: Repo.get!(Track, id)
+  def get_track(id), do: Repo.get(Track, id)
 
   def create_track(attrs \\ %{}) do
     %Track{}
@@ -122,26 +123,33 @@ defmodule PR.Queue do
     |> join(
       :left, [t],
       p in Point,
-      on: t.id == p.track_id and t.user_id == ^user_id,
+      on: t.id == p.track_id and p.user_id == ^user_id,
       as: :given_point
     )
   end
 
-  #defp query_received_points(query, user_id) do
-    #query
-    #|> join(
-      #:left, [t],
-      #p in Point,
-      #on: t.id == p.track_id and t.user_id == ^user_id,
-      #as: :received_points
-    #)
-  #end
+  defp query_received_points(query) do
+    query
+    |> join(
+      :left, [t],
+      p in subquery(points_for()),
+      on: t.id == p.track_id,
+      as: :received_points
+    )
+  end
+
+  defp points_for() do
+    Point
+    |> group_by([p], p.track_id)
+    |> select([p], %{track_id: p.track_id, points: count(p.id)})
+  end
 
   defp select_user_facing_fields(query) do
     query
-    |> select([t, given_point: p], %{
+    |> select([t, given_point: gp, received_points: rp], %{
       t |
-      has_pointed: not is_nil(p.id)
+      has_pointed: not is_nil(gp.id),
+      points: rp.points
     })
 
   end

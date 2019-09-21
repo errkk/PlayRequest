@@ -20,12 +20,6 @@ defmodule PR.Scoring do
     |> Repo.insert()
   end
 
-  def update_point(%Point{} = point, attrs) do
-    point
-    |> Point.changeset(attrs)
-    |> Repo.update()
-  end
-
   def change_point(%Point{} = point) do
     Point.changeset(point, %{})
   end
