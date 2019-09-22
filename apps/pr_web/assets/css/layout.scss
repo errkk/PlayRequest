@@ -15,14 +15,25 @@ body {
 .container {
   padding: 20px 40px 0;
   display: grid;
-  grid-column-gap: 20px;
   grid-row-gap: 20px;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+
+  grid-template-columns: 1fr;
   grid-template-rows: auto;
+
   grid-template-areas:
-    "left-header left-header right-header right-header"
-    "left left right right"
-    "footer footer footer footer";
+    "left-header"
+    "left"
+    "right-header"
+    "right";
+
+  @media (min-width: 800px) {
+    grid-column-gap: 20px;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-areas:
+      "left-header left-header right-header right-header"
+      "left left right right"
+      "footer footer footer footer";
+  }
 
   &.container--middle {
     grid-template-areas:
