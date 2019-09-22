@@ -3,9 +3,14 @@ defmodule PRWeb.PlaybackView do
 
   alias PR.Queue.Track
   alias PR.Music.PlaybackState
+  alias PR.Queue.Track
+  alias PR.Auth.User
 
   def playing?(%Track{playing_since: playing}, %PlaybackState{state: :playing}) when not is_nil(playing), do: true
   def playing?(_, _), do: false
+
+  def wobble?(%Track{id: liked_id}, %Track{id: track_id}) when track_id == liked_id, do: "track--liked"
+  def wobble?(_, _), do: ""
 
   def progress(%Track{duration: duration} = track, %PlaybackState{position: position} = play_state) do
     if playing?(track, play_state) do
@@ -13,6 +18,27 @@ defmodule PRWeb.PlaybackView do
       content_tag(:span, class: "progress") do
         content_tag(:span, "", class: "progress__bar", style: "width: #{value}%;")
       end
+    end
+  end
+
+  def can_vote?(%Track{user_id: user_id}, %User{id: id}) when id == user_id, do: false
+  def can_vote?(%Track{has_pointed: true}, _), do: false
+  def can_vote?(_, _), do: true
+
+  def heart(%Track{points: points}) when not is_nil(points) do
+    1..points
+    |> Enum.map(fn _ -> content_tag(:span, "♥️", class: "heart") end)
+  end
+  def heart(_), do: ""
+
+  def it_me?(track, %{assigns: assigns}), do: it_me?(track, assigns)
+  def it_me?(%Track{user_id: user_id}, %{current_user: %User{id: current_user_id}}) when user_id == current_user_id, do: true
+  def it_me?(_, _), do: false
+
+  def crown(%Track{points: nil}, _), do: ""
+  def crown(%Track{points: points} = track, assigns) when points > 0 do
+    if it_me?(track, assigns) do
+      content_tag(:div, "👑", class: "crown")
     end
   end
 

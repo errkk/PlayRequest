@@ -22,6 +22,7 @@ defmodule PR.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import PR.DataCase
+      import PR.Factory
     end
   end
 

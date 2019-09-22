@@ -6,6 +6,9 @@ defmodule PRWeb.PlaybackLive do
   alias PR.{SonosAPI, Music, PlayState}
   alias PR.Auth
   alias PR.Auth.User
+  alias PR.Scoring
+  alias PR.Scoring.Point
+  alias PR.Queue.Track
   alias PRWeb.PlaybackView
 
   def render(assigns) do
@@ -26,7 +29,9 @@ defmodule PRWeb.PlaybackLive do
       result: [],
       q: nil,
       loading: nil,
-      playlist: Music.get_playlist(),
+      info: nil,
+      recently_liked: nil,
+      playlist: Music.get_playlist(%User{id: user_id}),
     )
 
     {:ok, assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)}
@@ -53,6 +58,15 @@ defmodule PRWeb.PlaybackLive do
     {:noreply, socket}
   end
 
+  def handle_info({Music, %Track{name: name} = track, :point}, socket) do
+    send(self(), {:get_playlist, nil})
+    if PlaybackView.it_me?(track, socket) do
+      {:noreply, assign(socket, info: "🙌 You've received a unit of appreciation for \"#{name}\"", recently_liked: track)}
+    else
+      {:noreply, socket}
+    end
+  end
+
   #
   # Async UI functions
   #
@@ -66,18 +80,24 @@ defmodule PRWeb.PlaybackLive do
     end
   end
 
-  def handle_info({:get_playlist, _}, socket) do
-    items = Music.get_playlist()
+  def handle_info({:get_playlist, _}, %{assigns: %{current_user: user}} = socket) do
+    items = Music.get_playlist(user)
     {:noreply, assign(socket, playlist: items)}
   end
 
   def handle_info({:queue, spotify_id}, %{assigns: %{current_user: user}} = socket) do
     case Music.queue(user, spotify_id) do
       {:ok, _track} ->
-        {:noreply, assign(socket, loading: false, result: [])}
+        {:noreply, assign(socket, loading: false, result: [], q: nil)}
       _ ->
         {:noreply, assign(socket, loading: false)}
     end
+  end
+
+  def handle_info({:like, track_id}, %{assigns: %{current_user: %User{id: user_id}}} = socket) do
+    Scoring.create_point(%{track_id: track_id, user_id: user_id})
+    send(self(), {:get_playlist, nil})
+    {:noreply, socket}
   end
 
   ## User events
@@ -90,6 +110,15 @@ defmodule PRWeb.PlaybackLive do
   def handle_event("search", %{"q" => q}, socket) when byte_size(q) <= 100 do
     send(self(), {:search, q})
     {:noreply, assign(socket, q: q, result: [], loading: true)}
+  end
+
+  def handle_event("like", track_id, socket) do
+    send(self(), {:like, track_id})
+    {:noreply, socket}
+  end
+
+  def handle_event("clear_info", _, socket) do
+    {:noreply, assign(socket, info: nil)}
   end
 
 end

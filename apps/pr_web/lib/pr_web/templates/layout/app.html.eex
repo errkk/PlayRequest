@@ -57,7 +57,7 @@
           <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
           <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
         </div>
-          <%= render @view_module, @view_template, assigns %>
+        <%= render @view_module, @view_template, assigns %>
       </main>
     </div>
     <footer class="footer">

@@ -67,14 +67,19 @@ defmodule PR.Music do
     end
   end
 
-  @spec get_playlist() :: [Track.t()]
-  def get_playlist() do
-    Queue.list_unplayed()
+  @spec get_playlist(User.t()) :: [Track.t()]
+  def get_playlist(current_user) do
+    Queue.list_unplayed(current_user)
   end
 
   def bump_and_reload do
     Queue.bump()
     load_playlist()
+  end
+
+  @spec broadcast(any(), :atom) :: no_return()
+  def broadcast(data, key) do
+    Phoenix.PubSub.broadcast(PRWeb.PubSub, @topic, {__MODULE__, data, key})
   end
 
   @spec find_playlist([map()]) :: {:ok, String.t()} | {:error, atom()}
@@ -102,11 +107,6 @@ defmodule PR.Music do
     else
       err -> err
     end
-  end
-
-  @spec broadcast(any(), :atom) :: no_return()
-  defp broadcast(data, key) do
-    Phoenix.PubSub.broadcast(PRWeb.PubSub, @topic, {__MODULE__, data, key})
   end
 
   defp get_playlist_name do
