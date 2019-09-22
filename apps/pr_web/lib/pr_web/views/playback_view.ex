@@ -25,6 +25,12 @@ defmodule PRWeb.PlaybackView do
   def can_vote?(%Track{has_pointed: true}, _), do: false
   def can_vote?(_, _), do: true
 
+  def heart(%Track{points: points}) when not is_nil(points) do
+    1..points
+    |> Enum.map(fn _ -> content_tag(:span, "♥️", class: "heart") end)
+  end
+  def heart(_), do: ""
+
   defp map_range(x, in_min, in_max, out_min, out_max) do
     (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
   end

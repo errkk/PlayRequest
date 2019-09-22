@@ -167,3 +167,11 @@
   }
 }
 
+.heart {
+  font-size: 0.5em;
+  padding-left: 5px;
+  vertical-align: middle;
+  &:first-of-type {
+    padding-left: 10px;
+  }
+}

@@ -40,11 +40,11 @@
             <h3 class="track__name">
               <%= track.name %>
               <%= if playing?(track, @play_state), do: "▸" %>
+              <%= heart track %>
             </h3>
             <p class="track__artist">
               <%= track.artist %>
             </p>
-            <%= track.points %>
           </div>
           <%= if can_vote?(track, @current_user) do %>
             <button class="track__user__container animate" phx-click="like" value="<%= track.id %>" title="Give some appreciation to <%= track.user.first_name %>">
