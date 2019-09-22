@@ -9,15 +9,24 @@ defmodule PR.Scoring do
   alias PR.Scoring.Point
   alias PR.Queue.Track
   alias PR.Auth.User
+  alias PR.Music
 
   def list_points do
     Repo.all(Point)
   end
 
   def create_point(attrs \\ %{}) do
-    %Point{}
+    case %Point{}
     |> Point.changeset(attrs)
-    |> Repo.insert()
+    |> Repo.insert() do
+      {:ok, point} = res ->
+        point
+        |> Repo.preload(:track)
+        |> Map.get(:track)
+        |> Music.broadcast(:point)
+        res
+      res -> res
+    end
   end
 
   def change_point(%Point{} = point) do

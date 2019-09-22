@@ -9,6 +9,9 @@ defmodule PRWeb.PlaybackView do
   def playing?(%Track{playing_since: playing}, %PlaybackState{state: :playing}) when not is_nil(playing), do: true
   def playing?(_, _), do: false
 
+  def wobble?(%Track{id: liked_id}, %Track{id: track_id}) when track_id == liked_id, do: "track--liked"
+  def wobble?(_, _), do: ""
+
   def progress(%Track{duration: duration} = track, %PlaybackState{position: position} = play_state) do
     if playing?(track, play_state) do
       value = map_range(position, 0, duration, 0, 100)

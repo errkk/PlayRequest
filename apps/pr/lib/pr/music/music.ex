@@ -77,6 +77,11 @@ defmodule PR.Music do
     load_playlist()
   end
 
+  @spec broadcast(any(), :atom) :: no_return()
+  def broadcast(data, key) do
+    Phoenix.PubSub.broadcast(PRWeb.PubSub, @topic, {__MODULE__, data, key})
+  end
+
   @spec find_playlist([map()]) :: {:ok, String.t()} | {:error, atom()}
   defp find_playlist(sonos_favorites) do
     case Enum.find(sonos_favorites, & &1.name == get_playlist_name()) do
@@ -102,11 +107,6 @@ defmodule PR.Music do
     else
       err -> err
     end
-  end
-
-  @spec broadcast(any(), :atom) :: no_return()
-  defp broadcast(data, key) do
-    Phoenix.PubSub.broadcast(PRWeb.PubSub, @topic, {__MODULE__, data, key})
   end
 
   defp get_playlist_name do

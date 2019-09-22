@@ -12,6 +12,8 @@
   border-radius: 2px;
   background: transparentize($white, 0.99);
 
+  animation: swing-in-top-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
+
   &:first-child {
     margin-top: 0;
   }
@@ -83,6 +85,10 @@
     border: none;
     background: none;
     cursor: pointer;
+  }
+
+  &--liked {
+    animation: pulsate-fwd 0.4s ease-in-out 3 both;
   }
 }
 

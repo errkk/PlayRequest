@@ -7,6 +7,8 @@ defmodule PRWeb.PlaybackLive do
   alias PR.Auth
   alias PR.Auth.User
   alias PR.Scoring
+  alias PR.Scoring.Point
+  alias PR.Queue.Track
   alias PRWeb.PlaybackView
 
   def render(assigns) do
@@ -27,6 +29,8 @@ defmodule PRWeb.PlaybackLive do
       result: [],
       q: nil,
       loading: nil,
+      info: nil,
+      recently_liked: nil,
       playlist: Music.get_playlist(%User{id: user_id}),
     )
 
@@ -53,6 +57,18 @@ defmodule PRWeb.PlaybackLive do
     send(self(), {:get_playlist, nil})
     {:noreply, socket}
   end
+
+  def handle_info({Music, %Track{name: name} = track, :point}, socket) do
+    send(self(), {:get_playlist, nil})
+    if it_me?(track, socket) do
+      {:noreply, assign(socket, info: "🙌 You've received a point for #{name}", recently_liked: track)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  def it_me?(%Track{user_id: user_id}, %{assigns: %{current_user: %User{id: current_user_id}}}) when user_id == current_user_id, do: true
+  def it_me?(_, _), do: false
 
   #
   # Async UI functions
@@ -102,6 +118,10 @@ defmodule PRWeb.PlaybackLive do
   def handle_event("like", track_id, socket) do
     send(self(), {:like, track_id})
     {:noreply, socket}
+  end
+
+  def handle_event("clear_info", _, socket) do
+    {:noreply, assign(socket, info: nil)}
   end
 
 end
