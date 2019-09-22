@@ -91,7 +91,7 @@ defmodule PRWeb.PlaybackLive do
   def handle_info({:queue, spotify_id}, %{assigns: %{current_user: user}} = socket) do
     case Music.queue(user, spotify_id) do
       {:ok, _track} ->
-        {:noreply, assign(socket, loading: false, result: [])}
+        {:noreply, assign(socket, loading: false, result: [], q: nil)}
       _ ->
         {:noreply, assign(socket, loading: false)}
     end
