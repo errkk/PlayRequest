@@ -131,9 +131,24 @@
     transform: scale(1);
   }
   50% {
-    transform: scale(1.1);
+    transform: scale(1.05);
   }
   100% {
     transform: scale(1);
+  }
+}
+
+
+/**
+ * ----------------------------------------
+ * animation flip-vertical-fwd
+ * ----------------------------------------
+ */
+@keyframes flip-vertical-fwd {
+  0% {
+    transform: translateZ(0) rotateY(0);
+  }
+  100% {
+    transform: translateZ(160px) rotateY(180deg);
   }
 }

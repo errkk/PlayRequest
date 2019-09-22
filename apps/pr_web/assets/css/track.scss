@@ -50,13 +50,64 @@
     border-radius: 2px;
   }
 
-  &__user__img {
-    flex: 0;
+  &__user {
     width: 30px;
-    height: auto;
-    display: block;
-    border-radius: 40px;
-    margin-right: 20px;
+    height: 30px;
+    transform-style: preserve-3d;
+    transform: translate3d(0, 0, 0);
+    transition: transform 400ms ease-in-out;
+
+    &__container {
+      position: relative;
+      padding: 20px;
+      background: none;
+      border: none;
+      outline: none;
+
+      .crown {
+        animation: bounce-in-top 1.4s ease-in-out 1 both;
+        position: absolute;
+        top: 3px;
+        left: 25px;
+        z-index: 1;
+      }
+
+      &.animate {
+        cursor: pointer;
+      }
+    }
+
+
+    &__back,
+    &__img {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      display: block;
+      border-radius: 40px;
+      border: 1px solid $darkerBlue;
+      left: 0;
+      top: 0;
+    }
+
+    &__img {
+      z-index: 2;
+    }
+
+    &__back {
+      transform: rotateY(180deg) translate3d(0, 0, 0) scale(1);
+      background: $pink url(/images/heart.svg) 50% 50% no-repeat;
+      background-size: 70% 70%;
+      z-index: 1;
+    }
+
+    &__container.animate:hover .track__user {
+      transform: rotateY(180deg) scale(1.5);
+    }
+    &__container.animate:focus .track__user {
+      transition-duration: 100ms;
+      transform: rotateY(180deg) scale(1.3);
+    }
   }
 
   &__queue {
