@@ -60,15 +60,12 @@ defmodule PRWeb.PlaybackLive do
 
   def handle_info({Music, %Track{name: name} = track, :point}, socket) do
     send(self(), {:get_playlist, nil})
-    if it_me?(track, socket) do
+    if PlaybackView.it_me?(track, socket) do
       {:noreply, assign(socket, info: "🙌 You've received a unit of appreciation for \"#{name}\"", recently_liked: track)}
     else
       {:noreply, socket}
     end
   end
-
-  def it_me?(%Track{user_id: user_id}, %{assigns: %{current_user: %User{id: current_user_id}}}) when user_id == current_user_id, do: true
-  def it_me?(_, _), do: false
 
   #
   # Async UI functions

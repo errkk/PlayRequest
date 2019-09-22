@@ -31,6 +31,17 @@ defmodule PRWeb.PlaybackView do
   end
   def heart(_), do: ""
 
+  def it_me?(track, %{assigns: assigns}), do: it_me?(track, assigns)
+  def it_me?(%Track{user_id: user_id}, %{current_user: %User{id: current_user_id}}) when user_id == current_user_id, do: true
+  def it_me?(_, _), do: false
+
+  def crown(%Track{points: nil}, _), do: ""
+  def crown(%Track{points: points} = track, assigns) when points > 0 do
+    if it_me?(track, assigns) do
+      content_tag(:div, "👑", class: "crown")
+    end
+  end
+
   defp map_range(x, in_min, in_max, out_min, out_max) do
     (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
   end

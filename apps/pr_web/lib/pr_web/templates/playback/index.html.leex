@@ -48,9 +48,7 @@
           </div>
           <%= if can_vote?(track, @current_user) do %>
             <button class="track__user__container animate" phx-click="like" value="<%= track.id %>" title="Give some appreciation to <%= track.user.first_name %>">
-              <%= if track.points do %>
-                <div class="crown">👑</div>
-              <% end %>
+              <%= crown track, assigns %>
               <div class="track__user">
                 <%= img_tag track.user.image, width: 50, class: "track__user__img" %>
                 <span class="track__user__back"></span>
@@ -58,9 +56,7 @@
             </button>
           <% else %>
             <div class="track__user__container">
-              <%= if track.points do %>
-                <div class="crown">👑</div>
-              <% end %>
+              <%= crown track, assigns %>
               <div class="track__user">
                 <%= img_tag track.user.image, width: 50, class: "track__user__img" %>
               </div>
