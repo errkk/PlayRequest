@@ -28,6 +28,13 @@ defmodule PR.Queue do
     |> Repo.all()
   end
 
+  def get_playing do
+    Track
+    |> query_is_playing()
+    |> limit(1)
+    |> Repo.one()
+  end
+
   def has_unplayed do
     Track
     |> query_unplayed()

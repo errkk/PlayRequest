@@ -20,13 +20,17 @@ defmodule PRWeb.Router do
     plug PRWeb.Plug.AuthPlug
   end
 
+  pipeline :now_playing do
+    plug PRWeb.Plug.NowPlayingPlug
+  end
+
   scope "/", PRWeb do
-    pipe_through [:browser, :auth]
+    pipe_through [:browser, :auth, :now_playing]
     live "/", PlaybackLive, session: [:user_id]
   end
 
   scope "/auth", PRWeb do
-    pipe_through :browser
+    pipe_through [:browser, :now_playing]
     get "/", AuthController, :index
     get "/delete", AuthController, :delete
     get "/:provider", AuthController, :request
