@@ -1,5 +1,5 @@
 defmodule PRWeb.UserSocket do
-  use Phoenix.Socket
+  use Phoenix.Socket, log: false
 
   ## Channels
   # channel "room:*", PRWeb.RoomChannel
