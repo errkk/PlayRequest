@@ -7,15 +7,18 @@
 
     <meta property="og:title" content="PlayRequest"/>
     <meta property="og:description" content="🎶 An inclusive shared playlist – it's Played by Many 🥰"/>
+    <%= unless assigns[:now_playing] do %>
     <meta property="og:image" content="<%= PRWeb.Endpoint.url() <> Routes.static_path(@conn, "/images/favicon.png") %>"/>
+    <% end %>
     <meta name="twitter:site" content="PlayRequest"/>
     <meta name="twitter:card" content="summary"/>
 
     <%= if assigns[:now_playing] do %>
-      <meta name="twitter:label1" content="Now Playing"/>
-      <meta name="twitter:data1" content="<%= @now_playing.name %>"/>
-      <meta name="twitter:label2" content="By"/>
-      <meta name="twitter:data2" content="<%= @now_playing.artist %>"/>
+    <meta property="og:image" content="<%= @now_playing.img %>"/>
+    <meta name="twitter:label1" content="Now Playing"/>
+    <meta name="twitter:data1" content="<%= @now_playing.name %>"/>
+    <meta name="twitter:label2" content="By"/>
+    <meta name="twitter:data2" content="<%= @now_playing.artist %>"/>
     <% end %>
 
     <link href="https://fonts.googleapis.com/css?family=Raleway:400,500,700|Source+Sans+Pro:400,600,700&display=swap" rel="stylesheet">
@@ -37,7 +40,7 @@
                         method: :post,
                         class: "button",
                         data: [confirm: "U sure?"]
-                        %>
+                    %>
                   </li>
                   <li class="nav__item">
                     <%= link "Setup", to: Routes.service_setup_path(@conn, :index) %>

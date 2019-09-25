@@ -9,16 +9,11 @@ defmodule PRWeb.Plug.NowPlayingPlug do
   def init(opts), do: opts
 
   def call(conn, _) do
-    merge_assigns(conn, get_now_playing())
-  end
-
-  defp get_now_playing do
     case Queue.get_playing() do
       %Track{} = track ->
-        IO.inspect track
-        [ now_playing: track ]
+        merge_assigns(conn, now_playing: track)
       _ ->
-        nil
-      end
+        conn
+    end
   end
 end
