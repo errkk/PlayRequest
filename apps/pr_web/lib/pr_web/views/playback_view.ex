@@ -21,6 +21,8 @@ defmodule PRWeb.PlaybackView do
     end
   end
 
+  def progress(_, _), do: nil
+
   def can_vote?(%Track{user_id: user_id}, %User{id: id}) when id == user_id, do: false
   def can_vote?(%Track{has_pointed: true}, _), do: false
   def can_vote?(_, _), do: true

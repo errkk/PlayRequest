@@ -1,11 +1,7 @@
 defmodule PRWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :pr_web
 
-  socket "/socket", PRWeb.UserSocket,
-    websocket: [timeout: 45_000],
-    longpoll: false
-
-  socket "/live", Phoenix.LiveView.Socket,
+  socket "/live", PRWeb.LiveViewSocket,
     websocket: [timeout: 45_000],
     longpoll: false
 
