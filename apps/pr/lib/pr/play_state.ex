@@ -78,7 +78,7 @@ defmodule PR.PlayState do
     end
   end
 
-  defp watch_progress(d), do: d
+  defp watch_play_state(d), do: d
 
   defp process_metadata(data) do
     data
