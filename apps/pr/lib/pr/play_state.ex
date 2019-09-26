@@ -111,7 +111,7 @@ defmodule PR.PlayState do
 
   def tick do
     with %{playing_since: %DateTime{} = playing_since, current_item: %SonosItem{duration: duration}} <- get(:metadata),
-         diff <- DateTime.diff(DateTime.utc_now(), get_playing_since, :millisecond),
+         diff <- DateTime.diff(DateTime.utc_now(), playing_since, :millisecond),
          true <- Kernel.>(duration, diff) do
 
         :play_state
