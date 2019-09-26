@@ -80,8 +80,8 @@ defmodule PR.PlayState do
 
   defp watch_play_state(data), do: data  
 
-  defp watch_progress(%{progress: progress} = d) do
-    Logger.info "Progress: #{progress}"
+  defp watch_progress(%{position: position} = d) do
+    Logger.info "Progress: #{position}"
     d
   end
   
