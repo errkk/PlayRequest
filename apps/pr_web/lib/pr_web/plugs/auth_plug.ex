@@ -32,5 +32,6 @@ defmodule PRWeb.Plug.AuthPlug do
   defp nope(conn) do
     conn
     |> redirect(to: Routes.auth_path(conn, :index))
+    |> halt()
   end
 end

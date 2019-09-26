@@ -8,7 +8,7 @@
     <meta property="og:title" content="PlayRequest"/>
     <meta property="og:description" content="🎶 An inclusive shared playlist – it's Played by Many 🥰"/>
     <%= unless assigns[:now_playing] do %>
-    <meta property="og:image" content="<%= PRWeb.Endpoint.url() <> Routes.static_path(@conn, "/images/favicon.png") %>"/>
+    <meta property="og:image" content="<%= PRWeb.Endpoint.url() <> Routes.static_path(@conn, "/images/pr.png") %>"/>
     <% end %>
     <meta name="twitter:site" content="PlayRequest"/>
     <meta name="twitter:card" content="summary"/>

@@ -78,13 +78,6 @@ defmodule PR.PlayState do
     end
   end
 
-  defp watch_play_state(data), do: data  
-
-  defp watch_progress(%{position: position} = d) do
-    Logger.info "Progress: #{position}"
-    d
-  end
-  
   defp watch_progress(d), do: d
 
   defp process_metadata(data) do
@@ -101,12 +94,34 @@ defmodule PR.PlayState do
     |> update_state(:play_state)
     |> broadcast(:play_state)
     |> watch_play_state()
-    |> watch_progress()
   end
 
   defp update_playing(%{current_item: current} = state) do
-    Queue.set_current(current)
-    state
+    case Queue.set_current(current) do
+      {:started, playing_since} ->
+        state
+        |> Map.put(:playing_since, playing_since)
+      {:already_started, playing_since} ->
+        state
+        |> Map.put(:playing_since, playing_since)
+      _ ->
+        state
+    end
+  end
+
+  def tick do
+    with %{playing_since: %DateTime{} = playing_since, current_item: %SonosItem{duration: duration}} <- get(:metadata),
+         diff <- DateTime.diff(DateTime.utc_now(), get_playing_since, :millisecond),
+         true <- Kernel.>(duration, diff) do
+
+        :play_state
+        |> get()
+        |> Map.put(:position, diff)
+        |> update_state(:play_state)
+        |> broadcast(:play_state)
+      else
+        _ -> nil
+    end
   end
 
   defp cast_metadata(%{} = data) do

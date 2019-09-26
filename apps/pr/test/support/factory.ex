@@ -15,7 +15,7 @@ defmodule PR.Factory do
     %PR.Queue.Track{
       name: "Jane",
       artist: "Jane",
-      duration: 3000,
+      duration: 30000,
       img: "img",
       played_at: nil,
       playing_since: nil,

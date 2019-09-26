@@ -77,21 +77,43 @@ defmodule PR.Queue do
     Track.changeset(track, %{})
   end
 
+  @spec set_current(SonosItem.t()) :: {:started | :already_started, DateTime.t()} | {:ok}
   def set_current(%SonosItem{spotify_id: spotify_id}) do
     Logger.info("Updating current track")
     now = DateTime.utc_now()
 
+    case set_current_transaction(spotify_id, now) do
+      {:ok, {1, nil}} ->
+        {:started, now}
+      {:ok, {0, nil}} ->
+        get_playing_since()
+    end
+  end
+
+  @spec set_current_transaction(String.t(), DateTime.t()) :: {:ok, {integer(), any()}}
+  defp set_current_transaction(spotify_id, now) do
     Repo.transaction(fn ->
+      # Anything else that was playing now isn't, cos this new track is
       Track
       |> query_is_playing()
       |> where([t], t.spotify_id != ^spotify_id)
       |> Repo.update_all(set: [playing_since: nil, played_at: now])
 
+      # Update the track that's playing by spotify id
+      # If its not already played or already marked as playing
       Track
       |> where([t], t.spotify_id == ^spotify_id)
       |> where([t], is_nil(t.played_at))
+      |> where([t], is_nil(t.playing_since))
       |> Repo.update_all(set: [playing_since: now])
     end)
+  end
+
+  defp get_playing_since do
+    case get_playing() do
+      %Track{playing_since: playing_since} -> {:already_started, playing_since}
+      _ -> {:ok}
+    end
   end
 
   def set_current(_) do
@@ -103,6 +125,7 @@ defmodule PR.Queue do
       playing_since: nil,
       played_at: dynamic([i], date_add(i.playing_since, i.duration, "millisecond"))
     ])
+    {:ok}
   end
 
   def bump do

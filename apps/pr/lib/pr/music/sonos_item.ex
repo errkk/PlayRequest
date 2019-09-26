@@ -1,5 +1,5 @@
 defmodule PR.Music.SonosItem do
-  defstruct [:name, :artist, :duration, :spotify_id, :spotify_uri]
+  defstruct [:name, :artist, :duration, :spotify_id, :spotify_uri, playing_since: nil]
 
   @spec new(map()) :: SonosItem.t()
   def new(%{

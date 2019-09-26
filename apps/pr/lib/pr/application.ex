@@ -10,6 +10,7 @@ defmodule PR.Application do
     children = [
       PR.Repo,
       PR.PlayState,
+      PR.Ticker,
       PR.SonosAPI,
       PR.SpotifyAPI,
       worker(Task, [&PR.PlayState.get_initial_state/0], restart: :temporary),
