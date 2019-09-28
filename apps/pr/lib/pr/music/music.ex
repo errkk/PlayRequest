@@ -3,6 +3,7 @@ defmodule PR.Music do
 
   alias PR.SonosAPI
   alias PR.SpotifyAPI
+  alias PR.PlayState
   alias PR.Music.SearchTrack
   alias PR.Queue
   alias PR.Queue.Track
@@ -39,7 +40,14 @@ defmodule PR.Music do
          search_track <- Map.put(search_track, :user_id, user_id),
          {:ok, queued_track} <- create_track(search_track) do
       broadcast(queued_track, :added)
-      sync_playlist()
+
+      if PlayState.is_idle?() do
+        Logger.info "Track added while player is idle. Triggering playlist"
+        load_playlist()
+      else
+        sync_playlist()
+      end
+
       {:ok, queued_track}
     else
       err -> err

@@ -67,11 +67,15 @@ defmodule PR.PlayState do
     |> process_metadata()
   end
 
+  def is_idle? do
+    match?(%PlaybackState{state: :idle}, get(:play_state))
+  end
+
   defp watch_play_state(%{state: :idle} = d) do
     # Metadta tells us there's nothing up next
     case Queue.has_unplayed do
       num when num > 0 ->
-        Logger.info "Idle, more tracks. Bump and reload."
+        Logger.info "Player idle, there are more tracks. Bump and re-trigger."
         Music.bump_and_reload()
       _ ->
         nil
