@@ -19,7 +19,7 @@ h2 {
   font-size: 35px;
   margin-bottom: 5px;
   font-weight: 400;
-  letter-spacing: 0.15ex;
+  letter-spacing: 0.06ex;
 }
 h3 {
   font-size: 18px;
@@ -48,6 +48,7 @@ a {
   background: none;
   color: inherit;
   cursor: pointer;
+  letter-spacing: 0.08ex;
 
   &:focus {
     outline: none;
