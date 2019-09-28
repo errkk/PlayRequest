@@ -141,6 +141,13 @@
   &--liked {
     animation: pulsate-fwd 0.4s ease-in-out 3 both;
   }
+
+  &__playing {
+    width: 18px;
+    height: 18px;
+    margin-bottom: -1px;
+    margin-right: 5px;
+  }
 }
 
 .progress {

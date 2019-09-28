@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="lds-bar-chart">
+   <g transform="rotate(180 50 50)">
+      <rect ng-attr-x="{{config.x1}}" y="15" ng-attr-width="{{config.width}}" height="69.3246" fill="#fff" x="15" width="15">
+      </rect>
+      <rect ng-attr-x="{{config.x2}}" y="15" ng-attr-width="{{config.width}}" height="51.9636" fill="#66fcf1" x="35" width="15">
+      </rect>
+      <rect ng-attr-x="{{config.x3}}" y="15" ng-attr-width="{{config.width}}" height="53.5006" fill="#FF1D79" x="55" width="15">
+      </rect>
+      <rect ng-attr-x="{{config.x4}}" y="15" ng-attr-width="{{config.width}}" height="45.4203" fill="#fff" x="75" width="15">
+      </rect>
+   </g>
+</svg>
+

@@ -21,4 +21,8 @@ input[type="text"] {
   &:focus {
     border-color: #fff;
   }
+
+  .loading & {
+    background: url("/images/loading.svg") 98% 0 no-repeat;
+  }
 }

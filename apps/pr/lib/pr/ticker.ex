@@ -1,5 +1,7 @@
 defmodule PR.Ticker do
   use GenServer
+  use Agent
+
   alias PR.PlayState
 
   def start_link(default) when is_list(default) do

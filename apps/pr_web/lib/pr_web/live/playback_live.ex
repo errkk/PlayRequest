@@ -21,11 +21,13 @@ defmodule PRWeb.PlaybackLive do
     Logger.info "Mounting a new live view"
     play_state = PlayState.get(:play_state)
     metadata = PlayState.get(:metadata)
+    progress = PlayState.get(:position)
 
     socket = assign(
       socket,
       metadata: metadata,
       play_state: play_state,
+      progress: progress,
       result: [],
       q: nil,
       loading: nil,
@@ -41,9 +43,14 @@ defmodule PRWeb.PlaybackLive do
   # Subscription handlers
   #
 
-  # Progress update
+  # Playback state update
   def handle_info({PlayState, %{} = play_state, :play_state}, socket) do
     {:noreply, assign(socket, play_state: play_state)}
+  end
+
+  # Progress update (interpolated from timer)
+  def handle_info({PlayState, progress, :progress}, socket) do
+    {:noreply, assign(socket, progress: progress)}
   end
 
   # Metadata webhook. Player is playing something else now

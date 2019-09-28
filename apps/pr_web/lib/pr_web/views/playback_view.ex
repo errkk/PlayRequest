@@ -12,16 +12,16 @@ defmodule PRWeb.PlaybackView do
   def wobble?(%Track{id: liked_id}, %Track{id: track_id}) when track_id == liked_id, do: "track--liked"
   def wobble?(_, _), do: ""
 
-  def progress(%Track{duration: duration} = track, %PlaybackState{position: position} = play_state) do
+  def progress(%Track{duration: duration} = track, play_state, progress) when is_number(progress) do
     if playing?(track, play_state) do
-      value = map_range(position, 0, duration, 0, 100)
+      value = map_range(progress, 0, duration, 0, 100)
       content_tag(:span, class: "progress") do
         content_tag(:span, "", class: "progress__bar", style: "width: #{value}%;")
       end
     end
   end
 
-  def progress(_, _), do: nil
+  def progress(_, _, _), do: nil
 
   def can_vote?(%Track{user_id: user_id}, %User{id: id}) when id == user_id, do: false
   def can_vote?(%Track{has_pointed: true}, _), do: false

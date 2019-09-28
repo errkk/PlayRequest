@@ -61,12 +61,7 @@
           </nav>
         </div>
         <div class="col--logo">
-          <h1 class="logo-heading">
-            <%= link to: Routes.live_path(@conn, PRWeb.PlaybackLive), class: "logo-link" do %>
-              <%= img_tag(Routes.static_path(@conn, "/images/pr.svg"), class: "logo") %>
-              PlayRequest
-            <% end %>
-          </h1>
+          <%= Phoenix.LiveView.live_render(@conn, PRWeb.LogoLive) %>
         </div>
       </header>
       <main role="main">
@@ -79,8 +74,7 @@
     </div>
     <footer class="footer">
       <p class="version">
-        Version: <%= @version %><br />
-        Commit: <%= @commit %>
+        Version: <%= @version %>
       </p>
     </footer>
     <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
