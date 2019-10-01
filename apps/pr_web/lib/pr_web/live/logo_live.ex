@@ -15,7 +15,7 @@ defmodule PRWeb.LogoLive do
 
     socket = assign(
       socket,
-      play_state: play_state,
+      play_state: play_state
     )
 
     {:ok, socket}

@@ -4,21 +4,21 @@ defmodule PR.QueueTest do
   alias PR.Queue
   alias PR.Queue.Track
   alias PR.Music.SonosItem
+  alias PR.Scoring
 
   describe "points" do
     test "user sees that they did a point" do
       me = insert(:user)
-      track = insert(:track, user: me)
-      assert [track] = Queue.list_unplayed(me)
-      assert %Track{points: 1, has_pointed: true}
+      track = insert(:track)
+      insert(:point, track: track, user: me)
+      assert [%Track{points: 1, has_pointed: true}] = Queue.list_unplayed(me)
     end
 
     test "user sees that someone else did points" do
       me = insert(:user)
       track = insert(:track)
       insert_list(2, :point, track: track)
-      assert [track] = Queue.list_unplayed(me)
-      assert %Track{points: 2, has_pointed: false} = track
+      assert [%Track{points: 2, has_pointed: false}] = Queue.list_unplayed(me)
     end
   end
 

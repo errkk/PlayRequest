@@ -3,11 +3,10 @@ defmodule PRWeb.PlaybackLive do
   use Phoenix.LiveView
   use Phoenix.HTML
 
-  alias PR.{SonosAPI, Music, PlayState}
+  alias PR.{Music, PlayState}
   alias PR.Auth
   alias PR.Auth.User
   alias PR.Scoring
-  alias PR.Scoring.Point
   alias PR.Queue.Track
   alias PRWeb.PlaybackView
 
@@ -33,7 +32,7 @@ defmodule PRWeb.PlaybackLive do
       loading: nil,
       info: nil,
       recently_liked: nil,
-      playlist: Music.get_playlist(%User{id: user_id}),
+      playlist: Music.get_playlist(%User{id: user_id})
     )
 
     {:ok, assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)}
@@ -60,7 +59,7 @@ defmodule PRWeb.PlaybackLive do
   end
 
   # Queue updated
-  def handle_info({Music, %{} = track, :added}, socket) do
+  def handle_info({Music, %{}, :added}, socket) do
     send(self(), {:get_playlist, nil})
     {:noreply, socket}
   end

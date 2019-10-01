@@ -28,8 +28,4 @@ defmodule PR.Scoring do
       res -> res
     end
   end
-
-  def change_point(%Point{} = point) do
-    Point.changeset(point, %{})
-  end
 end
