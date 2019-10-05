@@ -55,7 +55,7 @@
               </div>
             </button>
           <% else %>
-            <div class="track__user__container <%= if dun_voted?(track, @current_user), do: "has-voted" %>">
+            <div class="track__user__container <%= if dun_voted?(track), do: "has-voted" %>">
               <div class="track__user">
                 <%= img_tag track.user.image, width: 50, class: "track__user__img" %>
               </div>
