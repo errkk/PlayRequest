@@ -49,15 +49,13 @@
           </div>
           <%= if can_vote?(track, @current_user) do %>
             <button class="track__user__container animate" phx-click="like" value="<%= track.id %>" title="Give some appreciation to <%= track.user.first_name %>">
-              <%= crown track, assigns %>
               <div class="track__user">
                 <%= img_tag track.user.image, width: 50, class: "track__user__img" %>
                 <span class="track__user__back"></span>
               </div>
             </button>
           <% else %>
-            <div class="track__user__container">
-              <%= crown track, assigns %>
+            <div class="track__user__container <%= if dun_voted?(track), do: "has-voted" %>">
               <div class="track__user">
                 <%= img_tag track.user.image, width: 50, class: "track__user__img" %>
               </div>

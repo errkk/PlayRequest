@@ -1,0 +1,22 @@
+<nav role="navigation" class="nav">
+  <ul>
+    <%= if assigns[:current_user] do %>
+      <%= if @current_user.is_trusted do %>
+        <li class="nav__item">
+          <%= link "Setup", to: Routes.service_setup_path(@socket, :index) %>
+        </li>
+      <% end %>
+    <% end %>
+    <li class="nav__item">
+      <%= if assigns[:current_user] do %>
+        <%= link "Logout #{@current_user.first_name}",
+            to: Routes.auth_path(@socket, :delete) %>
+        <%= img_tag @current_user.image, class: "profile-image" %>
+        <%= heart(@points) %>
+      <% else %>
+        <%= link "Login",
+            to: Routes.auth_path(@socket, :index) %>
+      <% end %>
+    </li>
+  </ul>
+</nav>

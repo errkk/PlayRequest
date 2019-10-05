@@ -43,8 +43,18 @@ body {
 }
 
 .container--header {
+  grid-row-gap: 10px;
+
   grid-template-areas:
-    "logo logo header header";
+    "logo"
+    "header";
+
+  @media (min-width: 800px) {
+
+    grid-template-areas:
+      "logo logo header header";
+    align-items: flex-end;
+  }
 }
 .col--left,
 .col--search {

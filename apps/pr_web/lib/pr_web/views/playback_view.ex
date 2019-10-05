@@ -23,16 +23,22 @@ defmodule PRWeb.PlaybackView do
 
   def progress(_, _, _), do: nil
 
-  def can_vote?(%Track{user_id: user_id}, %User{id: id}) when id == user_id, do: false
-  def can_vote?(%Track{has_pointed: true}, _), do: false
+  def dun_voted?(%Track{has_pointed: true}), do: true
+  def dun_voted?(_), do: false
+
+  def can_vote?(%Track{} = track, %User{} = user), do: not it_me?(track, user) and not dun_voted?(track)
   def can_vote?(_, _), do: true
 
-  def heart(%Track{points: points}) when not is_nil(points) do
+  def heart(points) when is_integer(points) and points > 0 do
     1..points
     |> Enum.map(fn _ -> content_tag(:span, "♥️", class: "heart") end)
   end
+  def heart(%Track{points: points}) when not is_nil(points) do
+    heart(points)
+  end
   def heart(_), do: ""
 
+  def it_me?(%Track{user_id: user_id}, %User{id: id}) when id == user_id, do: true
   def it_me?(track, %{assigns: assigns}), do: it_me?(track, assigns)
   def it_me?(%Track{user_id: user_id}, %{current_user: %User{id: current_user_id}}) when user_id == current_user_id, do: true
   def it_me?(_, _), do: false
