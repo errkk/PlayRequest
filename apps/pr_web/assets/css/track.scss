@@ -9,7 +9,7 @@
   margin: 10px 0 0;
   align-items: center;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 2px;
+  border-radius: 3px;
   background: transparentize($white, 0.99);
 
   animation: swing-in-top-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
@@ -64,16 +64,19 @@
       border: none;
       outline: none;
 
-      .crown {
-        animation: bounce-in-top 1.4s ease-in-out 1 both;
-        position: absolute;
-        top: 3px;
-        left: 25px;
-        z-index: 1;
-      }
-
       &.animate {
         cursor: pointer;
+      }
+
+      &.has-voted {
+        &::after {
+          content: "❤️";
+          position: absolute;
+          display: block;
+          font-size: 8px;
+          bottom: 15px;
+          right: 15px;
+        }
       }
     }
 
@@ -152,15 +155,15 @@
 
 .progress {
   position: absolute;
-  bottom: -2px;
-  z-index: 0;
-  left: 0;
+  bottom: 0;
+  top: 0;
+  z-index: -1;
+  left: 80px;
   right: 0;
   display: block;
-  height: 2px;
-  width: 100%;
-
-  background: rgba(255, 255, 255, 0.1);
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
+  overflow: hidden;
 
   &__bar {
     position: absolute;
@@ -168,9 +171,12 @@
     left: 0;
     top: 0;
     bottom: 0;
-    transition: width 1000ms ease-out;
+    transition: width 900ms linear;
 
-    background: $pink;
+    background: $darkerBlue;
+
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
   }
 }
 
