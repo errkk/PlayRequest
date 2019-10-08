@@ -70,6 +70,7 @@ defmodule PR.SonosHouseholds do
   def get_active_group!() do
     Group
     |> query_is_active()
+    |> query_newest()
     |> limit(1)
     |> Repo.one!()
   end
@@ -77,8 +78,9 @@ defmodule PR.SonosHouseholds do
   def get_active_group() do
     Group
     |> query_is_active()
+    |> query_newest()
     |> limit(1)
-    |> Repo.one!()
+    |> Repo.one()
   end
 
 
@@ -114,5 +116,10 @@ defmodule PR.SonosHouseholds do
   defp query_is_active(query) do
     query
     |> where([h], h.is_active)
+  end
+
+  defp query_newest(query) do
+    query
+    |> order_by([g], desc: g.inserted_at)
   end
 end

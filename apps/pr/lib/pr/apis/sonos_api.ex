@@ -25,7 +25,9 @@ defmodule PR.SonosAPI do
       SonosHouseholds.update_group(group, %{subscribed_at: nil})
       {:ok}
     else
-      res -> res
+      res ->
+        SonosHouseholds.update_group(group, %{subscribed_at: nil})
+        res
     end
   end
 
@@ -130,12 +132,29 @@ defmodule PR.SonosAPI do
       {:ok, %{groups: groups}, household_id} ->
         total =
           groups
-          |> Enum.map(fn %{id: id, name: name, player_ids: player_ids} -> %{group_id: id, name: name, player_ids: player_ids, household_id: household_id} end)
-          |> Enum.map(&SonosHouseholds.insert_or_update_group(&1))
-          |> length()
+          |> Enum.map(& map_group(&1, household_id))
+          |> Enum.count(& SonosHouseholds.insert_or_update_group(&1))
         {:ok, total}
       {:error, msg} -> {:error, msg}
       _ -> nil
+    end
+  end
+
+  defp map_group(%{id: id, name: name, player_ids: player_ids}, household_id) do
+    %{group_id: id, name: name, player_ids: player_ids, household_id: household_id}
+  end
+
+  def create_group(player_ids) do
+    case household() do
+      %Household{household_id: household_id, id: id} ->
+        %{playerIds: player_ids}
+        |> post("/households/#{household_id}/groups/createGroup")
+        |> Map.get(:group)
+        |> map_group(id)
+        |> Map.put(:is_active, true)
+        |> SonosHouseholds.insert_or_update_group()
+      _ ->
+        {:error, :no_household_activated}
     end
   end
 

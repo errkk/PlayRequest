@@ -7,6 +7,7 @@ defmodule PR.PlayState do
   alias PR.Music
   alias PR.Music.{SonosItem, PlaybackState}
   alias PR.Queue
+  alias PR.SonosHouseholds.GroupManager
 
   @topic inspect(__MODULE__)
 
@@ -15,6 +16,8 @@ defmodule PR.PlayState do
   end
 
   def get_initial_state() do
+    GroupManager.check_groups()
+
     try do
       Logger.info "Fetching inital state"
       SonosAPI.get_playback()
@@ -23,7 +26,7 @@ defmodule PR.PlayState do
       |> process_metadata()
     rescue
       _ ->
-      Logger.error "PlayState could not fetch initial state"
+        Logger.error "PlayState could not fetch initial state"
     end
   end
 
