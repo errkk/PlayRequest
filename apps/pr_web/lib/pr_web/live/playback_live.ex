@@ -8,6 +8,7 @@ defmodule PRWeb.PlaybackLive do
   alias PR.Auth.User
   alias PR.Scoring
   alias PR.Queue.Track
+  alias PR.Queue
   alias PRWeb.PlaybackView
 
   def render(assigns) do
@@ -32,6 +33,7 @@ defmodule PRWeb.PlaybackLive do
       loading: nil,
       info: nil,
       recently_liked: nil,
+      participated: Queue.has_participated?(%User{id: user_id}),
       playlist: Music.get_playlist(%User{id: user_id})
     )
 
@@ -110,7 +112,7 @@ defmodule PRWeb.PlaybackLive do
 
   def handle_event("queue", spotify_id, socket) do
     send(self(), {:queue, spotify_id})
-    {:noreply, socket}
+    {:noreply, assign(socket, participated: true)}
   end
 
   def handle_event("search", %{"q" => q}, socket) when byte_size(q) <= 100 do

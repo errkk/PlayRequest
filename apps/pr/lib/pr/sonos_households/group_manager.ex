@@ -26,6 +26,7 @@ defmodule PR.SonosHouseholds.GroupManager do
     end
   end
 
+  @spec handle_mismatch(List.t()) :: :ok | {:error, String.t()}
   defp handle_mismatch(player_ids) do
     SonosAPI.unsubscribe_webhooks()
 

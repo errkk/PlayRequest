@@ -50,6 +50,15 @@ defmodule PR.Queue do
     |> Repo.all()
   end
 
+  def has_participated?(%User{id: user_id} = user) do
+    case Track
+    |> query_for_user(user)
+    |> Repo.aggregate(:count, :id) do
+      0 -> false
+      _ -> true
+    end
+  end
+
   def get_track!(id), do: Repo.get!(Track, id)
   def get_track(id), do: Repo.get(Track, id)
 
@@ -166,6 +175,11 @@ defmodule PR.Queue do
       on: t.id == p.track_id,
       as: :received_points
     )
+  end
+
+  defp query_for_user(query, %User{id: user_id}) do
+    query
+    |> where([t], t.user_id == ^user_id)
   end
 
   defp points_for() do

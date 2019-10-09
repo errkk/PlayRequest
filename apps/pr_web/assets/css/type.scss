@@ -32,7 +32,12 @@ p {
 }
 .intro {
   font-size: 1.5em;
+  margin-bottom: 0.3em;
+  & + p {
+    margin-top: 0;
+  }
 }
+
 a {
   text-decoration: none;
   color: #fff;
@@ -74,4 +79,10 @@ a {
   height: auto;
   vertical-align: bottom;
   margin: 0 0 3px 0;
+}
+
+.welcome {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0 20px 10px 20px;
+  margin-top: 30px;
 }

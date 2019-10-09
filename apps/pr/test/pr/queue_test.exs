@@ -4,7 +4,6 @@ defmodule PR.QueueTest do
   alias PR.Queue
   alias PR.Queue.Track
   alias PR.Music.SonosItem
-  alias PR.Scoring
 
   describe "points" do
     test "user sees that they did a point" do
@@ -25,7 +24,7 @@ defmodule PR.QueueTest do
   describe "queuing" do
     test "can't queue something twice if its unplayed" do
       me = insert(:user)
-      track = insert(:track, user: me, spotify_id: "derp")
+      insert(:track, user: me, spotify_id: "derp")
       assert {:error, _} = Queue.create_track(%{user_id: me.id, spotify_id: "derp"})
     end
   end
@@ -72,6 +71,19 @@ defmodule PR.QueueTest do
       track = Track |> Repo.get(current_track.id)
       assert track |> Map.get(:played_at) |> is_nil()
       assert DateTime.compare(track.playing_since, playing_since) === :eq
+    end
+  end
+
+  describe "participation" do
+    test "has_participated?/1 is true when user has queued something" do
+      user = insert(:user)
+      insert(:track, user: user)
+      assert Queue.has_participated?(user)
+    end
+
+    test "has_participated?/1 is false when user hasn't queued something" do
+      user = insert(:user)
+      refute Queue.has_participated?(user)
     end
   end
 end
