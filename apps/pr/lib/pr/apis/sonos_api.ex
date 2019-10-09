@@ -89,7 +89,6 @@ defmodule PR.SonosAPI do
     end
   end
 
-
   def unsubscribe_metadata do
     with %Group{group_id: group_id} <- group(),
          %{} <- delete("/groups/#{group_id}/playbackMetadata/subscription") do
@@ -132,7 +131,7 @@ defmodule PR.SonosAPI do
       {:ok, %{groups: groups}, household_id} ->
         total =
           groups
-          |> Enum.map(& map_group(&1, household_id))
+          |> Enum.map(& fields_for_group(&1, household_id))
           |> Enum.count(& SonosHouseholds.insert_or_update_group(&1))
         {:ok, total}
       {:error, msg} -> {:error, msg}
@@ -140,7 +139,7 @@ defmodule PR.SonosAPI do
     end
   end
 
-  defp map_group(%{id: id, name: name, player_ids: player_ids}, household_id) do
+  defp fields_for_group(%{id: id, name: name, player_ids: player_ids}, household_id) do
     %{group_id: id, name: name, player_ids: player_ids, household_id: household_id}
   end
 
@@ -150,7 +149,7 @@ defmodule PR.SonosAPI do
         %{playerIds: player_ids}
         |> post("/households/#{household_id}/groups/createGroup")
         |> Map.get(:group)
-        |> map_group(id)
+        |> fields_for_group(id)
         |> Map.put(:is_active, true)
         |> SonosHouseholds.insert_or_update_group()
       _ ->
