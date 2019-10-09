@@ -2,6 +2,9 @@ defmodule PR.ScoringTest do
   use PR.DataCase
 
   alias PR.Scoring
+  alias PR.Scoring.Point
+  alias PR.Queue
+  alias PR.Queue.Track
 
   describe "points" do
     test "can save a point for someone elses track" do
@@ -53,6 +56,20 @@ defmodule PR.ScoringTest do
       insert_list(3, :point)
 
       assert 0 == Scoring.count_points(player)
+    end
+  end
+
+  describe "deleteyness" do
+    test "delete track deletes the points too" do
+      point = insert(:point)
+      Repo.delete(%Track{id: point.track_id})
+      assert [] == Scoring.list_points()
+    end
+
+    test "delete point doesn't delete the track" do
+      point = insert(:point)
+      Repo.delete(%Point{id: point.id})
+      assert 1 == Queue.list_tracks() |> length()
     end
   end
 end
