@@ -7,6 +7,13 @@
       <input placeholder="Search for a track" autocomplete="off" type="text" name="q" value="<%= @q %>" <%= if @loading, do: "readonly" %>/>
     </form>
     <p phx-click="clear_info" class="alert alert-info <%= if assigns[:info], do: "alert--entrance" %>" role="alert"><%= if assigns[:info], do: @info %></p>
+
+    <%= unless @participated do %>
+    <p class="alert alert-info" role="alert">
+      👋 Hi <%= @current_user.first_name %> thanks for coming along. <br />
+      You can queue a track by searching up here 👆 and pressing the ▸
+    </p>
+    <% end %>
     <div class="search-results">
       <%= for track <- @result do %>
         <div class="track">

@@ -41,7 +41,7 @@ defmodule PR.ScoringTest do
 
     test "its ok to has no points" do
       player = insert(:user)
-      tracks = insert_list(3, :track, user: player)
+      insert_list(3, :track, user: player)
       insert_list(3, :point)
 
       assert 0 == Scoring.count_points(player)
