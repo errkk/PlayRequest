@@ -6,8 +6,10 @@ defmodule PRWeb.UserHeaderLive do
   alias PR.Auth
   alias PR.Auth.User
   alias PR.Music
+  alias PR.PlayState
   alias PR.Scoring
   alias PR.Queue.Track
+  alias PR.SonosAPI
   alias PRWeb.PlaybackView
   alias PRWeb.UserHeaderView
 
@@ -17,10 +19,13 @@ defmodule PRWeb.UserHeaderLive do
 
   def mount(%{user_id: user_id}, socket) when not is_nil(user_id) do
     if connected?(socket), do: Music.subscribe()
+    if connected?(socket), do: PlayState.subscribe()
+    play_state = PlayState.get(:play_state)
 
     socket = assign(
       socket,
-      points: Scoring.count_points(%User{id: user_id})
+      points: Scoring.count_points(%User{id: user_id}),
+      play_state: play_state
     )
 
     {:ok, assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)}
@@ -51,7 +56,25 @@ defmodule PRWeb.UserHeaderLive do
     end
   end
 
+  def handle_info({PlayState, %{} = play_state, :play_state}, socket) do
+    {:noreply, assign(socket, play_state: play_state)}
+  end
+
   def handle_info(_, socket) do
+    {:noreply, socket}
+  end
+
+  #
+  # UI events
+  #
+
+  def handle_event("toggle_playback", _, socket) do
+    SonosAPI.toggle_playback()
+    {:noreply, socket}
+  end
+
+  def handle_event("start", _, socket) do
+    Music.load_playlist()
     {:noreply, socket}
   end
 
