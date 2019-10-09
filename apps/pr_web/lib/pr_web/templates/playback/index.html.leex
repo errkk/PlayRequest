@@ -9,10 +9,14 @@
     <p phx-click="clear_info" class="alert alert-info <%= if assigns[:info], do: "alert--entrance" %>" role="alert"><%= if assigns[:info], do: @info %></p>
 
     <%= unless @participated do %>
-    <p class="alert alert-info" role="alert">
-      👋 Hi <%= @current_user.first_name %> thanks for coming along. <br />
-      You can queue a track by searching up here 👆 and pressing the ▸
-    </p>
+    <div class="welcome">
+      <p class="intro">
+        👋 Hi <%= @current_user.first_name %> thanks for coming along.
+      </p>
+      <p>
+        You can queue a track by searching up here 👆 and pressing the triangle ▸
+      </p>
+    </div>
     <% end %>
     <div class="search-results">
       <%= for track <- @result do %>
