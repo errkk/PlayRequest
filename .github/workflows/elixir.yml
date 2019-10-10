@@ -7,8 +7,8 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    container:
-      image: elixir:1.9.1-slim
+#     container:
+#       image: elixir:1.9.1-slim
 
     services:
       postgres:
