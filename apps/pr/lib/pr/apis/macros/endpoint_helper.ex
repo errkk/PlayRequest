@@ -94,7 +94,7 @@ defmodule PR.Apis.EndpointHelper do
       defp client_request(client, resource, :put), do: Client.post(client, resource)
 
       @spec client_request(Client.t(), String.t(), atom(), map()) :: any() | nil
-      defp client_request(client, resource, :post, params), do: Client.post(client, resource, params)
+      defp client_request(client, resource, :post, params), do: client |> Client.put_header("Content-Type", "application/json") |> Client.post(resource, params)
       defp client_request(client, resource, :put, params), do: Client.put(client, resource, params)
 
 
