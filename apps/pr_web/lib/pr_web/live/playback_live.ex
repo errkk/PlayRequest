@@ -56,16 +56,16 @@ defmodule PRWeb.PlaybackLive do
 
   # Metadata webhook. Player is playing something else now
   def handle_info({PlayState, %{} = metadata, :metadata}, socket) do
-    send(self(), {:get_playlist, nil})
     {:noreply, assign(socket, metadata: metadata)}
   end
 
-  # Queue updated
-  def handle_info({Music, %{}, :added}, socket) do
+  # Queue has changed either from addition or track has played
+  def handle_info({Music, _num_unplayed, :queue_updated}, socket) do
     send(self(), {:get_playlist, nil})
-    {:noreply, socket}
+    {:noreply, socket)
   end
 
+  # Someone got a point. Was it me?
   def handle_info({Music, %Track{name: name} = track, :point}, socket) do
     send(self(), {:get_playlist, nil})
     if PlaybackView.it_me?(track, socket) do

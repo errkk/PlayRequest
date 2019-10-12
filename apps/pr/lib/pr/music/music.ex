@@ -39,7 +39,7 @@ defmodule PR.Music do
     with {:ok, search_track} <- get_track(id),
          search_track <- Map.put(search_track, :user_id, user_id),
          {:ok, queued_track} <- create_track(search_track) do
-      broadcast(queued_track, :added)
+      queue_updated()
 
       if PlayState.is_idle?() do
         Logger.info "Track added while player is idle. Triggering playlist"
@@ -78,6 +78,11 @@ defmodule PR.Music do
   @spec get_playlist(User.t()) :: [Track.t()]
   def get_playlist(current_user) do
     Queue.list_unplayed(current_user)
+  end
+
+  def queue_updated do
+    Queue.num_unplayed()
+    |> broadcast(:queue_updated)
   end
 
   def bump_and_reload do

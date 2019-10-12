@@ -9,6 +9,7 @@ defmodule PRWeb.UserHeaderLive do
   alias PR.PlayState
   alias PR.Scoring
   alias PR.Queue.Track
+  alias PR.Queue
   alias PR.SonosAPI
   alias PRWeb.PlaybackView
   alias PRWeb.UserHeaderView
@@ -25,7 +26,8 @@ defmodule PRWeb.UserHeaderLive do
     socket = assign(
       socket,
       points: Scoring.count_points(%User{id: user_id}),
-      play_state: play_state
+      play_state: play_state,
+      num_unplayed: Queue.num_unplayed()
     )
 
     {:ok, assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)}
@@ -58,6 +60,10 @@ defmodule PRWeb.UserHeaderLive do
 
   def handle_info({PlayState, %{} = play_state, :play_state}, socket) do
     {:noreply, assign(socket, play_state: play_state)}
+  end
+
+  def handle_info({Music, num_unplayed, :queue_updated}, socket) do
+    {:noreply, assign(socket, num_unplayed: num_unplayed)}
   end
 
   def handle_info(_, socket) do

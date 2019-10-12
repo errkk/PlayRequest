@@ -93,6 +93,10 @@ defmodule PR.PlayState do
     |> update_playing()
     |> update_state(:metadata)
     |> broadcast(:metadata)
+
+    Music.queue_updated()
+
+    data
   end
 
   defp process_play_state(data) do
