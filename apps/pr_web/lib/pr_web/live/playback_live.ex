@@ -62,7 +62,7 @@ defmodule PRWeb.PlaybackLive do
   # Queue has changed either from addition or track has played
   def handle_info({Music, _num_unplayed, :queue_updated}, socket) do
     send(self(), {:get_playlist, nil})
-    {:noreply, socket)
+    {:noreply, socket}
   end
 
   # Someone got a point. Was it me?
