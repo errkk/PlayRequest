@@ -73,6 +73,10 @@ defmodule PR.Apis.EndpointHelper do
         Logger.error("Not found")
         {:error, :not_found}
       end
+      defp handle_api_response({:error, %Response{status_code: 415}}) do
+        Logger.error("Unsupported media type")
+        {:error, :unsupported_media_type}
+      end
       defp handle_api_response({:error, %Response{status_code: 410}}) do
         Logger.error("Gone")
         {:error, :gone}

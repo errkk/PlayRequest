@@ -42,6 +42,12 @@ defmodule PR.Queue do
     |> Repo.aggregate(:count, :id)
   end
 
+  def num_unplayed do
+    Track
+    |> query_unplayed()
+    |> Repo.aggregate(:count, :id)
+  end
+
   def list_track_uris do
     Track
     |> query_unplayed()

@@ -3,6 +3,9 @@
     <%= if assigns[:current_user] do %>
       <%= if @current_user.is_trusted do %>
         <li class="nav__item">
+          <%= play_pause @play_state, @num_unplayed %>
+        </li>
+        <li class="nav__item">
           <%= link "Setup", to: Routes.service_setup_path(@socket, :index) %>
         </li>
       <% end %>
