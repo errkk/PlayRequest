@@ -8,7 +8,7 @@ These are both official APIs so this project is a little different to the ones t
 PlayRequest uses Phoenix LiveView for keeping the UI up to date with the playback progress and dynamic queue.
 Players can show eachother appreciation for good tune choice by pressing a little heart, to give the chooser a good behaviour afferming dopamin hit.
 
-![PlayRequest Screenshot](https://github.com/errkk/PlayRequest/raw/master/doc/play-request-screenshot.png)
+![PlayRequest Screenshot](https://github.com/errkk/PlayRequest/raw/master/docs/play-request-screenshot.png)
 
 # 👩‍💻 Running locally
 You'll need to get a bunch of API keys.
