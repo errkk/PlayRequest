@@ -1,4 +1,8 @@
 <div class="container">
+  <div class="col--right">
+
+    <%= img_tag Routes.static_path(@conn, "/images/promo-image.svg"), class: "promo-image" %>
+  </div>
   <div class="col--left">
     <h2>Wat dis?</h2>
     <p class="intro">
