@@ -141,7 +141,7 @@ defmodule PR.Queue do
     |> query_is_playing()
     |> Repo.update_all(set: [
       playing_since: nil,
-      played_at: dynamic([i], date_add(i.playing_since, i.duration, "millisecond"))
+      played_at: dynamic([i], datetime_add(i.playing_since, i.duration, "millisecond"))
     ])
     {:ok}
   end

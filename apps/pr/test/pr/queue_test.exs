@@ -82,10 +82,11 @@ defmodule PR.QueueTest do
     end
 
     test "nothing is playing" do
-      previous_track = insert(:track, spotify_id: "herp", playing_since: ~N[2019-01-01 00:00:00])
+      previous_track = insert(:track, spotify_id: "herp", playing_since: ~N[2019-01-01 00:10:00], duration: 10_000)
       assert {:ok} = Queue.set_current(%{})
       assert Queue.get_playing() |> is_nil()
       refute Track |> Repo.get(previous_track.id) |> Map.get(:played_at) |> is_nil()
+      assert Track |> Repo.get(previous_track.id) |> Map.get(:played_at) |> DateTime.compare(~U[2019-01-01 00:10:10Z]) == :eq
       assert Track |> Repo.get(previous_track.id) |> Map.get(:playing_since) |> is_nil()
     end
 
