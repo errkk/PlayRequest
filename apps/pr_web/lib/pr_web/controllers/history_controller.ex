@@ -2,6 +2,7 @@ defmodule PRWeb.HistoryController do
   use PRWeb, :controller
 
   alias PR.Queue
+  alias PR.Scoring
   alias PR.Auth.User
 
   def index(conn, _params) do
@@ -11,7 +12,9 @@ defmodule PRWeb.HistoryController do
       |> Queue.list_todays_tracks()
       |> group_by_hour()
 
-    render(conn, "index.html", items: items)
+    top_scorers = Scoring.list_top_scorers()
+
+    render(conn, "index.html", items: items, top_scorers: top_scorers)
   end
 
   defp group_by_hour(items) do

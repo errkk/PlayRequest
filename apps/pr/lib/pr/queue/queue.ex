@@ -225,6 +225,13 @@ defmodule PR.Queue do
     )
   end
 
+  @spec points_for() :: Ecto.Queryable.t()
+  defp points_for() do
+    Point
+    |> group_by([p], p.track_id)
+    |> select([p], %{track_id: p.track_id, points_received: count(p.id)})
+  end
+
   @spec query_for_user(Ecto.Queryable.t(), User.t()) :: Ecto.Queryable.t()
   defp query_for_user(query, %User{id: user_id}) do
     query
@@ -243,20 +250,13 @@ defmodule PR.Queue do
     |> order_by([t], asc: t.inserted_at)
   end
 
-  @spec points_for() :: Ecto.Queryable.t()
-  defp points_for() do
-    Point
-    |> group_by([p], p.track_id)
-    |> select([p], %{track_id: p.track_id, points: count(p.id)})
-  end
-
   @spec select_user_facing_fields(Ecto.Queryable.t()) :: Ecto.Queryable.t()
   defp select_user_facing_fields(query) do
     query
     |> select([t, given_point: gp, received_points: rp], %{
       t |
       has_pointed: not is_nil(gp.id),
-      points: rp.points
+      points_received: rp.points_received
     })
 
   end

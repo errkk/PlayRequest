@@ -2,42 +2,60 @@
   <div class="col--header--left">
     <h2>Today</h2>
   </div>
-  <div class="col--search">
-    <div class="queue">
-      <%= for {hour, tracks} <- @items do %>
-        <h3><%= hour %></h3>
-        <%= for track <- tracks do %>
-          <div class="track">
-            <div class="track__img__container">
-              <%= img_tag track.img, width: 100, class: "track__img" %>
-            </div>
-
-            <div class="track__details">
-              <h3 class="track__name">
-                <%= link [
-                    img_tag(Routes.static_path(@conn, "/images/spotify.svg"), class: "spotify"),
-                    track.name
-                  ],
-                  to: {:"spotify:track", track.spotify_id},
-                  title: "Open in Spotify"
-                %>
-                <%= heart track %>
-              </h3>
-              <p class="track__artist">
-                <%= track.artist %>
-              </p>
-              <p>
-                @ <%= time(track.played_at) %>
-              </p>
-            </div>
-              <div class="track__user__container">
-                <div class="track__user">
-                  <%= img_tag track.user.image, width: 50, class: "track__user__img" %>
-                </div>
-              </div>
+  <div class="col--left">
+    <%= for {hour, tracks} <- @items do %>
+      <h3><%= hour %></h3>
+      <%= for track <- tracks do %>
+        <div class="track">
+          <div class="track__img__container">
+            <%= img_tag track.img, width: 100, class: "track__img" %>
           </div>
-        <% end %>
+
+          <div class="track__details">
+            <h3 class="track__name">
+              <%= link [
+                  img_tag(Routes.static_path(@conn, "/images/spotify.svg"), class: "spotify"),
+                  track.name
+                ],
+                to: {:"spotify:track", track.spotify_id},
+                title: "Open in Spotify"
+              %>
+              <%= heart track %>
+            </h3>
+            <p class="track__artist">
+              <%= track.artist %>
+            </p>
+            <p>
+              @ <%= time(track.played_at) %>
+            </p>
+          </div>
+            <div class="track__user__container">
+              <div class="track__user">
+                <%= img_tag track.user.image, width: 50, class: "track__user__img" %>
+              </div>
+            </div>
+        </div>
       <% end %>
-    </div>
+    <% end %>
+  </div>
+
+  <div class="col--right">
+    <h3>Point Receivers</h3>
+    <%= for user <- @top_scorers do %>
+      <div class="track">
+        <div class="track__img__container">
+          <%= img_tag user.image, width: 100, class: "track__img" %>
+        </div>
+
+        <div class="track__details">
+          <h3 class="track__name">
+            <%= user.first_name %> <%= user.last_name %>
+          </h3>
+          <%= heart user.points_received %>
+          <p class="track__artist">
+          </p>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>

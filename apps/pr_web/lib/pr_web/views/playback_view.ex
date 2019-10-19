@@ -36,8 +36,8 @@ defmodule PRWeb.PlaybackView do
   def it_me?(%Track{user_id: user_id}, %{current_user: %User{id: current_user_id}}) when user_id == current_user_id, do: true
   def it_me?(_, _), do: false
 
-  def crown(%Track{points: nil}, _), do: ""
-  def crown(%Track{points: points} = track, assigns) when points > 0 do
+  def crown(%Track{points_received: nil}, _), do: ""
+  def crown(%Track{points_received: points} = track, assigns) when points > 0 do
     if it_me?(track, assigns) do
       content_tag(:div, "👑", class: "crown")
     end

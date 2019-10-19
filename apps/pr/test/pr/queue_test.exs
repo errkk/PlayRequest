@@ -31,14 +31,14 @@ defmodule PR.QueueTest do
       me = insert(:user)
       track = insert(:track)
       insert(:point, track: track, user: me)
-      assert [%Track{points: 1, has_pointed: true}] = Queue.list_unplayed(me)
+      assert [%Track{points_received: 1, has_pointed: true}] = Queue.list_unplayed(me)
     end
 
     test "user sees that someone else did points" do
       me = insert(:user)
       track = insert(:track)
       insert_list(2, :point, track: track)
-      assert [%Track{points: 2, has_pointed: false}] = Queue.list_unplayed(me)
+      assert [%Track{points_received: 2, has_pointed: false}] = Queue.list_unplayed(me)
     end
   end
 

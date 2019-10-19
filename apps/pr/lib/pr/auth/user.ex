@@ -2,6 +2,8 @@ defmodule PR.Auth.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias PR.Queue.Track
+
   schema "users" do
     field :display_name, :string
     field :email, :string
@@ -10,6 +12,10 @@ defmodule PR.Auth.User do
     field :last_name, :string
     field :token, :string
     field :is_trusted, :boolean
+
+    field :points_received, :integer, virtual: true
+
+    has_many :tracks, Track
 
     timestamps()
   end
