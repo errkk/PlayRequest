@@ -1,6 +1,5 @@
 defmodule PRWeb.Plug.NowPlayingPlug do
   @moduledoc false
-  @behaviour Plug
 
   use PRWeb, :plug
   alias PR.Queue
