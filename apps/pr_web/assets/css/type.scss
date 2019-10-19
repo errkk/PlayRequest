@@ -43,6 +43,16 @@ a {
   color: #fff;
 }
 
+a.link,
+.link {
+  transition: box-shadow 200ms ease;
+}
+
+a.link:hover,
+a:hover .link {
+  box-shadow: inset 0 -8px 0 0 darken($pink, 40);
+}
+
 .button {
   display: inline-block;
   padding: 10px 20px;

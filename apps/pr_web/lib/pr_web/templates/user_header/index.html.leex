@@ -6,19 +6,26 @@
           <%= play_pause @play_state, @num_unplayed %>
         </li>
         <li class="nav__item">
-          <%= link "Setup", to: Routes.service_setup_path(@socket, :index) %>
+          <%= link "Setup", to: Routes.service_setup_path(@socket, :index), class: "link" %>
         </li>
       <% end %>
+    <% end %>
+    <%= if assigns[:current_user] do %>
+      <li class="nav__item">
+        <%= link "History", to: Routes.history_path(@socket, :index), class: "link" %>
+      </li>
     <% end %>
     <li class="nav__item">
       <%= if assigns[:current_user] do %>
         <%= link "Logout #{@current_user.first_name}",
-            to: Routes.auth_path(@socket, :delete) %>
+            to: Routes.auth_path(@socket, :delete),
+            class: "link" %>
         <%= img_tag @current_user.image, class: "profile-image" %>
         <%= heart(@points) %>
       <% else %>
         <%= link "Login",
-            to: Routes.auth_path(@socket, :index) %>
+            to: Routes.auth_path(@socket, :index),
+            class: "link" %>
       <% end %>
     </li>
   </ul>

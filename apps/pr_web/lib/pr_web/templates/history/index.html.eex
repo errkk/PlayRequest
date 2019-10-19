@@ -15,7 +15,7 @@
             <h3 class="track__name">
               <%= link [
                   img_tag(Routes.static_path(@conn, "/images/spotify.svg"), class: "spotify"),
-                  track.name
+                  content_tag(:span, track.name, class: "link")
                 ],
                 to: {:"spotify:track", track.spotify_id},
                 title: "Open in Spotify"
