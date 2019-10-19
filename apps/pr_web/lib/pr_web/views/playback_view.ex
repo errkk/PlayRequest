@@ -6,6 +6,8 @@ defmodule PRWeb.PlaybackView do
   alias PR.Queue.Track
   alias PR.Auth.User
 
+  import PRWeb.SharedView, only: [heart: 1]
+
   def playing?(%Track{playing_since: playing}, %PlaybackState{state: :playing}) when not is_nil(playing), do: true
   def playing?(_, _), do: false
 
@@ -29,22 +31,13 @@ defmodule PRWeb.PlaybackView do
   def can_vote?(%Track{} = track, %User{} = user), do: not it_me?(track, user) and not dun_voted?(track)
   def can_vote?(_, _), do: true
 
-  def heart(points) when is_integer(points) and points > 0 do
-    1..points
-    |> Enum.map(fn _ -> content_tag(:span, "♥️", class: "heart") end)
-  end
-  def heart(%Track{points: points}) when not is_nil(points) do
-    heart(points)
-  end
-  def heart(_), do: ""
-
   def it_me?(%Track{user_id: user_id}, %User{id: id}) when id == user_id, do: true
   def it_me?(track, %{assigns: assigns}), do: it_me?(track, assigns)
   def it_me?(%Track{user_id: user_id}, %{current_user: %User{id: current_user_id}}) when user_id == current_user_id, do: true
   def it_me?(_, _), do: false
 
-  def crown(%Track{points: nil}, _), do: ""
-  def crown(%Track{points: points} = track, assigns) when points > 0 do
+  def crown(%Track{points_received: nil}, _), do: ""
+  def crown(%Track{points_received: points} = track, assigns) when points > 0 do
     if it_me?(track, assigns) do
       content_tag(:div, "👑", class: "crown")
     end

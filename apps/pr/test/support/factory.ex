@@ -13,7 +13,7 @@ defmodule PR.Factory do
 
   def track_factory do
     %PR.Queue.Track{
-      name: "Jane",
+      name: "Jane's song",
       artist: "Jane",
       duration: 30000,
       img: "img",
@@ -21,6 +21,18 @@ defmodule PR.Factory do
       playing_since: nil,
       user: insert(:user)
     }
+  end
+
+  def played_track_factory do
+    struct!(track_factory(), %{
+      played_at: DateTime.utc_now()
+    })
+  end
+
+  def playing_track_factory do
+    struct!(track_factory(), %{
+      playing_since: DateTime.utc_now()
+    })
   end
 
   def point_factory do

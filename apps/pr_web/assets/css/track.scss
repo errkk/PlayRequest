@@ -188,3 +188,18 @@
     padding-left: 10px;
   }
 }
+
+
+.track + h3,
+.track + h2 {
+  margin-top: 30px;
+}
+
+h3 + .track,
+h2 + .track {
+  margin-top: 10px;
+}
+
+.spotify {
+  margin-right: 0.8ex;
+}

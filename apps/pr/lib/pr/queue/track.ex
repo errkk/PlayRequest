@@ -3,6 +3,7 @@ defmodule PR.Queue.Track do
   import Ecto.Changeset
 
   alias PR.Auth.User
+  alias PR.Scoring.Point
 
   schema "tracks" do
     field :artist, :string
@@ -14,9 +15,10 @@ defmodule PR.Queue.Track do
     field :playing_since, :utc_datetime
 
     field :has_pointed, :boolean, virtual: true
-    field :points, :integer, virtual: true
+    field :points_received, :integer, virtual: true
 
     belongs_to :user, User
+    has_many :points, Point
 
     timestamps()
   end

@@ -5,19 +5,40 @@ defmodule PR.QueueTest do
   alias PR.Queue.Track
   alias PR.Music.SonosItem
 
+  describe "list" do
+    test "list_unplayed/1 lists in correct order" do
+      then = DateTime.utc_now()
+      |> DateTime.add(-1, :second)
+      me = insert(:user)
+      track_1_id = insert(:track, inserted_at: then).id
+      track_2_id = insert(:track, inserted_at: DateTime.utc_now()).id
+      assert [%{id: ^track_1_id}, %{id: ^track_2_id}] = Queue.list_unplayed(me)
+    end
+
+    test "list_todays_tracks/1 lists in correct order" do
+      then = DateTime.utc_now()
+      |> DateTime.add(-1, :second)
+      me = insert(:user)
+      track_1_id = insert(:played_track, inserted_at: then).id
+      track_2_id = insert(:played_track, inserted_at: DateTime.utc_now()).id
+      _not_me = insert(:track)
+      assert [%{id: ^track_1_id}, %{id: ^track_2_id}] = Queue.list_todays_tracks(me)
+    end
+  end
+
   describe "points" do
     test "user sees that they did a point" do
       me = insert(:user)
       track = insert(:track)
       insert(:point, track: track, user: me)
-      assert [%Track{points: 1, has_pointed: true}] = Queue.list_unplayed(me)
+      assert [%Track{points_received: 1, has_pointed: true}] = Queue.list_unplayed(me)
     end
 
     test "user sees that someone else did points" do
       me = insert(:user)
       track = insert(:track)
       insert_list(2, :point, track: track)
-      assert [%Track{points: 2, has_pointed: false}] = Queue.list_unplayed(me)
+      assert [%Track{points_received: 2, has_pointed: false}] = Queue.list_unplayed(me)
     end
   end
 
@@ -61,10 +82,11 @@ defmodule PR.QueueTest do
     end
 
     test "nothing is playing" do
-      previous_track = insert(:track, spotify_id: "herp", playing_since: ~N[2019-01-01 00:00:00])
+      previous_track = insert(:track, spotify_id: "herp", playing_since: ~N[2019-01-01 00:10:00], duration: 10_000)
       assert {:ok} = Queue.set_current(%{})
       assert Queue.get_playing() |> is_nil()
       refute Track |> Repo.get(previous_track.id) |> Map.get(:played_at) |> is_nil()
+      assert Track |> Repo.get(previous_track.id) |> Map.get(:played_at) |> DateTime.compare(~U[2019-01-01 00:10:10Z]) == :eq
       assert Track |> Repo.get(previous_track.id) |> Map.get(:playing_since) |> is_nil()
     end
 

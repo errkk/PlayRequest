@@ -5,6 +5,7 @@ defmodule PR.ScoringTest do
   alias PR.Scoring.Point
   alias PR.Queue
   alias PR.Queue.Track
+  alias PR.Auth.User
 
   describe "points" do
     test "can save a point for someone elses track" do
@@ -70,6 +71,19 @@ defmodule PR.ScoringTest do
       point = insert(:point)
       Repo.delete(%Point{id: point.id})
       assert 1 == Queue.list_tracks() |> length()
+    end
+  end
+
+  describe "list_top_scorers" do
+    test "lists totals for each user with points in the right order" do
+      voter = insert(:user)
+      player = insert(:user)
+      tracks = insert_list(3, :track, user: player)
+      Enum.each(tracks, fn track -> insert(:point, track: track, user: voter) end)
+
+      player_id = player.id
+
+      assert [%User{points_received: 3, id: ^player_id}] = Scoring.list_top_scorers()
     end
   end
 end

@@ -1,6 +1,6 @@
 defmodule PRWeb.UserHeaderView do
   use PRWeb, :view
-  import PRWeb.PlaybackView, only: [heart: 1]
+  import PRWeb.SharedView, only: [heart: 1]
 
   alias PR.Music.PlaybackState
 
