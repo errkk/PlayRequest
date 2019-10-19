@@ -75,7 +75,7 @@ defmodule PR.PlayState do
   end
 
   defp watch_play_state(%{state: :idle} = d) do
-    # Metadta tells us there's nothing up next
+    # Metadata tells us there's nothing up next
     case Queue.has_unplayed do
       num when num > 0 ->
         Logger.info "Player idle, there are more tracks. Bump and re-trigger."
