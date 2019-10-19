@@ -24,7 +24,13 @@ defmodule PR.QueueTest do
   describe "queuing" do
     test "can't queue something twice if its unplayed" do
       me = insert(:user)
-      insert(:track, user: me, spotify_id: "derp")
+      insert(:track, spotify_id: "derp")
+      assert {:error, _} = Queue.create_track(%{user_id: me.id, spotify_id: "derp"})
+    end
+
+    test "can't queue something twice if its playing" do
+      me = insert(:user)
+      insert(:track, spotify_id: "derp", playing_since: DateTime.utc_now())
       assert {:error, _} = Queue.create_track(%{user_id: me.id, spotify_id: "derp"})
     end
   end
@@ -34,6 +40,14 @@ defmodule PR.QueueTest do
       current_track = insert(:track, spotify_id: "derp")
       assert {:started, _} = Queue.set_current(%SonosItem{spotify_id: "derp"})
       refute Track |> Repo.get(current_track.id) |> Map.get(:playing_since) |> is_nil()
+    end
+
+    test "set playing since if there's a dupe" do
+      current_track = insert(:track, spotify_id: "derp")
+      oops_dupe = insert(:track, spotify_id: "derp")
+      assert {:started, _} = Queue.set_current(%SonosItem{spotify_id: "derp"})
+      refute Track |> Repo.get(current_track.id) |> Map.get(:playing_since) |> is_nil()
+      refute Track |> Repo.get(oops_dupe.id) |> Map.get(:playing_since) |> is_nil()
     end
 
     test "set playing since and played at" do
