@@ -17,12 +17,25 @@ defmodule PR.Queue do
     Repo.all(Track)
   end
 
+  def list_todays_tracks(%User{id: user_id}) do
+    Track
+    |> query_today()
+    |> query_given_points(user_id)
+    |> query_received_points()
+    |> query_played()
+    |> select_user_facing_fields()
+    |> order()
+    |> preload(:user)
+    |> Repo.all()
+  end
+
   def list_unplayed(%User{id: user_id}) do
     Track
     |> query_unplayed()
     |> query_given_points(user_id)
     |> query_received_points()
     |> select_user_facing_fields()
+    |> order()
     |> limit(100)
     |> preload(:user)
     |> Repo.all()
@@ -51,6 +64,7 @@ defmodule PR.Queue do
   def list_track_uris do
     Track
     |> query_unplayed()
+    |> order()
     |> limit(100)
     |> select([t], {t.spotify_id})
     |> Repo.all()
@@ -155,12 +169,16 @@ defmodule PR.Queue do
   defp query_unplayed(query) do
     query
     |> where([t], is_nil(t.played_at))
-    |> order_by([t], asc: t.inserted_at)
   end
 
   defp query_unplaying(query) do
     query
     |> where([t], is_nil(t.playing_since))
+  end
+
+  defp query_played(query) do
+    query
+    |> where([t], not is_nil(t.played_at))
   end
 
   defp query_given_points(query, user_id) do
@@ -186,6 +204,16 @@ defmodule PR.Queue do
   defp query_for_user(query, %User{id: user_id}) do
     query
     |> where([t], t.user_id == ^user_id)
+  end
+
+  defp query_today(query) do
+    query
+    |> where([t], fragment("?::date", t.inserted_at) == ^Date.utc_today())
+  end
+
+  defp order(query) do
+    query
+    |> order_by([t], asc: t.inserted_at)
   end
 
   defp points_for() do

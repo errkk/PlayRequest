@@ -5,6 +5,27 @@ defmodule PR.QueueTest do
   alias PR.Queue.Track
   alias PR.Music.SonosItem
 
+  describe "list" do
+    test "list_unplayed/1 lists in correct order" do
+      then = DateTime.utc_now()
+      |> DateTime.add(-1, :second)
+      me = insert(:user)
+      track_1_id = insert(:track, inserted_at: then).id
+      track_2_id = insert(:track, inserted_at: DateTime.utc_now()).id
+      assert [%{id: ^track_1_id}, %{id: ^track_2_id}] = Queue.list_unplayed(me)
+    end
+
+    test "list_todays_tracks/1 lists in correct order" do
+      then = DateTime.utc_now()
+      |> DateTime.add(-1, :second)
+      me = insert(:user)
+      track_1_id = insert(:played_track, inserted_at: then).id
+      track_2_id = insert(:played_track, inserted_at: DateTime.utc_now()).id
+      _not_me = insert(:track)
+      assert [%{id: ^track_1_id}, %{id: ^track_2_id}] = Queue.list_todays_tracks(me)
+    end
+  end
+
   describe "points" do
     test "user sees that they did a point" do
       me = insert(:user)
