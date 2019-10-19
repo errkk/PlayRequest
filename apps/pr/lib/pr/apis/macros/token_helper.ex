@@ -60,17 +60,17 @@ defmodule PR.Apis.TokenHelper do
       defp get_access_token do
         case Agent.get(__MODULE__,  & &1) do
           %AccessToken{} = token ->
-            Logger.info("Getting from cache")
+            Logger.debug("Getting from cache")
             token
           _ ->
-            Logger.info("Getting from DB")
+            Logger.debug("Getting from DB")
             cache_stored_credential()
         end
       end
 
       @spec put_access_token(AccessToken.t()) :: AccessToken.t()
       defp put_access_token(data) do
-        Logger.info("Writing token to Agent")
+        Logger.debug("Writing token to Agent")
         Agent.update(__MODULE__, fn _state -> data end)
         data
       end

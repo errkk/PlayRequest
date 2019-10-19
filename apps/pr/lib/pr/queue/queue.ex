@@ -98,10 +98,10 @@ defmodule PR.Queue do
     now = DateTime.utc_now()
 
     case set_current_transaction(spotify_id, now) do
-      {:ok, {1, nil}} ->
-        {:started, now}
       {:ok, {0, nil}} ->
         get_playing_since()
+      {:ok, {_, nil}} ->
+        {:started, now}
     end
   end
 
