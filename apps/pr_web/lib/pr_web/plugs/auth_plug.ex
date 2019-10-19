@@ -1,6 +1,5 @@
 defmodule PRWeb.Plug.AuthPlug do
   @moduledoc false
-  @behaviour Plug
 
   use PRWeb, :plug
   alias PR.Auth.User

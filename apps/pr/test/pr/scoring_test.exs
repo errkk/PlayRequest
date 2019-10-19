@@ -85,5 +85,20 @@ defmodule PR.ScoringTest do
 
       assert [%User{points_received: 3, id: ^player_id}] = Scoring.list_top_scorers()
     end
+
+    test "for today" do
+      yesterday = DateTime.utc_now()
+      |> Timex.shift(days: -1)
+      voter = insert(:user)
+      player = insert(:user)
+      tracks = insert_list(3, :track, user: player)
+      old_tracks = insert_list(3, :track, user: player, inserted_at: yesterday)
+      Enum.each(tracks, fn track -> insert(:point, track: track, user: voter) end)
+      Enum.each(old_tracks, fn track -> insert(:point, track: track, user: insert(:user)) end)
+
+      player_id = player.id
+
+      assert [%User{points_received: 3, id: ^player_id}] = Scoring.list_top_scorers()
+    end
   end
 end

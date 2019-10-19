@@ -18,9 +18,16 @@ defmodule PR.Scoring do
   @spec list_top_scorers() :: [User.t()]
   def list_top_scorers do
     User
-    |> join(:right, [u], t in assoc(u, :tracks), as: :tracks)
-    |> join(:right, [u, tracks: t], p in assoc(t, :points), as: :points)
+    |> join(:right,
+      [u], t in assoc(u, :tracks),
+      on: fragment("?::date", t.inserted_at) == ^Date.utc_today(),
+      as: :tracks)
+    |> join(:right,
+      [u, tracks: t], p in assoc(t, :points),
+      on: fragment("?::date", p.inserted_at) == ^Date.utc_today(),
+      as: :points)
     |> group_by([u], u.id)
+    |> having([u], not is_nil(u.id))
     |> select([u], %{u | points_received: count(1)})
     |> order_by([u], desc: fragment("count(1)"))
     |> Repo.all()

@@ -1,6 +1,5 @@
 defmodule PRWeb.Plug.ReleaseMetadataPlug do
   @moduledoc false
-  @behaviour Plug
 
   use PRWeb, :plug
 
