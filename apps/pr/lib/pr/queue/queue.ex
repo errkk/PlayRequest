@@ -17,9 +17,10 @@ defmodule PR.Queue do
     Repo.all(Track)
   end
 
+  @spec list_todays_tracks(User.t()) :: [Track.t()]
   def list_todays_tracks(%User{id: user_id}) do
     Track
-    |> query_today()
+    |> query_for_today()
     |> query_given_points(user_id)
     |> query_received_points()
     |> query_played()
@@ -29,6 +30,7 @@ defmodule PR.Queue do
     |> Repo.all()
   end
 
+  @spec list_unplayed(User.t()) :: [Track.t()]
   def list_unplayed(%User{id: user_id}) do
     Track
     |> query_unplayed()
@@ -41,6 +43,7 @@ defmodule PR.Queue do
     |> Repo.all()
   end
 
+  @spec get_playing() :: Track.t()
   def get_playing do
     Track
     |> query_is_playing()
@@ -48,6 +51,7 @@ defmodule PR.Queue do
     |> Repo.one()
   end
 
+  @spec has_unplayed() :: integer()
   def has_unplayed do
     Track
     |> query_unplayed()
@@ -55,12 +59,14 @@ defmodule PR.Queue do
     |> Repo.aggregate(:count, :id)
   end
 
+  @spec num_unplayed() :: integer()
   def num_unplayed do
     Track
     |> query_unplayed()
     |> Repo.aggregate(:count, :id)
   end
 
+  @spec list_track_uris() :: [String.t()]
   def list_track_uris do
     Track
     |> query_unplayed()
@@ -70,6 +76,7 @@ defmodule PR.Queue do
     |> Repo.all()
   end
 
+  @spec has_participated?(User.t()) :: boolean()
   def has_participated?(%User{id: user_id} = user) do
     case Track
     |> query_for_user(user)
@@ -79,29 +86,37 @@ defmodule PR.Queue do
     end
   end
 
+  @spec get_track!(integer()) :: Track.t()
   def get_track!(id), do: Repo.get!(Track, id)
+
+  @spec get_track(integer()) :: Track.t() | nil
   def get_track(id), do: Repo.get(Track, id)
 
+  @spec create_track(map()) :: {:ok, Track.t()} | {:error, Ecto.Changeset.t()}
   def create_track(attrs \\ %{}) do
     %Track{}
     |> Track.changeset(attrs)
     |> Repo.insert()
   end
 
+  @spec update_track(Track.t(), map()) :: {:ok, Track.t()} | {:error, Ecto.Changeset.t()}
   def update_track(%Track{} = track, attrs) do
     track
     |> Track.changeset(attrs)
     |> Repo.update()
   end
 
+  @spec mark_played(Track.t()) :: {:ok, Track.t()} | {:error, Ecto.Changeset.t()}
   def mark_played(%Track{} = track) do
     update_track(track, %{played_at: DateTime.utc_now()})
   end
 
+  @spec delete_track(Track.t()) :: {:ok, Track.t()} | {:error, Ecto.Changeset.t()}
   def delete_track(%Track{} = track) do
     Repo.delete(track)
   end
 
+  @spec change_track(Track.t()) :: Ecto.Changeset.t()
   def change_track(%Track{} = track) do
     Track.changeset(track, %{})
   end
@@ -118,6 +133,19 @@ defmodule PR.Queue do
         {:started, now}
     end
   end
+
+  def set_current(_) do
+    Logger.info("Nothing playing, clearing playing_since")
+
+    Track
+    |> query_is_playing()
+    |> Repo.update_all(set: [
+      playing_since: nil,
+      played_at: dynamic([i], date_add(i.playing_since, i.duration, "millisecond"))
+    ])
+    {:ok}
+  end
+
 
   @spec set_current_transaction(String.t(), DateTime.t()) :: {:ok, {integer(), any()}}
   defp set_current_transaction(spotify_id, now) do
@@ -138,6 +166,7 @@ defmodule PR.Queue do
     end)
   end
 
+  @spec get_playing_since() :: {:already_started, DateTime.t()} | {:ok}
   defp get_playing_since do
     case get_playing() do
       %Track{playing_since: playing_since} -> {:already_started, playing_since}
@@ -145,42 +174,36 @@ defmodule PR.Queue do
     end
   end
 
-  def set_current(_) do
-    Logger.info("Nothing playing, clearing playing_since")
-
-    Track
-    |> query_is_playing()
-    |> Repo.update_all(set: [
-      playing_since: nil,
-      played_at: dynamic([i], date_add(i.playing_since, i.duration, "millisecond"))
-    ])
-    {:ok}
-  end
-
+  @spec bump() :: {:ok}
   def bump do
     set_current(%{})
   end
 
+  @spec query_is_playing(Ecto.Queryable.t()) :: Ecto.Queryable.t()
   defp query_is_playing(query) do
     query
     |> where([t], not is_nil(t.playing_since))
   end
 
+  @spec query_unplayed(Ecto.Queryable.t()) :: Ecto.Queryable.t()
   defp query_unplayed(query) do
     query
     |> where([t], is_nil(t.played_at))
   end
 
+  @spec query_unplaying(Ecto.Queryable.t()) :: Ecto.Queryable.t()
   defp query_unplaying(query) do
     query
     |> where([t], is_nil(t.playing_since))
   end
 
+  @spec query_played(Ecto.Queryable.t()) :: Ecto.Queryable.t()
   defp query_played(query) do
     query
     |> where([t], not is_nil(t.played_at))
   end
 
+  @spec query_given_points(Ecto.Queryable.t(), integer()) :: Ecto.Queryable.t()
   defp query_given_points(query, user_id) do
     query
     |> join(
@@ -191,6 +214,7 @@ defmodule PR.Queue do
     )
   end
 
+  @spec query_received_points(Ecto.Queryable.t()) :: Ecto.Queryable.t()
   defp query_received_points(query) do
     query
     |> join(
@@ -201,27 +225,32 @@ defmodule PR.Queue do
     )
   end
 
+  @spec query_for_user(Ecto.Queryable.t(), User.t()) :: Ecto.Queryable.t()
   defp query_for_user(query, %User{id: user_id}) do
     query
     |> where([t], t.user_id == ^user_id)
   end
 
-  defp query_today(query) do
+  @spec query_for_today(Ecto.Queryable.t()) :: Ecto.Queryable.t()
+  defp query_for_today(query) do
     query
     |> where([t], fragment("?::date", t.inserted_at) == ^Date.utc_today())
   end
 
+  @spec order(Ecto.Queryable.t()) :: Ecto.Queryable.t()
   defp order(query) do
     query
     |> order_by([t], asc: t.inserted_at)
   end
 
+  @spec points_for() :: Ecto.Queryable.t()
   defp points_for() do
     Point
     |> group_by([p], p.track_id)
     |> select([p], %{track_id: p.track_id, points: count(p.id)})
   end
 
+  @spec select_user_facing_fields(Ecto.Queryable.t()) :: Ecto.Queryable.t()
   defp select_user_facing_fields(query) do
     query
     |> select([t, given_point: gp, received_points: rp], %{

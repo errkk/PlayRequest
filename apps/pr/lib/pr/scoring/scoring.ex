@@ -23,6 +23,7 @@ defmodule PR.Scoring do
     |> Repo.aggregate(:count, :id)
   end
 
+  @spec create_point(map()) :: {:ok, Point.t()} | {:error, Ecto.Changeset.t()}
   def create_point(attrs \\ %{}) do
     case %Point{}
     |> Point.changeset(attrs)
