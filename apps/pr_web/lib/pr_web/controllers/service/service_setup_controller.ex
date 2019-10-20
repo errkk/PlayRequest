@@ -162,5 +162,17 @@ defmodule PRWeb.Service.ServiceSetupController do
     end
   end
 
+  def clear_groups(conn, _) do
+    case SonosHouseholds.clear_groups() do
+      {:ok} ->
+        conn
+        |> put_flash(:info, "That seemed to work")
+        |> redirect(to: Routes.service_setup_path(conn, :index))
+      {:error, msg} ->
+        conn
+        |> put_flash(:error, "⚠️ #{msg}")
+        |> redirect(to: Routes.service_setup_path(conn, :index))
+    end
+  end
 end
 
