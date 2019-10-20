@@ -129,5 +129,9 @@ defmodule PRWeb.PlaybackLive do
     {:noreply, assign(socket, info: nil)}
   end
 
+  def handle_event(%{"event" => "clear_info"}, socket) do
+    {:noreply, assign(socket, info: nil)}
+  end
+
 end
 
