@@ -109,6 +109,13 @@ defmodule PR.SonosHouseholds do
     Repo.delete(group)
   end
 
+  def clear_groups do
+    case Repo.delete_all(Group) do
+      {_, nil} -> {:ok}
+      _ -> {:error, "Not deleted"}
+    end
+  end
+
   def change_group(%Group{} = group) do
     Group.changeset(group, %{})
   end

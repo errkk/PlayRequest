@@ -45,6 +45,7 @@ defmodule PRWeb.Router do
       get "/", ServiceSetupController, :index
       post "/save-households", ServiceSetupController, :save_households
       post "/save-groups", ServiceSetupController, :save_groups
+      delete "/clear-groups", ServiceSetupController, :clear_groups
       put "/household/:id", ServiceSetupController, :toggle_household
       put "/group/:id", ServiceSetupController, :toggle_group
       post "/subscribe", ServiceSetupController, :subscribe_sonos_webhooks

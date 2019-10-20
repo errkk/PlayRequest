@@ -77,6 +77,14 @@
             </div>
           <% end %>
         <% end %>
+        <%= if @has_active_households and @has_groups do %>
+          <p>
+            <%= link "Clear groups",
+                to: Routes.service_setup_path(@conn, :clear_groups),
+                method: :delete,
+                class: "button" %>
+          </p>
+        <% end %>
       </li>
       <li>
         <h3>
