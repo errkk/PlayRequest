@@ -20,11 +20,18 @@ defmodule PRWeb.HistoryController do
   defp group_by_hour(items) do
     items
     |> Enum.group_by(fn
-      %{played_at: time} -> Timex.format!(time, "{h24}:00")
+      %{played_at: dt} ->
+        dt
+        |> Timex.Timezone.convert(tz())
+        |> Timex.format!("{h24}:00")
     end)
   end
 
   defp get_user(%Plug.Conn{assigns: %{current_user: %User{} = user}}), do: user
   defp get_user(_), do: nil
+
+  defp tz do
+    Application.get_env(:pr, :timezone)
+  end
 end
 

@@ -4,7 +4,11 @@ defmodule PRWeb.HistoryView do
 
   def time(dt) do
     dt
-    |> NaiveDateTime.to_time()
+    |> Timex.Timezone.convert(tz())
+    |> Timex.format!("{h24}:{m}")
   end
 
+  defp tz do
+    Application.get_env(:pr, :timezone)
+  end
 end
