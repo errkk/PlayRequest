@@ -30,21 +30,3 @@ if (searchInput) {
     }
   }, false);
 }
-
-window.addEventListener("keyup", evt => {
-  if (evt.key === "Escape") {
-    liveSocket.channel.push({
-      event: "clear_info"
-    });
-  }
-}, false);
-
-function getChannel() {
-  return Object.values(liveSocket.views).filter(v => v.view === 'PRWeb.PlaybackLive')[0].channel;
-}
-window.clearInfo = () => {
-getChannel().push("event", {event: "clear_info"});
-}
-
-window.getChannel = getChannel;
-window.ls = liveSocket;
