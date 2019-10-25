@@ -13,7 +13,8 @@ import Config
 config :pr,
   namespace: PR,
   ecto_repos: [PR.Repo],
-  playlist_name: "PlayRequest"
+  playlist_name: "PlayRequest",
+  timezone: "Europe/London"
 
 config :pr_web,
   namespace: PRWeb,

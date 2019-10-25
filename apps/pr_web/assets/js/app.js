@@ -19,3 +19,14 @@ import LiveSocket from "phoenix_live_view"
 
 let liveSocket = new LiveSocket("/live");
 liveSocket.connect();
+
+const searchInput = document.getElementById("search");
+
+if (searchInput) {
+  window.addEventListener("keyup", (evt) => {
+    if (evt.key === "/") {
+      evt.preventDefault();
+      searchInput.focus();
+    }
+  }, false);
+}
