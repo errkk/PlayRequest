@@ -137,13 +137,20 @@ defmodule PR.Queue do
   def set_current(_) do
     Logger.info("Nothing playing, clearing playing_since")
 
-    Track
-    |> query_is_playing()
-    |> Repo.update_all(set: [
-      playing_since: nil,
-      played_at: dynamic([i], datetime_add(i.playing_since, i.duration, "millisecond"))
-    ])
-    {:ok}
+    case Track
+      |> query_is_playing()
+      |> query_has_been_playing()
+      |> Repo.update_all(set: [
+        playing_since: nil,
+        played_at: dynamic([i], datetime_add(i.playing_since, i.duration, "millisecond"))
+      ]) do
+      {0, nil} ->
+        Logger.info("Set current, nothing updated")
+        {:ok}
+      {_, nil} ->
+        Logger.info("Set current, something updated")
+        {:ok}
+    end
   end
 
 
@@ -183,6 +190,12 @@ defmodule PR.Queue do
   defp query_is_playing(query) do
     query
     |> where([t], not is_nil(t.playing_since))
+  end
+
+  @spec query_has_been_playing(Ecto.Queryable.t()) :: Ecto.Queryable.t()
+  defp query_has_been_playing(query) do
+    query
+    |> where([t], t.playing_since < ago(10, "second"))
   end
 
   @spec query_unplayed(Ecto.Queryable.t()) :: Ecto.Queryable.t()
