@@ -90,6 +90,22 @@ defmodule PR.QueueTest do
       assert Track |> Repo.get(previous_track.id) |> Map.get(:playing_since) |> is_nil()
     end
 
+    test "nothing is playing but it might be lets give it 10 seconds" do
+      previous_track = insert(:track, spotify_id: "herp", playing_since: DateTime.utc_now(), duration: 10_000)
+      assert {:ok} = Queue.set_current(%{})
+      refute Queue.get_playing() |> is_nil()
+    end
+
+    test "nothing is playing but it might be lets give it 10 seconds its had 10 seconds" do
+      then =
+        DateTime.utc_now()
+        |> Timex.shift(minutes: -1)
+
+      previous_track = insert(:track, spotify_id: "herp", playing_since: then, duration: 10_000)
+      assert {:ok} = Queue.set_current(%{})
+      assert Queue.get_playing() |> is_nil()
+    end
+
     test "already played" do
       played_track = insert(:track, spotify_id: "herp", played_at: ~N[2019-01-01 00:00:00])
       assert {:ok} = Queue.set_current(%SonosItem{spotify_id: "herp"})
