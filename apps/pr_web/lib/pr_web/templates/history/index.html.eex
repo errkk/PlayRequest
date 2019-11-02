@@ -1,8 +1,6 @@
 <div class="container">
-  <div class="col--header--left">
-    <h2>Today</h2>
-  </div>
   <div class="col--left">
+    <h2>Today</h2>
     <%= for {hour, tracks} <- @items do %>
       <h3><%= hour %></h3>
       <%= for track <- tracks do %>

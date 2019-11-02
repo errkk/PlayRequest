@@ -1,12 +1,12 @@
 <div class="container">
-  <div class="col--header--left">
-    <h2>Search</h2>
-  </div>
   <div class="col--search">
-    <form phx-submit="search" class="<%= if @loading, do: "loading" %>">
-      <input id="search" placeholder="Search for a track" autocomplete="off" type="text" name="q" value="<%= @q %>" <%= if @loading, do: "readonly" %>/>
-    </form>
-    <p phx-click="clear_info" class="alert alert-info <%= if assigns[:info], do: "alert--entrance" %>" role="alert"><%= if assigns[:info], do: @info %></p>
+    <div class="search <%= unless length(@result) > 0, do: "search--sticky" %>">
+    <h2>Search</h2>
+      <form phx-submit="search" class="<%= if @loading, do: "loading" %>">
+        <input id="search" placeholder="Search for a track" autocomplete="off" type="text" name="q" value="<%= @q %>" <%= if @loading, do: "readonly" %>/>
+      </form>
+      <p phx-click="clear_info" class="alert alert-info <%= if assigns[:info], do: "alert--entrance" %>" role="alert"><%= if assigns[:info], do: @info %></p>
+    </div>
 
     <%= unless @participated do %>
     <div class="welcome">
@@ -36,10 +36,8 @@
     </div>
   </div>
 
-  <div class="col--header--right">
-    <h2>Queue</h2>
-  </div>
   <div class="col--playlist">
+    <h2>Queue</h2>
     <div class="queue">
       <%= for track <- @playlist do %>
         <div class="track <%= wobble?(@recently_liked, track) %>">

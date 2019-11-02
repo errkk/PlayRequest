@@ -21,30 +21,24 @@ body {
   grid-template-rows: auto;
 
   grid-template-areas:
-    "left-header"
     "left"
-    "right-header"
     "right";
 
   @media (min-width: 800px) {
     grid-column-gap: 20px;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-areas:
-      "left-header left-header right-header right-header"
       "left left right right"
       "footer footer footer footer";
   }
 
   &.container--middle {
     grid-template-areas:
-      "left-header_ left-header right-header right-header_"
       "left_ main main right_";
     }
 }
 
 .container--header {
-  position: sticky;
-  top: 0;
   grid-row-gap: 10px;
 
   grid-template-areas:
@@ -78,11 +72,10 @@ body {
   text-align: right;
   padding: 20px 0;
 }
-.col--header--left {
-  grid-area: left-header;
-}
-.col--header--right {
-  grid-area: right-header;
+
+.search--sticky {
+  position: sticky;
+  top: 20px;
 }
 
 .nav {
