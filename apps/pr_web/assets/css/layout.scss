@@ -43,6 +43,8 @@ body {
 }
 
 .container--header {
+  position: sticky;
+  top: 0;
   grid-row-gap: 10px;
 
   grid-template-areas:

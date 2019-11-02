@@ -110,7 +110,7 @@ defmodule PRWeb.PlaybackLive do
 
   ## User events
 
-  def handle_event("queue", spotify_id, socket) do
+  def handle_event("queue", %{"value" => spotify_id}, socket) do
     send(self(), {:queue, spotify_id})
     {:noreply, assign(socket, participated: true)}
   end
@@ -120,7 +120,7 @@ defmodule PRWeb.PlaybackLive do
     {:noreply, assign(socket, q: q, result: [], loading: true)}
   end
 
-  def handle_event("like", track_id, socket) do
+  def handle_event("like", %{"value" => track_id}, socket) do
     send(self(), {:like, track_id})
     {:noreply, socket}
   end
