@@ -46,7 +46,7 @@ defmodule PRWeb.MixProject do
       {:pr, in_umbrella: true},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:phoenix_live_view, github: "phoenixframework/phoenix_live_view"},
+      {:phoenix_live_view, "~> 0.3.0"},
       {:ueberauth_google, "~> 0.8"},
       {:ex_machina, "~> 2.3", only: :test},
       {:timex, "~> 3.5"},
