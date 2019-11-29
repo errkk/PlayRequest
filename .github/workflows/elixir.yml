@@ -26,16 +26,59 @@ jobs:
           --health-retries 5
 
     steps:
+
     - uses: actions/checkout@v1
     - name: Install Dependencies
       run: |
         mix local.hex --force
         mix local.rebar --force
         mix deps.get
-    - name: Run Tests
-      run: mix test
+
+    #- name: Run Tests
+      #run: mix test
+      #env:
+        ## use postgres for the host here because we have specified a container for the job.
+        ## If we were running the job on the VM this would be localhost
+        #POSTGRES_HOST: postgres
+        #POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
+
+
+    - name: Install Node
+      run: |
+        apt update
+        apt install -y curl
+        curl -sL https://deb.nodesource.com/setup_8.x | bash -
+        apt install -y nodejs
+
+    - name: Build JS
+      #if: success() && github.ref == 'refs/heads/master'
+      run: |
+        cd ./apps/pr_web/assets
+        mkdir -p node_modules
+        npm install
+        chmod -R 775 node_modules
+        npm run-script deploy
+
+    - name: Build Elixir release
+      #if: success() && github.ref == 'refs/heads/master'
+      run: |
+        mix compile
+        mix phx.digest
+        mix release
       env:
-        # use postgres for the host here because we have specified a container for the job.
-        # If we were running the job on the VM this would be localhost
-        POSTGRES_HOST: postgres
-        POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
+        MIX_ENV: prod
+
+    #- name: Consolodate release files
+      ##if: success() && github.ref == 'refs/heads/master'
+      #run: |
+        #mkdir -p ./artifacts/elixir
+        #mkdir -p ./artifacts/elixir/pr/releases/0.0.1/priv
+        #cp -R _build/prod/rel/* ./artifacts/elixir
+        #cp -R ./priv/static ./artifacts/elixir/pr/releases/0.0.1/priv
+        #cp -R ./priv/repo ./artifacts/elixir/pr/releases/0.0.1/priv
+
+    - uses: actions/upload-artifact@v1
+      #if: success() && github.ref == 'refs/heads/master'
+      with:
+        name: Elixir Release
+        path: ./_build/prod
