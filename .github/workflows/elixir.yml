@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: elixir:1.9.1-slim
+      image: bitwalker/alpine-elixir:1.9.0
 
     services:
       postgres:
@@ -27,28 +27,27 @@ jobs:
 
     steps:
 
+    - name: Install APK packages
+      run: |
+        apk update
+        apk add --virtual build-dependencies build-base
+        apk add bash nodejs npm inotify-tools openssl
+
     - uses: actions/checkout@v1
+
     - name: Install Dependencies
       run: |
         mix local.hex --force
         mix local.rebar --force
         mix deps.get
 
-    #- name: Run Tests
-      #run: mix test
-      #env:
-        ## use postgres for the host here because we have specified a container for the job.
-        ## If we were running the job on the VM this would be localhost
-        #POSTGRES_HOST: postgres
-        #POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
-
-
-    - name: Install Node
-      run: |
-        apt update
-        apt install -y curl
-        curl -sL https://deb.nodesource.com/setup_8.x | bash -
-        apt install -y nodejs
+    - name: Run Tests
+      run: mix test
+      env:
+        # use postgres for the host here because we have specified a container for the job.
+        # If we were running the job on the VM this would be localhost
+        POSTGRES_HOST: postgres
+        POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
 
     - name: Build JS
       #if: success() && github.ref == 'refs/heads/master'
