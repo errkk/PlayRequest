@@ -68,17 +68,13 @@ jobs:
       env:
         MIX_ENV: prod
 
-    #- name: Consolodate release files
-      ##if: success() && github.ref == 'refs/heads/master'
-      #run: |
-        #mkdir -p ./artifacts/elixir
-        #mkdir -p ./artifacts/elixir/pr/releases/0.0.1/priv
-        #cp -R _build/prod/rel/* ./artifacts/elixir
-        #cp -R ./priv/static ./artifacts/elixir/pr/releases/0.0.1/priv
-        #cp -R ./priv/repo ./artifacts/elixir/pr/releases/0.0.1/priv
-
-    - uses: actions/upload-artifact@v1
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
       #if: success() && github.ref == 'refs/heads/master'
       with:
-        name: Elixir Release
-        path: ./_build/prod
+        name: errkk/playrequest/pr
+        username: ${{ secrets.PKG_USERNAME }}
+        password: ${{ secrets.PKG_TOKEN }}
+        registry: docker.pkg.github.com
+        dockerfile: Dockerfile.production
+        tag_names: true
