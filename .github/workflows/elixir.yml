@@ -50,7 +50,7 @@ jobs:
         POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
 
     - name: Build JS
-      #if: success() && github.ref == 'refs/heads/master'
+      if: success() && github.ref == 'refs/heads/master'
       run: |
         cd ./apps/pr_web/assets
         mkdir -p node_modules
@@ -59,7 +59,7 @@ jobs:
         npm run-script deploy
 
     - name: Build Elixir release
-      #if: success() && github.ref == 'refs/heads/master'
+      if: success() && github.ref == 'refs/heads/master'
       run: |
         mix compile
         mix phx.digest
@@ -69,7 +69,7 @@ jobs:
 
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@master
-      #if: success() && github.ref == 'refs/heads/master'
+      if: success() && github.ref == 'refs/heads/master'
       with:
         name: errkk/playrequest/pr
         username: ${{ secrets.PKG_USERNAME }}
