@@ -33,12 +33,61 @@ PR uses Google to authenticate users.
 You will need keys for this too
 
 # 🚀 Deployment
-This repo has stuff for deploying on Heroku using Elixir Releases and the Heroku Elixir buildpack.
 Environment variables are loaded in at run time from `rel/envvars.exs`
-Annoyingly because of the way the buildpack runs, the asset digest happens when the dyno starts (not at build time currently).
+The GitHub actions workflow for this repo will build an Elixir release and then slip it into an Alpine Docker image which it pushes to the package registry `docker.pkg.github.com`.
+
+# Heroku
+To install your own PR on Heroku, you can deploy the container.
+
+1. Create a Heroku app
+```sh
+heroku apps:create {app_name} --region=eu --stack=container --no-remote
+```
+
+2. Pull the image from GitHub
+
+```sh
+docker pull docker.pkg.github.com/errkk/playrequest/pr:master
+```
+
+3. Tag it to your Heroku app's registry
+```sh
+docker tag docker.pkg.github.com/errkk/playrequest/pr:build registry.heroku.com/{app_name}/web
+```
+
+4. You'll need to set the following env vars (see above for getting creds for Spotify and Sonos)
+```sh
+heroku config:set --app={app_name} HOSTNAME={app_name}.herokuapp.com
+heroku config:set --app={app_name} REDIRECT_URL_BASE=https://{app_name}.herokuapp.com
+heroku config:set --app={app_name} SPOTIFY_CLIENT_ID=
+heroku config:set --app={app_name} SPOTIFY_SECRET=
+heroku config:set --app={app_name} SONOS_KEY=
+heroku config:set --app={app_name} SONOS_SECRET=
+heroku config:set --app={app_name} GOOGLE_CLIENT_ID=
+heroku config:set --app={app_name} GOOGLE_CLIENT_SECRET=
+heroku config:set --app={app_name} ALLOWED_USER_DOMAINS=
+heroku config:set --app={app_name} POOL_SIZE=10
+```
+
+5. Make a database for the app
+```sh
+heroku addons:create postgresql
+```
+
+5.  Then release the image using the Heroku CLI
+```sh
+heroku container:release web -a {app_name}
+```
+
+6. Make sure to migrate the database (see below)
+
+7. Login to create the first user
+
+8. Using the database URL, connect to the database and set `trusted=TRUE` for your user.
+You can then access the setup page to obtain access tokens and setup webhooks etc.
 
 # 📝 Migrate
-
+There's a shell script in the container that will migrate the database
 ```sh
 heroku run "./migrate.sh"
 ```

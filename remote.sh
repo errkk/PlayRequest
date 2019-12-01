@@ -4,4 +4,3 @@
 # heroku ps:exec
 
 pr/bin/pr remote;
-
