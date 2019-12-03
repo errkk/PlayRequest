@@ -1,0 +1,26 @@
+name: Release
+
+on: deployment
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    env:
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      HEROKU_APP: ${{ secrets.HEROKU_APP }}
+
+    steps:
+    - name: Docker login
+      run: |
+        docker login username=_ password=$HEROKU_TOKEN registry.heroku.com
+        docker login username=_ password=$GITHUB_TOKEN docker.pkg.github.com
+
+    - name: Push tag to Heroku
+      run: |
+        docker pull docker.pkg.github.com/errkk/playrequest/pr:master
+        docker tag docker.pkg.github.com/errkk/playrequest/pr:master registry.heroku.com/$HEROKU_APP/web
+        docker push registry.heroku.com/$HEROKU_APP/web
+
+    - name: Release
+      run: heroku release:web -a $HEROKU_APP

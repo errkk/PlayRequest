@@ -27,53 +27,70 @@ jobs:
 
     steps:
 
-    - name: Install APK packages
-      run: |
-        apk update
-        apk add --virtual build-dependencies build-base
-        apk add bash nodejs npm inotify-tools openssl
+    #- name: Install APK packages
+      #run: |
+        #apk update
+        #apk add --virtual build-dependencies build-base
+        #apk add bash nodejs npm inotify-tools openssl
 
-    - uses: actions/checkout@v1
+    #- uses: actions/checkout@v1
 
-    - name: Install Dependencies
-      run: |
-        mix local.hex --force
-        mix local.rebar --force
-        mix deps.get
+    #- name: Install Dependencies
+      #run: |
+        #mix local.hex --force
+        #mix local.rebar --force
+        #mix deps.get
 
-    - name: Run Tests
-      run: mix test
-      env:
-        # use postgres for the host here because we have specified a container for the job.
-        # If we were running the job on the VM this would be localhost
-        POSTGRES_HOST: postgres
-        POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
+    #- name: Run Tests
+      #run: mix test
+      #env:
+        ## use postgres for the host here because we have specified a container for the job.
+        ## If we were running the job on the VM this would be localhost
+        #POSTGRES_HOST: postgres
+        #POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
 
-    - name: Build JS
-      if: success() && github.ref == 'refs/heads/master'
-      run: |
-        cd ./apps/pr_web/assets
-        mkdir -p node_modules
-        npm install
-        chmod -R 775 node_modules
-        npm run-script deploy
+    #- name: Build JS
+      #if: success() && github.ref == 'refs/heads/master'
+      #run: |
+        #cd ./apps/pr_web/assets
+        #mkdir -p node_modules
+        #npm install
+        #chmod -R 775 node_modules
+        #npm run-script deploy
 
-    - name: Build Elixir release
-      if: success() && github.ref == 'refs/heads/master'
-      run: |
-        mix compile
-        mix phx.digest
-        mix release
-      env:
-        MIX_ENV: prod
+    #- name: Build Elixir release
+      #if: success() && github.ref == 'refs/heads/master'
+      #run: |
+        #mix compile
+        #mix phx.digest
+        #mix release
+      #env:
+        #MIX_ENV: prod
 
-    - name: Publish to Registry
-      uses: elgohr/Publish-Docker-Github-Action@master
-      if: success() && github.ref == 'refs/heads/master'
+    #- name: Publish to Registry
+      #uses: elgohr/Publish-Docker-Github-Action@master
+      #if: success() && github.ref == 'refs/heads/master'
+      #with:
+        #name: errkk/playrequest/pr
+        #username: ${{ secrets.PKG_USERNAME }}
+        #password: ${{ secrets.PKG_TOKEN }}
+        #registry: docker.pkg.github.com
+        #dockerfile: Dockerfile.production
+        #tag_names: true
+
+    - name: Create deployment
+      uses: niklasmerz/github-deployment-action@master
+      #if: success() && github.ref == 'refs/heads/master'
       with:
-        name: errkk/playrequest/pr
-        username: ${{ secrets.PKG_USERNAME }}
-        password: ${{ secrets.PKG_TOKEN }}
-        registry: docker.pkg.github.com
-        dockerfile: Dockerfile.production
-        tag_names: true
+        args: -o errkk -r playrequest -c master -e production
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set deployment status
+      uses: niklasmerz/github-deployment-action@master
+      #if: success() && github.ref == 'refs/heads/master'
+      with:
+        args: -o errkk -r playrequest -s success -u https://$HEROKU_APP.herokuapp.com -f
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        HEROKU_APP: ${{ secrets.HEROKU_APP }}
