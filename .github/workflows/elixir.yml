@@ -117,7 +117,7 @@ jobs:
       uses: niklasmerz/github-deployment-action@master
       if: success()
       with:
-        args: -o errkk -r playrequest -s success -u https://$HEROKU_APP.herokuapp.com -f
+        args: -o errkk -r playrequest -s success -u https://$HEROKU_APP.herokuapp.com -f -e production
 
     - name: Set deployment status
       uses: niklasmerz/github-deployment-action@master
