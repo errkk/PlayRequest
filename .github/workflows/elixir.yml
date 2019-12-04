@@ -1,4 +1,4 @@
-name: Tests
+name: Test and Build
 
 on: push
 
@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: elixir:1.9.1-slim
+      image: bitwalker/alpine-elixir:1.9.0
 
     services:
       postgres:
@@ -26,12 +26,21 @@ jobs:
           --health-retries 5
 
     steps:
+
+    - name: Install APK packages
+      run: |
+        apk update
+        apk add --virtual build-dependencies build-base
+        apk add bash nodejs npm inotify-tools openssl
+
     - uses: actions/checkout@v1
+
     - name: Install Dependencies
       run: |
         mix local.hex --force
         mix local.rebar --force
         mix deps.get
+
     - name: Run Tests
       run: mix test
       env:
@@ -39,3 +48,40 @@ jobs:
         # If we were running the job on the VM this would be localhost
         POSTGRES_HOST: postgres
         POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
+
+    - name: Build JS
+      if: success() && github.ref == 'refs/heads/master'
+      run: |
+        cd ./apps/pr_web/assets
+        mkdir -p node_modules
+        npm install
+        chmod -R 775 node_modules
+        npm run-script deploy
+
+    - name: Build Elixir release
+      if: success() && github.ref == 'refs/heads/master'
+      run: |
+        mix compile
+        mix phx.digest
+        mix release
+      env:
+        MIX_ENV: prod
+
+    - name: Publish to Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
+      if: success() && github.ref == 'refs/heads/master'
+      with:
+        name: errkk/playrequest/pr
+        username: ${{ secrets.PKG_USERNAME }}
+        password: ${{ secrets.PKG_TOKEN }}
+        registry: docker.pkg.github.com
+        dockerfile: Dockerfile.production
+        tag_names: true
+
+    - name: Create deployment
+      uses: niklasmerz/github-deployment-action@master
+      if: success() && github.ref == 'refs/heads/master'
+      with:
+        args: -o errkk -r playrequest -c master -e production
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
