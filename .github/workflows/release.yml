@@ -16,12 +16,12 @@ jobs:
     - name: Pull image
       run: |
         docker login docker.pkg.github.com -u $GITHUB_ACTOR -p $GITHUB_TOKEN
-        docker pull docker.pkg.github.com/errkk/playrequest/pr:master
+        docker pull docker.pkg.github.com/errkk/playrequest/pr:latest
 
     - name: Tag and push image to Heroku
       run: |
         docker login registry.heroku.com -u _ -p $HEROKU_TOKEN
-        docker tag docker.pkg.github.com/errkk/playrequest/pr:master registry.heroku.com/$HEROKU_APP/web
+        docker tag docker.pkg.github.com/errkk/playrequest/pr:latest registry.heroku.com/$HEROKU_APP/web
         docker push registry.heroku.com/$HEROKU_APP/web
 
     - name: Release
