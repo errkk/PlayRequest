@@ -45,7 +45,6 @@ heroku apps:create {app_name} --region=eu --stack=container --no-remote
 ```
 
 2. Pull the image from GitHub
-
 ```sh
 docker pull docker.pkg.github.com/errkk/playrequest/pr:master
 ```
