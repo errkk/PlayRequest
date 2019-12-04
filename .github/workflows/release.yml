@@ -7,20 +7,36 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       HEROKU_APP: ${{ secrets.HEROKU_APP }}
+      HEROKU_TOKEN: ${{ secrets.HEROKU_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_ACTOR: ${{ github.actor }}
 
     steps:
-    - name: Docker login
+    - name: Pull image
       run: |
-        docker login username=_ password=$HEROKU_TOKEN registry.heroku.com
-        docker login username=_ password=$GITHUB_TOKEN docker.pkg.github.com
-
-    - name: Push tag to Heroku
-      run: |
+        docker login docker.pkg.github.com -u $GITHUB_ACTOR -p $GITHUB_TOKEN
         docker pull docker.pkg.github.com/errkk/playrequest/pr:master
+
+    - name: Tag and push image to Heroku
+      run: |
+        docker login registry.heroku.com -u _ -p $HEROKU_TOKEN
         docker tag docker.pkg.github.com/errkk/playrequest/pr:master registry.heroku.com/$HEROKU_APP/web
         docker push registry.heroku.com/$HEROKU_APP/web
 
     - name: Release
-      run: heroku release:web -a $HEROKU_APP
+      run: heroku container:release web -a $HEROKU_APP
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
+
+    - name: Set deployment status
+      uses: niklasmerz/github-deployment-action@master
+      if: success()
+      with:
+        args: -o errkk -r playrequest -s success -u https://$HEROKU_APP.herokuapp.com -f
+
+    - name: Set deployment status
+      uses: niklasmerz/github-deployment-action@master
+      if: failure()
+      with:
+        args: -o errkk -r playrequest -s failure
