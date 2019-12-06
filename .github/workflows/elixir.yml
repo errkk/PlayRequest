@@ -3,7 +3,7 @@ name: Test and Build
 on: push
 
 jobs:
-  test:
+  build:
 
     runs-on: ubuntu-latest
 
@@ -49,16 +49,8 @@ jobs:
         POSTGRES_HOST: postgres
         POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
 
-  build:
-    runs-on: ubuntu-latest
-    needs: test
-    if: success() && github.ref == 'refs/heads/master'
-
-    container:
-      image: bitwalker/alpine-elixir:1.9.0
-
-    steps:
     - name: Build JS
+      if: success() && github.ref == 'refs/heads/master'
       run: |
         cd ./apps/pr_web/assets
         mkdir -p node_modules
@@ -67,6 +59,7 @@ jobs:
         npm run-script deploy
 
     - name: Build Elixir release
+      if: success() && github.ref == 'refs/heads/master'
       run: |
         mix compile
         mix phx.digest
@@ -75,8 +68,8 @@ jobs:
         MIX_ENV: prod
 
     - name: Publish to Registry
+      if: success() && github.ref == 'refs/heads/master'
       uses: elgohr/Publish-Docker-Github-Action@master
-      if: success()
       with:
         name: errkk/playrequest/pr
         username: ${{ secrets.PKG_USERNAME }}
