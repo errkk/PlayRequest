@@ -42,6 +42,7 @@ defmodule PRWeb do
 
       import PRWeb.ErrorHelpers
       import PRWeb.Gettext
+      import PRWeb.SharedView
       alias PRWeb.Router.Helpers, as: Routes
     end
   end

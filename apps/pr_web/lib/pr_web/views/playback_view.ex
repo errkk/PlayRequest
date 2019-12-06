@@ -6,8 +6,6 @@ defmodule PRWeb.PlaybackView do
   alias PR.Queue.Track
   alias PR.Auth.User
 
-  import PRWeb.SharedView, only: [heart: 1]
-
   def playing?(%Track{playing_since: playing}, %PlaybackState{state: :playing}) when not is_nil(playing), do: true
   def playing?(_, _), do: false
 

@@ -1,6 +1,5 @@
 defmodule PRWeb.SharedView do
-  use PRWeb, :view
-
+  use Phoenix.HTML
   alias PR.Queue.Track
 
   def heart(points) when is_integer(points) and points > 0 do
@@ -12,5 +11,8 @@ defmodule PRWeb.SharedView do
   end
   def heart(_), do: ""
 
+  def installation_name do
+    Application.get_env(:pr, :installation_name)
+  end
 end
 
