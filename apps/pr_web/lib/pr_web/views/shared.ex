@@ -12,7 +12,7 @@ defmodule PRWeb.SharedView do
   def heart(_), do: ""
 
   def installation_name do
-    Application.get_env(:pr, :installation_name)
+    Application.get_env(:pr, :installation_name, "PlayRequest")
   end
 end
 
