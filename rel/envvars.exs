@@ -19,4 +19,4 @@ config :ueberauth, Ueberauth.Strategy.Google.OAuth,
 
 config :pr,
   allowed_user_domains: System.get_env("ALLOWED_USER_DOMAINS"),
-  installation_name: System.get_env("INSTALLATION_NAME", "PlayRequest")
+  installation_name: System.get_env("INSTALLATION_NAME")
