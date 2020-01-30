@@ -1,8 +1,14 @@
 defmodule PRWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :pr_web
 
-  socket "/live", PRWeb.LiveViewSocket,
-    websocket: [timeout: 45_000],
+  @session_options [
+    store: :cookie,
+    key: "_pr_web_key",
+    signing_salt: "ZG+jiBR2"
+  ]
+
+  socket "/live", Phoenix.LiveView.Socket,
+    websocket: [timeout: 45_000, connect_info: [session: @session_options]],
     longpoll: false
 
   # Serve at "/" the static files from "priv/static" directory.
@@ -37,10 +43,7 @@ defmodule PRWeb.Endpoint do
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
-  plug Plug.Session,
-    store: :cookie,
-    key: "_pr_web_key",
-    signing_salt: "ZG+jiBR2"
+  plug Plug.Session, @session_options
 
   plug PRWeb.Router
 end

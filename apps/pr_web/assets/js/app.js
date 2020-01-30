@@ -19,7 +19,8 @@ import {Socket} from "phoenix"
 // import socket from "./socket"
 import favicon from "./favicon"
 
-let liveSocket = new LiveSocket("/live", Socket);
+const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+const liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}});
 liveSocket.connect();
 
 const searchInput = document.getElementById("search");
