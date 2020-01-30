@@ -21,6 +21,8 @@
     <meta name="twitter:data2" content="<%= @now_playing.artist %>"/>
     <% end %>
 
+    <%= csrf_meta_tag() %>
+
     <link href="https://fonts.googleapis.com/css?family=Raleway:400,500,700|Source+Sans+Pro:400,600,700&display=swap" rel="stylesheet">
     <title><%= installation_name() %></title>
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
@@ -31,9 +33,7 @@
     <div class="content">
       <header class="container container--header">
         <div class="col--header">
-          <%= live_render(@conn, PRWeb.UserHeaderLive, session: %{
-            user_id: if(assigns[:current_user], do: @current_user.id)
-          }) %>
+          <%= LiveView.Helpers.live_render(@conn, PRWeb.UserHeaderLive) %>
         </div>
         <div class="col--logo">
           <%= live_render(@conn, PRWeb.LogoLive) %>
