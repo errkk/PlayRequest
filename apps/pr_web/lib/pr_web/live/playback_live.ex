@@ -34,7 +34,8 @@ defmodule PRWeb.PlaybackLive do
       info: nil,
       recently_liked: nil,
       participated: Queue.has_participated?(%User{id: user_id}),
-      playlist: Music.get_playlist(%User{id: user_id})
+      playlist: Music.get_playlist(%User{id: user_id}),
+      page_title: page_title(metadata)
     )
 
     {:ok, assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)}
@@ -56,7 +57,7 @@ defmodule PRWeb.PlaybackLive do
 
   # Metadata webhook. Player is playing something else now
   def handle_info({PlayState, %{} = metadata, :metadata}, socket) do
-    {:noreply, assign(socket, metadata: metadata)}
+    {:noreply, assign(socket, metadata: metadata, page_title: page_title(metadata))}
   end
 
   # Queue has changed either from addition or track has played
@@ -132,6 +133,9 @@ defmodule PRWeb.PlaybackLive do
   def handle_event(%{"event" => "clear_info"}, socket) do
     {:noreply, assign(socket, info: nil)}
   end
+
+  defp page_title(%{current_item: %{name: name}}), do: name
+  defp page_title(_), do: PRWeb.SharedView.installation_name()
 
 end
 
