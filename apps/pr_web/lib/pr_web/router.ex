@@ -26,7 +26,7 @@ defmodule PRWeb.Router do
 
   scope "/", PRWeb do
     pipe_through [:browser, :auth, :now_playing]
-    live "/", PlaybackLive, session: [:user_id]
+    live "/", PlaybackLive
     get "/history", HistoryController, :index
   end
 

@@ -15,7 +15,7 @@ defmodule PRWeb.PlaybackLive do
     PlaybackView.render("index.html", assigns)
   end
 
-  def mount(%{user_id: user_id}, socket) do
+  def mount(%{"user_id" => user_id}, socket) do
     if connected?(socket), do: PlayState.subscribe()
     if connected?(socket), do: Music.subscribe()
     Logger.info "Mounting a new live view"

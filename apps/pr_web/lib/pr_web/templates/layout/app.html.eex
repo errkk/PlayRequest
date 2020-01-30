@@ -33,7 +33,7 @@
     <div class="content">
       <header class="container container--header">
         <div class="col--header">
-          <%= LiveView.Helpers.live_render(@conn, PRWeb.UserHeaderLive) %>
+          <%= live_render(@conn, PRWeb.UserHeaderLive) %>
         </div>
         <div class="col--logo">
           <%= live_render(@conn, PRWeb.LogoLive) %>
