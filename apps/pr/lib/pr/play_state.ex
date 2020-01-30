@@ -36,6 +36,18 @@ defmodule PR.PlayState do
     end
   end
 
+  def debug_toggle_playing() do
+    case get(:play_state) do
+      %PlaybackState{state: :playing} ->
+        %PlaybackState{state: :paused}
+
+      %PlaybackState{state: :paused} ->
+        %PlaybackState{state: :playing}
+    end
+    |> update_state(:play_state)
+    |> broadcast(:play_state)
+  end
+
   defp update_state(data, key) do
     Agent.update __MODULE__, fn state ->
       Map.put(state, key, data)
