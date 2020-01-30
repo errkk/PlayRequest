@@ -24,9 +24,10 @@
     <link href="https://fonts.googleapis.com/css?family=Raleway:400,500,700|Source+Sans+Pro:400,600,700&display=swap" rel="stylesheet">
     <title><%= installation_name() %></title>
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
-    <link rel="shortcut icon" href="<%= Routes.static_path(@conn, "/images/favicon.png") %>"/>
+    <link rel="icon" href="<%= Routes.static_path(@conn, "/images/favicon.png") %>" id="favicon"/>
   </head>
   <body>
+    <%= live_render(@conn, PRWeb.FaviconLive, container: {:div, class: "canvas-container"}) %>
     <div class="content">
       <header class="container container--header">
         <div class="col--header">

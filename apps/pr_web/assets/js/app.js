@@ -10,13 +10,14 @@ import css from "../css/app.scss"
 // Import dependencies
 //
 import "phoenix_html"
+import LiveSocket from "phoenix_live_view"
+import {Socket} from "phoenix"
 
 // Import local files
 //
 // Local files can be imported directly using relative paths, for example:
 // import socket from "./socket"
-import LiveSocket from "phoenix_live_view"
-import {Socket} from "phoenix"
+import favicon from "./favicon"
 
 let liveSocket = new LiveSocket("/live", Socket);
 liveSocket.connect();
@@ -31,3 +32,5 @@ if (searchInput) {
     }
   }, false);
 }
+
+favicon();
