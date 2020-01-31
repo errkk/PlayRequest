@@ -134,7 +134,7 @@ defmodule PRWeb.PlaybackLive do
     {:noreply, assign(socket, info: nil)}
   end
 
-  defp page_title(%{current_item: %{name: name}}), do: name
+  defp page_title(%{current_item: %{name: name, artist: artist}}), do: "🎵 #{name} – #{artist}"
   defp page_title(_), do: PRWeb.SharedView.installation_name()
 
 end
