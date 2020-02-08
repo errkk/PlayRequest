@@ -13,6 +13,8 @@ import "phoenix_html"
 import LiveSocket from "phoenix_live_view"
 import {Socket} from "phoenix"
 
+import "./socket";
+
 // Import local files
 //
 // Local files can be imported directly using relative paths, for example:
