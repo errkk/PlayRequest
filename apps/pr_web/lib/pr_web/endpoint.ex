@@ -11,7 +11,7 @@ defmodule PRWeb.Endpoint do
     websocket: [timeout: 45_000, connect_info: [session: @session_options]],
     longpoll: false
 
-  socket "/socket", Phoenix.Socket,
+  socket "/socket", PRWeb.UserSocket,
     websocket: [timeout: 45_000, connect_info: [session: @session_options]],
     longpoll: false
 
