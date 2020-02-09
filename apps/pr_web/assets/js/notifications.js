@@ -1,15 +1,16 @@
 import {Socket} from "phoenix";
 
-const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
-const socket = new Socket("/socket", {params: {_csrf_token: csrfToken}});
+function connect() {
+  const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
+  const socket = new Socket("/socket", {params: {_csrf_token: csrfToken}});
 
-socket.connect();
+  socket.connect();
 
-// Now that you are connected, you can join channels with a topic:
-const channel = socket.channel("notifications:like", {})
-channel.join()
-  .receive("error", resp => { console.log("Unable to join notifications channel", resp) });
+  const channel = socket.channel("notifications:like", {})
 
+  channel.join().receive("error", resp => { console.log("Unable to join notifications channel", resp) });
+  channel.on("like", showNotification);
+}
 
 function showNotification({track: {artist, name, img}}) {
   const msgTitle = `😍 Sombody liked ${name}`;
@@ -34,8 +35,9 @@ function requestNotificationPermission() {
   Notification.requestPermission();
 }
 
-requestNotificationPermission();
 
-channel.on("like", showNotification);
 
-export default socket;
+export default function() {
+  requestNotificationPermission();
+  connect();
+};

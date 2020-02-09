@@ -13,13 +13,8 @@ import "phoenix_html"
 import LiveSocket from "phoenix_live_view"
 import {Socket} from "phoenix"
 
-import "./socket";
-
-// Import local files
-//
-// Local files can be imported directly using relative paths, for example:
-// import socket from "./socket"
 import favicon from "./favicon"
+import notifications from "./notifications";
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
 const liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}});
@@ -37,3 +32,4 @@ if (searchInput) {
 }
 
 favicon();
+notifications();
