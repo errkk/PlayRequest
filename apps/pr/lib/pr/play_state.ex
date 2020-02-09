@@ -55,7 +55,7 @@ defmodule PR.PlayState do
     data
   end
 
-  @spec broadcast(any(), :atom) :: no_return()
+  @spec broadcast(any(), atom()) :: no_return()
   defp broadcast(data, key) do
     Phoenix.PubSub.broadcast(PRWeb.PubSub, @topic, {__MODULE__, data, key})
     data
