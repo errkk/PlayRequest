@@ -140,7 +140,7 @@ defmodule PRWeb.PlaybackLive do
   defp page_title(%PlaybackState{state: :idle}), do: PRWeb.SharedView.installation_name()
   defp page_title(%PlaybackState{state: :playing}), do: :metadata |> PlayState.get() |> page_title()
   defp page_title(%{current_item: %SonosItem{name: name, artist: artist}}) do
-    case PlayState.get(:state) do
+    case PlayState.get(:play_state) do
       %PlaybackState{state: :playing} ->
         "🎵 #{name} – #{artist}"
       _ ->
