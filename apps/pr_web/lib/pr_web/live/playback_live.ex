@@ -4,6 +4,7 @@ defmodule PRWeb.PlaybackLive do
   use Phoenix.HTML
 
   alias PR.{Music, PlayState}
+  alias PR.Music.{SonosItem, PlaybackState}
   alias PR.Auth
   alias PR.Auth.User
   alias PR.Scoring
@@ -47,7 +48,7 @@ defmodule PRWeb.PlaybackLive do
 
   # Playback state update
   def handle_info({PlayState, %{} = play_state, :play_state}, socket) do
-    {:noreply, assign(socket, play_state: play_state)}
+    {:noreply, assign(socket, play_state: play_state, page_title: page_title(play_state))}
   end
 
   # Progress update (interpolated from timer)
@@ -134,7 +135,18 @@ defmodule PRWeb.PlaybackLive do
     {:noreply, assign(socket, info: nil)}
   end
 
-  defp page_title(%{current_item: %{name: name, artist: artist}}), do: "🎵 #{name} – #{artist}"
+  # This is all happening cos the @page_title is a single var and cant match playback_state and metadata in the template
+  defp page_title(%PlaybackState{state: :paused}), do: PRWeb.SharedView.installation_name()
+  defp page_title(%PlaybackState{state: :idle}), do: PRWeb.SharedView.installation_name()
+  defp page_title(%PlaybackState{state: :playing}), do: :metadata |> PlayState.get() |> page_title()
+  defp page_title(%{current_item: %SonosItem{name: name, artist: artist}}) do
+    case PlayState.get(:state) do
+      %PlaybackState{state: :playing} ->
+        "🎵 #{name} – #{artist}"
+      _ ->
+        PRWeb.SharedView.installation_name()
+    end
+  end
   defp page_title(_), do: PRWeb.SharedView.installation_name()
 
 end
