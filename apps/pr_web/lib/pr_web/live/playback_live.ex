@@ -8,6 +8,7 @@ defmodule PRWeb.PlaybackLive do
   alias PR.Auth
   alias PR.Auth.User
   alias PR.Scoring
+  alias PR.Scoring.Point
   alias PR.Queue.Track
   alias PR.Queue
   alias PRWeb.PlaybackView
@@ -68,7 +69,7 @@ defmodule PRWeb.PlaybackLive do
   end
 
   # Someone got a point. Was it me?
-  def handle_info({Music, %Track{name: name} = track, :point}, socket) do
+  def handle_info({Music, %Point{track: %Track{name: name} = track}, :point}, socket) do
     send(self(), {:get_playlist, nil})
     if PlaybackView.it_me?(track, socket) do
       {:noreply, assign(socket, info: "🙌 You've received a unit of appreciation for \"#{name}\"", recently_liked: track)}
