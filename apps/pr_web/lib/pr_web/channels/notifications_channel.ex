@@ -2,6 +2,7 @@ defmodule PRWeb.NotificationsChannel do
   use PRWeb, :channel
 
   alias PR.Music
+  alias PR.Scoring.Point
   alias PR.Queue.Track
 
   intercept ["like"]
@@ -17,10 +18,11 @@ defmodule PRWeb.NotificationsChannel do
   end
 
   # PubSub callbacks from Music subscription
-  def handle_info({Music, %Track{user_id: recipient_id} = track, :point},
+  def handle_info({Music, %Point{track: %Track{user_id: recipient_id} = track, user: user}, :point},
       %{assigns: %{user_id: s_uid}} = socket) when recipient_id == s_uid do
     track_data = Map.take(track, [:name, :artist, :img])
-    push(socket, "like", %{user_id: recipient_id, track: track_data})
+    user_data = Map.take(user, [:first_name, :last_name])
+    push(socket, "like", %{user_id: recipient_id, track: track_data, from: user_data})
     {:noreply, socket}
   end
   def handle_info({Music, _, _}, socket) do

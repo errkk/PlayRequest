@@ -43,13 +43,13 @@ defmodule PR.Scoring do
 
   @spec create_point(map()) :: {:ok, Point.t()} | {:error, Ecto.Changeset.t()}
   def create_point(attrs \\ %{}) do
-    case %Point{}
+    %Point{}
     |> Point.changeset(attrs)
-    |> Repo.insert() do
+    |> Repo.insert()
+    |> case do
       {:ok, point} = res ->
         point
-        |> Repo.preload(:track)
-        |> Map.get(:track)
+        |> Repo.preload([:track, :user])
         |> Music.broadcast(:point)
         res
       res -> res

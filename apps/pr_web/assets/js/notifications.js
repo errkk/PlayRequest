@@ -12,8 +12,8 @@ function connect() {
   channel.on("like", showNotification);
 }
 
-function showNotification({track: {artist, name, img}}) {
-  const msgTitle = `😍 Sombody liked ${name}`;
+function showNotification({track: {artist, name, img}, from: {first_name}}) {
+  const msgTitle = `😍 ${first_name} liked ${name}`;
   const options = {
     image: img,
     icon: img,
