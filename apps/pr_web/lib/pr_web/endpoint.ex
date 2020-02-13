@@ -7,12 +7,13 @@ defmodule PRWeb.Endpoint do
     signing_salt: "ZG+jiBR2"
   ]
 
-  socket "/live", Phoenix.LiveView.Socket,
-    websocket: [timeout: 45_000, connect_info: [session: @session_options]],
+  # Can replace this with Phoenix.LiveView.Socket when phx is 1.5
+  socket "/live", PR.LiveView.Socket,
+    websocket: [timeout: 45_000, connect_info: [session: @session_options], log: false],
     longpoll: false
 
   socket "/socket", PRWeb.UserSocket,
-    websocket: [timeout: 45_000, connect_info: [session: @session_options]],
+    websocket: [timeout: 45_000, connect_info: [session: @session_options], log: false],
     longpoll: false
 
   # Serve at "/" the static files from "priv/static" directory.
