@@ -8,6 +8,7 @@ defmodule PRWeb.UserHeaderLive do
   alias PR.Music
   alias PR.PlayState
   alias PR.Scoring
+  alias PR.Scoring.Point
   alias PR.Queue.Track
   alias PR.Queue
   alias PR.SonosAPI
@@ -23,22 +24,23 @@ defmodule PRWeb.UserHeaderLive do
     if connected?(socket), do: PlayState.subscribe()
     play_state = PlayState.get(:play_state)
 
-    socket = assign(
-      socket,
-      points: Scoring.count_points(%User{id: user_id}),
-      play_state: play_state,
-      num_unplayed: Queue.num_unplayed()
-    )
+    socket =
+      assign(
+        socket,
+        points: Scoring.count_points(%User{id: user_id}),
+        play_state: play_state,
+        num_unplayed: Queue.num_unplayed()
+      )
 
     {:ok, assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)}
   end
 
-
   def mount(_, socket) do
-    socket = assign(
-      socket,
-      points: 0
-    )
+    socket =
+      assign(
+        socket,
+        points: 0
+      )
 
     {:ok, socket}
   end
@@ -47,12 +49,16 @@ defmodule PRWeb.UserHeaderLive do
   # Subscription handlers
   #
 
-  def handle_info({Music, %Track{} = track, :point}, %{assigns: %{current_user: %User{id: user_id}}} = socket) do
+  def handle_info(
+        {Music, %Point{track: %Track{} = track}, :point},
+        %{assigns: %{current_user: %User{id: user_id}}} = socket
+      ) do
     if PlaybackView.it_me?(track, socket) do
-      {:noreply, assign(
-        socket,
-        points: Scoring.count_points(%User{id: user_id})
-        )}
+      {:noreply,
+       assign(
+         socket,
+         points: Scoring.count_points(%User{id: user_id})
+       )}
     else
       {:noreply, socket}
     end
@@ -83,6 +89,4 @@ defmodule PRWeb.UserHeaderLive do
     Music.load_playlist()
     {:noreply, socket}
   end
-
 end
-
