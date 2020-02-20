@@ -1,30 +1,43 @@
-const ICON_SIZE = 32;
+import { ICON_SIZE } from "./favicon";
 
-console.log("Hi im worker");
+const WHITE = "#ffffff";
+const CYAN = "#6efcf1";
+const PINK = "#fc267a";
 
-onmessage = async (evt) => {
+let y1 = ICON_SIZE;
+let y2 = ICON_SIZE;
+let y3 = ICON_SIZE;
+
+onmessage = (evt) => {
   const canvas = evt.data;
   const ctx = canvas.getContext("2d");
-  drawBar(ctx, 0, "#ffffff", 1, 0, ICON_SIZE, 1, ICON_SIZE / 4);
-  drawBar(ctx, 12, "#6efcf1", 1.5, 0, ICON_SIZE - 10, -1, 0);
-  drawBar(ctx, 24, "#fc267a", 1.25, 0, ICON_SIZE, 1, ICON_SIZE / 2);
 
-  function drawBar (ctx, x, color, rate, min, max, direction, delta) {
-    const y = Math.floor(delta);
+  function drawBar(ctx, x, y, color) {
     ctx.fillStyle = color;
     ctx.fillRect(x, y, 8, ICON_SIZE - y);
-    favicon.href = canvas.toDataURL("image/png");
-
-    window.requestAnimationFrame(() => {
-      ctx.clearRect(x, y, 8, ICON_SIZE - y);
-
-      if (1 || canvas.dataset.playback === "active") {
-        const nextDirection = delta > max ? -1 : delta < min ? 1 : direction;
-        const nextDelta = direction > 0 ? delta + rate : delta - rate;
-        drawBar(ctx, x, color, rate, min, max, nextDirection, nextDelta);
-      } else {
-        drawBar(ctx, x, color, rate, min, max, direction, delta);
-      }
-    });
   }
+
+  function drawFrame() {
+    ctx.clearRect(0, 0, ICON_SIZE, ICON_SIZE);
+
+    drawBar(ctx, 0, y1, WHITE);
+    drawBar(ctx, 12, y2, PINK);
+    drawBar(ctx, 24, y3, CYAN);
+
+    postMessage(canvas.transferToImageBitmap());
+  }
+
+  function incrementFrame() {
+    const time = new Date().getMilliseconds();
+    const step = time / 1000;
+    const rad = Math.PI * 2 * step;
+    y1 = Math.floor(Math.sin(rad - Math.PI / 1) * ICON_SIZE / 2) + (ICON_SIZE /2);
+    y2 = Math.floor(Math.sin(rad - Math.PI / 2) * ICON_SIZE / 2) + (ICON_SIZE /2);
+    y3 = Math.floor(Math.sin(rad - Math.PI / 3) * ICON_SIZE / 2) + (ICON_SIZE /2);
+
+    drawFrame();
+    setTimeout(incrementFrame, 200);
+  }
+
+  incrementFrame();
 };
