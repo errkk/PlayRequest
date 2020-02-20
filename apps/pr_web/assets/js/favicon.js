@@ -1,32 +1,23 @@
-const ICON_SIZE = 32;
+export const ICON_SIZE = 32;
 
 export default () => {
   const favicon = document.getElementById("favicon");
-  const canvas = document.getElementById("canvas");
+  const playState = document.getElementById("play_state");
+  const worker = new Worker('/js/worker.js');
+  const offcanvas = new OffscreenCanvas(ICON_SIZE, ICON_SIZE);
+  worker.postMessage(offcanvas, [offcanvas]);
 
-  if (favicon && canvas) {
-    const ctx = canvas.getContext("2d");
-    drawBar(ctx, 0, "#ffffff", 1, 0, ICON_SIZE, 1, ICON_SIZE / 4);
-    drawBar(ctx, 12, "#6efcf1", 1.5, 0, ICON_SIZE - 10, -1, 0);
-    drawBar(ctx, 24, "#fc267a", 1.25, 0, ICON_SIZE, 1, ICON_SIZE / 2);
-  }
+  const canvas = document.createElement('canvas');
+  canvas.width = ICON_SIZE;
+  canvas.height = ICON_SIZE;
+  const ctx = canvas.getContext('2d');
 
-  function drawBar (ctx, x, color, rate, min, max, direction, delta) {
-    const y = Math.floor(delta);
-    ctx.fillStyle = color;
-    ctx.fillRect(x, y, 8, ICON_SIZE - y);
-    favicon.href = canvas.toDataURL("image/png");
-
-    window.requestAnimationFrame(() => {
-      ctx.clearRect(x, y, 8, ICON_SIZE - y);
-
-      if (canvas.dataset.playback === "active") {
-        const nextDirection = delta > max ? -1 : delta < min ? 1 : direction;
-        const nextDelta = direction > 0 ? delta + rate : delta - rate;
-        drawBar(ctx, x, color, rate, min, max, nextDirection, nextDelta);
-      } else {
-        drawBar(ctx, x, color, rate, min, max, direction, delta);
-      }
-    });
+  worker.onmessage = ({data}) => {
+    if (!playState || playState.dataset.playback !== "active") {
+      return;
+    }
+    ctx.clearRect(0, 0, ICON_SIZE, ICON_SIZE);
+    ctx.drawImage(data, 0, 0);
+    favicon.href = canvas.toDataURL();
   }
 }

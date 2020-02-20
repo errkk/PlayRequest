@@ -7,6 +7,6 @@ defmodule PRWeb.FaviconView do
   def playback_canvas(_), do: canvas(:inactive)
 
   defp canvas(state) do
-    tag(:canvas, id: "canvas", width: "32px", height: "32px", data: [playback: state])
+    content_tag(:span, "", id: "play_state", data: [playback: state])
   end
 end
