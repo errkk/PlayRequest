@@ -6,20 +6,23 @@ input {
 
 input[type="text"] {
   display: block;
-  padding: 10px 5px;
+  padding: 10px 15px;
   width: 100%;
   box-sizing: border-box;
+  box-shadow: 1px 0 0 transparent;
 
   border: 1px solid rgba(255, 255, 255, 0.5);
   outline: none;
-  border-radius: 2px;
+  border-radius: 15px;
 
   color: inherit;
   font-family: inherit;
-  transition: border 200ms ease;
+  transition: background 200ms ease, box-shadow 200ms ease;
 
   &:focus {
-    border-color: #fff;
+    //border-color: #fff;
+    box-shadow: 1px 0 20px $shad;
+    background: $white;
   }
 
   .loading & {

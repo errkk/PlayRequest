@@ -1,15 +1,39 @@
+$headingFont: "Grota";
+$headingFontBlack: "GrotaBlack";
+$fontName: "GrotaSansRd";
+
+@font-face {
+  font-family: "#{$headingFont}Black";
+  src: url("/fonts/#{$fontName}-Black.woff") format("woff"), url("/fonts/#{$fontName}-Black.ttf")  format("truetype"); /* Safari, Android, iOS */
+  font-weight: bold;
+}
+@font-face {
+  font-family: $headingFont;
+  src: url("/fonts/#{$fontName}-SemiBold.woff") format("woff"), url("/fonts/#{$fontName}-SemiBold.ttf")  format("truetype"); /* Safari, Android, iOS */
+  font-weight: bold;
+}
+
+@font-face {
+  font-family: $headingFont;
+  src: url("/fonts/#{$fontName}-Light.woff") format("woff"), url("/fonts/#{$fontName}-Light.ttf")  format("truetype"); /* Safari, Android, iOS */
+  font-weight: normal;
+}
+
 body {
   line-height: 1.4;
+  color: $text;
 }
 
 h1, h2, h3, h4 {
-  font-family: 'Raleway', serif;
+  font-family: $headingFont, sans-serif;
   margin: 0;
   padding: 0;
   line-height: 1;
-  color: #66fcf1;
+  color: $blue;
+  letter-spacing: 0.05ex;
 }
 h1 {
+  font-family: $headingFontBlack, sans-serif;
   font-size: 50px;
   & + p {
     margin-top: 10px;
@@ -18,7 +42,6 @@ h1 {
 h2 {
   font-size: 35px;
   margin-bottom: 20px;
-  font-weight: 400;
   letter-spacing: 0.06ex;
 }
 h3 {
@@ -40,7 +63,7 @@ p {
 
 a {
   text-decoration: none;
-  color: #fff;
+  color: $text;
 }
 
 a.link,
@@ -50,7 +73,7 @@ a.link,
 
 a.link:hover,
 a:hover .link {
-  box-shadow: inset 0 -8px 0 0 darken($pink, 40);
+  box-shadow: inset 0 -8px 0 0 darken($blue, 40);
 }
 
 .button {
@@ -69,7 +92,7 @@ a:hover .link {
     outline: none;
   }
   &:hover {
-    border-color: #fff;
+    border-color: $white;
   }
 
   & + & {
@@ -87,14 +110,16 @@ a:hover .link {
   }
 }
 
-.logo-heading {
-}
 .logo {
   display: inline-block;
   width: 60px;
   height: auto;
   vertical-align: bottom;
   margin: 0 0 3px 0;
+  &-link {
+    color: $pink;
+    letter-spacing: 0.06ex;
+  }
 }
 
 .welcome {

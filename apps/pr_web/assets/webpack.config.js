@@ -42,6 +42,14 @@ module.exports = (env, options) => ({
             options: {}
           }
         ]
+      },
+      {
+          test: /\.(woff(2)?|ttf|eot|svg|otf)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+          loader: 'resolve-url-loader',
+          options: {
+              name: 'fonts/[name].[ext]',
+              publicPath: '../fonts'
+          }
       }
     ]
   },

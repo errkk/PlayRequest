@@ -6,13 +6,20 @@
 .track {
   position: relative;
   display: flex;
+  flex-wrap: wrap;
   margin: 10px 0 0;
   align-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
-  background: transparentize($white, 0.99);
-
+  border-radius: 15px;
+  overflow: hidden;
+  background: #aae4f8;
+  box-shadow: 1px 0 20px $shad;
+  color: $darkerBlue;
   animation: swing-in-top-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
+
+  .queue & {
+    background: $white;
+    color: $text;
+  }
 
   &:first-child {
     margin-top: 0;
@@ -47,7 +54,9 @@
     height: auto;
     display: block;
     margin-right: 20px;
-    border-radius: 2px;
+    border-radius: 100px;
+    margin: 10px 30px 10px 10px;
+
   }
 
   &__user {
@@ -99,7 +108,7 @@
 
     &__back {
       transform: rotateY(180deg) translate3d(0, 0, 0) scale(1);
-      background: $pink url(/images/heart.svg) 50% 50% no-repeat;
+      background: $blue url(/images/heart.svg) 50% 50% no-repeat;
       background-size: 70% 70%;
       z-index: 1;
     }
@@ -154,29 +163,22 @@
 }
 
 .progress {
-  position: absolute;
-  bottom: 0;
-  top: 0;
-  z-index: -1;
-  left: 80px;
-  right: 0;
   display: block;
-  border-top-right-radius: 2px;
-  border-bottom-right-radius: 2px;
-  overflow: hidden;
+  flex: 0 0 100%;
+  box-sizing: border-box;
+  padding: 10px 12px 12px;
 
   &__bar {
     position: absolute;
     height: 100%;
-    left: 0;
-    top: 0;
-    bottom: 0;
+    bottom: 12px;
+    height: 6px;
+    max-width: calc(100% - 24px);
     transition: width 900ms linear;
 
-    background: $darkerBlue;
+    background: $pink;
 
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
+    border-radius: 10px;
   }
 }
 
