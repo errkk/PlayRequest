@@ -68,12 +68,11 @@
     margin-right: 20px;
     border-radius: 100px;
     margin: 10px 30px 10px 10px;
-
   }
 
   &__user {
-    width: 30px;
-    height: 30px;
+    width: $avatarSize;
+    height: $avatarSize;
     transform-style: preserve-3d;
     transform: translate3d(0, 0, 0);
     transition: transform 400ms ease-in-out;
@@ -105,11 +104,11 @@
     &__back,
     &__img {
       position: absolute;
-      width: 30px;
-      height: 30px;
+      width: $avatarSize;
+      height: $avatarSize;
       display: block;
       border-radius: 40px;
-      border: 1px solid $darkerBlue;
+      border: 1px solid $white;
       left: 0;
       top: 0;
     }

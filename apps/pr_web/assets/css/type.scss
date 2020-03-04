@@ -130,5 +130,8 @@ a:hover .link {
 
   border-radius: 15px;
   background: #0a0d36;
-  box-shadow: 1px 0 20px $shad;
+
+  .shad {
+    box-shadow: 1px 0 20px $shad;
+  }
 }
