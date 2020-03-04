@@ -6,23 +6,40 @@ input {
 
 input[type="text"] {
   display: block;
-  padding: 10px 5px;
+  padding: 10px 15px;
   width: 100%;
   box-sizing: border-box;
+  box-shadow: 1px 0 0 transparent;
 
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 2px solid transparentize($white, 0.5);
   outline: none;
-  border-radius: 2px;
+  border-radius: 15px;
 
-  color: inherit;
+  color: $text;
   font-family: inherit;
-  transition: border 200ms ease;
+  transition: background 200ms ease, box-shadow 200ms ease;
+
+  &::placeholder {
+    transition: color 200ms ease;
+    color: transparentize($white, 0.5);
+  }
 
   &:focus {
-    border-color: #fff;
+    box-shadow: 1px 0 20px $shad;
+    background-color: $white;
+
+    &::placeholder {
+      color: transparentize($text, 0.5);
+    }
   }
 
   .loading & {
-    background: url("/images/loading.svg") 98% 0 no-repeat;
+    background-image: url("/images/loading.svg");
+    background-position: 98% 0;
+    background-repeat: no-repeat;
+  }
+
+  .active & {
+    background-color: $white;
   }
 }

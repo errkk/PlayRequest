@@ -7,15 +7,24 @@
 .alert {
   margin: 0;
   padding: 0;
-
-  &--entrance {
-    animation: swing-in-top-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
-  }
+  transition: box-shadow 300ms ease-in 300ms;
 }
+
 .alert:not(:empty) {
   grid-column: main;
+
+  padding: 20px 30px 20px;
+  margin-top: 30px;
+
+  color: $text;
+  border-radius: 15px;
+  background: $darkerBlue;
+
   background: $teal;
-  color: $darkerBlue;
-  padding: 10px 20px;
-  font-weight: 600;
+  box-shadow: 1px 0 0 rgba(0, 0, 0, 0);
+}
+
+.alert.alert--entrance:not(:empty) {
+  animation: bounce-in-top 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
+  box-shadow: 1px 0 20px $strongShad;
 }

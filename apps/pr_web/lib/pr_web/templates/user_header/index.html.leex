@@ -17,7 +17,7 @@
               to: Routes.auth_path(@socket, :delete),
               class: "link" %>
           <%= img_tag @current_user.image, class: "profile-image" %>
-          <%= heart(@points) %>
+          <%= heart(@points, "heart") %>
       </li>
     </ul>
   </nav>

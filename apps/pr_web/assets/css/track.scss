@@ -6,16 +6,53 @@
 .track {
   position: relative;
   display: flex;
+  flex-wrap: wrap;
   margin: 10px 0 0;
   align-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
-  background: transparentize($white, 0.99);
-
+  border-radius: 15px;
+  overflow: hidden;
+  background: $white;
+  box-shadow: 1px 0 20px $shad;
+  color: $text;
   animation: swing-in-top-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
+  transition: box-shadow 200ms ease;
+
+  h3 {
+    color: $blue;
+  }
+
+  a {
+    color: $blue;
+  }
+  a:hover .link {
+    box-shadow: inset 0 -8px 0 0 transparentize($pink, 0.8);
+  }
+
+  &--light {
+    background: transparentize($white, 0.8);
+    box-shadow: none;
+    color: $white;
+
+    h3 {
+      color: $teal;
+    }
+  }
+
+  &--dark {
+    color: $white;
+    background: $darkerBlue;
+
+    h3 {
+      color: inherit;
+    }
+  }
 
   &:first-child {
     margin-top: 0;
+  }
+
+  &.playing {
+    box-shadow: 1px 0 30px rgba(0, 0, 0, 0.4);
   }
 
   &__details {
@@ -47,12 +84,13 @@
     height: auto;
     display: block;
     margin-right: 20px;
-    border-radius: 2px;
+    border-radius: 10px;
+    margin: 10px 30px 10px 10px;
   }
 
   &__user {
-    width: 30px;
-    height: 30px;
+    width: $avatarSize;
+    height: $avatarSize;
     transform-style: preserve-3d;
     transform: translate3d(0, 0, 0);
     transition: transform 400ms ease-in-out;
@@ -70,10 +108,13 @@
 
       &.has-voted {
         &::after {
-          content: "❤️";
+          content: "";
           position: absolute;
+          z-index: 1;
           display: block;
-          font-size: 8px;
+          background: url(/images/heart_pink.svg) 50% 50% no-repeat;
+          width: 16px;
+          height: 16px;
           bottom: 15px;
           right: 15px;
         }
@@ -84,11 +125,11 @@
     &__back,
     &__img {
       position: absolute;
-      width: 30px;
-      height: 30px;
+      width: $avatarSize;
+      height: $avatarSize;
       display: block;
       border-radius: 40px;
-      border: 1px solid $darkerBlue;
+      border: 1px solid $white;
       left: 0;
       top: 0;
     }
@@ -99,7 +140,7 @@
 
     &__back {
       transform: rotateY(180deg) translate3d(0, 0, 0) scale(1);
-      background: $pink url(/images/heart.svg) 50% 50% no-repeat;
+      background: $blue url(/images/heart.svg) 50% 50% no-repeat;
       background-size: 70% 70%;
       z-index: 1;
     }
@@ -154,36 +195,33 @@
 }
 
 .progress {
-  position: absolute;
-  bottom: 0;
-  top: 0;
-  z-index: -1;
-  left: 80px;
-  right: 0;
   display: block;
-  border-top-right-radius: 2px;
-  border-bottom-right-radius: 2px;
-  overflow: hidden;
+  flex: 0 0 100%;
+  box-sizing: border-box;
+  padding: 10px 12px 12px;
 
   &__bar {
     position: absolute;
     height: 100%;
-    left: 0;
-    top: 0;
-    bottom: 0;
+    bottom: 12px;
+    height: 6px;
+    max-width: calc(100% - 24px);
     transition: width 900ms linear;
 
-    background: $darkerBlue;
+    background: $pink;
 
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
+    border-radius: 10px;
   }
 }
 
 .heart {
-  font-size: 0.5em;
+  width: 10px;
+  height: 16px;
   padding-left: 5px;
   vertical-align: middle;
+  margin-bottom: 4px;
+  display: inline-block;
+
   &:first-of-type {
     padding-left: 10px;
   }

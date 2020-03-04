@@ -2,25 +2,25 @@
   <div class="col--search">
     <div class="search <%= unless length(@result) > 0, do: "search--sticky" %>">
     <h2>Search</h2>
-      <form phx-submit="search" class="<%= if @loading, do: "loading" %>">
+      <form phx-submit="search" class="<%= if @loading, do: "loading" %> <%= if length(@result) > 0, do: "active" %>">
         <input id="search" placeholder="Search for a track" autocomplete="off" type="text" name="q" value="<%= @q %>" <%= if @loading, do: "readonly" %>/>
       </form>
       <p phx-click="clear_info" class="alert alert-info <%= if assigns[:info], do: "alert--entrance" %>" role="alert"><%= if assigns[:info], do: @info %></p>
     </div>
 
     <%= unless @participated do %>
-    <div class="welcome">
-      <p class="intro">
+    <div class="box">
+      <h2>
         👋 Hi <%= @current_user.first_name %> thanks for coming along.
-      </p>
+      </h2>
       <p>
-        You can queue a track by searching up here 👆 and pressing the triangle ▸
+        You can queue a track by searching up here 👆 and pressing the triangle.
       </p>
     </div>
     <% end %>
     <div class="search-results">
       <%= for track <- @result do %>
-        <div class="track">
+        <div class="track track--light">
           <%= img_tag track.img, width: 100, class: "track__img" %>
           <div class="track__details">
             <h3 class="track__name">
@@ -40,7 +40,7 @@
     <h2>Queue</h2>
     <div class="queue">
       <%= for track <- @playlist do %>
-        <div class="track <%= wobble?(@recently_liked, track) %>">
+        <div class="track <%= wobble?(@recently_liked, track) %> <%= if playing?(track, @play_state), do: "playing" %>">
           <div class="track__img__container">
             <%= img_tag track.img, width: 100, class: "track__img" %>
           </div>
