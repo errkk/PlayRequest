@@ -26,7 +26,17 @@ defmodule PR.Queue.Track do
   @doc false
   def changeset(track, attrs) do
     track
-    |> cast(attrs, [:name, :artist, :img, :spotify_id, :duration, :played_at, :playing_since, :user_id])
+    |> cast(attrs, [
+      :name,
+      :artist,
+      :img,
+      :spotify_id,
+      :duration,
+      :played_at,
+      :playing_since,
+      :user_id
+    ])
     |> validate_required([:name, :artist, :img, :spotify_id, :duration, :user_id])
+    |> validate_exclusion(:artist, ["Oasis"])
   end
 end

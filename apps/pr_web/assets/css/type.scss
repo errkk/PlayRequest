@@ -4,7 +4,7 @@ $fontName: "GrotaSansRd";
 
 @font-face {
   font-family: "#{$headingFont}Black";
-  src: url("/fonts/#{$fontName}-Black.woff") format("woff"), url("/fonts/#{$fontName}-Black.ttf")  format("truetype"); /* Safari, Android, iOS */
+  src: url("/fonts/#{$fontName}-Bold.woff") format("woff"), url("/fonts/#{$fontName}-Bold.ttf")  format("truetype"); /* Safari, Android, iOS */
   font-weight: bold;
 }
 @font-face {
@@ -21,7 +21,7 @@ $fontName: "GrotaSansRd";
 
 body {
   line-height: 1.4;
-  color: $text;
+  color: $white;
 }
 
 h1, h2, h3, h4 {
@@ -29,7 +29,7 @@ h1, h2, h3, h4 {
   margin: 0;
   padding: 0;
   line-height: 1;
-  color: $blue;
+  color: $white;
   letter-spacing: 0.05ex;
 }
 h1 {
@@ -63,7 +63,7 @@ p {
 
 a {
   text-decoration: none;
-  color: $text;
+  color: $white;
 }
 
 a.link,
@@ -73,7 +73,7 @@ a.link,
 
 a.link:hover,
 a:hover .link {
-  box-shadow: inset 0 -8px 0 0 darken($blue, 40);
+  box-shadow: inset 0 -8px 0 0 $pink;
 }
 
 .button {
@@ -87,6 +87,7 @@ a:hover .link {
   color: inherit;
   cursor: pointer;
   letter-spacing: 0.08ex;
+  border-radius: 20px;
 
   &:focus {
     outline: none;
@@ -116,14 +117,18 @@ a:hover .link {
   height: auto;
   vertical-align: bottom;
   margin: 0 0 3px 0;
+
   &-link {
-    color: $pink;
+    color: $white;
     letter-spacing: 0.06ex;
   }
 }
 
-.welcome {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0 20px 10px 20px;
+.box {
+  padding: 40px 30px 30px;
   margin-top: 30px;
+
+  border-radius: 15px;
+  background: #0a0d36;
+  box-shadow: 1px 0 20px $shad;
 }
