@@ -50,7 +50,7 @@ jobs:
         POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
 
     - name: Build JS
-      if: success() && github.ref == 'refs/heads/master'
+      if: success() && github.ref == 'refs/heads/font'
       run: |
         cd ./apps/pr_web/assets
         mkdir -p node_modules
@@ -59,7 +59,7 @@ jobs:
         npm run-script deploy
 
     - name: Build Elixir release
-      if: success() && github.ref == 'refs/heads/master'
+      if: success() && github.ref == 'refs/heads/font'
       run: |
         mix compile
         mix phx.digest
@@ -68,7 +68,7 @@ jobs:
         MIX_ENV: prod
 
     - name: Publish to Registry
-      if: success() && github.ref == 'refs/heads/master'
+      if: success() && github.ref == 'refs/heads/font'
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
         name: errkk/playrequest/pr
@@ -89,7 +89,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/font'
 
     env:
       HEROKU_APP: ${{ secrets.HEROKU_APP }}

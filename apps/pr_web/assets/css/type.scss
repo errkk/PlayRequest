@@ -125,7 +125,7 @@ a:hover .link {
 }
 
 .box {
-  padding: 40px 30px 30px;
+  padding: 40px 30px 20px;
   margin-top: 30px;
 
   border-radius: 15px;
@@ -133,5 +133,9 @@ a:hover .link {
 
   .shad {
     box-shadow: 1px 0 20px $shad;
+  }
+
+  h3 {
+    margin-top: 0;
   }
 }

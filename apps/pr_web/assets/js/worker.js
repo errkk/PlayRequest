@@ -1,7 +1,7 @@
 import { ICON_SIZE } from "./favicon";
 
 const WHITE = "#ffffff";
-const CYAN = "#6efcf1";
+const CYAN = "#32fad7";
 const PINK = "#fc267a";
 
 let y1 = ICON_SIZE;

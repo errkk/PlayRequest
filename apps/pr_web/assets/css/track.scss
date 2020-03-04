@@ -11,7 +11,8 @@
   align-items: center;
   border-radius: 15px;
   overflow: hidden;
-  background: transparentize($white, 0.3);
+  background: $white;
+  box-shadow: 1px 0 20px $shad;
   color: $text;
   animation: swing-in-top-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
   transition: box-shadow 200ms ease;
@@ -20,12 +21,29 @@
     color: $blue;
   }
 
-  .queue & {
-    background: $white;
-    box-shadow: 1px 0 20px $shad;
+  a {
+    color: $blue;
+  }
+  a:hover .link {
+    box-shadow: inset 0 -8px 0 0 transparentize($pink, 0.8);
+  }
+
+  &--light {
+    background: transparentize($white, 0.8);
+    box-shadow: none;
+    color: $white;
 
     h3 {
-      color: $pink;
+      color: $teal;
+    }
+  }
+
+  &--dark {
+    color: $white;
+    background: $darkerBlue;
+
+    h3 {
+      color: inherit;
     }
   }
 
@@ -66,7 +84,7 @@
     height: auto;
     display: block;
     margin-right: 20px;
-    border-radius: 100px;
+    border-radius: 10px;
     margin: 10px 30px 10px 10px;
   }
 
@@ -90,10 +108,13 @@
 
       &.has-voted {
         &::after {
-          content: "❤️";
+          content: "";
           position: absolute;
+          z-index: 1;
           display: block;
-          font-size: 8px;
+          background: url(/images/heart_pink.svg) 50% 50% no-repeat;
+          width: 16px;
+          height: 16px;
           bottom: 15px;
           right: 15px;
         }
@@ -194,9 +215,13 @@
 }
 
 .heart {
-  font-size: 0.5em;
+  width: 10px;
+  height: 16px;
   padding-left: 5px;
   vertical-align: middle;
+  margin-bottom: 4px;
+  display: inline-block;
+
   &:first-of-type {
     padding-left: 10px;
   }
