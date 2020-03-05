@@ -28,6 +28,7 @@ defmodule PRWeb.Router do
     pipe_through [:browser, :auth, :now_playing]
     live "/", PlaybackLive
     get "/history", HistoryController, :index
+    post "/history/track-unplayed/:id", HistoryController, :mark_unplayed
   end
 
   scope "/auth", PRWeb do

@@ -111,6 +111,11 @@ defmodule PR.Queue do
     update_track(track, %{played_at: DateTime.utc_now()})
   end
 
+  @spec mark_unplayed(Track.t()) :: {:ok, Track.t()} | {:error, Ecto.Changeset.t()}
+  def mark_unplayed(%Track{} = track) do
+    update_track(track, %{played_at: nil})
+  end
+
   @spec delete_track(Track.t()) :: {:ok, Track.t()} | {:error, Ecto.Changeset.t()}
   def delete_track(%Track{} = track) do
     Repo.delete(track)

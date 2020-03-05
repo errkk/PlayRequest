@@ -82,7 +82,7 @@ a:hover .link {
   text-transform: uppercase;
   border: 1px solid rgba(255, 255, 255, 0.5);
   transition: border 200ms ease;
-  font-size: 12px;
+  font-size: 14px;
   background: none;
   color: inherit;
   cursor: pointer;
@@ -108,6 +108,17 @@ a:hover .link {
     background: url("/images/loading.svg") no-repeat 50% 50%;
     width: 80px;
     text-indent: 99999px;
+  }
+
+  &--primary {
+    background-color: $darkerBlue;
+    border: none;
+    transition: box-shadow 200ms ease-in;
+    box-shadow: 1px 0 0px $shad;
+
+    &:hover {
+      box-shadow: 1px 0 20px $shad;
+    }
   }
 }
 

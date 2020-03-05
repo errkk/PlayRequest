@@ -179,6 +179,15 @@
     }
   }
 
+  &__skipped-link {
+    opacity: 0;
+    transition: opacity 200ms ease;
+
+    .track:hover & {
+      opacity: 1;
+    }
+  }
+
   &__like {
     padding: 0;
     margin: 0;
