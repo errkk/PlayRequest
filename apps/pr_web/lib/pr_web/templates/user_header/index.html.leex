@@ -16,9 +16,14 @@
           <%= link "Logout #{@current_user.first_name}",
               to: Routes.auth_path(@socket, :delete),
               class: "link" %>
-          <%= img_tag @current_user.image, class: "profile-image" %>
-          <%= heart(@points, "heart") %>
       </li>
     </ul>
+
+    <div class="user">
+      <%= img_tag @current_user.image, class: "profile-image" %>
+      <span class="user__hearts">
+        <%= heart(@points) %>
+      </span>
+    </div>
   </nav>
 <% end %>
