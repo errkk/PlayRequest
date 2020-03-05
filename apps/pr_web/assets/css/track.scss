@@ -36,6 +36,10 @@
     h3 {
       color: $teal;
     }
+
+    &:hover {
+      box-shadow: 1px 0 20px $strongShad;
+    }
   }
 
   &--dark {
@@ -161,16 +165,17 @@
     background: $teal;
     border: none;
     background: url(/images/arrow.svg) 50% 50% no-repeat;
-    background-size: 60% 60%;
-    transition: background 200ms ease-out;
+    background-size: 40% 40%;
+    transition: transform 200ms ease-out;
     cursor: pointer;
+    transform: translate(0, 0);
 
     &:focus {
       outline: none;
     }
 
     &:hover {
-      background-position: 70% 50%;
+      transform: translate(5px, 0) scale(1.1);
     }
   }
 

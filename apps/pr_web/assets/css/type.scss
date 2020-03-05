@@ -21,7 +21,7 @@ $fontName: "GrotaSansRd";
 
 body {
   line-height: 1.4;
-  color: $white;
+  color: transparentize($white, 0.2);
 }
 
 h1, h2, h3, h4 {
@@ -116,11 +116,23 @@ a:hover .link {
   width: 60px;
   height: auto;
   vertical-align: bottom;
-  margin: 0 0 3px 0;
+  margin: 0 8px 4px 0;
 
   &-link {
     color: $white;
     letter-spacing: 0.06ex;
+
+  }
+}
+
+@media (max-width: 950px) {
+  .logo {
+    width: 40px;
+    margin: 0 6px 7px 0;
+
+    &-link {
+      font-size: 30px;
+    }
   }
 }
 
@@ -129,7 +141,7 @@ a:hover .link {
   margin-top: 30px;
 
   border-radius: 15px;
-  background: #0a0d36;
+  background: $darkerBlue;
 
   .shad {
     box-shadow: 1px 0 20px $shad;
