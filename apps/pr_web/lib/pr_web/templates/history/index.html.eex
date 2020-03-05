@@ -25,11 +25,11 @@
             </p>
             <p>
               @ <%= time(track.played_at) %>
-              <%= if @current_user.is_trusted, do: link("😫 It skipped",
-                       to: Routes.history_path(@conn, :mark_unplayed, track),
-                       method: :post,
-                       class: "track__skipped-link",
-                       data: [confirm: "Rrrly?"]) %>
+              <%= link("😫 It skipped",
+                    to: Routes.history_path(@conn, :mark_unplayed, track),
+                    method: :post,
+                    class: "track__skipped-link",
+                    data: [confirm: "Rrrly?"]) %>
             </p>
           </div>
             <div class="track__user__container">
