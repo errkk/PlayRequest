@@ -133,8 +133,11 @@ body {
   }
 
   &__hearts {
-    padding-right: 10px;
     vertical-align: middle;
+
+    .heart:first-child {
+      margin-right: 10px;
+    }
   }
 }
 
