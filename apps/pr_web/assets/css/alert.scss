@@ -1,7 +1,11 @@
 .alert-container {
-  display: grid;
-  grid-column-gap: 20px;
-  grid-template-columns: 1fr [main] 2fr [main-end] 1fr;
+  padding: 0 40px 0;
+
+  @media (min-width: 800px) {
+    display: grid;
+    grid-column-gap: 20px;
+    grid-template-columns: 1fr [main] 2fr [main-end] 1fr;
+  }
 }
 
 .alert {
@@ -22,6 +26,7 @@
 
   background: $teal;
   box-shadow: 1px 0 0 rgba(0, 0, 0, 0);
+
 }
 
 .alert.alert--entrance:not(:empty) {
