@@ -14,6 +14,7 @@ import LiveSocket from "phoenix_live_view"
 import {Socket} from "phoenix"
 
 import favicon from "./favicon"
+import PRSocket from "./socket";
 import notifications from "./notifications";
 import germs from "./germs";
 
@@ -32,6 +33,7 @@ if (searchInput) {
   }, false);
 }
 
+const socket = PRSocket.connect();
 favicon();
-notifications();
-germs();
+notifications(socket);
+germs(socket);
