@@ -14,7 +14,9 @@ import LiveSocket from "phoenix_live_view"
 import {Socket} from "phoenix"
 
 import favicon from "./favicon"
+import PRSocket from "./socket";
 import notifications from "./notifications";
+import germs from "./germs";
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
 const liveSocket = new LiveSocket("/live", Socket, {params: {_csrf_token: csrfToken}});
@@ -31,5 +33,7 @@ if (searchInput) {
   }, false);
 }
 
+const socket = PRSocket.connect();
 favicon();
-notifications();
+notifications(socket);
+germs(socket);

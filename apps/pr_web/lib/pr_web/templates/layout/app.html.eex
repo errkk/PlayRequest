@@ -30,7 +30,7 @@
   </head>
   <body>
     <%= live_render(@conn, PRWeb.FaviconLive, container: {:div, class: "canvas-container"}) %>
-    <div class="content">
+    <div class="content" id="content">
       <header class="container container--header">
         <div class="col--header">
           <%= live_render(@conn, PRWeb.UserHeaderLive) %>

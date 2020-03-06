@@ -2,6 +2,7 @@ defmodule PRWeb.UserSocket do
   use Phoenix.Socket, log: false
 
   channel "notifications:*", PRWeb.NotificationsChannel
+  channel "mouse:*", PRWeb.CoronaVirusChannel
 
   def connect(_params, socket, connect_info) do
     user_id = connect_info.session["user_id"]

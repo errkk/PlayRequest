@@ -1,13 +1,5 @@
-import {Socket} from "phoenix";
-
-function connect() {
-  const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
-  const socket = new Socket("/socket", {params: {_csrf_token: csrfToken}});
-
-  socket.connect();
-
+function connect(socket) {
   const channel = socket.channel("notifications:like", {})
-
   channel.join().receive("error", resp => { console.log("Unable to join notifications channel", resp) });
   channel.on("like", showNotification);
 }
@@ -37,7 +29,7 @@ function requestNotificationPermission() {
 
 
 
-export default function() {
+export default function(socket) {
   requestNotificationPermission();
-  connect();
+  connect(socket);
 };
