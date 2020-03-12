@@ -72,8 +72,8 @@ jobs:
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
         name: errkk/playrequest/pr
-        username: ${{ secrets.PKG_USERNAME }}
-        password: ${{ secrets.PKG_TOKEN }}
+        username: _
+        password: ${{ secrets.GITHUB_TOKEN }}
         registry: docker.pkg.github.com
         dockerfile: Dockerfile.production
         tag_names: true
@@ -113,15 +113,3 @@ jobs:
       run: heroku container:release web -a $HEROKU_APP
       env:
         HEROKU_API_KEY: ${{ secrets.HEROKU_TOKEN }}
-
-    - name: Set deployment status
-      uses: niklasmerz/github-deployment-action@master
-      if: success()
-      with:
-        args: -o errkk -r playrequest -s success -u https://$HEROKU_APP.herokuapp.com -f -e production
-
-    - name: Set deployment status
-      uses: niklasmerz/github-deployment-action@master
-      if: failure()
-      with:
-        args: -o errkk -r playrequest -s failure

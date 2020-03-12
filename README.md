@@ -46,7 +46,7 @@ heroku apps:create {app_name} --region=eu --stack=container --no-remote
 
 2. Pull the image from GitHub
 ```sh
-docker pull docker.pkg.github.com/errkk/playrequest/pr:master
+docker pull docker.pkg.github.com/errkk/playrequest/pr:latest
 ```
 
 3. Tag it to your Heroku app's registry
@@ -70,7 +70,7 @@ heroku config:set --app={app_name} POOL_SIZE=10
 
 5. Make a database for the app
 ```sh
-heroku addons:create postgresql
+heroku addons:create heroku-postgresql
 ```
 
 5.  Then release the image using the Heroku CLI
