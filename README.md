@@ -66,11 +66,13 @@ heroku config:set --app={app_name} GOOGLE_CLIENT_ID=
 heroku config:set --app={app_name} GOOGLE_CLIENT_SECRET=
 heroku config:set --app={app_name} ALLOWED_USER_DOMAINS=
 heroku config:set --app={app_name} POOL_SIZE=10
+heroku config:set --app={app_name} INSTALLATION_NAME=PlayRequest
 ```
 
 5. Make a database for the app
 ```sh
 heroku addons:create heroku-postgresql
+heroku labs:enable runtime-dyno-metadata
 ```
 
 5.  Then release the image using the Heroku CLI
