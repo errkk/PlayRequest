@@ -19,16 +19,20 @@ defmodule PRWeb.Router do
     plug PRWeb.Plug.AuthPlug
   end
 
+  pipeline :trusted do
+    plug PRWeb.Plug.TrustedPlug
+  end
+
   pipeline :now_playing do
     plug PRWeb.Plug.NowPlayingPlug
   end
 
-  #if Mix.env() == :dev do
-    #scope "/" do
-      #pipe_through :browser
-      #live_dashboard "/dashboard"
-    #end
-  #end
+  if Mix.env() == :dev do
+    scope "/" do
+      pipe_through [:browser, :auth, :trusted]
+      live_dashboard "/dashboard", metrics: PRWeb.Telemetry
+    end
+  end
 
   scope "/", PRWeb do
     pipe_through [:browser, :auth, :now_playing]
