@@ -13,6 +13,7 @@ defmodule PR.Application do
       PR.Ticker,
       PR.SonosAPI,
       PR.SpotifyAPI,
+      PR.Telemetry,
       worker(Task, [&PR.PlayState.get_initial_state/0], restart: :temporary),
     ]
 

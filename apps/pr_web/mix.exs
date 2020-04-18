@@ -37,7 +37,7 @@ defmodule PRWeb.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.4.9"},
+      {:phoenix, "~> 1.4.16"},
       {:phoenix_pubsub, "~> 1.1"},
       {:phoenix_ecto, "~> 4.0"},
       {:phoenix_html, "~> 2.11"},
@@ -46,10 +46,11 @@ defmodule PRWeb.MixProject do
       {:pr, in_umbrella: true},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:phoenix_live_view, "~> 0.8.0"},
+      {:phoenix_live_view, "~> 0.12.0"},
       {:ueberauth_google, "~> 0.8"},
       {:ex_machina, "~> 2.3", only: :test},
       {:timex, "~> 3.5"},
+      {:phoenix_live_dashboard, "~> 0.1"},
     ]
   end
 

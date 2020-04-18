@@ -4,11 +4,10 @@ defmodule PRWeb.Router do
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
-    plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug :fetch_flash
     plug :fetch_live_flash
+    plug :put_root_layout, {PRWeb.LayoutView, :root}
     plug PRWeb.Plug.ReleaseMetadataPlug
   end
 
@@ -20,8 +19,19 @@ defmodule PRWeb.Router do
     plug PRWeb.Plug.AuthPlug
   end
 
+  pipeline :trusted do
+    plug PRWeb.Plug.TrustedPlug
+  end
+
   pipeline :now_playing do
     plug PRWeb.Plug.NowPlayingPlug
+  end
+
+  if Mix.env() == :dev do
+    scope "/" do
+      pipe_through [:browser, :auth, :trusted]
+      live_dashboard "/dashboard", metrics: PR.Telemetry
+    end
   end
 
   scope "/", PRWeb do

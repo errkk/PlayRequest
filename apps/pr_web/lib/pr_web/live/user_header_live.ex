@@ -19,7 +19,7 @@ defmodule PRWeb.UserHeaderLive do
     UserHeaderView.render("index.html", assigns)
   end
 
-  def mount(%{"user_id" => user_id}, socket) when not is_nil(user_id) do
+  def mount(_params, %{"user_id" => user_id}, socket) when not is_nil(user_id) do
     if connected?(socket), do: Music.subscribe()
     if connected?(socket), do: PlayState.subscribe()
     play_state = PlayState.get(:play_state)
@@ -35,7 +35,7 @@ defmodule PRWeb.UserHeaderLive do
     {:ok, assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)}
   end
 
-  def mount(_, socket) do
+  def mount(_, _, socket) do
     socket =
       assign(
         socket,

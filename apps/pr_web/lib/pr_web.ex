@@ -23,7 +23,7 @@ defmodule PRWeb do
       import Plug.Conn
       import PRWeb.Gettext
       alias PRWeb.Router.Helpers, as: Routes
-      import Phoenix.LiveView.Helpers
+      import Phoenix.LiveView.Controller
     end
   end
 
@@ -53,6 +53,7 @@ defmodule PRWeb do
       import Plug.Conn
       import Phoenix.Controller
       import Phoenix.LiveView.Router
+      import Phoenix.LiveDashboard.Router
     end
   end
 

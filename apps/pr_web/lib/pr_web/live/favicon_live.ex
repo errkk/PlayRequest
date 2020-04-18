@@ -9,7 +9,7 @@ defmodule PRWeb.FaviconLive do
     FaviconView.render("index.html", assigns)
   end
 
-  def mount(_, socket) do
+  def mount(_params, _session_, socket) do
     if connected?(socket), do: PlayState.subscribe()
     play_state = PlayState.get(:play_state)
 

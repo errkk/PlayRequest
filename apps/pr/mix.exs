@@ -40,8 +40,10 @@ defmodule PR.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:jason, "~> 1.0"},
       {:oauth2, "~> 2.0"},
-      {:certifi, "~> 2.4 and >= 2.4.2", override: true},
+      {:certifi, "~> 2.5.1"},
       {:ex_machina, "~> 2.3", only: :test},
+      {:telemetry_poller, "~> 0.4"},
+      {:telemetry_metrics, "~> 0.4"},
     ]
   end
 

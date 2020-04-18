@@ -10,7 +10,7 @@
 @import "setup-list";
 @import "alert";
 @import "snow";
-@import "../../../../deps/phoenix_live_view/assets/css/live_view.css";
+@import "../node_modules/nprogress/nprogress.css";
 
 html {
   height: 100%;

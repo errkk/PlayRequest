@@ -8,10 +8,7 @@ defmodule PRWeb.Application do
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
-      # Start the endpoint when the application starts
-      PRWeb.Endpoint
-      # Starts a worker by calling: PRWeb.Worker.start_link(arg)
-      # {PRWeb.Worker, arg},
+      PRWeb.Endpoint,
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
