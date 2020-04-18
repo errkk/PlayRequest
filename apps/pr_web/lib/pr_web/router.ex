@@ -27,11 +27,9 @@ defmodule PRWeb.Router do
     plug PRWeb.Plug.NowPlayingPlug
   end
 
-  if Mix.env() == :dev do
-    scope "/" do
-      pipe_through [:browser, :auth, :trusted]
-      live_dashboard "/dashboard", metrics: PR.Telemetry
-    end
+  scope "/stats" do
+    pipe_through [:browser, :auth, :trusted]
+    live_dashboard "/dashboard", metrics: PR.Telemetry
   end
 
   scope "/", PRWeb do
