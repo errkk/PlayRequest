@@ -1,5 +1,6 @@
 defmodule PRWeb.Router do
   use PRWeb, :router
+  #import Phoenix.LiveDashboard.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -24,9 +25,16 @@ defmodule PRWeb.Router do
     plug PRWeb.Plug.NowPlayingPlug
   end
 
+  #if Mix.env() == :dev do
+    #scope "/" do
+      #pipe_through :browser
+      #live_dashboard "/dashboard"
+    #end
+  #end
+
   scope "/", PRWeb do
     pipe_through [:browser, :auth, :now_playing]
-    live "/", PlaybackLive
+    live "/", PlaybackLive, layout: {PRWeb.LayoutView, :app}
     get "/history", HistoryController, :index
     post "/history/track-unplayed/:id", HistoryController, :mark_unplayed
   end
