@@ -1,15 +1,13 @@
 defmodule PRWeb.Router do
   use PRWeb, :router
-  #import Phoenix.LiveDashboard.Router
 
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
-    plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug :fetch_flash
     plug :fetch_live_flash
+    plug :put_root_layout, {PRWeb.LayoutView, :root}
     plug PRWeb.Plug.ReleaseMetadataPlug
   end
 
@@ -34,7 +32,7 @@ defmodule PRWeb.Router do
 
   scope "/", PRWeb do
     pipe_through [:browser, :auth, :now_playing]
-    live "/", PlaybackLive, layout: {PRWeb.LayoutView, :app}
+    live "/", PlaybackLive
     get "/history", HistoryController, :index
     post "/history/track-unplayed/:id", HistoryController, :mark_unplayed
   end

@@ -1,6 +1,6 @@
 defmodule PRWeb.PlaybackLive do
   require Logger
-  use Phoenix.LiveView
+  use Phoenix.LiveView, layout: {PRWeb.LayoutView, "live.html"}
   use Phoenix.HTML
 
   alias PR.{Music, PlayState}
@@ -17,7 +17,7 @@ defmodule PRWeb.PlaybackLive do
     PlaybackView.render("index.html", assigns)
   end
 
-  def mount(%{"user_id" => user_id}, socket) do
+  def mount(_params, %{"user_id" => user_id}, socket) do
     if connected?(socket), do: PlayState.subscribe()
     if connected?(socket), do: Music.subscribe()
     Logger.info "Mounting a new live view"
