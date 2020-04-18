@@ -9,7 +9,6 @@ defmodule PRWeb.Application do
     # List all child processes to be supervised
     children = [
       PRWeb.Endpoint,
-      PRWeb.Telemetry
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

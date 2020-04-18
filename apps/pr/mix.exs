@@ -42,6 +42,8 @@ defmodule PR.MixProject do
       {:oauth2, "~> 2.0"},
       {:certifi, "~> 2.5.1"},
       {:ex_machina, "~> 2.3", only: :test},
+      {:telemetry_poller, "~> 0.4"},
+      {:telemetry_metrics, "~> 0.4"},
     ]
   end
 

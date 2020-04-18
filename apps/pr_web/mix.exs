@@ -51,8 +51,6 @@ defmodule PRWeb.MixProject do
       {:ex_machina, "~> 2.3", only: :test},
       {:timex, "~> 3.5"},
       {:phoenix_live_dashboard, "~> 0.1"},
-      {:telemetry_poller, "~> 0.4"},
-      {:telemetry_metrics, "~> 0.4"},
     ]
   end
 

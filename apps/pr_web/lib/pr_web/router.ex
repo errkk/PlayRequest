@@ -30,7 +30,7 @@ defmodule PRWeb.Router do
   if Mix.env() == :dev do
     scope "/" do
       pipe_through [:browser, :auth, :trusted]
-      live_dashboard "/dashboard", metrics: PRWeb.Telemetry
+      live_dashboard "/dashboard", metrics: PR.Telemetry
     end
   end
 

@@ -1,4 +1,4 @@
-defmodule PRWeb.Telemetry do
+defmodule PR.Telemetry do
   use Supervisor
   import Telemetry.Metrics
 
@@ -26,11 +26,11 @@ defmodule PRWeb.Telemetry do
       ),
 
       # Database Time Metrics
-      summary("pr_web.repo.query.total_time", unit: {:native, :millisecond}),
-      summary("pr_web.repo.query.decode_time", unit: {:native, :millisecond}),
-      summary("pr_web.repo.query.query_time", unit: {:native, :millisecond}),
-      summary("pr_web.repo.query.queue_time", unit: {:native, :millisecond}),
-      summary("pr_web.repo.query.idle_time", unit: {:native, :millisecond}),
+      summary("pr.repo.query.total_time", unit: {:native, :millisecond}),
+      summary("pr.repo.query.decode_time", unit: {:native, :millisecond}),
+      summary("pr.repo.query.query_time", unit: {:native, :millisecond}),
+      summary("pr.repo.query.queue_time", unit: {:native, :millisecond}),
+      summary("pr.repo.query.idle_time", unit: {:native, :millisecond}),
 
       # VM Metrics
       summary("vm.memory.total", unit: {:byte, :kilobyte}),
