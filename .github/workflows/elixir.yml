@@ -76,15 +76,7 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: docker.pkg.github.com
         dockerfile: Dockerfile.production
-        tag_names: true
-
-    - name: Create deployment
-      uses: niklasmerz/github-deployment-action@master
-      if: success()
-      with:
-        args: -o errkk -r playrequest -c master -e production
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        tags: latest
 
   release:
     runs-on: ubuntu-latest
