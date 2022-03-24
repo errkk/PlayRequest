@@ -23,7 +23,6 @@ defmodule PR.ExternalAuth.Auth do
     |> validate_required(@fields)
   end
 
-  @spec to_token(Auth.t()) :: AccessToken.t()
   def to_token(%Auth{} = auth) do
     auth
     |> Map.take([:access_token, :refresh_token])

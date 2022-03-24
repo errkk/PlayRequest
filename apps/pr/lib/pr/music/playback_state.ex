@@ -6,11 +6,10 @@ defmodule PR.Music.PlaybackState do
 
   alias PR.Music.PlaybackState
 
-  @spec new(map()) :: PlaybackState.t()
   def new(%{
-    position_millis: position,
-    playback_state: playback_state
-  }) do
+        position_millis: position,
+        playback_state: playback_state
+      }) do
     %__MODULE__{
       position: position,
       state: state(playback_state)
@@ -27,5 +26,4 @@ defmodule PR.Music.PlaybackState do
   defp state("PLAYBACK_STATE_PLAYING"), do: :playing
   defp state("PLAYBACK_STATE_IDLE"), do: :idle
   defp state(_), do: nil
-
 end

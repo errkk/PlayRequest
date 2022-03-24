@@ -9,7 +9,7 @@ defmodule PR.MixProject do
       config_path: "../../config/config.exs",
       deps_path: "../../deps",
       lockfile: "../../mix.lock",
-      elixir: "~> 1.5",
+      elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -36,14 +36,14 @@ defmodule PR.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:ecto_sql, "~> 3.1"},
+      {:ecto_sql, "~> 3.4"},
       {:postgrex, ">= 0.0.0"},
       {:jason, "~> 1.0"},
       {:oauth2, "~> 2.0"},
-      {:certifi, "~> 2.5.1"},
+      {:certifi, "~> 2.2"},
       {:ex_machina, "~> 2.3", only: :test},
       {:telemetry_poller, "~> 0.4"},
-      {:telemetry_metrics, "~> 0.4"},
+      {:telemetry_metrics, "~> 0.4"}
     ]
   end
 

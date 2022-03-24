@@ -15,17 +15,16 @@ defmodule PR.Scoring do
     Repo.all(Point)
   end
 
-  @spec list_top_scorers() :: [User.t()]
   def list_top_scorers do
     User
-    |> join(:right,
-      [u], t in assoc(u, :tracks),
+    |> join(:right, [u], t in assoc(u, :tracks),
       on: fragment("?::date", t.inserted_at) == ^Date.utc_today(),
-      as: :tracks)
-    |> join(:right,
-      [u, tracks: t], p in assoc(t, :points),
+      as: :tracks
+    )
+    |> join(:right, [u, tracks: t], p in assoc(t, :points),
       on: fragment("?::date", p.inserted_at) == ^Date.utc_today(),
-      as: :points)
+      as: :points
+    )
     |> group_by([u], u.id)
     |> having([u], not is_nil(u.id))
     |> select([u], %{u | points_received: count(1)})
@@ -33,7 +32,6 @@ defmodule PR.Scoring do
     |> Repo.all()
   end
 
-  @spec count_points(User.t()) :: integer()
   def count_points(%User{} = user) do
     Point
     |> query_for_user(user)
@@ -41,7 +39,6 @@ defmodule PR.Scoring do
     |> Repo.aggregate(:count, :id)
   end
 
-  @spec create_point(map()) :: {:ok, Point.t()} | {:error, Ecto.Changeset.t()}
   def create_point(attrs \\ %{}) do
     %Point{}
     |> Point.changeset(attrs)
@@ -51,16 +48,19 @@ defmodule PR.Scoring do
         point
         |> Repo.preload([:track, :user])
         |> Music.broadcast(:point)
+
         res
-      res -> res
+
+      res ->
+        res
     end
   end
 
-  @spec query_for_user(Ecto.Queryable.t(), User.t()) :: Ecto.Queryable.t()
   defp query_for_user(query, %User{id: user_id}) do
     query
     |> join(
-      :right, [p],
+      :right,
+      [p],
       t in Track,
       on: t.id == p.track_id and t.user_id == ^user_id,
       as: :points
