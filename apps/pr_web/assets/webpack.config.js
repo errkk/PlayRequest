@@ -1,15 +1,15 @@
 const path = require('path');
 const glob = require('glob');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const TerserPlugin = require("terser-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-module.exports = (env, options) => ({
+module.exports = (_env, _options) => ({
   optimization: {
     minimizer: [
-      new UglifyJsPlugin({ cache: true, parallel: true, sourceMap: false }),
-      new OptimizeCSSAssetsPlugin({})
+      new TerserPlugin(),
+      new CssMinimizerPlugin(),
     ]
   },
   entry: {
@@ -19,6 +19,12 @@ module.exports = (env, options) => ({
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, '../priv/static/js')
+  },
+  stats: {
+    colors: true,
+    modules: true,
+    reasons: true,
+    errorDetails: true
   },
   module: {
     rules: [
@@ -30,24 +36,14 @@ module.exports = (env, options) => ({
         }
       },
       {
-        test: /\.scss$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          {
-            loader: 'css-loader',
-            options: {}
-          },
-          {
-            loader: 'sass-loader',
-            options: {}
-          }
-        ]
+        test: /.s?css$/,
+        use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
       },
       {
           test: /\.(woff(2)?|ttf|eot|svg|otf)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
           loader: 'resolve-url-loader',
           options: {
-              name: 'fonts/[name].[ext]',
+              name: '/static/fonts/[name].[ext]',
               publicPath: '../fonts'
           }
       }
@@ -55,6 +51,6 @@ module.exports = (env, options) => ({
   },
   plugins: [
     new MiniCssExtractPlugin({ filename: '../css/app.css' }),
-    new CopyWebpackPlugin([{ from: 'static/', to: '../' }])
+    new CopyWebpackPlugin({patterns: [{ from: 'static/', to: '../priv/static' }]})
   ]
 });
