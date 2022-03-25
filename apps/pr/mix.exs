@@ -38,6 +38,7 @@ defmodule PR.MixProject do
     [
       {:ecto_sql, "~> 3.4"},
       {:postgrex, ">= 0.0.0"},
+      {:phoenix_pubsub, "~> 2.0"},
       {:jason, "~> 1.0"},
       {:oauth2, "~> 2.0"},
       {:certifi, "~> 2.2"},

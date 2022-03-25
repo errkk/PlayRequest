@@ -14,7 +14,8 @@ defmodule PR.Application do
       PR.SonosAPI,
       PR.SpotifyAPI,
       PR.Telemetry,
-      worker(Task, [&PR.PlayState.get_initial_state/0], restart: :temporary),
+      {Phoenix.PubSub, [name: PRWeb.PubSub, adapter: Phoenix.PubSub.PG2]},
+      worker(Task, [&PR.PlayState.get_initial_state/0], restart: :temporary)
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: PR.Supervisor)

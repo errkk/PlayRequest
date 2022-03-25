@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :pr,
   allowed_user_domains: "example.com"

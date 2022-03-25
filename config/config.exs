@@ -26,10 +26,10 @@ config :pr_web, PRWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "MBQFquRClfM/IuOPei8yy0dwxawJRGOnuEH4zbPsKx7+PPc3UWVYJqKufr76yDbe",
   render_errors: [view: PRWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: PRWeb.PubSub, adapter: Phoenix.PubSub.PG2],
+  pubsub_server: PRWeb.PubSub,
   live_view: [
-     signing_salt: "SECRET_SALT"
-   ]
+    signing_salt: "SECRET_SALT"
+  ]
 
 # Configures Elixir's Logger
 config :logger, :console,
@@ -50,4 +50,3 @@ import_config "#{Mix.env()}.exs"
 
 # Load env vars
 import_config "../rel/envvars.exs"
-

@@ -19,21 +19,24 @@ defmodule PR.PlayState do
     GroupManager.check_groups()
 
     try do
-      Logger.info "Fetching inital state"
+      Logger.info("Fetching inital state")
+
       SonosAPI.get_playback()
       |> process_play_state()
+
       SonosAPI.get_metadata()
       |> process_metadata()
     rescue
-      _ ->
-        Logger.error "PlayState could not fetch initial state"
+      err ->
+        IO.inspect(err)
+        Logger.error("PlayState could not fetch initial state")
     end
   end
 
   def get(key) do
-    Agent.get __MODULE__, fn state ->
+    Agent.get(__MODULE__, fn state ->
       Map.get(state, key)
-    end
+    end)
   end
 
   def debug_toggle_playing() do
@@ -49,9 +52,10 @@ defmodule PR.PlayState do
   end
 
   defp update_state(data, key) do
-    Agent.update __MODULE__, fn state ->
+    Agent.update(__MODULE__, fn state ->
       Map.put(state, key, data)
-    end
+    end)
+
     data
   end
 
@@ -88,10 +92,11 @@ defmodule PR.PlayState do
 
   defp watch_play_state(%{state: :idle} = d) do
     # Metadata tells us there's nothing up next
-    case Queue.has_unplayed do
+    case Queue.has_unplayed() do
       num when num > 0 ->
-        Logger.info "Player idle, there are more tracks. Bump and re-trigger."
+        Logger.info("Player idle, there are more tracks. Bump and re-trigger.")
         Music.bump_and_reload()
+
       _ ->
         nil
     end
@@ -124,24 +129,28 @@ defmodule PR.PlayState do
       {:started, playing_since} ->
         state
         |> Map.put(:playing_since, playing_since)
+
       {:already_started, playing_since} ->
         state
         |> Map.put(:playing_since, playing_since)
+
       _ ->
         state
     end
   end
 
   def tick do
-    with %{playing_since: %DateTime{} = playing_since, current_item: %SonosItem{duration: duration}} <- get(:metadata),
+    with %{
+           playing_since: %DateTime{} = playing_since,
+           current_item: %SonosItem{duration: duration}
+         } <- get(:metadata),
          diff <- DateTime.diff(DateTime.utc_now(), playing_since, :millisecond),
          true <- Kernel.>(duration, diff) do
-
-        diff
-        |> update_state(:progress)
-        |> broadcast(:progress)
-      else
-        _ -> nil
+      diff
+      |> update_state(:progress)
+      |> broadcast(:progress)
+    else
+      _ -> nil
     end
   end
 
@@ -153,8 +162,7 @@ defmodule PR.PlayState do
       |> Map.delete(:container)
     rescue
       _ ->
-      %{current_item: %{}, next_item: %{}}
+        %{current_item: %{}, next_item: %{}}
     end
   end
 end
-

@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :pr,
   playlist_name: "PlayRequestDev"
@@ -12,11 +12,11 @@ config :pr, PR.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
-config :pr, :sonos,
-  scopes: "playback-control-all"
+config :pr, :sonos, scopes: "playback-control-all"
 
 config :pr, :spotify,
-  scopes: ~w(user-modify-playback-state user-read-currently-playing user-read-playback-state playlist-modify-private playlist-read-private)
+  scopes:
+    ~w(user-modify-playback-state user-read-currently-playing user-read-playback-state playlist-modify-private playlist-read-private)
 
 config :oauth2, debug: true
 
