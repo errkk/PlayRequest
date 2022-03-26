@@ -50,7 +50,9 @@ defmodule PRWeb.MixProject do
       {:ueberauth_google, "~> 0.8"},
       {:ex_machina, "~> 2.7", only: :test},
       {:timex, "~> 3.5"},
-      {:phoenix_live_dashboard, "~> 0.3 or ~> 0.2.9"}
+      {:phoenix_live_dashboard, "~> 0.3 or ~> 0.2.9"},
+      {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
+      {:dart_sass, "~> 0.4", runtime: Mix.env() == :dev}
     ]
   end
 
@@ -59,6 +61,13 @@ defmodule PRWeb.MixProject do
   #
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
-    [test: ["ecto.create --quiet", "ecto.migrate", "test"]]
+    [
+      test: ["ecto.create --quiet", "ecto.migrate", "test"],
+      "assets.deploy": [
+        "esbuild default --minify",
+        "sass default --no-source-map --style=compressed",
+        "phx.digest"
+      ]
+    ]
   end
 end

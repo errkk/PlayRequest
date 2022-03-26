@@ -44,6 +44,21 @@ config :ueberauth, Ueberauth,
     google: {Ueberauth.Strategy.Google, [default_scope: "email profile"]}
   ]
 
+config :esbuild,
+  version: "0.12.18",
+  default: [
+    args: ~w(js/app.js js/worker.js --bundle --target=es2016 --outdir=../priv/static/assets),
+    cd: Path.expand("../apps/pr_web/assets", __DIR__),
+    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+  ]
+
+config :dart_sass,
+  version: "1.49.0",
+  default: [
+    args: ~w(css/app.scss ../priv/static/assets/app.css),
+    cd: Path.expand("../apps/pr_web/assets", __DIR__)
+  ]
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

@@ -3,7 +3,7 @@ export const ICON_SIZE = 32;
 export default () => {
   const favicon = document.getElementById("favicon");
   const playState = document.getElementById("play_state");
-  const worker = new Worker('/js/worker.js');
+  const worker = new Worker('/assets/worker.js');
   const offcanvas = new OffscreenCanvas(ICON_SIZE, ICON_SIZE);
   worker.postMessage(offcanvas, [offcanvas]);
 
