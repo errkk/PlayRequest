@@ -7,8 +7,7 @@ defmodule PRWeb.Endpoint do
     signing_salt: "ZG+jiBR2"
   ]
 
-  # Can replace this with Phoenix.LiveView.Socket when phx is 1.5
-  socket "/live", PR.LiveView.Socket,
+  socket "/live", Phoenix.LiveView.Socket,
     websocket: [timeout: 45_000, connect_info: [session: @session_options], log: false],
     longpoll: false
 
