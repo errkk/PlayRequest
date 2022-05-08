@@ -14,7 +14,7 @@ defmodule PR.Application do
       PR.SpotifyAPI,
       PR.Telemetry,
       PRWeb.Endpoint,
-      {Phoenix.PubSub, [name: PRWeb.PubSub, adapter: Phoenix.PubSub.PG2]},
+      {Phoenix.PubSub, [name: PR.PubSub, adapter: Phoenix.PubSub.PG2]},
       {PR.Worker.GetInitialState, [nil]}
     ]
 

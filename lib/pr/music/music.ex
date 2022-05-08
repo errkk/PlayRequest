@@ -17,7 +17,7 @@ defmodule PR.Music do
 
   @doc "Use in the live view to receive updates"
   def subscribe do
-    Phoenix.PubSub.subscribe(PRWeb.PubSub, @topic)
+    Phoenix.PubSub.subscribe(PR.PubSub, @topic)
   end
 
   @spec search(String.t()) :: {:ok, [SearchTrack.t()]} | {:error}
@@ -92,7 +92,7 @@ defmodule PR.Music do
 
   @spec broadcast(any(), :atom) :: no_return()
   def broadcast(data, key) do
-    Phoenix.PubSub.broadcast(PRWeb.PubSub, @topic, {__MODULE__, data, key})
+    Phoenix.PubSub.broadcast(PR.PubSub, @topic, {__MODULE__, data, key})
   end
 
   @spec find_playlist([map()]) :: {:ok, String.t()} | {:error, atom()}

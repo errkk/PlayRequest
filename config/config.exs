@@ -11,22 +11,16 @@ import Config
 
 # Configure Mix tasks and generators
 config :pr,
-  namespace: PR,
   ecto_repos: [PR.Repo],
   playlist_name: "PlayRequest",
   timezone: "Europe/London"
 
-config :pr_web,
-  namespace: PRWeb,
-  ecto_repos: [PR.Repo],
-  generators: [context_app: :pr]
-
 # Configures the endpoint
-config :pr_web, PRWeb.Endpoint,
+config :pr, PRWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "MBQFquRClfM/IuOPei8yy0dwxawJRGOnuEH4zbPsKx7+PPc3UWVYJqKufr76yDbe",
   render_errors: [view: PRWeb.ErrorView, accepts: ~w(html json)],
-  pubsub_server: PRWeb.PubSub,
+  pubsub_server: PR.PubSub,
   live_view: [
     signing_salt: "SECRET_SALT"
   ]

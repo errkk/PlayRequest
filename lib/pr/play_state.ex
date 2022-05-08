@@ -61,7 +61,7 @@ defmodule PR.PlayState do
 
   @spec broadcast(any(), atom()) :: no_return()
   defp broadcast(data, key) do
-    Phoenix.PubSub.broadcast(PRWeb.PubSub, @topic, {__MODULE__, data, key})
+    Phoenix.PubSub.broadcast(PR.PubSub, @topic, {__MODULE__, data, key})
     data
   end
 
@@ -69,7 +69,7 @@ defmodule PR.PlayState do
 
   @doc "Use in the live view to receive updates"
   def subscribe do
-    Phoenix.PubSub.subscribe(PRWeb.PubSub, @topic)
+    Phoenix.PubSub.subscribe(PR.PubSub, @topic)
   end
 
   @doc "Update the state from the webhook controller"
@@ -94,7 +94,7 @@ defmodule PR.PlayState do
     # Metadata tells us there's nothing up next
     case Queue.has_unplayed() do
       num when num > 0 ->
-        Logger.info("Player idle, there are more tracks. Bump and re-trigger.")
+        Logger.info("Player idle, there more tracks. Bump and re-trigger.")
         Music.bump_and_reload()
 
       _ ->

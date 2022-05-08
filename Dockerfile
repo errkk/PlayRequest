@@ -77,12 +77,6 @@ USER "${USER}"
 COPY --from=build --chown="${USER}":"${USER}"\
   /app/_build/prod/rel/pr ./
 
-# Copy util scripts
-COPY --chown="${USER}":"${USER}" ./scripts/start.sh ./start.sh
-COPY --chown="${USER}":"${USER}" ./scripts/migrate.sh ./migrate.sh
-COPY --chown="${USER}":"${USER}" ./scripts/remote.sh ./remote.sh
-
 # Runs from release bin
-# ENTRYPOINT ["bin/pr"]
-# CMD ["start"]
- CMD ["./start.sh"]
+ENTRYPOINT ["bin/pr"]
+CMD ["start"]

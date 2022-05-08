@@ -1,5 +1,5 @@
 defmodule PRWeb.Endpoint do
-  use Phoenix.Endpoint, otp_app: :pr_web
+  use Phoenix.Endpoint, otp_app: :pr
 
   @session_options [
     store: :cookie,
