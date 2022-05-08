@@ -8,7 +8,8 @@ processes = []
 
 [env]
   PORT = "8080"
-  REDIRECT_URL_BASE = "https://sonosnow.fly.dev"
+  REDIRECT_URL_BASE = "https://sonosnow.fly.dev/"
+  HOSTNAME = "sonosnow.fly.dev"
 
 [experimental]
   allowed_public_ports = []

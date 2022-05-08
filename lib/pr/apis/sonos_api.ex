@@ -58,6 +58,7 @@ defmodule PR.SonosAPI do
   def subscribe_playback do
     with %Group{group_id: group_id} <- group(),
          %{} <- post("/groups/#{group_id}/playback/subscription") do
+         Logger.info("Subscribed to playback webhook #{group_id}")
         {:ok, %{}}
     else
       err ->
@@ -68,6 +69,7 @@ defmodule PR.SonosAPI do
   def unsubscribe_playback do
     with %Group{group_id: group_id} <- group(),
          %{} <- delete("/groups/#{group_id}/playback/subscription") do
+         Logger.info("Un-ubscribed to playback webhook #{group_id}")
         {:ok, %{}}
     else
       err ->
@@ -82,6 +84,7 @@ defmodule PR.SonosAPI do
   def subscribe_metadata do
     with %Group{group_id: group_id} <- group(),
          %{} <- post("/groups/#{group_id}/playbackMetadata/subscription") do
+         Logger.info("Subscribed to metadata webhook #{group_id}")
         {:ok, %{}}
     else
       err ->
@@ -92,6 +95,7 @@ defmodule PR.SonosAPI do
   def unsubscribe_metadata do
     with %Group{group_id: group_id} <- group(),
          %{} <- delete("/groups/#{group_id}/playbackMetadata/subscription") do
+         Logger.info("Un-subscribed to metadata webhook #{group_id}")
         {:ok, %{}}
     else
       err ->
