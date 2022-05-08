@@ -1,44 +1,79 @@
-defmodule PR.Umbrella.MixProject do
+defmodule PR.MixProject do
   use Mix.Project
 
   def project do
     [
-      apps_path: "apps",
+      app: :pr,
+      version: "0.1.0",
+      elixir: "~> 1.12",
+      elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
+      aliases: aliases(),
       deps: deps(),
       releases: releases()
     ]
   end
 
-  # Dependencies can be Hex packages:
+  # Configuration for the OTP application.
   #
-  #   {:mydep, "~> 0.3.0"}
-  #
-  # Or git/path repositories:
-  #
-  #   {:mydep, git: "https://github.com/elixir-lang/mydep.git", tag: "0.1.0"}
-  #
-  # Type "mix help deps" for more examples and options.
-  #
-  # Dependencies listed here are available only for this project
-  # and cannot be accessed from applications inside the apps folder
+  # Type `mix help compile.app` for more information.
+  def application do
+    [
+      mod: {PR.Application, []},
+      extra_applications: [:logger, :runtime_tools]
+    ]
+  end
+
+  # Specifies which paths to compile per environment.
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
+
   defp deps do
-    []
+    [
+      {:ecto_sql, "~> 3.4"},
+      {:postgrex, ">= 0.0.0"},
+      {:phoenix_pubsub, "~> 2.0"},
+      {:jason, "~> 1.0"},
+      {:oauth2, "~> 2.0"},
+      {:certifi, "~> 2.2"},
+      {:telemetry_poller, "~> 0.4"},
+      {:telemetry_metrics, "~> 0.4"},
+      {:phoenix, "~> 1.6.0"},
+      {:phoenix_ecto, "~> 4.1"},
+      {:phoenix_html, "~> 3.0"},
+      {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:gettext, "~> 0.11"},
+      {:plug_cowboy, "~> 2.0"},
+      {:phoenix_live_view, "~> 0.17.0"},
+      {:ueberauth_google, "~> 0.8"},
+      {:ex_machina, "~> 2.7", only: :test},
+      {:timex, "~> 3.5"},
+      {:phoenix_live_dashboard, "~> 0.3 or ~> 0.2.9"},
+      {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
+      {:dart_sass, "~> 0.4", runtime: Mix.env() == :dev}
+    ]
   end
 
   defp releases() do
     [
-      pr: [
+      wsp: [
         version: "0.0.1",
         include_executables_for: [:unix],
-        steps: [:assemble, &copy_rel_files/1],
-        applications: [pr: :permanent, pr_web: :permanent]
+        applications: [wsp: :permanent]
       ]
     ]
   end
 
-  defp copy_rel_files(release) do
-    File.cp("rel/envvars.exs", Path.join(release.path, "envvars.exs"))
-    release
+  defp aliases do
+    [
+      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+      "ecto.reset": ["ecto.drop", "ecto.setup"],
+      test: ["ecto.create --quiet", "ecto.migrate", "test"],
+      "assets.deploy": [
+        "esbuild default --minify",
+        "sass default --no-source-map --style=compressed",
+        "phx.digest"
+      ]
+    ]
   end
 end
