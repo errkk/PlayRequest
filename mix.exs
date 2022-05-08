@@ -56,10 +56,10 @@ defmodule PR.MixProject do
 
   defp releases() do
     [
-      wsp: [
+      pr: [
         version: "0.0.1",
         include_executables_for: [:unix],
-        applications: [wsp: :permanent]
+        applications: [pr: :permanent]
       ]
     ]
   end

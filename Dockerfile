@@ -27,7 +27,7 @@ COPY priv priv
 COPY assets assets
 
 # Compile assets
-RUN mix assets.deploy
+# RUN mix assets.deploy
 
 # compile project
 COPY lib lib

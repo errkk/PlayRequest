@@ -90,7 +90,7 @@ defmodule PR.PlayState do
     match?(%PlaybackState{state: :idle}, get(:play_state))
   end
 
-  defp watch_play_state(%{state: :idle} = d) do
+  defp watch_play_state(%{state: :idle}) do
     # Metadata tells us there's nothing up next
     case Queue.has_unplayed() do
       num when num > 0 ->
