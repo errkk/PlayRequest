@@ -137,8 +137,11 @@ defmodule PR.SonosAPI do
           groups
           |> Enum.map(& fields_for_group(&1, household_id))
           |> Enum.count(& SonosHouseholds.insert_or_update_group(&1))
+        Logger.info("Groups saved")
         {:ok, total}
-      {:error, msg} -> {:error, msg}
+      {:error, msg} ->
+        Logger.error(msg)
+        {:error, msg}
       _ -> nil
     end
   end

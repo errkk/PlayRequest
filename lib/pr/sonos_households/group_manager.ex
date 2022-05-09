@@ -11,6 +11,7 @@ defmodule PR.SonosHouseholds.GroupManager do
          {:ok, expected_group_id, player_ids} <- get_active_group_id() do
       if groups
         |> Enum.map(& &1.id)
+        |> Enum.map(& IO.puts/1)
         |> Enum.member?(expected_group_id) do
         :ok
       else
