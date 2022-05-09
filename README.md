@@ -27,69 +27,58 @@ eg: `https://{YOUR PROXY HOST}/sonos/callback`
 
 ## 🎵 Spotify
 Go to [Spotify Developers](https://developer.spotify.com/documentation/web-api/) and create a web API integration
+Update: You now also have to add the Spotify users that will do OAuth on here, limted to 24 accounts while the app is in development mode.
 
 ## 🔐 Google Auth
 PR uses Google to authenticate users.
 You will need keys for this too
 
 # 🚀 Deployment
-Environment variables are loaded in at run time from `rel/envvars.exs`
-The GitHub actions workflow for this repo will build an Elixir release and then slip it into an Alpine Docker image which it pushes to the package registry `docker.pkg.github.com`.
 
-# Heroku
-To install your own PR on Heroku, you can deploy the container.
 
-1. Create a Heroku app
+1. Create a Fly app
 ```sh
-heroku apps:create {app_name} --region=eu --stack=container --no-remote
+fly launch
+```
+It will probably ask if you want a postgres container as well. You do.
+
+2. It might be useful to set the app name
+```sh
+export FLY_APP={app_name}
 ```
 
-2. Pull the image from GitHub
+3. Build and push the image
 ```sh
-docker pull docker.pkg.github.com/errkk/playrequest/pr:latest
-```
-
-3. Tag it to your Heroku app's registry
-```sh
-docker tag docker.pkg.github.com/errkk/playrequest/pr:build registry.heroku.com/{app_name}/web
+fly deploy --remote-only --app $FLY_APP
 ```
 
 4. You'll need to set the following env vars (see above for getting creds for Spotify and Sonos)
 ```sh
-heroku config:set --app={app_name} HOSTNAME={app_name}.herokuapp.com
-heroku config:set --app={app_name} REDIRECT_URL_BASE=https://{app_name}.herokuapp.com
-heroku config:set --app={app_name} SPOTIFY_CLIENT_ID=
-heroku config:set --app={app_name} SPOTIFY_SECRET=
-heroku config:set --app={app_name} SONOS_KEY=
-heroku config:set --app={app_name} SONOS_SECRET=
-heroku config:set --app={app_name} GOOGLE_CLIENT_ID=
-heroku config:set --app={app_name} GOOGLE_CLIENT_SECRET=
-heroku config:set --app={app_name} ALLOWED_USER_DOMAINS=
-heroku config:set --app={app_name} POOL_SIZE=10
-heroku config:set --app={app_name} INSTALLATION_NAME=PlayRequest
+echo """
+HOSTNAME={app_name}.fly.dev
+REDIRECT_URL_BASE=https://{app_name}.fly.dev
+SPOTIFY_CLIENT_ID=
+SPOTIFY_SECRET=
+SONOS_KEY=
+SONOS_SECRET=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+ALLOWED_USER_DOMAINS=
+POOL_SIZE=10
+INSTALLATION_NAME=PlayRequest
+""" | fly secrets import --app $APP_NAME
 ```
 
-5. Make a database for the app
+5. It probably won't work first time, so logs help
 ```sh
-heroku addons:create heroku-postgresql
-heroku labs:enable runtime-dyno-metadata
+fly logs  --app $FLY_APP
 ```
 
-5.  Then release the image using the Heroku CLI
-```sh
-heroku container:release web -a {app_name}
-```
-
-6. Make sure to migrate the database (see below)
-
-7. Login to create the first user
+6. Login to create the first user
 
 8. Using the database URL, connect to the database and set `trusted=TRUE` for your user.
 You can then access the setup page to obtain access tokens and setup webhooks etc.
-
-# 📝 Migrate
-There's a shell script in the container that will migrate the database
 ```sh
-heroku run "./migrate.sh"
+fly proxy 5433 --app ${FLY_APP}-db
 ```
-
+Don't forget the proxy port!

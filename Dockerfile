@@ -77,6 +77,7 @@ USER "${USER}"
 COPY --from=build --chown="${USER}":"${USER}"\
   /app/_build/prod/rel/pr ./
 
-# Runs from release bin
-ENTRYPOINT ["bin/pr"]
-CMD ["start"]
+COPY --chown="${USER}":"${USER}"\
+  scripts/start.sh ./start.sh
+
+CMD ["./start.sh"]

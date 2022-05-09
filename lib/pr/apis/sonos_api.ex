@@ -69,7 +69,7 @@ defmodule PR.SonosAPI do
   def unsubscribe_playback do
     with %Group{group_id: group_id} <- group(),
          %{} <- delete("/groups/#{group_id}/playback/subscription") do
-         Logger.info("Un-ubscribed to playback webhook #{group_id}")
+         Logger.info("Un-subscribed to playback webhook #{group_id}")
         {:ok, %{}}
     else
       err ->
@@ -87,6 +87,9 @@ defmodule PR.SonosAPI do
          Logger.info("Subscribed to metadata webhook #{group_id}")
         {:ok, %{}}
     else
+      {:error, message} ->
+         Logger.error("Cant subscribe to metadata #{message}")
+        {:error, message}
       err ->
         err
     end
