@@ -293,8 +293,8 @@ defmodule PR.Queue do
       t |
       has_pointed: not is_nil(gp.id),
       points_received: rp.points_received,
-      track_novelty: tn.track_novelty,
-      artist_novelty: an.artist_novelty,
+      track_novelty: coalesce(tn.track_novelty, 100),
+      artist_novelty: coalesce(an.artist_novelty, 100),
     })
 
   end

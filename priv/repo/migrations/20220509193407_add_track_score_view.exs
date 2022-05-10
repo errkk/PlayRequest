@@ -21,6 +21,7 @@ defmodule PR.Repo.Migrations.AddTrackScoreView do
           tracks t
         where
           t.inserted_at > now() - interval '3 week'
+          and t.played_at is not null
         order by
           recency desc
       )
