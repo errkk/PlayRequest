@@ -7,8 +7,7 @@ defmodule PR.Queue do
   import Ecto.Query, warn: false
   alias PR.Repo
 
-  alias PR.Queue
-  alias PR.Queue.{Track, TrackScore}
+  alias PR.Queue.{Track, TrackNovelty, ArtistNovelty}
   alias PR.Music.SonosItem
   alias PR.Auth.User
   alias PR.Scoring.Point
@@ -24,7 +23,7 @@ defmodule PR.Queue do
     |> query_given_points(user_id)
     |> query_received_points()
     |> query_played()
-    |> query_track_score()
+    |> query_novelty()
     |> select_user_facing_fields()
     |> order()
     |> preload(:user)
@@ -37,7 +36,7 @@ defmodule PR.Queue do
     |> query_unplayed()
     |> query_given_points(user_id)
     |> query_received_points()
-    |> query_track_score()
+    |> query_novelty()
     |> select_user_facing_fields()
     |> order()
     |> limit(100)
@@ -245,14 +244,20 @@ defmodule PR.Queue do
     )
   end
 
-  @spec query_track_score(Ecto.Queryable.t()) :: Ecto.Queryable.t()
-  defp query_track_score(query) do
+  @spec query_novelty(Ecto.Queryable.t()) :: Ecto.Queryable.t()
+  defp query_novelty(query) do
     query
     |> join(
       :left, [t],
-      s in TrackScore,
-      on: t.spotify_id == s.spotify_id,
-      as: :track_score
+      tn in TrackNovelty,
+      on: tn.spotify_id == t.spotify_id,
+      as: :track_novelty
+    )
+    |> join(
+      :left, [t],
+      tn in ArtistNovelty,
+      on: tn.artist == t.artist,
+      as: :artist_novelty
     )
   end
 
@@ -284,12 +289,12 @@ defmodule PR.Queue do
   @spec select_user_facing_fields(Ecto.Queryable.t()) :: Ecto.Queryable.t()
   defp select_user_facing_fields(query) do
     query
-    |> select([t, given_point: gp, received_points: rp, track_score: ts], %{
+    |> select([t, given_point: gp, received_points: rp, track_novelty: tn, artist_novelty: an], %{
       t |
       has_pointed: not is_nil(gp.id),
       points_received: rp.points_received,
-      score: ts.score,
-      artist_score: ts.artist_score
+      track_novelty: tn.track_novelty,
+      artist_novelty: an.artist_novelty,
     })
 
   end

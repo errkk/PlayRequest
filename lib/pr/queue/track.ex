@@ -18,9 +18,9 @@ defmodule PR.Queue.Track do
     field :has_pointed, :boolean, virtual: true
     field :points_received, :integer, virtual: true
 
-    # from a joined mat view
-    field :score, :integer, virtual: true
-    field :artist_score, :integer, virtual: true
+    # from a joined view
+    field :artist_novelty, :integer, virtual: true
+    field :track_novelty, :integer, virtual: true
 
     belongs_to :user, User
     has_many :points, Point

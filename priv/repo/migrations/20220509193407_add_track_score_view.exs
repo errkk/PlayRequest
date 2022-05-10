@@ -3,90 +3,78 @@ defmodule PR.Repo.Migrations.AddTrackScoreView do
 
   def change do
     execute """
-      CREATE MATERIALIZED VIEW track_scores as 
-        with tracks_and_age as (
-          select
-            t.spotify_id,
-            t.name,
-            t.artist,
-            floor(
+      CREATE VIEW recent_plays as (
+        select
+          t.spotify_id,
+          t.name,
+          t.artist,
+          floor(
+            (
               extract(
                 epoch
                 from
-                  now() - t.inserted_at
-              ) / 36000
-            ) as age
-          from
-            tracks t
-          where
-            t.inserted_at > now() - interval '3 week'
-        ),
-        artist_novelty as (
+                  t.inserted_at - (now() - interval '3 week')
+              )
+            ) / 36000 -- 0 - 50 for recentness
+          ) as recency
+        from
+          tracks t
+        where
+          t.inserted_at > now() - interval '3 week'
+        order by
+          recency desc
+      )
+      """,
+      """
+        DROP VIEW recent_plays
+      """
+
+    execute """
+      CREATE VIEW artist_novelty as (
+        with artist_un_novelty as (
           select
-            artist,
-            floor(sum(60 - age) * count(1) * 0.05) as artist_score,
-            count(1)
+            count(1) * max(recency) as un_novelty,
+            artist
           from
-            tracks_and_age
+            recent_plays
           group by
             artist
-        ),
-        track_novelty as (
+        )
+        select
+          artist,
+          floor(100 - (un_novelty / (
+            select max(un_novelty) from artist_un_novelty
+          ) * 100))::integer as artist_novelty
+        from
+          artist_un_novelty
+        )
+      """,
+      """
+        DROP VIEW artist_novelty
+      """
+
+    execute """
+      CREATE VIEW track_novelty as (
+        with track_un_novelty as (
           select
-            artist,
-            name,
-            spotify_id,
-            floor(sum(60 - age) * count(1) * 0.01) as track_score,
-            count(1) as track_count
+            count(1) * max(recency) as un_novelty,
+            spotify_id
           from
-            tracks_and_age
+            recent_plays
           group by
-            name,
-            spotify_id,
-            artist
-        ),
-        scores as (
-          select
-            tn.spotify_id,
-            tn.artist,
-            tn.name,
-            tn.track_score,
-            an.artist_score,
-            tn.track_score * an.artist_score as score
-          from
-            track_novelty tn
-            join artist_novelty an on tn.artist = an.artist
+            spotify_id
         )
         select
           spotify_id,
-          artist,
-          name,
-          floor(
-            (
-              score / (
-                select
-                  max(score)
-                from
-                  scores
-              ) + 0.0001
-            ) * 100
-          ) as score,
-          floor(
-            (
-              artist_score / (
-                select
-                  max(artist_score)
-                from
-                  scores
-              ) + 0.0001
-            ) * 100
-          ) as artist_score
+          floor(100 - (un_novelty / (
+            select max(un_novelty) from track_un_novelty
+          ) * 100))::integer as track_novelty
         from
-          scores
-    """,
-    """
-    DROP MATERIALIZED VIEW track_scores
-    """
-
+          track_un_novelty
+      )
+      """,
+      """
+        DROP VIEW track_novelty
+      """
   end
 end

@@ -9,6 +9,8 @@
             <%= img_tag track.img, width: 100, class: "track__img" %>
           </div>
 
+          <%= novelty track.track_novelty, track.artist_novelty %>
+
           <div class="track__details">
             <h3 class="track__name">
               <%= link [
@@ -18,10 +20,16 @@
                 to: {:"spotify:track", track.spotify_id},
                 title: "Open in Spotify"
               %>
+              <%= if track.track_novelty < 20 do %>
+                <span title={"Track novelty: #{track.track_novelty}"}>😴</span>
+              <% end %>
               <%= heart track %>
             </h3>
             <p class="track__artist">
               <%= track.artist %>
+              <%= if track.artist_novelty < 20 do %>
+                <span title={"Artist novelty: #{track.artist_novelty}"}>😴</span>
+              <% end %>
             </p>
             <p>
               @ <%= time(track.played_at) %>
