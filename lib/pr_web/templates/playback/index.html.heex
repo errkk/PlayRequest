@@ -21,16 +21,18 @@
     <div class="search-results">
       <%= for track <- @result do %>
         <div class="track track--light">
-          <%= img_tag track.img, width: 100, class: "track__img" %>
-          <div class="track__details">
-            <h3 class="track__name">
-              <%= track.name %>
-            </h3>
-            <p class="track__artist">
-              <%= track.artist %>
-            </p>
+          <div class="track__inner">
+            <%= img_tag track.img, width: 100, class: "track__img" %>
+            <div class="track__details">
+              <h3 class="track__name">
+                <%= track.name %>
+              </h3>
+              <p class="track__artist">
+                <%= track.artist %>
+              </p>
+            </div>
+            <button title="Add to queue" class="track__queue" phx-click="queue" value={track.spotify_id}></button>
           </div>
-          <button title="Add to queue" class="track__queue" phx-click="queue" value={track.spotify_id}></button>
         </div>
       <% end %>
     </div>

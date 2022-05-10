@@ -22,7 +22,7 @@ defmodule PRWeb.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :pr,
-    gzip: false,
+    gzip: true,
     only: ~w(assets fonts images favicon.png robots.txt)
 
   # Code reloading can be explicitly enabled under the

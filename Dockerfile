@@ -24,10 +24,16 @@ COPY config/config.exs config/prod.exs config/
 
 # copy assets
 COPY priv priv
-COPY assets assets
 
 # Compile assets
-# RUN mix assets.deploy
+# Install here and pass path to dart-sass config in config.exs
+RUN npm install -g sass
+COPY assets assets
+
+# Build sass here, cos doing it via mix dun werk on fly
+RUN cd assets && \
+     sass --no-source-map --style=compressed css/app.scss ../priv/static/assets/app.css
+RUN mix assets.deploy
 
 # compile project
 COPY lib lib

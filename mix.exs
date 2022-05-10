@@ -71,7 +71,8 @@ defmodule PR.MixProject do
       test: ["ecto.create --quiet", "ecto.migrate", "test"],
       "assets.deploy": [
         "esbuild default --minify",
-        "sass default --no-source-map --style=compressed",
+        # No dart sass here cos its done in the docker file
+        # as the dart-sass lib didn't run in fly's builder env
         "phx.digest"
       ]
     ]
