@@ -23,6 +23,13 @@ defmodule PR.Factory do
     }
   end
 
+  def group_factory do
+    %PR.SonosHouseholds.Group{
+      group_id: sequence(:group, &"RINCON:#{&1}"),
+      is_active: false
+    }
+  end
+
   def played_track_factory do
     struct!(track_factory(), %{
       played_at: DateTime.utc_now()

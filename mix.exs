@@ -50,7 +50,8 @@ defmodule PR.MixProject do
       {:timex, "~> 3.5"},
       {:phoenix_live_dashboard, "~> 0.3 or ~> 0.2.9"},
       {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
-      {:dart_sass, "~> 0.4", runtime: Mix.env() == :dev}
+      {:dart_sass, "~> 0.4", runtime: Mix.env() == :dev},
+      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false}
     ]
   end
 

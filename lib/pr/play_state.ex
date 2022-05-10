@@ -7,7 +7,8 @@ defmodule PR.PlayState do
   alias PR.Music
   alias PR.Music.{SonosItem, PlaybackState}
   alias PR.Queue
-  alias PR.SonosHouseholds.GroupManager
+  alias PR.SonosHouseholds
+  alias PR.SonosHouseholds.{GroupManager, Group}
 
   @topic inspect(__MODULE__)
 
@@ -73,17 +74,29 @@ defmodule PR.PlayState do
   end
 
   @doc "Update the state from the webhook controller"
-  def handle_play_state_webhook(data) do
-    data
-    |> SonosAPI.convert_result()
-    |> process_play_state()
+  def handle_play_state_webhook(data, group_id) do
+    case SonosHouseholds.get_active_group() do
+      %Group{group_id: ^group_id} ->
+        Logger.info("Handling PlayState for #{group_id}")
+      data
+      |> SonosAPI.convert_result()
+      |> process_play_state()
+      _ -> 
+        Logger.info("Skipping PlayState for #{group_id}")
+    end
   end
 
   @doc "Called by webhook"
-  def handle_metadata_webhook(data) do
-    data
-    |> SonosAPI.convert_result()
-    |> process_metadata()
+  def handle_metadata_webhook(data, group_id) do
+    case SonosHouseholds.get_active_group() do
+      %Group{group_id: ^group_id} ->
+        Logger.info("Handling Metadata for #{group_id}")
+        data
+        |> SonosAPI.convert_result()
+        |> process_metadata()
+      _ -> 
+        Logger.info("Skipping Metadata for #{group_id}")
+    end
   end
 
   def is_idle? do

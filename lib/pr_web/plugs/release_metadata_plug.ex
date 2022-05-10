@@ -11,8 +11,7 @@ defmodule PRWeb.Plug.ReleaseMetadataPlug do
 
   defp get_release_metadata do
     [
-      version: System.get_env("HEROKU_RELEASE_VERSION", "dev"),
-      commit: System.get_env("HEROKU_SLUG_COMMIT", "dev")
+      version: System.get_env("APP_REVISION", "dev"),
     ]
   end
 end
