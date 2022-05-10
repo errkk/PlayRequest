@@ -119,6 +119,7 @@ defmodule PR.PlayState do
   defp process_play_state(data) do
     data
     |> PlaybackState.new()
+    |> IO.inspect
     |> update_state(:play_state)
     |> broadcast(:play_state)
     |> watch_play_state()

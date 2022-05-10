@@ -40,6 +40,7 @@ defmodule PR.Apis.TokenHelper do
             |> Map.put("service", Atom.to_string(__MODULE__))
             |> ExternalAuth.insert_or_update_auth()
 
+            Logger.info("Saving refresh token for #{__MODULE__}")
             cache_stored_credential()
           {:ok}
         end
@@ -60,10 +61,10 @@ defmodule PR.Apis.TokenHelper do
       defp get_access_token do
         case Agent.get(__MODULE__,  & &1) do
           %AccessToken{} = token ->
-            Logger.debug("Getting from cache")
+            Logger.debug("Getting token from cache")
             token
           _ ->
-            Logger.debug("Getting from DB")
+            Logger.debug("Getting token from DB")
             cache_stored_credential()
         end
       end
@@ -103,6 +104,8 @@ defmodule PR.Apis.TokenHelper do
 
       @spec get_refresh_token() :: {:error, atom()} | {:ok}
       def get_refresh_token() do
+        Logger.info("Refreshing token for #{__MODULE__}")
+
         refresh_token = client()
         |> authenticated_client()
         |> Map.get(:token)
