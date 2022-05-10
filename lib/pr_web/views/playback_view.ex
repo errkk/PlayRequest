@@ -30,6 +30,18 @@ defmodule PRWeb.PlaybackView do
 
   def progress(_, _, _), do: nil
 
+  def novelty(%Track{score: score, artist_score: artist_score} = track) do
+    percent_track = 100 - Decimal.to_integer(score) / 2
+    percent_artist = 100 - Decimal.to_integer(artist_score) / 2
+    content_tag(:span, class: "novelty") do
+      [
+        content_tag(:span, "Novelty score", class: "novelty__bar__label", style: "width: #{percent_track}%;"),
+        content_tag(:span, "", class: "novelty__bar novelty__bar--track", style: "width: #{percent_track}%;"),
+        content_tag(:span, "", class: "novelty__bar novelty__bar--artist", style: "width: #{percent_artist}%;")
+      ]
+    end
+  end
+
   def dun_voted?(%Track{has_pointed: true}), do: true
   def dun_voted?(_), do: false
 

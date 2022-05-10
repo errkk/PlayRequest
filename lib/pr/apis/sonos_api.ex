@@ -61,7 +61,12 @@ defmodule PR.SonosAPI do
          Logger.info("Subscribed to playback webhook #{group_id}")
         {:ok, %{}}
     else
+      {:error, message} ->
+        Logger.error("Cant subscribe to playback #{message}")
+        {:error, message}
+
       err ->
+        IO.inspect(err, label: :subscribe_playback)
         err
     end
   end

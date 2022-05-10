@@ -228,6 +228,34 @@
   }
 }
 
+.novelty {
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+  height: 10px;
+  position: relative;
+
+  &__bar {
+    height: 5px;
+    display: block;
+
+    border-radius: 10px;
+    &__label {
+      font-size: 10px;
+    }
+  }
+  &__bar--track {
+    background: $pink;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  &__bar--artist {
+    background: blue;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}
+
 .heart {
   width: 10px;
   height: 16px;

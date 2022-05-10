@@ -4,6 +4,7 @@ defmodule PR.Queue.Track do
 
   alias PR.Auth.User
   alias PR.Scoring.Point
+  alias PR.Queue.TrackScore
 
   schema "tracks" do
     field :artist, :string
@@ -16,6 +17,10 @@ defmodule PR.Queue.Track do
 
     field :has_pointed, :boolean, virtual: true
     field :points_received, :integer, virtual: true
+
+    # from a joined mat view
+    field :score, :integer, virtual: true
+    field :artist_score, :integer, virtual: true
 
     belongs_to :user, User
     has_many :points, Point

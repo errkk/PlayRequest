@@ -50,6 +50,7 @@
               <%= if playing?(track, @play_state),
                   do: img_tag(Routes.static_path(PRWeb.Endpoint, "/images/playing-icon.svg"), class: "track__playing") %>
               <%= track.name %>
+              <%= novelty track %>
               <%= heart track %>
             </h3>
             <p class="track__artist">
