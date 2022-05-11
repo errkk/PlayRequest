@@ -1,0 +1,44 @@
+/* This file is for your main application css. */
+
+@import "animations";
+@import "variables";
+@import "type";
+@import "layout";
+@import "track";
+@import "form";
+@import "setup-list";
+@import "setup-list";
+@import "alert";
+
+html {
+  height: 100%;
+  padding: 0;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 18px;
+
+  background-color: $blue;
+  background-image: linear-gradient(45deg, $blue, darken($blue, 10));
+  background-attachment: fixed;
+}
+
+.is-pending {
+  opacity: 0.5;
+}
+
+progress {
+  width: 100%;
+}
+
+.version {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.canvas-container {
+  display: none;
+}

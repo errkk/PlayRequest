@@ -1,0 +1,294 @@
+
+.search-results {
+  margin-top: 10px;
+}
+
+.track {
+  position: relative;
+  margin: 10px 0 0;
+  border-radius: 15px;
+  // overflow: hidden;
+  background: $white;
+  box-shadow: 1px 0 20px $shad;
+  color: $text;
+  animation: swing-in-top-fwd 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
+  transition: box-shadow 200ms ease;
+
+  h3 {
+    color: $blue;
+  }
+
+  a {
+    color: $blue;
+  }
+  a:hover .link {
+    box-shadow: inset 0 -8px 0 0 transparentize($pink, 0.8);
+  }
+
+  &__inner {
+    display: flex;
+    align-items: center;
+  }
+
+  &--light {
+    background: transparentize($white, 0.8);
+    box-shadow: none;
+    color: $white;
+
+    h3 {
+      color: $teal;
+    }
+
+    &:hover {
+      box-shadow: 1px 0 20px $strongShad;
+    }
+  }
+
+  &--dark {
+    color: $white;
+    background: $darkerBlue;
+
+    h3 {
+      color: inherit;
+    }
+  }
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  &.playing {
+    box-shadow: 1px 0 30px rgba(0, 0, 0, 0.4);
+  }
+
+  &__details {
+    flex: auto;
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    & p {
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  &__name {
+    margin-top: 0;
+    font-weight: bold;
+    margin-bottom: 0.2em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__artist {
+  }
+
+  &__img__container {
+    position: relative;
+    flex: 0;
+    width: 80px;
+    margin-right: 20px;
+  }
+  &__img {
+    width: 80px;
+    height: auto;
+    display: block;
+    margin-right: 20px;
+    border-radius: 10px;
+    margin: 10px 30px 10px 10px;
+  }
+
+  &__user {
+    width: $avatarSize;
+    height: $avatarSize;
+    transform-style: preserve-3d;
+    transform: translate3d(0, 0, 0);
+    transition: transform 400ms ease-in-out;
+
+    &__container {
+      background: orange;
+      position: relative;
+      padding: 20px;
+      background: none;
+      border: none;
+      outline: none;
+
+      &.animate {
+        cursor: pointer;
+      }
+
+      &.has-voted {
+        &::after {
+          content: "";
+          position: absolute;
+          z-index: 1;
+          display: block;
+          background: url(/images/heart_pink.svg) 50% 50% no-repeat;
+          width: 16px;
+          height: 16px;
+          bottom: 15px;
+          right: 15px;
+        }
+      }
+    }
+
+
+    &__back,
+    &__img {
+      position: absolute;
+      width: $avatarSize;
+      height: $avatarSize;
+      display: block;
+      border-radius: 40px;
+      border: 1px solid $white;
+      left: 0;
+      top: 0;
+    }
+
+    &__img {
+      z-index: 2;
+    }
+
+    &__back {
+      transform: rotateY(180deg) translate3d(0, 0, 0) scale(1);
+      background: $blue url(/images/heart.svg) 50% 50% no-repeat;
+      background-size: 70% 70%;
+      z-index: 1;
+    }
+
+    &__container.animate:hover .track__user {
+      transform: rotateY(180deg) scale(1.5);
+    }
+    &__container.animate:focus .track__user {
+      transition-duration: 100ms;
+      transform: rotateY(180deg) scale(1.3);
+    }
+  }
+
+  &__queue {
+    width: 60px;
+    justify-self: flex-end;
+    align-self: stretch;
+    background: $teal;
+    border: none;
+    background: url(/images/arrow.svg) 50% 50% no-repeat;
+    background-size: 40% 40%;
+    transition: transform 200ms ease-out;
+    cursor: pointer;
+    transform: translate(0, 0);
+
+    &:focus {
+      outline: none;
+    }
+
+    &:hover {
+      transform: translate(5px, 0) scale(1.1);
+    }
+  }
+
+  &__skipped-link {
+    opacity: 0;
+    transition: opacity 200ms ease;
+
+    .track:hover & {
+      opacity: 1;
+    }
+  }
+
+  &__like {
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+
+  &--liked {
+    animation: pulsate-fwd 0.4s ease-in-out 3 both;
+  }
+
+  &__playing {
+    width: 18px;
+    height: 18px;
+    margin-bottom: -1px;
+    margin-right: 5px;
+  }
+}
+
+.progress {
+  display: block;
+  flex: 0 0 100%;
+  box-sizing: border-box;
+  padding: 6px 12px 12px;
+
+  &__bar {
+    position: absolute;
+    height: 100%;
+    bottom: 12px;
+    height: 6px;
+    max-width: calc(100% - 24px);
+    transition: width 900ms linear;
+
+    background: $pink;
+
+    border-radius: 10px;
+  }
+}
+
+.novelty {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  box-sizing: border-box;
+  width: 20px;
+  height: 100px;
+  background: linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
+  margin-right: 15px;
+  padding-top: 10px;
+
+  &__bar {
+    flex: 1;
+    margin: 0 1px;
+
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    min-height: 4px;
+
+    &--artist {
+      background: $pink;
+    }
+    &--track {
+      background: $blue;
+    }
+  }
+}
+
+.heart {
+  width: 10px;
+  height: 16px;
+  padding-left: 5px;
+  vertical-align: middle;
+  margin-bottom: 4px;
+  display: inline-block;
+
+  &:first-of-type {
+    padding-left: 10px;
+  }
+}
+
+
+.track + h3,
+.track + h2 {
+  margin-top: 30px;
+}
+
+h3 + .track,
+h2 + .track {
+  margin-top: 10px;
+}
+
+.spotify {
+  margin-right: 0.8ex;
+}
