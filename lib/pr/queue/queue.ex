@@ -128,21 +128,24 @@ defmodule PR.Queue do
   end
 
   @spec set_current(SonosItem.t()) :: {:started | :already_started, DateTime.t()} | {:ok}
-  def set_current(%SonosItem{spotify_id: spotify_id}) do
-    Logger.info("Updating current track")
+  def set_current(%SonosItem{spotify_id: spotify_id, name: name}) do
+    Logger.info("Sonos current track is: #{name}. Update Queue if this is in there.")
     now = DateTime.utc_now()
 
     case set_current_transaction(spotify_id, now) do
       {:ok, {0, nil}} ->
+        # Track has already been marked as playing
         get_playing_since()
       {:ok, {_, nil}} ->
+        # Updated, queued track has been marked as playing
         {:started, now}
     end
   end
 
   def set_current(_) do
-    Logger.info("Nothing playing, clearing playing_since")
+    Logger.info("Updating current track to *nothing*")
 
+    # Check for something in the DB that's been playing for < 10 seconds
     case Track
       |> query_is_playing()
       |> query_has_been_playing()
@@ -151,10 +154,10 @@ defmodule PR.Queue do
         played_at: dynamic([i], datetime_add(i.playing_since, i.duration, "millisecond"))
       ]) do
       {0, nil} ->
-        Logger.info("Set current, nothing updated")
+        Logger.info("Set current, no playing track found, nothing updated")
         {:ok}
       {_, nil} ->
-        Logger.info("Set current, something updated")
+        Logger.info("Set current, old track cleared")
         {:ok}
     end
   end
@@ -200,6 +203,7 @@ defmodule PR.Queue do
 
   @spec query_has_been_playing(Ecto.Queryable.t()) :: Ecto.Queryable.t()
   defp query_has_been_playing(query) do
+    # Was it playing since before 10 seconds ago
     query
     |> where([t], t.playing_since < ago(10, "second"))
   end

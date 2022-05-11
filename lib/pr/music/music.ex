@@ -55,6 +55,7 @@ defmodule PR.Music do
   end
 
   def sync_playlist do
+    Logger.info("Syncing tracks to Spotify playlist")
     Queue.list_track_uris()
     |> Enum.map(fn {id} -> "spotify:track:" <> id end)
     |> SpotifyAPI.replace_playlist()
@@ -66,6 +67,7 @@ defmodule PR.Music do
          {:ok, %{items: sonos_favorites}, _} <- SonosAPI.get_favorites(),
          {:ok, fav_id} <- find_playlist(sonos_favorites),
          %{}  <- SonosAPI.set_favorite(fav_id, group_id) do
+         Logger.info("Triggered playlist on SONOS")
       {:ok}
     else
       {:error, :playlist_not_created} ->
@@ -81,6 +83,7 @@ defmodule PR.Music do
   end
 
   def queue_updated do
+    # Broadcase number of unplayed tracks
     Queue.num_unplayed()
     |> broadcast(:queue_updated)
   end

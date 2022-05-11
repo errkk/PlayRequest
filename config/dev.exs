@@ -1,7 +1,7 @@
 import Config
 
 config :pr,
-  playlist_name: "PlayRequestDev"
+  playlist_name: "PlayRequest"
 
 # Configure your database
 config :pr, PR.Repo,
