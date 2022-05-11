@@ -157,6 +157,11 @@ defmodule PR.PlayState do
     end
   end
 
+  defp update_playing(%{current_item: %{}} = state) do
+    Logger.info("Nothing in Sonos queue")
+    state
+  end
+
   # Called on an interval by supervisor
   def tick do
     with %{
