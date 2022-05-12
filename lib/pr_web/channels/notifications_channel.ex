@@ -1,5 +1,6 @@
 defmodule PRWeb.NotificationsChannel do
   use PRWeb, :channel
+  require Logger
 
   alias PR.Music
   alias PR.Scoring.Point
@@ -23,8 +24,12 @@ defmodule PRWeb.NotificationsChannel do
     track_data = Map.take(track, [:name, :artist, :img])
     user_data = Map.take(user, [:first_name, :last_name])
     push(socket, "like", %{user_id: recipient_id, track: track_data, from: user_data})
+    %{name: name} = track_data
+    %{first_name: first_name} = user_data
+    Logger.info("Track liked: #{name} from: #{first_name}")
     {:noreply, socket}
   end
+
   def handle_info({Music, _, _}, socket) do
     {:noreply, socket}
   end

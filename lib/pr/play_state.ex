@@ -29,7 +29,7 @@ defmodule PR.PlayState do
       |> process_metadata()
     rescue
       _err ->
-        Logger.error("PlayState could not fetch initial state")
+        Logger.warn("PlayState could not fetch initial state")
     end
   end
 

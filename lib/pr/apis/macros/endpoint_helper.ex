@@ -34,7 +34,7 @@ defmodule PR.Apis.EndpointHelper do
         case client()
              |> authenticated_client()
              |> client_request(resource, method)
-             |> handle_api_response() do
+             |> handle_api_response(resource) do
           {:unauthorized} ->
             get_refresh_token()
             request(resource, method)
@@ -51,7 +51,7 @@ defmodule PR.Apis.EndpointHelper do
         case client()
              |> authenticated_client()
              |> client_request(resource, method, params)
-             |> handle_api_response() do
+             |> handle_api_response(resource) do
           {:unauthorized} ->
             get_refresh_token()
             request(resource, method, params)
@@ -64,42 +64,42 @@ defmodule PR.Apis.EndpointHelper do
       defp encode_params(%{} = params), do: Jason.encode!(params)
       defp encode_params(params), do: params
 
-      @spec handle_api_response({:error | :ok, Response.t() | Error.t()}) :: map() | nil
-      defp handle_api_response({:error, %Response{status_code: 401, body: body}}) do
-        Logger.error("Unauthorized token")
+      @spec handle_api_response({:error | :ok, Response.t() | Error.t()}, String.t()) :: map() | nil
+      defp handle_api_response({:error, %Response{status_code: 401, body: body}}, _resource) do
+        Logger.error("Unauthorized token: #{__MODULE__}")
         {:unauthorized}
       end
 
-      defp handle_api_response({:ok, %Response{status_code: 200, body: body}}),
+      defp handle_api_response({:ok, %Response{status_code: 200, body: body}}, _resource),
         do: Jason.decode!(body) |> convert_result()
 
-      defp handle_api_response({:ok, %Response{status_code: 204, body: body}}), do: {:ok, nil}
+      defp handle_api_response({:ok, %Response{status_code: 204, body: body}}, _resource), do: {:ok, nil}
 
-      defp handle_api_response({:ok, %Response{status_code: 201, body: body}}),
+      defp handle_api_response({:ok, %Response{status_code: 201, body: body}}, _resource),
         do: Jason.decode!(body) |> convert_result()
 
-      defp handle_api_response({:error, %Response{status_code: 404}}) do
-        Logger.error("Not found")
+      defp handle_api_response({:error, %Response{status_code: 404}}, resource) do
+        Logger.error("Not found: #{resource}")
         {:error, :not_found}
       end
 
-      defp handle_api_response({:error, %Response{status_code: 415}}) do
-        Logger.error("Unsupported media type")
+      defp handle_api_response({:error, %Response{status_code: 415}}, resource) do
+        Logger.error("Unsupported media type: #{resource}")
         {:error, :unsupported_media_type}
       end
 
-      defp handle_api_response({:error, %Response{status_code: 410}}) do
-        Logger.error("Gone")
+      defp handle_api_response({:error, %Response{status_code: 410}}, resource) do
+        Logger.error("Gone: #{resource}")
         {:error, :gone}
       end
 
-      defp handle_api_response({:error, %Response{status_code: code, body: body}}) do
-        Logger.error("Error #{code}")
+      defp handle_api_response({:error, %Response{status_code: code, body: body}}, resource) do
+        Logger.error("Error: #{code}, #{resource} #{__MODULE__}")
         {:error, body}
       end
 
-      defp handle_api_response({:error, %Error{reason: reason}}) do
-        Logger.error("Error: #{inspect(reason)}")
+      defp handle_api_response({:error, %Error{reason: reason}}, resource) do
+        Logger.error("Error: #{inspect(reason)} #{resource} #{__MODULE__}")
         {:error, reason}
       end
 

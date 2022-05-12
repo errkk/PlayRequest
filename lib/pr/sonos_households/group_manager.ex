@@ -11,19 +11,28 @@ defmodule PR.SonosHouseholds.GroupManager do
          {:ok, expected_group_id, player_ids} <- get_active_group_id() do
       if groups
         |> Enum.map(& &1.id)
-        |> Enum.map(& IO.puts/1)
+        |> IO.inspect(label: :found_groups)
         |> Enum.member?(expected_group_id) do
+        Logger.info("Group ok #{expected_group_id}")
         :ok
       else
-        Logger.error "Active group not found. Trying to recreate."
+        Logger.error("Active group #{expected_group_id} not found. Trying to recreate.")
         handle_mismatch(player_ids)
         {:error, :mismatch}
       end
     else
-      {:error, :cant_get_groups} -> {:error, "Can't get Sonos groups"}
-      {:error, :no_active_group} -> {:error, "Group not set"}
-      {:error, :no_household_activated} -> {:error, "Household not activated"}
-      _ -> {:error, "Something didn't work"}
+      {:error, :cant_get_groups} ->
+        Logger.error("Check groups: Can't get groups")
+        {:error, "Can't get Sonos groups"}
+      {:error, :no_active_group} ->
+        Logger.error("Check groups: No active group")
+        {:error, "Group not set"}
+      {:error, :no_household_activated} ->
+        Logger.error("Check groups: No household activated")
+        {:error, "Household not activated"}
+      _ ->
+        Logger.error("Check groups: Error")
+        {:error, "Something didn't work"}
     end
   end
 
@@ -47,7 +56,9 @@ defmodule PR.SonosHouseholds.GroupManager do
     case SonosAPI.get_groups() do
       {:ok, %{groups: groups}, _} ->
         {:ok, groups}
-      {:error, msg} -> {:error, msg}
+      {:error, msg} ->
+        Logger.error("Can't get groups: #{msg}")
+        {:error, msg}
       _ ->
         {:error, :cant_get_groups}
     end
