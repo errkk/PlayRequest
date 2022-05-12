@@ -4,11 +4,12 @@
 }
 
 .chips {
-  margin-top: 5px;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
 }
 .chip {
   display: inline-flex;
-  flex: 0 0;
   border-radius: 100px;
   background: $blue;
   color: #fff;
@@ -16,11 +17,12 @@
 
   justify-content: flex-start;
   align-items: center;
-  margin-top: 4px;
+  margin-right: 1ex;
   font-size: 14px;
   .pie {
     margin-right: 5px;
   }
+
 
   &__number,
   &__img {
@@ -30,13 +32,16 @@
     flex: 0 0 17px;
     margin-right: 5px;
   }
+
+  &--teal {
+    background: $tealDark;
+  }
 }
 
 .track {
   position: relative;
   margin: 10px 0 0;
   border-radius: 15px;
-  // overflow: hidden;
   background: $white;
   box-shadow: 1px 0 20px $shad;
   color: $text;

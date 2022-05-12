@@ -24,7 +24,6 @@
                 <%= if track.track_novelty < 20 do %>
                   <span title={"Track novelty: #{track.track_novelty}"}>😴</span>
                 <% end %>
-                <%= heart track %>
               </h3>
               <p class="track__artist">
                 <%= track.artist %>
@@ -32,13 +31,25 @@
                   <span title={"Artist novelty: #{track.artist_novelty}"}>😴</span>
                 <% end %>
               </p>
-              <p>
-                @ <%= time(track.played_at) %>
-                <%= link("😫 It skipped, plz re-queue",
-                      to: Routes.history_path(@conn, :mark_unplayed, track),
-                      method: :post,
-                      class: "track__skipped-link") %>
-              </p>
+
+                <div class="chips">
+                  <div class="chip">
+                    <%= img_tag track.user.image, width: 40, class: "chip__img" %>
+                    <%= track.user.first_name %>
+                  </div>
+
+                  <span class="chip chip--teal">
+                    <span class="chip_img">@</span>
+                    <%= time(track.played_at) %>
+                  </span>
+                  <span>
+                    <%= link("😫 It skipped, plz re-queue",
+                          to: Routes.history_path(@conn, :mark_unplayed, track),
+                          method: :post,
+                          class: "track__skipped-link") %>
+                  </span>
+                  <%= heart track %>
+                </div>
             </div>
               <div class="novelty__container">
                 <div class="pie blue mask animate" style={"--p:#{max(5, track.artist_novelty)}; --w:60px"}>
