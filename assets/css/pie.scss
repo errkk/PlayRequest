@@ -15,6 +15,16 @@
   display: inline-grid;
   place-content: center;
   font-weight: bold;
+
+  &.blue {
+    --c:#{$blue};
+  }
+  &.pink {
+    --c:#{$pink};
+  }
+  &.teal {
+    --c:#{$tealDark};
+  }
 }
 .pie:before,
 .pie:after {
@@ -27,16 +37,18 @@
   background:
     radial-gradient(farthest-side,var(--c) 98%,#0000) top/var(--b) var(--b) no-repeat,
     conic-gradient(var(--c) calc(var(--p)*1%),#0000 0);
-  // -webkit-mask: radial-gradient(farthest-side,#0000 calc(99% - var(--b)),#000 calc(100% - var(--b)));
-  //         mask: radial-gradient(farthest-side,#0000 calc(99% - var(--b)),#000 calc(100% - var(--b)));
+}
+.mask.pie:before {
+  -webkit-mask: radial-gradient(farthest-side,#0000 calc(99% - var(--b)),#000 calc(100% - var(--b)));
+          mask: radial-gradient(farthest-side,#0000 calc(99% - var(--b)),#000 calc(100% - var(--b)));
 }
 .pie:after {
   inset: calc(50% - var(--b)/2);
   background: var(--c);
   transform: rotate(calc(var(--p)*3.6deg)) translateY(calc(50% - var(--w)/2));
 }
-.animate {
-  animation: p 1s .5s both;
+.pie.animate {
+  animation: p 2s 600ms ease-in-out;
 }
 .no-round:before {
   background-size: 0 0, auto;

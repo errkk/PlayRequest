@@ -40,9 +40,18 @@
                       class: "track__skipped-link") %>
               </p>
             </div>
-              <div class="track__user__container">
-                <div class="track__user">
-                  <%= img_tag track.user.image, width: 50, class: "track__user__img" %>
+              <div class="novelty__container">
+                <div class="pie blue mask animate" style={"--p:#{max(5, track.artist_novelty)}; --w:60px"}>
+                  <div class="pie pink mask animate" style={"--p:#{max(5, track.track_novelty)}; --w:47px"}>
+                    <div class="novelty__inner">
+                      <p class="artist" title={"Artist novelty #{track.artist_novelty}%"}>
+                      <%= track.artist_novelty %>
+                      </p>
+                      <p class="track" title={"Track novelty #{track.track_novelty}%"}>
+                      <%= track.track_novelty %>
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
           </div>

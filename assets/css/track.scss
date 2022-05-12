@@ -117,79 +117,27 @@
     width: 100px;
     height: 100px;
     margin: 10px 15px 10px 10px;
+
+    .has-voted & {
+      &::after {
+        content: "";
+        position: absolute;
+        z-index: 1;
+        display: block;
+        background: url(/images/heart_pink.svg) 50% 50% no-repeat;
+        background-size: 16px 16px;
+        width: 16px;
+        height: 16px;
+        bottom: -3px;
+        right: -3px;
+      }
+    }
   }
   &__img {
-    position: absolute;
     width: 100%;
     height: 100%;
     display: block;
     border-radius: 10px;
-  }
-
-  &__user {
-    width: $avatarSize;
-    height: $avatarSize;
-    transform-style: preserve-3d;
-    transform: translate3d(0, 0, 0);
-    transition: transform 400ms ease-in-out;
-
-    &__container {
-      position: relative;
-      padding: 20px;
-      background: none;
-      border: none;
-      outline: none;
-
-      &.animate {
-        cursor: pointer;
-      }
-
-      &.has-voted {
-        &::after {
-          content: "";
-          position: absolute;
-          z-index: 1;
-          display: block;
-          background: url(/images/heart_pink.svg) 50% 50% no-repeat;
-          width: 16px;
-          height: 16px;
-          bottom: 15px;
-          right: 15px;
-        }
-      }
-    }
-
-
-    &__back,
-    &__img {
-      position: absolute;
-      width: $avatarSize;
-      height: $avatarSize;
-      display: block;
-      border-radius: 40px;
-      border: 1px solid $white;
-      left: 0;
-      top: 0;
-    }
-
-    &__img {
-      z-index: 2;
-    }
-
-    &__back {
-      transform: rotateY(180deg) translate3d(0, 0, 0) scale(1);
-      background: $blue url(/images/heart.svg) 50% 50% no-repeat;
-      background-size: 70% 70%;
-      z-index: 1;
-    }
-
-    &__container.animate:hover .track__user {
-      transform: rotateY(180deg) scale(1.5);
-    }
-    &__container.animate:focus .track__user {
-      transition-duration: 100ms;
-      transform: rotateY(180deg) scale(1.3);
-    }
   }
 
   &__queue {
@@ -266,18 +214,7 @@
   &__container {
     position: relative;
     display: flex;
-    align-self: stretch;
     margin-right: 20px;
-    &::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: white;
-      z-index: 0;
-    }
   }
 
   &__score {
@@ -286,34 +223,31 @@
     align-self: center;
   }
 
-  &__score__inner {
+  &__inner {
     position: relative;
     z-index: 1;
     display: flex;
-    background: blue;
-    border: 2px solid #fff;
-    color: white;
+    flex-direction: column;
+    color: $blue;
     border-radius: 100px;
-    width: 3em;
-    height: 3em;
+    width: 37px;
+    height: 37px;
     font-size: 14px;
     justify-content: center;
     align-items: center;
-  }
-
-  &__bar {
-    flex: 1;
-    margin: 0 1px;
-
-    border-top-right-radius: 10px;
-    border-top-left-radius: 10px;
-    min-height: 4px;
-
-    &--artist {
-      background: $pink;
+    line-height: 1;
+    p {
+      padding: 0;
+      margin: 0;
+      display: block;
+      user-select: none;
+      cursor: help;
     }
-    &--track {
-      background: $blue;
+    .track {
+      color: $pink;
+    }
+    .artist {
+      color: $blue;
     }
   }
 }
@@ -328,6 +262,61 @@
 
   &:first-of-type {
     padding-left: 10px;
+  }
+}
+
+.flip {
+  &__back,
+  &__front {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    display: block;
+    left: 0;
+    top: 0;
+  }
+
+  &__container {
+    border: none;
+    outline: none;
+    position: relative;
+    padding: 0;
+    margin: 0;
+    perspective: 600px;
+    &.animate {
+      cursor: pointer;
+    }
+  }
+
+  &__flipper {
+    width: 100px;
+    height: 100px;
+    position: relative;
+    transform-style: preserve-3d;
+    transform: translate3d(0, 0, 0);
+    transition: transform 400ms ease-in-out;
+  }
+
+  &__front {
+    z-index: 2;
+    backface-visibility: hidden;
+  }
+
+  &__back {
+    z-index: 1;
+    transform-style: preserve-3d;
+    transform: rotateY(180deg) translate3d(0, 0, 0) scale(1);
+    background: $blue url(/images/heart.svg) 50% 50% no-repeat;
+    background-size: 70% 70%;
+    border-radius: 11px;
+  }
+
+  &__container.animate:hover .flip__flipper {
+    transform: rotateY(180deg) scale(1.1);
+  }
+  &__container.animate:focus-visible .flip__flipper {
+    transition-duration: 100ms;
+    transform: rotateY(180deg);
   }
 }
 
