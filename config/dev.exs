@@ -10,7 +10,8 @@ config :pr, PR.Repo,
   database: "pr_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+  pool_size: 10,
+  log: false
 
 config :pr, :sonos, scopes: "playback-control-all"
 

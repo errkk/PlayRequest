@@ -1,6 +1,8 @@
 import Config
 
-config :logger, level: :info
+config :logger,
+  backends: [LoggerPapertrailBackend.Logger],
+  level: :info
 
 config :pr, PR.Repo, ssl: false, socket_options: [:inet6]
 
@@ -9,6 +11,3 @@ config :pr, PRWeb.Endpoint,
   server: true,
   root: ".",
   version: Application.spec(:pr, :vsn)
-
-config :logger,
-  backends: [LoggerJSON]

@@ -9,7 +9,16 @@ config :pr, PRWeb.Endpoint,
   url: [host: System.get_env("HOSTNAME"), port: 443, scheme: "https"],
   cache_static_manifest: "priv/static/cache_manifest.json"
 
-config :logger, level: :info
+config :logger, :console,
+  format: "$time $metadata[$level] $message\n",
+  metadata: [:request_id]
+
+config :logger, :logger_papertrail_backend,
+  host: System.get_env("PAPERTRAIL_HOST"),
+  level: :info,
+  system_name: System.get_env("HOSTNAME"),
+  metadata_filter: [],
+  format: "$metadata $message"
 
 config :pr, :sonos,
   scopes: "playback-control-all",
