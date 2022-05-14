@@ -9,3 +9,6 @@ config :pr, PRWeb.Endpoint,
   server: true,
   root: ".",
   version: Application.spec(:pr, :vsn)
+
+config :logger,
+  backends: [LoggerJSON]

@@ -13,6 +13,7 @@ defmodule PRWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug LoggerJSON.Plug
   end
 
   pipeline :auth do

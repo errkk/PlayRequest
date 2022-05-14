@@ -169,6 +169,7 @@
   &__skipped-link {
     opacity: 0;
     transition: opacity 200ms ease;
+    margin-left: 10px;
 
     .track:hover & {
       opacity: 1;
@@ -258,15 +259,15 @@
 }
 
 .heart {
-  width: 10px;
-  height: 16px;
+  width: 12px;
+  height: 18px;
   padding-left: 5px;
   vertical-align: middle;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   display: inline-block;
 
   &:first-of-type {
-    padding-left: 10px;
+    padding-left: 8px;
   }
 }
 

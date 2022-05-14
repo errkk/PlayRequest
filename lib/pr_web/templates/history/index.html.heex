@@ -10,8 +10,6 @@
               <%= img_tag track.img, width: 100, class: "track__img" %>
             </div>
 
-            <%= novelty track.track_novelty, track.artist_novelty %>
-
             <div class="track__details">
               <h3 class="track__name">
                 <%= link [
@@ -42,13 +40,13 @@
                     <span class="chip_img">@</span>
                     <%= time(track.played_at) %>
                   </span>
+                  <%= heart track %>
                   <span>
                     <%= link("😫 It skipped, plz re-queue",
                           to: Routes.history_path(@conn, :mark_unplayed, track),
                           method: :post,
                           class: "track__skipped-link") %>
                   </span>
-                  <%= heart track %>
                 </div>
             </div>
               <div class="novelty__container">
