@@ -53,7 +53,8 @@ defmodule PR.MixProject do
       {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
       {:logger_papertrail_backend, "~> 1.1"},
       {:dart_sass, "~> 0.4", runtime: Mix.env() == :dev},
-      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false}
+      {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
+      {:opq, "~> 4.0"}
     ]
   end
 
