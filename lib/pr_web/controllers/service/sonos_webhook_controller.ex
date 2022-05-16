@@ -8,9 +8,7 @@ defmodule PRWeb.Service.SonosWebhookController do
     case get_req_header(conn, "x-sonos-target-value") do
       [group_id | _tail] ->
         Logger.metadata(group_id: group_id)
-        OPQ.enqueue(:sonos_events, fn ->
-          PlayState.handle_play_state_webhook(params, group_id)
-        end)
+        OPQ.enqueue(:sonos_events, PlayState, :handle_play_state_webhook, [params, group_id])
         render(conn, "index.json")
       _ ->
         Logger.error("PlaybackState webhook, no group id provided")
@@ -22,9 +20,7 @@ defmodule PRWeb.Service.SonosWebhookController do
     case get_req_header(conn, "x-sonos-target-value") do
       [group_id | _tail] ->
         Logger.metadata(group_id: group_id)
-        OPQ.enqueue(:sonos_events, fn ->
-          PlayState.handle_metadata_webhook(params, group_id)
-        end)
+        OPQ.enqueue(:sonos_events, PlayState, :handle_metadata_webhook, [params, group_id])
         render(conn, "index.json")
       _ ->
         Logger.error("Metadata webhook, no group id provided")
