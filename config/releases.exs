@@ -18,7 +18,8 @@ config :logger, :logger_papertrail_backend,
   level: :info,
   system_name: System.get_env("HOSTNAME"),
   metadata_filter: [],
-  format: "$metadata $message"
+  format: "$metadata $message",
+  metadata: [:request_id, :group_id]
 
 config :pr, :sonos,
   scopes: "playback-control-all",

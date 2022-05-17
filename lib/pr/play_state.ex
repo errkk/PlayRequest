@@ -73,32 +73,32 @@ defmodule PR.PlayState do
   end
 
   @doc "Update the state from the webhook controller"
-  def handle_play_state_webhook(data, group_id) do
+  def handle_play_state_webhook(data, group_id, request_id) do
     case SonosHouseholds.get_active_group() do
       %Group{group_id: ^group_id} ->
-        Logger.metadata(group_id: group_id)
-        Logger.info("Handling PlayState for #{group_id}")
+        Logger.metadata(group_id: group_id, request_id: request_id)
+        Logger.info("Handling PlayState")
       data
       |> SonosAPI.convert_result()
       |> process_play_state()
       _ -> 
         Logger.metadata(group_id: group_id)
-        Logger.info("Skipping PlayState for #{group_id}")
+        Logger.info("Skipping PlayState")
     end
   end
 
   @doc "Called by webhook"
-  def handle_metadata_webhook(data, group_id) do
+  def handle_metadata_webhook(data, group_id, request_id) do
     case SonosHouseholds.get_active_group() do
       %Group{group_id: ^group_id} ->
-        Logger.metadata(group_id: group_id)
-        Logger.info("Handling Metadata for #{group_id}")
+        Logger.metadata(group_id: group_id, request_id: request_id)
+        Logger.info("Handling Metadata")
         data
         |> SonosAPI.convert_result()
         |> process_metadata()
       _ -> 
         Logger.metadata(group_id: group_id)
-        Logger.info("Skipping Metadata for #{group_id}")
+        Logger.info("Skipping Metadata")
     end
   end
 

@@ -1,7 +1,7 @@
 import Config
 
 config :logger,
-  backends: [LoggerPapertrailBackend.Logger],
+  backends: [LoggerPapertrailBackend.Logger, :console],
   level: :info
 
 config :pr, PR.Repo, ssl: false, socket_options: [:inet6]
