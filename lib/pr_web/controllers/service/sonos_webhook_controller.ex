@@ -7,7 +7,7 @@ defmodule PRWeb.Service.SonosWebhookController do
   def callback(conn, %{"playbackState" => _} = params) do
     case get_req_header(conn, "x-sonos-target-value") do
       [group_id | _tail] ->
-        OPQ.enqueue(:sonos_events, PlayState, :handle_play_state_webhook, [params, group_id, request_id()])
+        PlayState.handle_play_state_webhook(params, group_id, request_id())
         render(conn, "index.json")
       _ ->
         Logger.error("PlaybackState webhook, no group id provided")

@@ -113,9 +113,9 @@ defmodule PR.PlayState do
     # with the new tracks.
     case Queue.has_unplayed() do
       num when num > 0 ->
-        Logger.info("Player IDLE. But, queue has more tracks. Loading them in 1000ms")
-        Process.sleep(1000)
-        Music.bump_and_reload()
+        Logger.info("Player IDLE. But, queue has more tracks. Loading them in 2000ms")
+        Process.sleep(2000)
+        trigger_on_sonos()
 
       _ ->
         Logger.info("Player idle, Queue empty.")
@@ -124,6 +124,19 @@ defmodule PR.PlayState do
   end
 
   defp watch_play_state(d), do: d
+
+  defp trigger_on_sonos do
+    case get(:play_state) do
+      %PlaybackState{state: :idle} ->
+        # Check playstate is still idle
+
+        Logger.info("Still idle, triggering")
+        Music.bump_and_reload()
+
+      %PlaybackState{state: state} ->
+        Logger.info("Cancelled trigger, state is now: #{state}")
+    end
+  end
 
   defp process_metadata(data) do
     data
@@ -142,6 +155,7 @@ defmodule PR.PlayState do
     |> PlaybackState.new()
     |> update_state(:play_state)
     |> broadcast(:play_state)
+    |> tap(fn %{state: state} -> Logger.metadata(playback_state: state) end)
     |> watch_play_state()
   end
 
