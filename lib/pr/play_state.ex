@@ -83,7 +83,7 @@ defmodule PR.PlayState do
       |> process_play_state()
       _ -> 
         Logger.metadata(group_id: group_id)
-        Logger.info("Skipping PlayState")
+        Logger.warn("Skipping PlayState, unrecongnised group: #{group_id}")
     end
   end
 
@@ -98,7 +98,7 @@ defmodule PR.PlayState do
         |> process_metadata()
       _ -> 
         Logger.metadata(group_id: group_id)
-        Logger.info("Skipping Metadata")
+        Logger.warn("Skipping Metadata unrecongnised group_id: #{group_id}")
     end
   end
 
@@ -113,9 +113,9 @@ defmodule PR.PlayState do
     # with the new tracks.
     case Queue.has_unplayed() do
       num when num > 0 ->
-        Logger.info("Player IDLE. But, queue has more tracks. Loading them in 2000ms")
-        Process.sleep(2000)
-        trigger_on_sonos()
+        Logger.info("Player IDLE. But, queue has more tracks. Loading them in 1000ms")
+        Process.sleep(1000)
+        trigger_on_sonos_system()
 
       _ ->
         Logger.info("Player idle, Queue empty.")
@@ -125,16 +125,18 @@ defmodule PR.PlayState do
 
   defp watch_play_state(d), do: d
 
-  defp trigger_on_sonos do
+  defp trigger_on_sonos_system do
     case get(:play_state) do
       %PlaybackState{state: :idle} ->
         # Check playstate is still idle
 
         Logger.info("Still idle, triggering")
+        # It will check again in between the requests required to do bump_and_reload
+        # It can take a few seconds
         Music.bump_and_reload()
 
       %PlaybackState{state: state} ->
-        Logger.info("Cancelled trigger, state is now: #{state}")
+        Logger.warn("Cancelled trigger, state is now: #{state}")
     end
   end
 
@@ -166,17 +168,17 @@ defmodule PR.PlayState do
         Map.put(state, :playing_since, playing_since)
 
       {:already_started, playing_since} ->
-        Logger.info("Already playing: #{name}")
+        Logger.debug("Already playing: #{name}")
         Map.put(state, :playing_since, playing_since)
 
       _ ->
-        Logger.info("Not in the queue: #{name}. Ignoring")
+        Logger.debug("Not in the queue: #{name}. Ignoring")
         state
     end
   end
 
   defp update_playing(%{current_item: %{}} = state) do
-    Logger.info("Nothing in Sonos queue")
+    Logger.info("Nothing playing on the Sonos")
     state
   end
 

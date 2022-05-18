@@ -4,7 +4,7 @@ defmodule PR.Music do
   alias PR.SonosAPI
   alias PR.SpotifyAPI
   alias PR.PlayState
-  alias PR.Music.SearchTrack
+  alias PR.Music.{SearchTrack, PlaybackState}
   alias PR.Queue
   alias PR.Queue.Track
   alias PR.SonosHouseholds
@@ -34,7 +34,7 @@ defmodule PR.Music do
 
   @spec queue(User.t(), String.t()) :: {:ok, Track.t()}
   def queue(%User{id: user_id}, id) do
-    Logger.info("Queuing #{id}")
+    Logger.info("Queuing: spotify:track:#{id}")
 
     with {:ok, search_track} <- get_track(id),
          search_track <- Map.put(search_track, :user_id, user_id),
@@ -42,7 +42,7 @@ defmodule PR.Music do
       queue_updated()
 
       if PlayState.is_idle?() do
-        Logger.info "Track added while player is idle. Triggering playlist"
+        Logger.info("Track added while player is idle. Triggering playlist")
         load_playlist()
       else
         sync_playlist()
@@ -59,20 +59,29 @@ defmodule PR.Music do
     Queue.list_track_uris()
     |> Enum.map(fn {id} -> "spotify:track:" <> id end)
     |> SpotifyAPI.replace_playlist()
+    Logger.debug("Spotify sync complete")
   end
 
+  # This take a little while to run, so there can be race conditions if it gets called
+  # a few times, before it's had a chance to affect the play state
   def load_playlist do
     sync_playlist()
     with %Group{group_id: group_id} <- SonosHouseholds.get_active_group!(),
          {:ok, %{items: sonos_favorites}, _} <- SonosAPI.get_favorites(),
          {:ok, fav_id} <- find_playlist(sonos_favorites),
+         %PlaybackState{state: :idle} <- PlayState.get(:play_state),
+         # TODO, this triggers the playlist to play, but it takes a while to get here,
+         # so maybe check if the playstate is still idle
          %{}  <- SonosAPI.set_favorite(fav_id, group_id) do
          Logger.info("Triggered playlist on SONOS")
       {:ok}
     else
+      %PlaybackState{state: state} ->
+        Logger.warn("Canceling load_playlist, PlayState is now: #{state}")
       {:error, :playlist_not_created} ->
         {:error, "Couldn't find #{get_playlist_name()} in Sonos favorites"}
-      _ ->
+      err ->
+        Logger.error(err)
         {:error, "Could not load playlist #{get_playlist_name()}"}
     end
   end

@@ -129,7 +129,7 @@ defmodule PR.Queue do
 
   @spec set_current(SonosItem.t()) :: {:started | :already_started, DateTime.t()} | {:ok}
   def set_current(%SonosItem{spotify_id: spotify_id, name: name}) do
-    Logger.info("Sonos current track is: #{name}. Update Queue if this is in there.")
+    Logger.debug("Sonos current track is: #{name}. Update Queue if this is in there.")
     now = DateTime.utc_now()
 
     case set_current_transaction(spotify_id, now) do
@@ -143,8 +143,6 @@ defmodule PR.Queue do
   end
 
   def set_current(_) do
-    Logger.info("Updating current track to *nothing*")
-
     # Check for something in the DB that's been playing for < 10 seconds
     case Track
       |> query_is_playing()
@@ -154,10 +152,10 @@ defmodule PR.Queue do
         played_at: dynamic([i], datetime_add(i.playing_since, i.duration, "millisecond"))
       ]) do
       {0, nil} ->
-        Logger.info("Set current, no playing track found, nothing updated")
+        Logger.info("Clearing current track. Nothing playing.")
         {:ok}
       {_, nil} ->
-        Logger.info("Set current, old track cleared")
+        Logger.warn("Clearing current track. Something was marked as playing still")
         {:ok}
     end
   end
