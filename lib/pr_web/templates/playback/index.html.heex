@@ -82,20 +82,31 @@
                     <%= img_tag track.user.image, width: 40, class: "chip__img" %>
                     <%= track.user.first_name %>
                   </div>
+
+                  <% if false do %>
+                  <div class="chip chip--grey">
+                    <span class="pie teal mask no-round" style={"--p:#{max(5, track.track_novelty)}"}>
+                    </span>
+                      Track novelty: <%= track.track_novelty %>%
+                  </div>
+                  <div class="chip chip--grey">
+                    <span class="pie teal mask no-round" style={"--p:#{max(5, track.artist_novelty)}"}>
+                    </span>
+                      Artist novelty: <%= track.artist_novelty %>%
+                  </div>
+                  <% end %>
                   <%= heart track %>
                 </div>
               </div>
               <div class="novelty__container">
-                <div class="pie blue mask" style={"--p:#{max(5, track.artist_novelty)}; --w:60px"}>
-                  <div class="pie pink mask" style={"--p:#{max(5, track.track_novelty)}; --w:47px"}>
-                    <div class="novelty__inner">
-                      <p class="artist" title={"Artist novelty #{track.artist_novelty}%"}>
-                      <%= track.artist_novelty %>
-                      </p>
-                      <p class="track" title={"Track novelty #{track.track_novelty}%"}>
-                      <%= track.track_novelty %>
-                      </p>
-                    </div>
+                <div class="pie blue mask" style={"--p:#{max(5, floor((track.track_novelty + track.artist_novelty + track.artist_novelty) / 3))}; --w:62px; --b:5px;"}>
+                  <div class="novelty__inner">
+                    <span class="novelty__title">
+                    Novelty
+                    </span>
+                    <span class="novelty__score">
+                      <%= floor((track.track_novelty + track.artist_novelty + track.artist_novelty) / 3) %>
+                    </span>
                   </div>
                 </div>
               </div>

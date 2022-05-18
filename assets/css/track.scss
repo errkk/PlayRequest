@@ -33,8 +33,14 @@
     margin-right: 5px;
   }
 
-  &--teal {
-    background: $tealDark;
+  &--light {
+    background: lighten($lightGrey, 10);
+  }
+  &--pink {
+    background: $pink;
+  }
+  &--grey {
+    background: $darkGrey;
   }
 }
 
@@ -225,8 +231,13 @@
 
   &__score {
     border-radius: 100px;
-    padding: 6px;
+    padding: 2px;
     align-self: center;
+  }
+  &__title {
+    font-weight: normal;
+    padding-top: 4px;
+    font-size: 10px;
   }
 
   &__inner {
@@ -234,10 +245,11 @@
     z-index: 1;
     display: flex;
     flex-direction: column;
-    color: $blue;
+    color: $white;
+    background: $tealDark;
     border-radius: 100px;
-    width: 37px;
-    height: 37px;
+    width: 47px;
+    height: 47px;
     font-size: 14px;
     justify-content: center;
     align-items: center;

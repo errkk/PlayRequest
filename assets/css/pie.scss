@@ -16,6 +16,15 @@
   place-content: center;
   font-weight: bold;
 
+  .chip & {
+
+    background: darken($lightGrey, 20);
+    border-radius: 50%;
+
+    -webkit-mask: radial-gradient(farthest-side,#0000 calc(99% - var(--b)),#000 calc(100% - var(--b)));
+            mask: radial-gradient(farthest-side,#0000 calc(99% - var(--b)),#000 calc(100% - var(--b)));
+  }
+
   &.blue {
     --c:#{$blue};
   }
@@ -23,6 +32,9 @@
     --c:#{$pink};
   }
   &.teal {
+    --c:#{$teal};
+  }
+  &.tealDark {
     --c:#{$tealDark};
   }
 }
