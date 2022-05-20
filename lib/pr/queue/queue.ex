@@ -143,19 +143,33 @@ defmodule PR.Queue do
   end
 
   def set_current(_) do
-    # Check for something in the DB that's been playing for < 10 seconds
+    # Check for something in the DB that's been playing since it's duration ago
     case Track
       |> query_is_playing()
       |> query_has_been_playing()
+      |> tap(fn tracks_query ->
+        tracks =
+          tracks_query
+          |> Repo.all()
+          |> Enum.map(& &1.name)
+
+        cond do
+          length(tracks) > 0 ->
+            tracks = Enum.join(tracks, ",")
+            Logger.info("Set current: Still playing tracks #{tracks}")
+          true ->
+            Logger.info("Set current: Nothing currently playing")
+        end
+      end)
       |> Repo.update_all(set: [
         playing_since: nil,
         played_at: dynamic([i], datetime_add(i.playing_since, i.duration, "millisecond"))
       ]) do
       {0, nil} ->
-        Logger.info("Clearing current track. Nothing playing.")
+        Logger.info("Set current: Nothing playing.")
         {:ok}
       {_, nil} ->
-        Logger.warn("Clearing current track. Something was marked as playing still")
+        Logger.warn("Set current: Something was playing, so updated to played.")
         {:ok}
     end
   end
@@ -201,9 +215,9 @@ defmodule PR.Queue do
 
   @spec query_has_been_playing(Ecto.Queryable.t()) :: Ecto.Queryable.t()
   defp query_has_been_playing(query) do
-    # Was it playing since before 10 seconds ago
+    # Did it start playing long enough ago that it should be finished?
     query
-    |> where([t], t.playing_since < ago(10, "second"))
+    |> where([t], t.playing_since < ago(t.duration, "millisecond"))
   end
 
   @spec query_unplayed(Ecto.Queryable.t()) :: Ecto.Queryable.t()

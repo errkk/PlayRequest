@@ -133,7 +133,11 @@ defmodule PR.PlayState do
         Logger.info("Still idle, triggering")
         # It will check again in between the requests required to do bump_and_reload
         # It can take a few seconds
-        Music.bump_and_reload()
+
+        # TODO maybe we don't want to bump and reload, just trigger_playlist
+        # in case bumping is what's skipping tracks 
+        # https://my.papertrailapp.com/systems/11282365431/events?q=%22request_id%3DFvB7Cl_1pEHvvdgAAAlh%22&selected=1463892313209204750
+        Music.trigger_playlist()
 
       %PlaybackState{state: state} ->
         Logger.warn("Cancelled trigger, state is now: #{state}")

@@ -79,6 +79,11 @@ RUN chown ${USER}:${USER} "/home/${USER}/app/tmp"
 # run as user
 USER "${USER}"
 
+# Pretend this is in bash history
+# It seems to be called .ash_history on alpine
+RUN touch /home/elixir/.bash_history && \
+  echo "/home/elixir/app/bin/pr remote" > /home/elixir/.ash_history
+
 # copy release executables
 COPY --from=build --chown="${USER}":"${USER}"\
   /app/_build/prod/rel/pr ./

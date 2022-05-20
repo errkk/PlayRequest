@@ -136,8 +136,8 @@ defmodule PRWeb.Service.ServiceSetupController do
     end
   end
 
-  def load_playlist(conn, _) do
-    case Music.load_playlist() do
+  def trigger_playlist(conn, _) do
+    case Music.trigger_playlist() do
       {:ok} ->
         conn
         |> put_flash(:info, "That seemed to work")

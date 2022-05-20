@@ -26,7 +26,8 @@ defmodule PRWeb.Service.SonosWebhookController do
     end
   end
 
-  def callback(conn, _params) do
+  def callback(conn, params) do
+    IO.inspect(params)
     Logger.info("Other webhook")
     render(conn, "index.json")
   end

@@ -86,7 +86,7 @@ defmodule PRWeb.UserHeaderLive do
   end
 
   def handle_event("start", _, socket) do
-    Music.load_playlist()
+    Music.trigger_playlist()
     {:noreply, socket}
   end
 end
