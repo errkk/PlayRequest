@@ -9,7 +9,6 @@ defmodule PRWeb.NotificationsChannel do
   def join("notifications:like", _payload, socket) do
     Music.subscribe()
 
-    IO.inspect(socket.assigns)
     if authorized?(socket) do
       {:ok, socket}
     else
@@ -37,6 +36,10 @@ defmodule PRWeb.NotificationsChannel do
       :ok
     end
 
+    {:noreply, socket}
+  end
+
+  def handle_info(_, socket) do
     {:noreply, socket}
   end
 

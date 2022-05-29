@@ -12,7 +12,6 @@ function connect() {
     .receive("ok", () => console.log("Connected"));
 
   channel.on("like", showNotification);
-  channel.on("test", data => console.log({data}));
 }
 
 function showNotification({track: {artist, name, img}, from: {first_name}}) {
@@ -22,7 +21,6 @@ function showNotification({track: {artist, name, img}, from: {first_name}}) {
     icon: img,
     body: `${name} – ${artist}`
   };
-  console.log(options)
   if (!("Notification" in window)) {
     return;
   }
