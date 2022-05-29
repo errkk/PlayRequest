@@ -10,18 +10,18 @@ defmodule PR.Ticker do
 
   @impl true
   def init(state) do
-    schedule_tick
+    schedule_next_tick()
     {:ok, state}
   end
 
   @impl true
   def handle_info(:tick, state) do
-    schedule_tick
+    schedule_next_tick()
     PlayState.tick()
     {:noreply, state}
   end
 
-  defp schedule_tick do
-    Process.send_after(self(), :tick, 1000)
+  defp schedule_next_tick do
+    Process.send_after(self(), :tick, 5_000)
   end
 end

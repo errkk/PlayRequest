@@ -18,6 +18,7 @@ defmodule PRWeb.Router do
 
   pipeline :auth do
     plug PRWeb.Plug.AuthPlug
+    plug PRWeb.Plug.UserSocketToken # For user socket
   end
 
   pipeline :trusted do

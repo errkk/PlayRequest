@@ -6,11 +6,10 @@ defmodule PRWeb.NotificationsChannel do
   alias PR.Scoring.Point
   alias PR.Queue.Track
 
-  intercept ["like"]
-
   def join("notifications:like", _payload, socket) do
     Music.subscribe()
 
+    IO.inspect(socket.assigns)
     if authorized?(socket) do
       {:ok, socket}
     else
@@ -19,23 +18,30 @@ defmodule PRWeb.NotificationsChannel do
   end
 
   # PubSub callbacks from Music subscription
-  def handle_info({Music, %Point{track: %Track{user_id: recipient_id} = track, user: user}, :point},
-      %{assigns: %{user_id: s_uid}} = socket) when recipient_id == s_uid do
+  def handle_info({Music, point, :point}, socket) do
+    %Point{track: %Track{user_id: recipient_id} = track, user: user} = point
+
     track_data = Map.take(track, [:name, :artist, :img])
     user_data = Map.take(user, [:first_name, :last_name])
-    push(socket, "like", %{user_id: recipient_id, track: track_data, from: user_data})
+
     %{name: name} = track_data
     %{first_name: first_name} = user_data
     Logger.info("Track liked: #{name} from: #{first_name}")
-    {:noreply, socket}
-  end
 
-  def handle_info({Music, _, _}, socket) do
+    case socket do
+      %{assigns: %{user_id: ^recipient_id}} ->
+        Logger.info("Sending like to user:#{recipient_id}")
+        push(socket, "like", %{user_id: recipient_id, track: track_data, from: user_data})
+      _ ->
+        Logger.info "skipping"
+      :ok
+    end
+
     {:noreply, socket}
   end
 
   # Add authorization logic here as required.
-  defp authorized?(%{assigns: user_id}) when not is_nil(user_id) do
+  defp authorized?(%{assigns: %{user_id: user_id} = assigns}) when not is_nil(user_id) do
     true
   end
 

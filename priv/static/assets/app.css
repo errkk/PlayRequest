@@ -629,7 +629,7 @@ body {
   bottom: 12px;
   height: 6px;
   max-width: calc(100% - 24px);
-  transition: width 900ms linear;
+  transition: width 5000ms linear;
   background: #FF1D79;
   border-radius: 10px;
 }

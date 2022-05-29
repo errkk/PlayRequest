@@ -1,15 +1,18 @@
 import {Socket} from "phoenix";
 
 function connect() {
-  const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
-  const socket = new Socket("/socket", {params: {_csrf_token: csrfToken}});
+  const socket = new Socket("/socket", {params: {token: window.userToken}});
 
   socket.connect();
 
   const channel = socket.channel("notifications:like", {})
 
-  channel.join().receive("error", resp => { console.log("Unable to join notifications channel", resp) });
+  channel.join()
+    .receive("error", resp => { console.log("Unable to join notifications channel", resp) })
+    .receive("ok", () => console.log("Connected"));
+
   channel.on("like", showNotification);
+  channel.on("test", data => console.log({data}));
 }
 
 function showNotification({track: {artist, name, img}, from: {first_name}}) {

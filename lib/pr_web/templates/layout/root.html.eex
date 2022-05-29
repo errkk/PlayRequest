@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <meta property="og:title" content="<%= installation_name() %>"/>
-    <meta property="og:description" content="🎶 An inclusive shared playlist 🥰"/>
+    <meta property="og:description" content="🎶 Contribute to the Sonos playlist"/>
     <%= unless assigns[:now_playing] do %>
     <meta property="og:image" content="<%= PRWeb.Endpoint.url() <> Routes.static_path(@conn, "/assets/pr.png") %>"/>
     <% end %>
@@ -26,7 +26,7 @@
     <link href="https://fonts.googleapis.com/css?family=Raleway:400,500,700|Source+Sans+Pro:400,600,700&display=swap" rel="stylesheet">
     <title><%= if assigns[:page_title], do: @page_title, else: installation_name() %></title>
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/assets/app.css") %>"/>
-    <link rel="icon" href="<%= Routes.static_path(@conn, "/assets/favicon.png") %>" id="favicon"/>
+    <link rel="icon" href="<%= Routes.static_path(@conn, "/images/favicon.png") %>" id="favicon"/>
   </head>
   <body>
     <div class="content">
@@ -37,6 +37,7 @@
         Version: <%= @version %>
       </p>
     </footer>
+    <script>window.userToken = "<%= assigns[:user_token] %>";</script>
     <script type="text/javascript" src="<%= Routes.static_path(@conn, "/assets/app.js") %>"></script>
   </body>
 </html>

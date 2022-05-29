@@ -106,7 +106,7 @@ defmodule PR.PlayState do
     match?(%PlaybackState{state: :idle}, get(:play_state))
   end
 
-  defp watch_play_state(%{state: :idle}) do
+  defp watch_play_state(%{state: :idle} = state) do
     # This is from play state. When player goes idle after playing everything.
     # Metadata will come soon, and wont match anything in the queue.
     # If that's updated the queue, then we can check for new tracks and re-trigger
@@ -118,10 +118,11 @@ defmodule PR.PlayState do
         Logger.info("Player IDLE. But, queue has more tracks. Loading them in 1000ms")
         Process.sleep(1000)
         trigger_on_sonos_system()
+        state
 
       _ ->
         Logger.info("Player idle, Queue empty.")
-        nil
+        state
     end
   end
 
@@ -169,8 +170,8 @@ defmodule PR.PlayState do
 
   defp update_playing(%{current_item: %{name: name} = current} = state) do
     Logger.metadata(playback_state: Map.get(get(:play_state), :state))
-    Queue.set_current(current)
-    |> case do
+    
+    case Queue.set_current(current) do
       {:ok, [playing: 1]} ->
         Logger.info("Started playing queued track: #{name}")
         state
@@ -185,12 +186,7 @@ defmodule PR.PlayState do
     end
   end
 
-  defp update_playing(%{current_item: %{} = i} = state) do
-    # TODO might need to do set current none here,
-    # currently the previous track is still marked as playing
-    # if there was only one track in the sonos queue and
-    # nothing in there to not match this
-    # So maybe call set_current here too, just to clear that last track when sonos is playing nothing
+  defp update_playing(%{current_item: %{}} = state) do
     Queue.set_current(%{})
     Logger.info("Nothing playing on the Sonos")
     state
@@ -199,9 +195,9 @@ defmodule PR.PlayState do
   # Called on an interval by supervisor
   def tick do
     with %{
-           playing_since: %DateTime{} = playing_since,
            current_item: %SonosItem{duration: duration}
          } <- get(:metadata),
+         %{playing_since: %DateTime{} = playing_since} <- Queue.get_playing(),
          diff <- DateTime.diff(DateTime.utc_now(), playing_since, :millisecond),
          true <- Kernel.>(duration, diff) do
       diff
@@ -219,7 +215,6 @@ defmodule PR.PlayState do
       |> Map.delete(:next_item)
       |> Map.delete(:container)
       # TODO ensure container is playrequest
-      # maybe get rid of next item
     rescue
       _ ->
         Logger.warn("Error casting metadata")
