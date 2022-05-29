@@ -15,10 +15,11 @@ defmodule PR.Factory do
     %PR.Queue.Track{
       name: "Jane's song",
       artist: "Jane",
-      duration: 30000,
+      duration: 30_000,
       img: "img",
       played_at: nil,
       playing_since: nil,
+      spotify_id: sequence(:spotify_id, &"spotify:track:#{&1}"),
       user: insert(:user)
     }
   end
@@ -38,7 +39,13 @@ defmodule PR.Factory do
 
   def playing_track_factory do
     struct!(track_factory(), %{
-      playing_since: DateTime.utc_now()
+      playing_since: DateTime.utc_now() |> DateTime.add(-30, :second)
+    })
+  end
+
+  def recently_playing_track_factory do
+    struct!(track_factory(), %{
+      playing_since: DateTime.utc_now() |> DateTime.add(-3, :second)
     })
   end
 
@@ -46,6 +53,32 @@ defmodule PR.Factory do
     %PR.Scoring.Point{
       track: build(:track),
       user: build(:user)
+    }
+  end
+
+  # Build only, these are just maps, to be cast by
+  # cast_metadata/1
+  def metadata_track_factory(%{id: id}) do
+   track = %{
+      id: %{object_id: id},
+      name: "track name",
+      artist: %{name: "artist"},
+      duration_millis: 10_000
+    }
+    %{track: track}
+  end
+
+  def metadata_track_factory(%{}) do
+    id = sequence(:spotify_id, &"spotify:track:#{&1}")
+    metadata_track_factory(%{id: id})
+  end
+
+  # Metadata payload after it's converted by the conroller
+  def metadata_factory do
+    %{
+      current_item: build(:metadata_track),
+      next_item: build(:metadata_track),
+      container: %{}
     }
   end
 end

@@ -132,56 +132,48 @@ defmodule PR.Queue do
     Logger.info("Sonos current track is: #{name}. Update Queue if this is in there.")
     now = DateTime.utc_now()
 
-    case set_current_transaction(spotify_id, now) do
-      # TODO not sure if we need to do anything with this
-      {:ok, res} ->
-        {:started, now}
-      {:ok, {0, nil}} ->
-        # Track has already been marked as playing
-        get_playing_since()
-      {:ok, {_, nil}} ->
-        # Updated, queued track has been marked as playing
-        {:started, now}
-    end
+    set_current_transaction(spotify_id, now)
   end
 
   def set_current(_) do
-    # Check for something in the DB that's been playing since it's duration ago
-    # TODO maybe this should be less than that, incase it's an intentional skip
+    # Set current to none of whats in the queue
+    # if there is something playing since > 20 sec ago, mark it as played
+    # if it's only jsut started, then mark it as not playing
     Logger.info("Set current: To no track")
     Track
       |> query_is_playing()
       |> query_has_been_playing()
-      |> tap(fn tracks_query ->
-        tracks =
-          tracks_query
-          |> Repo.all()
-          |> Enum.map(& &1.name)
-
-        cond do
-          length(tracks) > 0 ->
-            tracks = Enum.join(tracks, ",")
-            Logger.info("Set current: Still playing tracks #{tracks}")
-          true ->
-            Logger.info("Set current: Nothing currently playing")
-        end
-      end)
       |> Repo.update_all(set: [
         playing_since: nil,
         played_at: dynamic([i], datetime_add(i.playing_since, i.duration, "millisecond"))
       ])
       |> case do
       {0, nil} ->
-        Logger.info("Set current: Nothing playing.")
-        [{:played, nil}, {:playing, nil}]
+        Logger.info("Set current: not recently started: Nothing updated.")
+        {:ok, [{:played, nil}, {:playing, nil}]}
       {rows, nil} ->
         Logger.warn("Set current: Something was playing, so updated to played.")
-        [{:played, rows}, {:playing, nil}]
+        {:ok, [{:played, rows}, {:playing, nil}]}
+    end
+
+    Track
+      |> query_is_playing()
+      |> Repo.update_all(set: [
+        playing_since: nil,
+        played_at: nil,
+      ])
+      |> case do
+      {0, nil} ->
+        Logger.info("Set current: recently started: Nothing updated.")
+        {:ok, [{:played, nil}, {:playing, nil}]}
+      {rows, nil} ->
+        Logger.warn("Set current: Something was playing but not for long, so updated to un_played.")
+        {:ok, [{:played, rows}, {:playing, nil}]}
     end
   end
 
 
-  @spec set_current_transaction(String.t(), DateTime.t()) :: {:ok, {integer(), any()}}
+  @spec set_current_transaction(String.t(), DateTime.t()) :: {:ok, [played: integer, playing: integer]}
   defp set_current_transaction(spotify_id, now) do
     Repo.transaction(fn ->
       # Anything else that was playing now isn't, cos this new track is
@@ -218,10 +210,10 @@ defmodule PR.Queue do
     end)
   end
 
-  @spec get_playing_since() :: {:already_started, DateTime.t()} | {:ok}
+  @spec get_playing_since() :: DateTime.t() | {:ok}
   defp get_playing_since do
     case get_playing() do
-      %Track{playing_since: playing_since} -> {:already_started, playing_since}
+      %Track{playing_since: playing_since} -> playing_since
       _ -> {:ok}
     end
   end

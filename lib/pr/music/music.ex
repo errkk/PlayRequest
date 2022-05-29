@@ -69,9 +69,8 @@ defmodule PR.Music do
     with %Group{group_id: group_id} <- SonosHouseholds.get_active_group!(),
          {:ok, %{items: sonos_favorites}, _} <- SonosAPI.get_favorites(),
          {:ok, fav_id} <- find_playlist(sonos_favorites),
+        # Check if the play state is still idle
          %PlaybackState{state: :idle} <- PlayState.get(:play_state),
-         # TODO, this triggers the playlist to play, but it takes a while to get here,
-         # so maybe check if the playstate is still idle
          %{}  <- SonosAPI.set_favorite(fav_id, group_id) do
          Logger.info("Trigger playlist: OK")
       {:ok}

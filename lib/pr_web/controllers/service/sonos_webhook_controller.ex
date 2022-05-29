@@ -18,7 +18,7 @@ defmodule PRWeb.Service.SonosWebhookController do
   def callback(conn, %{"currentItem" => _} = params) do
     case get_req_header(conn, "x-sonos-target-value") do
       [group_id | _tail] ->
-        OPQ.enqueue(:sonos_events, PlayState, :handle_metadata_webhook, [params, group_id, request_id()])
+        PlayState.handle_metadata_webhook(params, group_id, request_id())
         render(conn, "index.json")
       _ ->
         Logger.error("Metadata webhook, no group id provided")
@@ -27,8 +27,8 @@ defmodule PRWeb.Service.SonosWebhookController do
   end
 
   def callback(conn, params) do
-    IO.inspect(params)
-    Logger.info("Other webhook")
+    {:ok, json} = Jason.encode(params)
+    Logger.info("Other webhook: #{json}")
     render(conn, "index.json")
   end
 

@@ -111,6 +111,8 @@ defmodule PR.PlayState do
     # Metadata will come soon, and wont match anything in the queue.
     # If that's updated the queue, then we can check for new tracks and re-trigger
     # with the new tracks.
+
+    # TODO might be worth checking metadata here
     case Queue.has_unplayed() do
       num when num > 0 ->
         Logger.info("Player IDLE. But, queue has more tracks. Loading them in 1000ms")
@@ -144,7 +146,7 @@ defmodule PR.PlayState do
     end
   end
 
-  defp process_metadata(data) do
+  def process_metadata(data) do
     data
     |> cast_metadata()
     |> update_playing()
@@ -156,7 +158,7 @@ defmodule PR.PlayState do
     data
   end
 
-  defp process_play_state(data) do
+  def process_play_state(data) do
     data
     |> PlaybackState.new()
     |> update_state(:play_state)
@@ -166,14 +168,16 @@ defmodule PR.PlayState do
   end
 
   defp update_playing(%{current_item: %{name: name} = current} = state) do
-    case Queue.set_current(current) do
-      {:started, playing_since} ->
+    Logger.metadata(playback_state: Map.get(get(:play_state), :state))
+    Queue.set_current(current)
+    |> case do
+      {:ok, [playing: 1]} ->
         Logger.info("Started playing queued track: #{name}")
-        Map.put(state, :playing_since, playing_since)
+        state
 
-      {:already_started, playing_since} ->
-        Logger.debug("Already playing: #{name}")
-        Map.put(state, :playing_since, playing_since)
+      {:ok, [playing: nil]} ->
+        Logger.debug("Already playing: #{name} (or is it nothing?)")
+        state
 
       _ ->
         Logger.debug("Not in the queue: #{name}. Ignoring")
@@ -181,7 +185,13 @@ defmodule PR.PlayState do
     end
   end
 
-  defp update_playing(%{current_item: %{}} = state) do
+  defp update_playing(%{current_item: %{} = i} = state) do
+    # TODO might need to do set current none here,
+    # currently the previous track is still marked as playing
+    # if there was only one track in the sonos queue and
+    # nothing in there to not match this
+    # So maybe call set_current here too, just to clear that last track when sonos is playing nothing
+    Queue.set_current(%{})
     Logger.info("Nothing playing on the Sonos")
     state
   end
@@ -206,13 +216,14 @@ defmodule PR.PlayState do
     try do
       data
       |> Map.update(:current_item, %{}, &SonosItem.new/1)
-      |> Map.update(:next_item, %{}, &SonosItem.new/1)
+      |> Map.delete(:next_item)
       |> Map.delete(:container)
       # TODO ensure container is playrequest
       # maybe get rid of next item
     rescue
       _ ->
-        %{current_item: %{}, next_item: %{}}
+        Logger.warn("Error casting metadata")
+        %{current_item: %{}}
     end
   end
 end

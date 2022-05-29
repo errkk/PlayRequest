@@ -16,7 +16,6 @@ defmodule PR.Application do
       PRWeb.Endpoint,
       {Phoenix.PubSub, [name: PR.PubSub, adapter: Phoenix.PubSub.PG2]},
       {PR.Worker.GetInitialState, [nil]},
-      {OPQ, name: :sonos_events, workers: 1}
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: PR.Supervisor)
