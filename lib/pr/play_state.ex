@@ -13,7 +13,7 @@ defmodule PR.PlayState do
   @topic inspect(__MODULE__)
 
   def start_link(_) do
-    Agent.start_link(fn -> %{play_state: %{}, metadata: %{}, progress: nil} end, name: __MODULE__)
+    Agent.start_link(fn -> %{play_state: %{}, metadata: %{}, progress: nil, error_mode: nil} end, name: __MODULE__)
   end
 
   def get_initial_state() do
@@ -76,7 +76,7 @@ defmodule PR.PlayState do
   def handle_play_state_webhook(data, group_id, request_id) do
     case SonosHouseholds.get_active_group() do
       %Group{group_id: ^group_id} ->
-        Logger.metadata(group_id: group_id, request_id: request_id)
+        Logger.metadata(group_id: group_id, request_id: request_id, error_mode: get(:error_mode))
         Logger.info("Handling PlayState")
       data
       |> SonosAPI.convert_result()
@@ -91,7 +91,7 @@ defmodule PR.PlayState do
   def handle_metadata_webhook(data, group_id, request_id) do
     case SonosHouseholds.get_active_group() do
       %Group{group_id: ^group_id} ->
-        Logger.metadata(group_id: group_id, request_id: request_id)
+        Logger.metadata(group_id: group_id, request_id: request_id, error_mode: get(:error_mode))
         Logger.info("Handling Metadata")
         data
         |> SonosAPI.convert_result()
@@ -99,6 +99,20 @@ defmodule PR.PlayState do
       _ -> 
         Logger.metadata(group_id: group_id)
         Logger.warn("Skipping Metadata unrecongnised group_id: #{group_id}")
+    end
+  end
+
+  def handle_error_webhook(data, group_id, request_id) do
+    case SonosHouseholds.get_active_group() do
+      %Group{group_id: ^group_id} ->
+        Logger.metadata(group_id: group_id, request_id: request_id, error_mode: get(:error_mode))
+        Logger.info("Handling Error webhook")
+        data
+        |> SonosAPI.convert_result()
+        |> process_sonos_error()
+      _ -> 
+        Logger.metadata(group_id: group_id)
+        Logger.warn("Skipping Error webhook unrecongnised group_id: #{group_id}")
     end
   end
 
@@ -126,6 +140,21 @@ defmodule PR.PlayState do
     end
   end
 
+  # If it's managed to play, maybe the error is over?
+  defp watch_play_state(%{state: :playing} = state) do
+    cond do
+      get(:error_mode) ->
+        Logger.info("Clearing error mode")
+        # Update agent
+        update_state(nil, :error_mode)
+        # Update live view 
+        broadcast(nil, :sonos_error)
+        state
+      true ->
+        state 
+    end
+  end
+
   defp watch_play_state(d), do: d
 
   defp trigger_on_sonos_system do
@@ -148,15 +177,19 @@ defmodule PR.PlayState do
   end
 
   def process_metadata(data) do
-    data
-    |> cast_metadata()
-    |> update_playing()
-    |> update_state(:metadata)
-    |> broadcast(:metadata)
+   case cast_metadata(data) do
+     {:ok, metadata} ->
+        metadata
+        |> update_playing()
+        |> update_state(:metadata)
+        |> broadcast(:metadata)
 
-    Music.queue_updated()
+        Music.queue_updated()
 
-    data
+        metadata
+      _ ->
+        data
+      end
   end
 
   def process_play_state(data) do
@@ -168,21 +201,37 @@ defmodule PR.PlayState do
     |> watch_play_state()
   end
 
+  def process_sonos_error(data) do
+    data
+    |> broadcast(:sonos_error)
+
+    # Set a flag on the agent, un set it when play state gets back to playing
+    update_state(true, :error_mode)
+  end
+
   defp update_playing(%{current_item: %{name: name} = current} = state) do
     Logger.metadata(playback_state: Map.get(get(:play_state), :state))
-    
-    case Queue.set_current(current) do
-      {:ok, [playing: 1]} ->
-        Logger.info("Started playing queued track: #{name}")
-        state
+    if get(:error_mode) do
+      Logger.warn("Update playing: Cancelled, cos error mode")
+      state
+    else
+      
+      # TODO don't mark as played if player is idle!!
+      # https://my.papertrailapp.com/systems/11282365431/events?q=%22pid%3D%3C0.8360.0%3E%22&selected=1467845015148589058
+      # Don't mark as played if playing since is < 20 seconds. is it really doing that?
+      case Queue.set_current(current) do
+        {:ok, [playing: 1]} ->
+          Logger.info("Started playing queued track: #{name}")
+          state
 
-      {:ok, [playing: nil]} ->
-        Logger.debug("Already playing: #{name} (or is it nothing?)")
-        state
+        {:ok, [playing: nil]} ->
+          Logger.debug("Already playing: #{name} (or is it nothing?)")
+          state
 
-      _ ->
-        Logger.debug("Not in the queue: #{name}. Ignoring")
-        state
+        _ ->
+          Logger.debug("Not in the queue: #{name}. Ignoring")
+          state
+      end
     end
   end
 
@@ -210,15 +259,15 @@ defmodule PR.PlayState do
 
   defp cast_metadata(%{} = data) do
     try do
-      data
+      data = data
       |> Map.update(:current_item, %{}, &SonosItem.new/1)
       |> Map.delete(:next_item)
       |> Map.delete(:container)
-      # TODO ensure container is playrequest
+      {:ok, data}
     rescue
       _ ->
         Logger.warn("Error casting metadata")
-        %{current_item: %{}}
+        {:error, :cant_cast_metadata}
     end
   end
 end

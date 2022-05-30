@@ -1,6 +1,9 @@
 import {Socket} from "phoenix";
 
 function connect() {
+  if (!window.userToken.length) {
+    return
+  }
   const socket = new Socket("/socket", {params: {token: window.userToken}});
 
   socket.connect();

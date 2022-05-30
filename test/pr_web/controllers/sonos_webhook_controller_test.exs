@@ -2,6 +2,7 @@ defmodule PRWeb.SonosWebhookControllerTest do
   use PRWeb.ConnCase
 
   alias PRWeb.Fixtures.Sonos.CurrentAndNext
+  alias PRWeb.Fixtures.Sonos.Error
 
   alias PR.Repo
   alias PR.Queue
@@ -77,6 +78,16 @@ defmodule PRWeb.SonosWebhookControllerTest do
       assert json_response(conn, 200)
       assert %{spotify_id: "0XhXnY0lBzbdEWktDHknsl"} = Queue.get_playing()
       assert %{played_at: %DateTime{}} = Repo.get(Track, old.id)
+    end
+  end
+
+  describe "error webhook" do
+    test "error code", %{conn: conn} do
+      conn = conn
+      |> put_req_header("content-type", "application/json")
+      |> put_req_header("x-sonos-target-value", "RINCON:GROUPID")
+      |> post(Routes.sonos_webhook_path(conn, :callback), Error.lost_connection())
+      assert json_response(conn, 200)
     end
   end
 end

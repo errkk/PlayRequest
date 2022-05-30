@@ -34,6 +34,7 @@ defmodule PRWeb.PlaybackLive do
         q: nil,
         loading: nil,
         info: nil,
+        error: nil,
         recently_liked: nil,
         participated: Queue.has_participated?(%User{id: user_id}),
         playlist: Music.get_playlist(%User{id: user_id}),
@@ -60,6 +61,18 @@ defmodule PRWeb.PlaybackLive do
   # Metadata webhook. Player is playing something else now
   def handle_info({PlayState, %{} = metadata, :metadata}, socket) do
     {:noreply, assign(socket, metadata: metadata, page_title: page_title(metadata))}
+  end
+
+  # Clear errormode
+  def handle_info({PlayState, nil, :sonos_error}, socket) do
+    {:noreply, assign(socket, error: nil)}
+  end
+
+  def handle_info({PlayState, %{error_code: error_code}, :sonos_error}, socket) do
+    {:noreply,
+     assign(socket,
+       error: "😵 Oh shit, an error from Sonos: \"#{error_code}\""
+     )}
   end
 
   # Queue has changed either from addition or track has played

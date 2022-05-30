@@ -14,5 +14,9 @@ defmodule PRWeb.UserSocket do
     end
   end
 
+  def connect(%{}, _socket, _connect_info) do
+    :error
+  end
+
   def id(socket), do: "user_socket:#{socket.assigns.user_id}"
 end

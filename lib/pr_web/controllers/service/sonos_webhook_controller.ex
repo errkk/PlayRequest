@@ -26,9 +26,20 @@ defmodule PRWeb.Service.SonosWebhookController do
     end
   end
 
+  def callback(conn, %{"errorCode" => _} = params) do
+    case get_req_header(conn, "x-sonos-target-value") do
+      [group_id | _tail] ->
+        PlayState.handle_error_webhook(params, group_id, request_id())
+        render(conn, "index.json")
+      _ ->
+        Logger.error("Error webhook, no group id provided")
+        render(conn, "index.json")
+    end
+  end
+
   def callback(conn, params) do
     {:ok, json} = Jason.encode(params)
-    Logger.info("Other webhook: #{json}")
+    Logger.error("Other webhook: #{json}")
     render(conn, "index.json")
   end
 
