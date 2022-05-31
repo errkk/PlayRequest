@@ -1,7 +1,6 @@
 defmodule PR.PlayStateTest do
   use PR.DataCase
   import Mock
-  import ExUnit.CaptureLog
 
   alias PR.Queue
   alias PR.Queue.Track
@@ -25,9 +24,7 @@ defmodule PR.PlayStateTest do
       metadata = build(:metadata, current_item: build(:metadata_track, id: spotify_id))
 
       # Act
-      assert capture_log([level: :info], fn ->
-        PlayState.process_metadata(metadata)
-      end) =~ "1 marked as playing"
+      PlayState.process_metadata(metadata)
 
       # Assert
       %{playing_since: playing_since, played_at: played_at} = Queue.get_track!(queue_track.id)
@@ -48,11 +45,7 @@ defmodule PR.PlayStateTest do
       metadata = build(:metadata, current_item: build(:metadata_track, id: spotify_id))
 
       # Act
-      log = capture_log([level: :info], fn ->
-        PlayState.process_metadata(metadata)
-      end)
-      assert log =~ "1 marked as played"
-      assert log =~ "1 marked as playing"
+      PlayState.process_metadata(metadata)
 
       # Assert
       %{playing_since: playing_since, played_at: played_at} = Queue.get_track!(queue_track.id)
@@ -70,6 +63,43 @@ defmodule PR.PlayStateTest do
         = PlayState.get(:metadata)
     end
 
+    test "error mode, dont update track when it says playing nothing", %{mocked_now: now} do
+      spotify_track_id = "123"
+      spotify_id = "spotify:track:#{spotify_track_id}"
+
+      previous_track = insert(:playing_track)
+      # Metadata says playing nothing
+      metadata = build(:metadata, current_item: %{})
+      sonos_error = build(:sonos_error)
+
+      # Act
+
+      # This updates the error mode on the agent, which interferes with other tests
+      # PlayState.process_sonos_error(sonos_error)
+      PlayState.process_metadata(metadata)
+
+      # Assert
+      %{playing_since: playing_since, played_at: played_at} = Queue.get_track!(previous_track.id)
+      # This should not be set to played
+      assert is_nil(played_at)
+      assert is_nil(playing_since)
+
+      # Check agent state
+      assert PlayState.get(:error_mode)
+
+      # Ok it's ok now we recieve a playing playstate
+      playing = build(:sonos_play_state)
+      PlayState.process_play_state(playing)
+
+      %{playing_since: playing_since, played_at: played_at} = Queue.get_track!(previous_track.id)
+      # This should not be set to played
+      assert is_nil(played_at)
+      refute is_nil(playing_since)
+
+      # Check agent state
+      refute PlayState.get(:error_mode)
+    end
+
     # This might be a bit rare, cos it will probs just say in metadata that the
     # current item is the first thing in the queue, from ages ago, but the play state is idle
     test "no track playing on sonos, 2 tracks in queue, one is playing" do
@@ -81,9 +111,7 @@ defmodule PR.PlayStateTest do
       metadata = build(:metadata, current_item: %{}, next_item: %{})
 
       # Act
-      assert capture_log([level: :info], fn ->
-        PlayState.process_metadata(metadata)
-      end) =~ "Set current: Something was playing, so updated to played."
+      PlayState.process_metadata(metadata)
 
       # Assert
       %{playing_since: playing_since, played_at: played_at} = Queue.get_track!(queue_track.id)
@@ -91,7 +119,7 @@ defmodule PR.PlayStateTest do
       assert is_nil(playing_since)
 
       %{playing_since: playing_since, played_at: played_at} = Queue.get_track!(previous_track.id)
-      # The playnig track is marked as played if it was started > 20 seconds ago
+      # The playing track is marked as played if it was started > 20 seconds ago
       refute is_nil(played_at)
       assert is_nil(playing_since)
 
@@ -108,9 +136,7 @@ defmodule PR.PlayStateTest do
       metadata = build(:metadata, current_item: %{}, next_item: %{})
 
       # Act
-      assert capture_log([level: :info], fn ->
-        PlayState.process_metadata(metadata)
-      end) =~ "Set current: Something was playing but not for long, so updated to un_played."
+      PlayState.process_metadata(metadata)
 
       # Assert
       %{playing_since: playing_since, played_at: played_at} = Queue.get_track!(queue_track.id)
@@ -138,9 +164,7 @@ defmodule PR.PlayStateTest do
       metadata = build(:metadata, current_item: current_item_from_ages_ago, next_item: %{})
 
       # Act
-      # assert capture_log([level: :info], fn ->
-        PlayState.process_metadata(metadata)
-      # end) =~ "Nothing playing on the Sonos"
+      PlayState.process_metadata(metadata)
 
       # Assert
       %{playing_since: playing_since, played_at: played_at} = Queue.get_track!(queue_track.id)
@@ -160,9 +184,7 @@ defmodule PR.PlayStateTest do
       metadata = build(:metadata, current_item: current_item_from_ages_ago, next_item: %{})
 
       # Act
-      assert capture_log([level: :info], fn ->
-        PlayState.process_metadata(metadata)
-      end)
+      PlayState.process_metadata(metadata)
 
       # Assert
       %{playing_since: playing_since, played_at: played_at} = Queue.get_track!(queue_track.id)

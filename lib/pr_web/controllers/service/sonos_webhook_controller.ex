@@ -37,6 +37,12 @@ defmodule PRWeb.Service.SonosWebhookController do
     end
   end
 
+  def callback(conn, %{"container" => %{"name" => name}}) do
+    Logger.warn("Ignoring metadata playing #{name}")
+    render(conn, "index.json")
+  end
+
+
   def callback(conn, params) do
     {:ok, json} = Jason.encode(params)
     Logger.error("Other webhook: #{json}")

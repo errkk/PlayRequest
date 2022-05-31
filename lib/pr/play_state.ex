@@ -106,7 +106,7 @@ defmodule PR.PlayState do
     case SonosHouseholds.get_active_group() do
       %Group{group_id: ^group_id} ->
         Logger.metadata(group_id: group_id, request_id: request_id, error_mode: get(:error_mode))
-        Logger.info("Handling Error webhook")
+        Logger.error("Handling Error webhook", error: Jason.encode!(data))
         data
         |> SonosAPI.convert_result()
         |> process_sonos_error()
@@ -142,15 +142,21 @@ defmodule PR.PlayState do
 
   # If it's managed to play, maybe the error is over?
   defp watch_play_state(%{state: :playing} = state) do
-    cond do
-      get(:error_mode) ->
+    if get(:error_mode) do
+        Logger.metadata(error_mode: nil)
         Logger.info("Clearing error mode")
         # Update agent
         update_state(nil, :error_mode)
         # Update live view 
         broadcast(nil, :sonos_error)
+        # Ok, everybody just calm down, what are we actually playing now?
+        Logger.info("Refetching metadata after error mode")
+        # Wonder if this sort of thing should be async, as it's in a webhook event
+        SonosAPI.get_metadata()
+        |> process_metadata()
+
         state
-      true ->
+      else
         state 
     end
   end
@@ -160,15 +166,7 @@ defmodule PR.PlayState do
   defp trigger_on_sonos_system do
     case get(:play_state) do
       %PlaybackState{state: :idle} ->
-        # Check playstate is still idle
-
         Logger.info("Still idle, triggering")
-        # It will check again in between the requests required to do bump_and_reload
-        # It can take a few seconds
-
-        # TODO maybe we don't want to bump and reload, just trigger_playlist
-        # in case bumping is what's skipping tracks 
-        # https://my.papertrailapp.com/systems/11282365431/events?q=%22request_id%3DFvB7Cl_1pEHvvdgAAAlh%22&selected=1463892313209204750
         Music.trigger_playlist()
 
       %PlaybackState{state: state} ->
@@ -188,6 +186,7 @@ defmodule PR.PlayState do
 
         metadata
       _ ->
+        Logger.info("not processing metadata")
         data
       end
   end
@@ -207,6 +206,7 @@ defmodule PR.PlayState do
 
     # Set a flag on the agent, un set it when play state gets back to playing
     update_state(true, :error_mode)
+    data
   end
 
   defp update_playing(%{current_item: %{name: name} = current} = state) do
@@ -215,10 +215,6 @@ defmodule PR.PlayState do
       Logger.warn("Update playing: Cancelled, cos error mode")
       state
     else
-      
-      # TODO don't mark as played if player is idle!!
-      # https://my.papertrailapp.com/systems/11282365431/events?q=%22pid%3D%3C0.8360.0%3E%22&selected=1467845015148589058
-      # Don't mark as played if playing since is < 20 seconds. is it really doing that?
       case Queue.set_current(current) do
         {:ok, [playing: 1]} ->
           Logger.info("Started playing queued track: #{name}")
@@ -257,17 +253,20 @@ defmodule PR.PlayState do
     end
   end
 
-  defp cast_metadata(%{} = data) do
+  defp cast_metadata(%{container: %{type: "playlist"}, current_item: current_item} = data) do
     try do
-      data = data
-      |> Map.update(:current_item, %{}, &SonosItem.new/1)
-      |> Map.delete(:next_item)
-      |> Map.delete(:container)
+      sonos_item = SonosItem.new(current_item)
+      data = %{current_item: sonos_item}
+
       {:ok, data}
     rescue
       _ ->
         Logger.warn("Error casting metadata")
-        {:error, :cant_cast_metadata}
+        {:ok, %{current_item: %{}}}
     end
+  end
+
+  defp cast_metadata(_) do
+    {:error, :probably_playing_something_else}
   end
 end

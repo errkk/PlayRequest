@@ -23,16 +23,12 @@ defmodule PRWeb.NotificationsChannel do
     track_data = Map.take(track, [:name, :artist, :img])
     user_data = Map.take(user, [:first_name, :last_name])
 
-    %{name: name} = track_data
-    %{first_name: first_name} = user_data
-    Logger.info("Track liked: #{name} from: #{first_name}")
-
     case socket do
       %{assigns: %{user_id: ^recipient_id}} ->
         Logger.info("Sending like to user:#{recipient_id}")
         push(socket, "like", %{user_id: recipient_id, track: track_data, from: user_data})
       _ ->
-        Logger.info "skipping"
+        :ok
       :ok
     end
 
@@ -44,7 +40,7 @@ defmodule PRWeb.NotificationsChannel do
   end
 
   # Add authorization logic here as required.
-  defp authorized?(%{assigns: %{user_id: user_id} = assigns}) when not is_nil(user_id) do
+  defp authorized?(%{assigns: %{user_id: user_id}}) when not is_nil(user_id) do
     true
   end
 

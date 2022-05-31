@@ -231,9 +231,9 @@ defmodule PR.Queue do
 
   @spec query_has_been_playing(Ecto.Queryable.t()) :: Ecto.Queryable.t()
   defp query_has_been_playing(query) do
-    # Did it start playing more than 20 seconds ago?
+    # Did it start playing more than 10 seconds ago?
     query
-    |> where([t], t.playing_since < ago(20, "second"))
+    |> where([t], t.playing_since < ago(10, "second"))
   end
 
   @spec query_unplayed(Ecto.Queryable.t()) :: Ecto.Queryable.t()

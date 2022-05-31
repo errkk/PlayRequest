@@ -19,7 +19,7 @@ config :logger, :logger_papertrail_backend,
   system_name: System.get_env("HOSTNAME"),
   metadata_filter: [],
   format: "[$level]$levelpad$metadata $message",
-  metadata: [:request_id, :pid, :playback_state, :error_mode]
+  metadata: [:request_id, :pid, :playback_state, :error_mode, :error]
 
 config :pr, :sonos,
   scopes: "playback-control-all",

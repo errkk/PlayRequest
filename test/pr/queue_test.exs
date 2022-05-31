@@ -91,17 +91,13 @@ defmodule PR.QueueTest do
     end
 
     test "nothing is playing but it might be lets give it 10 seconds" do
-      track = insert(:track, spotify_id: "herp", playing_since: DateTime.utc_now(), duration: 10_000)
+      track = insert(:recently_playing_track, spotify_id: "herp", duration: 10_000)
       assert {:ok, [played: 1, playing: nil]} = Queue.set_current(%{})
       assert %{played_at: nil, playing_since: nil} = Queue.get_track!(track.id)
     end
 
     test "nothing is playing but it might be lets give it 10 seconds its had 10 seconds" do
-      then =
-        DateTime.utc_now()
-        |> Timex.shift(minutes: -1)
-
-      previous_track = insert(:track, spotify_id: "herp", playing_since: then, duration: 10_000)
+      previous_track = insert(:playing_track, spotify_id: "herp", duration: 10_000)
       assert {:ok, [played: nil, playing: nil]} = Queue.set_current(%{})
       assert Queue.get_playing() |> is_nil()
     end

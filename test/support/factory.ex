@@ -78,7 +78,18 @@ defmodule PR.Factory do
     %{
       current_item: build(:metadata_track),
       next_item: build(:metadata_track),
-      container: %{}
+      container: %{type: "playlist"}
+    }
+  end
+
+  def sonos_error_factory do
+    %{errorCode: "Shit's fucked", errorReason: "oh dear"}
+  end
+
+  def sonos_play_state_factory do
+    %{
+      position_millis: 10_000,
+      playback_state: :playing
     }
   end
 end
