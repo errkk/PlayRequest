@@ -201,12 +201,11 @@ defmodule PR.PlayState do
   end
 
   def process_sonos_error(data) do
-    data
-    |> broadcast(:sonos_error)
+    broadcast(data, :sonos_error)
 
     # Set a flag on the agent, un set it when play state gets back to playing
     update_state(true, :error_mode)
-    data
+    :ok
   end
 
   defp update_playing(%{current_item: %{name: name} = current} = state) do
@@ -253,7 +252,7 @@ defmodule PR.PlayState do
     end
   end
 
-  defp cast_metadata(%{container: %{type: "playlist"}, current_item: current_item} = data) do
+  defp cast_metadata(%{container: %{type: "playlist"}, current_item: current_item}) do
     try do
       sonos_item = SonosItem.new(current_item)
       data = %{current_item: sonos_item}
@@ -267,6 +266,7 @@ defmodule PR.PlayState do
   end
 
   defp cast_metadata(_) do
+    Logger.info("probably playing something else")
     {:error, :probably_playing_something_else}
   end
 end

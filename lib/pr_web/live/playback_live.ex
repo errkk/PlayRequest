@@ -100,6 +100,11 @@ defmodule PRWeb.PlaybackLive do
   # Async UI functions
   #
 
+  def handle_info({:search, ""}, socket) do
+    # Empty serach query
+    {:noreply, assign(socket, loading: false, result: [])}
+  end
+
   def handle_info({:search, q}, socket) do
     case Music.search(q) do
       {:ok, tracks} ->

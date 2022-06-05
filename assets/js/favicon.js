@@ -2,7 +2,9 @@ export const ICON_SIZE = 32;
 
 export default () => {
   const favicon = document.getElementById("favicon");
-  const playState = document.getElementById("play_state");
+  // TODO connect this to a playstate socket
+  const isPlaying = true;
+
   const worker = new Worker('/assets/worker.js');
   const offcanvas = new OffscreenCanvas(ICON_SIZE, ICON_SIZE);
   worker.postMessage(offcanvas, [offcanvas]);
@@ -13,7 +15,7 @@ export default () => {
   const ctx = canvas.getContext('2d');
 
   worker.onmessage = ({data}) => {
-    if (!playState || playState.dataset.playback !== "active") {
+    if (!isPlaying) {
       return;
     }
     ctx.clearRect(0, 0, ICON_SIZE, ICON_SIZE);
