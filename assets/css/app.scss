@@ -11,6 +11,18 @@
 @import "alert";
 @import "pie";
 
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
 html {
   height: 100%;
   padding: 0;
@@ -23,8 +35,14 @@ body {
   font-size: 18px;
 
   background-color: $blue;
-  background-image: linear-gradient(45deg, $blue, darken($blue, 10));
+  background-image: linear-gradient(45deg, $blue, darken($blue, 20));
   background-attachment: fixed;
+
+  &.error {
+    background-image: linear-gradient(45deg, $pink, $blue);
+    background-size: 200% 200%;
+    animation: gradient 1s ease infinite;
+  }
 }
 
 .is-pending {

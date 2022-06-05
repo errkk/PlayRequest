@@ -66,6 +66,7 @@ body {
 .col--logo {
   grid-area: logo;
   padding: 20px 0;
+  align-self: flex-start;
 
   @media (max-width: 800px) {
     padding: 0 0 10px 0;
@@ -88,59 +89,76 @@ body {
 }
 
 .nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
 
   ul {
+    display: flex;
+    flex: 1;
+    flex-wrap: nowrap;
+    flex-direction: column;
     padding: 0;
     margin: 0;
-    display: inline-block;
+
+    @media (min-width: 800px) {
+      flex: 1;
+      flex-direction: row;
+      justify-content: flex-end;
+      align-items: center;
+    }
   }
   li {
     padding: 0;
     margin: 0;
     display: inline-block;
-    margin-right: 20px;
-
-    &:last-child {
-      margin-right: 0;
-    }
-
-    @media (max-width: 800px) {
-      &:first-child {
-        margin-right: 0;
-      }
-    }
+    margin: 3px 20px 3px 0;
+    white-space: nowrap;
   }
   .button {
-    margin-right: 20px;
+    margin-right: 10px;
+    justify-self: flex-end;
+    flex: 1;
   }
 }
 
 .user {
-  margin-top: 10px;
+  justify-self: flex-end;
   margin-left: 20px;
   background: silver;
   padding: 6px;
   border-radius: 30px;
-  background: $darkerBlue;
+  background: $blue;
   display: inline-block;
   box-shadow: 1px 0 20px $shad;
 
-  @media (max-width: 800px) {
-    margin-top: 20px;
-    margin-left: 0;
-    display: block;
-    margin-bottom: 40px;
-  }
-
   &__hearts {
     vertical-align: middle;
+    margin-left: 1ex;
 
-    .heart:last-child {
+    .heart {
       margin-right: 10px;
     }
   }
 }
 
+.users {
+  &-container {
+    width: 100%;
+    margin-top: 10px;
+    justify-content: flex-end;
+    display: flex;
+  }
+  padding: 4px;
+  border-radius: 30px;
+  background: $darkerBlue;
+  display: inline-block;
+  box-shadow: 1px 0 20px $shad;
+
+  .profile-image {
+    width: 30px;
+  }
+}
 
 .profile-image {
   width: 40px;
