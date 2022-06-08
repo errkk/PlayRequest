@@ -13,7 +13,7 @@
   border-radius: 100px;
   background: $blue;
   color: #fff;
-  padding: 4px 8px 4px 6px;
+  padding: 2px 6px 2px 4px;
 
   justify-content: flex-start;
   align-items: center;
@@ -27,9 +27,9 @@
   &__number,
   &__img {
     border-radius: 100px;
-    width: 17px;
-    height: 17px;
-    flex: 0 0 17px;
+    width: 21px;
+    height: 21px;
+    flex: 0 0 21px;
     margin-right: 5px;
   }
 

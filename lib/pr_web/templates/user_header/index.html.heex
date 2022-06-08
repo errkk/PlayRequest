@@ -31,6 +31,7 @@
       <%= for {_id, user} <- @users do %>
         <%= img_tag user.image, class: "profile-image", title: user.first_name %>
       <% end %>
+      <span class="users--title">online</span>
       </div>
     </div>
   </nav>
