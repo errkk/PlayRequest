@@ -13,7 +13,9 @@ defmodule PR.PlayState do
   @topic inspect(__MODULE__)
 
   def start_link(_) do
-    Agent.start_link(fn -> %{play_state: %{}, metadata: %{}, progress: nil, error_mode: nil} end, name: __MODULE__)
+    Agent.start_link(fn -> %{play_state: %{}, metadata: %{}, progress: nil, error_mode: nil} end,
+      name: __MODULE__
+    )
   end
 
   def get_initial_state() do
@@ -78,10 +80,12 @@ defmodule PR.PlayState do
       %Group{group_id: ^group_id} ->
         Logger.metadata(group_id: group_id, request_id: request_id, error_mode: get(:error_mode))
         Logger.info("Handling PlayState")
-      data
-      |> SonosAPI.convert_result()
-      |> process_play_state()
-      _ -> 
+
+        data
+        |> SonosAPI.convert_result()
+        |> process_play_state()
+
+      _ ->
         Logger.metadata(group_id: group_id)
         Logger.warn("Skipping PlayState, unrecongnised group: #{group_id}")
     end
@@ -93,10 +97,12 @@ defmodule PR.PlayState do
       %Group{group_id: ^group_id} ->
         Logger.metadata(group_id: group_id, request_id: request_id, error_mode: get(:error_mode))
         Logger.info("Handling Metadata")
+
         data
         |> SonosAPI.convert_result()
         |> process_metadata()
-      _ -> 
+
+      _ ->
         Logger.metadata(group_id: group_id)
         Logger.warn("Skipping Metadata unrecongnised group_id: #{group_id}")
     end
@@ -107,10 +113,12 @@ defmodule PR.PlayState do
       %Group{group_id: ^group_id} ->
         Logger.metadata(group_id: group_id, request_id: request_id, error_mode: get(:error_mode))
         Logger.error("Handling Error webhook", error: Jason.encode!(data))
+
         data
         |> SonosAPI.convert_result()
         |> process_sonos_error()
-      _ -> 
+
+      _ ->
         Logger.metadata(group_id: group_id)
         Logger.warn("Skipping Error webhook unrecongnised group_id: #{group_id}")
     end
@@ -143,21 +151,21 @@ defmodule PR.PlayState do
   # If it's managed to play, maybe the error is over?
   defp watch_play_state(%{state: :playing} = state) do
     if get(:error_mode) do
-        Logger.metadata(error_mode: nil)
-        Logger.info("Clearing error mode")
-        # Update agent
-        update_state(nil, :error_mode)
-        # Update live view 
-        broadcast(nil, :sonos_error)
-        # Ok, everybody just calm down, what are we actually playing now?
-        Logger.info("Refetching metadata after error mode")
-        # Wonder if this sort of thing should be async, as it's in a webhook event
-        SonosAPI.get_metadata()
-        |> process_metadata()
+      Logger.metadata(error_mode: nil)
+      Logger.info("Clearing error mode")
+      # Update agent
+      update_state(nil, :error_mode)
+      # Update live view 
+      broadcast(nil, :sonos_error)
+      # Ok, everybody just calm down, what are we actually playing now?
+      Logger.info("Refetching metadata after error mode")
+      # Wonder if this sort of thing should be async, as it's in a webhook event
+      SonosAPI.get_metadata()
+      |> process_metadata()
 
-        state
-      else
-        state 
+      state
+    else
+      state
     end
   end
 
@@ -175,8 +183,8 @@ defmodule PR.PlayState do
   end
 
   def process_metadata(data) do
-   case cast_metadata(data) do
-     {:ok, metadata} ->
+    case cast_metadata(data) do
+      {:ok, metadata} ->
         metadata
         |> update_playing()
         |> update_state(:metadata)
@@ -185,10 +193,11 @@ defmodule PR.PlayState do
         Music.queue_updated()
 
         metadata
+
       _ ->
         Logger.info("not processing metadata")
         data
-      end
+    end
   end
 
   def process_play_state(data) do
@@ -210,6 +219,7 @@ defmodule PR.PlayState do
 
   defp update_playing(%{current_item: %{name: name} = current} = state) do
     Logger.metadata(playback_state: Map.get(get(:play_state), :state))
+
     if get(:error_mode) do
       Logger.warn("Update playing: Cancelled, cos error mode")
       state
@@ -252,7 +262,7 @@ defmodule PR.PlayState do
     end
   end
 
-  defp cast_metadata(%{container: %{type: "playlist"}, current_item: current_item}) do
+  defp cast_metadata(%{container: %{}, current_item: current_item}) do
     try do
       sonos_item = SonosItem.new(current_item)
       data = %{current_item: sonos_item}
@@ -265,8 +275,8 @@ defmodule PR.PlayState do
     end
   end
 
-  defp cast_metadata(_) do
-    Logger.info("probably playing something else")
+  defp cast_metadata(data) do
+    Logger.info("probably playing something else? #{Jason.encode!(data)}")
     {:error, :probably_playing_something_else}
   end
 end
