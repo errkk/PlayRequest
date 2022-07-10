@@ -1,5 +1,5 @@
 defmodule PR.QueueTest do
-  use PR.DataCase
+  use PR.DataCase, async: true
 
   alias PR.Queue
   alias PR.Queue.Track

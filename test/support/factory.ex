@@ -89,7 +89,7 @@ defmodule PR.Factory do
   def sonos_play_state_factory do
     %{
       position_millis: 10_000,
-      playback_state: :playing
+      playback_state: "PLAYBACK_STATE_PLAYING"
     }
   end
 end

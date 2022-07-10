@@ -241,9 +241,14 @@ defmodule PR.PlayState do
   end
 
   defp update_playing(%{current_item: %{}} = state) do
-    Queue.set_current(%{})
-    Logger.info("Nothing playing on the Sonos")
-    state
+    if get(:error_mode) do
+      Logger.warn("Update playing: Cancelled, cos error mode")
+      state
+    else
+      Queue.set_current(%{})
+      Logger.info("Nothing playing on the Sonos")
+      state
+    end
   end
 
   # Called on an interval by supervisor
@@ -262,7 +267,7 @@ defmodule PR.PlayState do
     end
   end
 
-  defp cast_metadata(%{container: %{}, current_item: current_item}) do
+  defp cast_metadata(%{container: %{}, current_item: %{track: %{}} = current_item}) do
     try do
       sonos_item = SonosItem.new(current_item)
       data = %{current_item: sonos_item}
@@ -270,10 +275,16 @@ defmodule PR.PlayState do
       {:ok, data}
     rescue
       _ ->
-        Logger.warn("Error casting metadata")
+        Logger.warn("Error casting metadata so setting %{}")
         {:ok, %{current_item: %{}}}
     end
   end
+
+  defp cast_metadata(%{container: %{}, current_item: %{}}) do
+    Logger.warn("Current item is empty, so setting %{}")
+    {:ok, %{current_item: %{}}}
+  end
+
 
   defp cast_metadata(data) do
     Logger.info("probably playing something else? #{Jason.encode!(data)}")
