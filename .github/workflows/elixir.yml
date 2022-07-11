@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: bitwalker/alpine-elixir:1.9.0
+      image: elixir:1.12-alpine
 
     services:
       postgres:
