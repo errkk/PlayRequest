@@ -77,5 +77,6 @@ jobs:
         registry: ghcr.io
         dockerfile: Dockerfile
         buildargs: APP_REVISION
+        # Doesn't work for 0.0.0-rc.0
         tag_semver: true
         tags: latest
