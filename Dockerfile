@@ -50,6 +50,10 @@ RUN apk update \
   && apk add --virtual build-dependencies \
   build-base
 
+# Get build arg to be in the env
+ARG APP_REVISION
+ENV APP_REVISION $APP_REVISION
+
 # install runtime dependencies
 RUN apk add --no-cache libstdc++ openssl ncurses-libs bash
 

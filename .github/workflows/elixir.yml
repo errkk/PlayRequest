@@ -68,6 +68,8 @@ jobs:
 
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@master
+      env:
+        APP_REVISION: ${{ github.ref_name }}
       with:
         name: errkk/playrequest/pr
         username: _
@@ -75,3 +77,4 @@ jobs:
         registry: ghcr.io
         dockerfile: Dockerfile
         tag_semver: true
+        buildargs: APP_REVISION
