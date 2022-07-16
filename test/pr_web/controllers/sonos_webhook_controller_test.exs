@@ -1,7 +1,9 @@
 defmodule PRWeb.SonosWebhookControllerTest do
-  use PRWeb.ConnCase
+  use PRWeb.ConnCase, async: true
+  import ExUnit.CaptureLog
 
   alias PRWeb.Fixtures.Sonos.CurrentAndNext
+  alias PRWeb.Fixtures.Sonos.Error
 
   alias PR.Repo
   alias PR.Queue
@@ -9,19 +11,21 @@ defmodule PRWeb.SonosWebhookControllerTest do
 
   describe "headers" do
     test "Check group id from header", %{conn: conn} do
-      insert(:track, playing_since: nil, spotify_id: "0XhXnY0lBzbdEWktDHknsl")
+      insert(:track, spotify_id: "0XhXnY0lBzbdEWktDHknsl")
       insert(:group, group_id: "RINCON:GROUPID", is_active: true)
-      conn = conn
-      |> put_req_header("content-type", "application/json")
-      |> put_req_header("x-sonos-target-value", "RINCON:GROUPID")
-      |> post(Routes.sonos_webhook_path(conn, :callback), CurrentAndNext.json())
-      assert json_response(conn, 200)
+      capture_log(fn -> 
+        conn = conn
+        |> put_req_header("content-type", "application/json")
+        |> put_req_header("x-sonos-target-value", "RINCON:GROUPID")
+        |> post(Routes.sonos_webhook_path(conn, :callback), CurrentAndNext.json())
+        assert json_response(conn, 200)
+      end)
     end
   end
 
   describe "metadata" do
     test "set current track when there is a next", %{conn: conn} do
-      insert(:track, playing_since: nil, spotify_id: "0XhXnY0lBzbdEWktDHknsl")
+      insert(:track, spotify_id: "0XhXnY0lBzbdEWktDHknsl")
       insert(:group, group_id: "RINCON:GROUPID", is_active: true)
       conn = conn
       |> put_req_header("content-type", "application/json")
@@ -33,12 +37,16 @@ defmodule PRWeb.SonosWebhookControllerTest do
 
     test "dont handle if group id is different", %{conn: conn} do
       insert(:track, playing_since: nil, spotify_id: "0XhXnY0lBzbdEWktDHknsl")
-      conn = conn
-      |> put_req_header("content-type", "application/json")
-      |> put_req_header("x-sonos-target-value", "RINCON:WHODIS???")
-      |> post(Routes.sonos_webhook_path(conn, :callback), CurrentAndNext.json())
-      assert json_response(conn, 200)
-      assert is_nil(Queue.get_playing())
+      
+      assert capture_log(fn -> 
+        conn = conn
+        |> put_req_header("content-type", "application/json")
+        |> put_req_header("x-sonos-target-value", "RINCON:WHODIS???")
+        |> post(Routes.sonos_webhook_path(conn, :callback), CurrentAndNext.json())
+        assert json_response(conn, 200)
+        assert is_nil(Queue.get_playing())
+
+      end) =~ "Skipping"
     end
 
     test "set current track when current is already playing", %{conn: conn} do
@@ -54,7 +62,7 @@ defmodule PRWeb.SonosWebhookControllerTest do
 
     test "old track set played", %{conn: conn} do
       insert(:group, group_id: "RINCON:GROUPID", is_active: true)
-      old = insert(:track, playing_since: DateTime.utc_now(), spotify_id: "something else")
+      old = insert(:playing_track, spotify_id: "something else")
 
       conn = conn
       |> put_req_header("content-type", "application/json")
@@ -67,8 +75,8 @@ defmodule PRWeb.SonosWebhookControllerTest do
 
     test "old track set played update current", %{conn: conn} do
       insert(:group, group_id: "RINCON:GROUPID", is_active: true)
-      old = insert(:track, playing_since: DateTime.utc_now(), spotify_id: "something else")
-      new = insert(:track, playing_since: nil, spotify_id: "0XhXnY0lBzbdEWktDHknsl")
+      old = insert(:playing_track, spotify_id: "something else")
+      new = insert(:track, spotify_id: "0XhXnY0lBzbdEWktDHknsl")
 
       conn = conn
       |> put_req_header("content-type", "application/json")
@@ -77,6 +85,16 @@ defmodule PRWeb.SonosWebhookControllerTest do
       assert json_response(conn, 200)
       assert %{spotify_id: "0XhXnY0lBzbdEWktDHknsl"} = Queue.get_playing()
       assert %{played_at: %DateTime{}} = Repo.get(Track, old.id)
+    end
+  end
+
+  describe "error webhook" do
+    test "error code", %{conn: conn} do
+      conn = conn
+      |> put_req_header("content-type", "application/json")
+      |> put_req_header("x-sonos-target-value", "RINCON:GROUPID")
+      |> post(Routes.sonos_webhook_path(conn, :callback), Error.lost_connection())
+      assert json_response(conn, 200)
     end
   end
 end

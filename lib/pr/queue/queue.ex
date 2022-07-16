@@ -132,60 +132,88 @@ defmodule PR.Queue do
     Logger.info("Sonos current track is: #{name}. Update Queue if this is in there.")
     now = DateTime.utc_now()
 
-    case set_current_transaction(spotify_id, now) do
-      {:ok, {0, nil}} ->
-        # Track has already been marked as playing
-        get_playing_since()
-      {:ok, {_, nil}} ->
-        # Updated, queued track has been marked as playing
-        {:started, now}
-    end
+    set_current_transaction(spotify_id, now)
   end
 
   def set_current(_) do
-    Logger.info("Updating current track to *nothing*")
-
-    # Check for something in the DB that's been playing for < 10 seconds
-    case Track
+    # Set current to none of whats in the queue
+    # if there is something playing since > 20 sec ago, mark it as played
+    # if it's only jsut started, then mark it as not playing
+    Logger.info("Set current: To no track")
+    Track
       |> query_is_playing()
       |> query_has_been_playing()
       |> Repo.update_all(set: [
         playing_since: nil,
         played_at: dynamic([i], datetime_add(i.playing_since, i.duration, "millisecond"))
-      ]) do
+      ])
+      |> case do
       {0, nil} ->
-        Logger.info("Set current, no playing track found, nothing updated")
-        {:ok}
-      {_, nil} ->
-        Logger.info("Set current, old track cleared")
-        {:ok}
+        Logger.info("Set current: not recently started: Nothing updated.")
+        {:ok, [{:played, nil}, {:playing, nil}]}
+      {rows, nil} ->
+        Logger.warn("Set current: Something was playing, so updated to played.")
+        {:ok, [{:played, rows}, {:playing, nil}]}
+    end
+
+    Track
+      |> query_is_playing()
+      |> Repo.update_all(set: [
+        playing_since: nil,
+        played_at: nil,
+      ])
+      |> case do
+      {0, nil} ->
+        Logger.info("Set current: recently started: Nothing updated.")
+        {:ok, [{:played, nil}, {:playing, nil}]}
+      {rows, nil} ->
+        Logger.warn("Set current: Something was playing but not for long, so updated to un_played.")
+        {:ok, [{:played, rows}, {:playing, nil}]}
     end
   end
 
 
-  @spec set_current_transaction(String.t(), DateTime.t()) :: {:ok, {integer(), any()}}
+  @spec set_current_transaction(String.t(), DateTime.t()) :: {:ok, [played: integer, playing: integer]}
   defp set_current_transaction(spotify_id, now) do
     Repo.transaction(fn ->
       # Anything else that was playing now isn't, cos this new track is
-      Track
+      played = Track
       |> query_is_playing()
       |> where([t], t.spotify_id != ^spotify_id)
       |> Repo.update_all(set: [playing_since: nil, played_at: now])
+      |> case do
+        {0, nil} ->
+          Logger.info("Set current: transaction, nothing marked as played")
+          {:played, nil}
+        {rows, nil} ->
+          Logger.info("Set current: transaction, #{rows} marked as played")
+          {:played, rows}
+      end
 
       # Update the track that's playing by spotify id
       # If its not already played or already marked as playing
-      Track
+      playing = Track
       |> where([t], t.spotify_id == ^spotify_id)
       |> where([t], is_nil(t.played_at))
       |> where([t], is_nil(t.playing_since))
       |> Repo.update_all(set: [playing_since: now])
+      |> case do
+        {0, nil} ->
+          Logger.info("Set current: transaction, nothing marked as playing")
+          {:playing, nil}
+        {rows, nil} ->
+          Logger.info("Set current: transaction, #{rows} marked as playing")
+          {:playing, rows}
+      end
+
+      [played, playing]
     end)
   end
 
-  @spec get_playing_since() :: {:already_started, DateTime.t()} | {:ok}
+  @spec get_playing_since() :: DateTime.t() | {:ok}
   defp get_playing_since do
     case get_playing() do
-      %Track{playing_since: playing_since} -> {:already_started, playing_since}
+      %Track{playing_since: playing_since} -> playing_since
       _ -> {:ok}
     end
   end
@@ -203,7 +231,7 @@ defmodule PR.Queue do
 
   @spec query_has_been_playing(Ecto.Queryable.t()) :: Ecto.Queryable.t()
   defp query_has_been_playing(query) do
-    # Was it playing since before 10 seconds ago
+    # Did it start playing more than 10 seconds ago?
     query
     |> where([t], t.playing_since < ago(10, "second"))
   end

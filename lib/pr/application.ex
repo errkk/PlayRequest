@@ -15,7 +15,8 @@ defmodule PR.Application do
       PR.Telemetry,
       PRWeb.Endpoint,
       {Phoenix.PubSub, [name: PR.PubSub, adapter: Phoenix.PubSub.PG2]},
-      {PR.Worker.GetInitialState, [nil]}
+      {PR.Worker.GetInitialState, [nil]},
+      PRWeb.Presence,
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: PR.Supervisor)

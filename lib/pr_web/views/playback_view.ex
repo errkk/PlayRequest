@@ -30,15 +30,6 @@ defmodule PRWeb.PlaybackView do
 
   def progress(_, _, _), do: nil
 
-  def novelty(track_novelty, artist_novelty) do
-    content_tag(:span, class: "novelty") do
-      [
-        content_tag(:span, "", class: "novelty__bar novelty__bar--track", style: "height: #{track_novelty}%;", title: "Track novelty: #{track_novelty}"),
-        content_tag(:span, "", class: "novelty__bar novelty__bar--artist", style: "height: #{artist_novelty}%;", title: "Artist novelty: #{artist_novelty}")
-      ]
-    end
-  end
-
   def dun_voted?(%Track{has_pointed: true}), do: true
   def dun_voted?(_), do: false
 

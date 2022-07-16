@@ -4,7 +4,6 @@ defmodule PR.Queue.Track do
 
   alias PR.Auth.User
   alias PR.Scoring.Point
-  alias PR.Queue.TrackScore
 
   schema "tracks" do
     field :artist, :string
@@ -42,6 +41,5 @@ defmodule PR.Queue.Track do
       :user_id
     ])
     |> validate_required([:name, :artist, :img, :spotify_id, :duration, :user_id])
-    |> validate_exclusion(:artist, ["Oasis"])
   end
 end

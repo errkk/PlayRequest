@@ -1,6 +1,5 @@
 defmodule PRWeb.HistoryView do
   use PRWeb, :view
-  import PRWeb.PlaybackView, only: [novelty: 2]
 
   def time(dt) do
     dt

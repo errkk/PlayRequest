@@ -1,7 +1,7 @@
 FROM elixir:1.12-alpine AS build
 RUN apk update \
-    && apk add --virtual build-dependencies \
-        build-base
+  && apk add --virtual build-dependencies \
+  build-base
 RUN apk add bash nodejs npm inotify-tools openssl
 
 WORKDIR /app
@@ -32,7 +32,7 @@ COPY assets assets
 
 # Build sass here, cos doing it via mix dun werk on fly
 RUN cd assets && \
-     sass --no-source-map --style=compressed css/app.scss ../priv/static/assets/app.css
+  sass --no-source-map --style=compressed css/app.scss ../priv/static/assets/app.css
 RUN mix assets.deploy
 
 # compile project
@@ -45,10 +45,10 @@ COPY config/releases.exs config/
 # assemble release
 RUN mix release
 
-FROM alpine:3.12 AS app
+FROM alpine:3.16 AS app
 RUN apk update \
-    && apk add --virtual build-dependencies \
-        build-base
+  && apk add --virtual build-dependencies \
+  build-base
 
 # install runtime dependencies
 RUN apk add --no-cache libstdc++ openssl ncurses-libs bash
@@ -64,20 +64,25 @@ RUN mkdir "/home/${USER}/app/tmp"
 # Create  unprivileged user to run the release
 RUN \
   addgroup \
-   -g 1000 \
-   -S "${USER}" \
+  -g 1000 \
+  -S "${USER}" \
   && adduser \
-   -s /bin/sh \
-   -u 1000 \
-   -G "${USER}" \
-   -h "/home/${USER}" \
-   -D "${USER}" \
+  -s /bin/sh \
+  -u 1000 \
+  -G "${USER}" \
+  -h "/home/${USER}" \
+  -D "${USER}" \
   && su "${USER}"
 
 RUN chown ${USER}:${USER} "/home/${USER}/app/tmp"
 
 # run as user
 USER "${USER}"
+
+# Pretend this is in bash history
+# It seems to be called .ash_history on alpine
+RUN touch /home/elixir/.bash_history && \
+  echo "/home/elixir/app/bin/pr remote" > /home/elixir/.ash_history
 
 # copy release executables
 COPY --from=build --chown="${USER}":"${USER}"\

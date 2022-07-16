@@ -148,7 +148,7 @@
         <h3>Load playlist</h3>
 
         <%= link "Load playlist on Sonos",
-            to: Routes.service_setup_path(@conn, :load_playlist),
+            to: Routes.service_setup_path(@conn, :trigger_playlist),
             method: :post,
             class: "button" %>
         <p>

@@ -5,12 +5,13 @@ config :pr,
 
 # Configure your database
 config :pr, PR.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: "pr_user",
+  password: "1234",
   database: "pr_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+  pool_size: 10,
+  log: false
 
 config :pr, :sonos, scopes: "playback-control-all"
 
@@ -77,7 +78,8 @@ config :pr, PRWeb.Endpoint,
   ]
 
 # Do not include metadata nor timestamps in development logs
-config :logger, :console, format: "[$level] $message\n"
+# config :logger, :console, format: "[$level] $message\n"
+config :logger, level: :info
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime

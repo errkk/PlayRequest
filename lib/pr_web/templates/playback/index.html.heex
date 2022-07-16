@@ -6,6 +6,7 @@
         <input id="search" placeholder="Search for a track" autocomplete="off" type="text" name="q" value={@q} readonl={@loading} />
       </form>
       <p phx-click="clear_info" class={"alert alert-info #{if assigns[:info], do: "alert--entrance"}"} role="alert"><%= if assigns[:info], do: @info %></p>
+      <p class={"alert alert-error #{if assigns[:error], do: "alert--entrance"}"} role="alert"><%= if assigns[:error], do: @error %></p>
     </div>
 
     <%= unless @participated do %>
@@ -22,7 +23,10 @@
       <%= for track <- @result do %>
         <div class="track track--light">
           <div class="track__inner">
-            <%= img_tag track.img, width: 100, class: "track__img" %>
+            <div class="track__img__container">
+              <%= img_tag track.img, width: 100, class: "track__img" %>
+            </div>
+
             <div class="track__details">
               <h3 class="track__name">
                 <%= track.name %>
@@ -42,45 +46,71 @@
     <h2>Queue</h2>
     <div class="queue">
       <%= for track <- @playlist do %>
-        <div class={"track #{wobble?(@recently_liked, track)} #{if playing?(track, @play_state), do: "playing"}"}>
+        <div class={"track #{wobble?(@recently_liked, track)} #{if playing?(track, @play_state), do: "playing"} #{if dun_voted?(track), do: "has-voted"}"}>
           <div class="track__inner">
-            <div class="track__img__container">
-              <%= img_tag track.img, width: 100, class: "track__img" %>
-            </div>
 
-            <%= novelty track.track_novelty, track.artist_novelty %>
+              <div class="track__img__container">
+              <%= if can_vote?(track, @current_user) do %>
+                <button class="flip__container animate" phx-click="like" value={track.id} title={"Give some appreciation to #{track.user.first_name}"}>
+                  <div class="flip__flipper">
+                    <%= img_tag track.img, width: 100, class: "track__img flip__front" %>
+                    <span class="flip__back"></span>
+                  </div>
+                </button>
+              <% else %>
+                <%= img_tag track.img, width: 100, class: "track__img" %>
+              <% end %>
+              </div>
 
-            <div class="track__details">
-              <h3 class="track__name">
-                <%= if playing?(track, @play_state),
-                    do: img_tag(Routes.static_path(PRWeb.Endpoint, "/images/playing-icon.svg"), class: "track__playing") %>
-                <%= track.name %>
-                <%= if track.track_novelty < 20 do %>
-                  <span title={"Track novelty: #{track.track_novelty}"}>😴</span>
-                <% end %>
-                <%= heart track %>
-              </h3>
-              <p class="track__artist">
-                <%= track.artist %>
-                <%= if track.artist_novelty < 20 do %>
-                  <span title={"Artist novelty: #{track.artist_novelty}"}>😴</span>
-                <% end %>
-              </p>
-            </div>
-            <%= if can_vote?(track, @current_user) do %>
-              <button class="track__user__container animate" phx-click="like" value={track.id} title={"Give some appreciation to #{track.user.first_name}"}>
-                <div class="track__user">
-                  <%= img_tag track.user.image, width: 50, class: "track__user__img" %>
-                  <span class="track__user__back"></span>
-                </div>
-              </button>
-            <% else %>
-              <div class={"track__user__container #{if dun_voted?(track), do: "has-voted"}"}>
-                <div class="track__user">
-                  <%= img_tag track.user.image, width: 50, class: "track__user__img" %>
+              <div class="track__details">
+                <h3 class="track__name">
+                  <%= if playing?(track, @play_state),
+                      do: img_tag(Routes.static_path(PRWeb.Endpoint, "/images/playing-icon.svg"), class: "track__playing") %>
+                  <%= track.name %>
+                  <%= if track.track_novelty < 20 do %>
+                    <span title={"Track novelty: #{track.track_novelty}"}>😴</span>
+                  <% end %>
+                </h3>
+                <p class="track__artist">
+                  <%= track.artist %>
+                  <%= if track.artist_novelty < 20 do %>
+                    <span title={"Artist novelty: #{track.artist_novelty}"}>😴</span>
+                  <% end %>
+                </p>
+
+                <div class="chips">
+                  <div class="chip">
+                    <%= img_tag track.user.image, width: 40, class: "chip__img" %>
+                    <%= track.user.first_name %>
+                  </div>
+
+                  <% if false do %>
+                  <div class="chip chip--grey">
+                    <span class="pie teal mask no-round" style={"--p:#{max(5, track.track_novelty)}"}>
+                    </span>
+                      Track novelty: <%= track.track_novelty %>%
+                  </div>
+                  <div class="chip chip--grey">
+                    <span class="pie teal mask no-round" style={"--p:#{max(5, track.artist_novelty)}"}>
+                    </span>
+                      Artist novelty: <%= track.artist_novelty %>%
+                  </div>
+                  <% end %>
+                  <%= heart track %>
                 </div>
               </div>
-            <% end %>
+              <div class="novelty__container">
+                <div class="pie blue mask" style={"--p:#{max(5, floor((track.track_novelty + track.artist_novelty + track.artist_novelty) / 3))}; --w:62px; --b:5px;"}>
+                  <div class="novelty__inner">
+                    <span class="novelty__title">
+                    Novelty
+                    </span>
+                    <span class="novelty__score">
+                      <%= floor((track.track_novelty + track.artist_novelty + track.artist_novelty) / 3) %>
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           <%= progress(track, @play_state, @progress) %>
         </div>

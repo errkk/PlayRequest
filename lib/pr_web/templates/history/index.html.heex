@@ -10,8 +10,6 @@
               <%= img_tag track.img, width: 100, class: "track__img" %>
             </div>
 
-            <%= novelty track.track_novelty, track.artist_novelty %>
-
             <div class="track__details">
               <h3 class="track__name">
                 <%= link [
@@ -24,7 +22,6 @@
                 <%= if track.track_novelty < 20 do %>
                   <span title={"Track novelty: #{track.track_novelty}"}>😴</span>
                 <% end %>
-                <%= heart track %>
               </h3>
               <p class="track__artist">
                 <%= track.artist %>
@@ -32,19 +29,40 @@
                   <span title={"Artist novelty: #{track.artist_novelty}"}>😴</span>
                 <% end %>
               </p>
-              <p>
-                @ <%= time(track.played_at) %>
-                <%= link("😫 It skipped, plz re-queue",
-                      to: Routes.history_path(@conn, :mark_unplayed, track),
-                      method: :post,
-                      class: "track__skipped-link") %>
-              </p>
+
+                <div class="chips">
+                  <div class="chip">
+                    <%= img_tag track.user.image, width: 40, class: "chip__img" %>
+                    <%= track.user.first_name %>
+                  </div>
+
+                  <span class="chip chip--teal">
+                    <span class="chip_img">@</span>
+                    <%= time(track.played_at) %>
+                  </span>
+                  <%= heart track %>
+                  <span>
+                    <%= link("😫 It skipped, plz re-queue",
+                          to: Routes.history_path(@conn, :mark_unplayed, track),
+                          method: :post,
+                          class: "track__skipped-link") %>
+                  </span>
+                </div>
             </div>
-              <div class="track__user__container">
-                <div class="track__user">
-                  <%= img_tag track.user.image, width: 50, class: "track__user__img" %>
+              
+              <div class="novelty__container">
+                <div class="pie blue mask" style={"--p:#{max(5, floor((track.track_novelty + track.artist_novelty + track.artist_novelty) / 3))}; --w:62px; --b:5px;"}>
+                  <div class="novelty__inner">
+                    <span class="novelty__title">
+                    Novelty
+                    </span>
+                    <span class="novelty__score">
+                      <%= floor((track.track_novelty + track.artist_novelty + track.artist_novelty) / 3) %>
+                    </span>
+                  </div>
                 </div>
               </div>
+
           </div>
         </div>
       <% end %>

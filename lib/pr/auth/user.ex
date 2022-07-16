@@ -4,6 +4,10 @@ defmodule PR.Auth.User do
 
   alias PR.Queue.Track
 
+  # Tells JSON encoder what to serialise
+  # User by PRWeb.Presence
+  @derive {Jason.Encoder, only: [:first_name, :last_name, :image]}
+
   schema "users" do
     field :display_name, :string
     field :email, :string

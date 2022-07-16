@@ -11,7 +11,6 @@ defmodule PR.SonosHouseholds.GroupManager do
          {:ok, expected_group_id, player_ids} <- get_active_group_id() do
       if groups
         |> Enum.map(& &1.id)
-        |> IO.inspect(label: :found_groups)
         |> Enum.member?(expected_group_id) do
         Logger.info("Group ok #{expected_group_id}")
         :ok
@@ -43,10 +42,10 @@ defmodule PR.SonosHouseholds.GroupManager do
     case SonosAPI.create_group(player_ids) do
       {:ok, %Group{id: id}} ->
         SonosAPI.subscribe_webhooks()
-        Logger.info "New group created"
+        Logger.info("New group created")
         {:ok, "Recreated group"}
       _ ->
-        Logger.error "Couldn't recreate group"
+        Logger.error("Couldn't recreate group")
         {:error, "Couldn't recreate group"}
     end
   end
@@ -57,7 +56,7 @@ defmodule PR.SonosHouseholds.GroupManager do
       {:ok, %{groups: groups}, _} ->
         {:ok, groups}
       {:error, msg} ->
-        Logger.error("Can't get groups: #{msg}")
+        Logger.error("Can't get groups from Sonos API: #{msg}")
         {:error, msg}
       _ ->
         {:error, :cant_get_groups}
@@ -66,6 +65,7 @@ defmodule PR.SonosHouseholds.GroupManager do
 
   @spec get_active_group_id() :: {:ok, String.t(), List.t()} | {:error, atom()}
   def get_active_group_id do
+    # Get Group ID and expected player_ids from the database
     case SonosHouseholds.get_active_group() do
       %Group{group_id: group_id, player_ids: player_ids} ->
         {:ok, group_id, player_ids}

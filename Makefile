@@ -1,5 +1,5 @@
 define PG
-brew services start postgresql && 
+brew services start postgresql &&
 endef
 
 define ENV
@@ -13,6 +13,15 @@ endef
 define DEPS
 mix deps.get && 
 endef
+
+setup:
+	# For postgres > 14, the default user isn't created so make one here
+	$(PG) $(ENV) $(DEPS) \
+	echo "You'll need to enter a pasword in a min" && \
+	echo "It's just for development, so you you use 1234 you wont have to edit config/{dev|test}.exs" && \
+	createuser -P -s -e pr_user && echo "User created" || echo "User not created, never mind, maybe you already did?" && \
+	mix ecto.setup
+.PHONY: dev
 
 dev:
 	$(PG) $(ENV) $(DEPS) $(MIGRATE)\

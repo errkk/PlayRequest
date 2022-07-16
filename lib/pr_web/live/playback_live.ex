@@ -34,6 +34,7 @@ defmodule PRWeb.PlaybackLive do
         q: nil,
         loading: nil,
         info: nil,
+        error: nil,
         recently_liked: nil,
         participated: Queue.has_participated?(%User{id: user_id}),
         playlist: Music.get_playlist(%User{id: user_id}),
@@ -62,6 +63,18 @@ defmodule PRWeb.PlaybackLive do
     {:noreply, assign(socket, metadata: metadata, page_title: page_title(metadata))}
   end
 
+  # Clear errormode
+  def handle_info({PlayState, nil, :sonos_error}, socket) do
+    {:noreply, assign(socket, error: nil)}
+  end
+
+  def handle_info({PlayState, %{error_code: error_code}, :sonos_error}, socket) do
+    {:noreply,
+     assign(socket,
+       error: "😵 Oh shit, an error from Sonos: \"#{error_code}\""
+     )}
+  end
+
   # Queue has changed either from addition or track has played
   def handle_info({Music, _num_unplayed, :queue_updated}, socket) do
     send(self(), {:get_playlist, nil})
@@ -86,6 +99,11 @@ defmodule PRWeb.PlaybackLive do
   #
   # Async UI functions
   #
+
+  def handle_info({:search, ""}, socket) do
+    # Empty serach query
+    {:noreply, assign(socket, loading: false, result: [])}
+  end
 
   def handle_info({:search, q}, socket) do
     case Music.search(q) do
