@@ -1,5 +1,5 @@
 defmodule PRWeb.AuthTest do
-  use PR.DataCase
+  use PR.DataCase, async: true
 
   alias PR.Auth
 

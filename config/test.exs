@@ -5,8 +5,8 @@ config :pr,
 
 # Configure your database
 config :pr, PR.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: "pr_user",
+  password: "1234",
   database: "pr_test",
   hostname: System.get_env("POSTGRES_HOST") || "localhost",
   port: System.get_env("POSTGRES_PORT") || 5432,

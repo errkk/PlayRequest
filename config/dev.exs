@@ -5,8 +5,8 @@ config :pr,
 
 # Configure your database
 config :pr, PR.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: "pr_user",
+  password: "1234",
   database: "pr_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
