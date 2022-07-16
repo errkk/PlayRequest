@@ -49,7 +49,7 @@ export FLY_APP={app_name}
 
 3. Build and push the image
 ```sh
-fly deploy --remote-only --app $FLY_APP
+fly deploy --app $FLY_APP --image --image ghcr.io/errkk/playrequest/pr:latest
 ```
 
 4. You'll need to set the following env vars (see above for getting creds for Spotify and Sonos)

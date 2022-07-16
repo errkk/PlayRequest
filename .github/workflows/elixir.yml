@@ -76,5 +76,6 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: ghcr.io
         dockerfile: Dockerfile
-        tag_semver: true
         buildargs: APP_REVISION
+        tag_semver: true
+        tags: latest
