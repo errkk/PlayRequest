@@ -3,7 +3,8 @@ name: Test and Build image
 on:
   push:
     tags:
-    - '*'
+    - '[0-9]+.[0-9]+.[0-9]+'
+    - '[0-9]+.[0-9]+.[0-9]+-rc\.[0-9]+'
     branches:
     - '*'
 
@@ -53,6 +54,33 @@ jobs:
         POSTGRES_HOST: postgres
         POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
 
+  check_tag:
+    runs-on: ubuntu-latest
+    outputs:
+      deploy: ${{ steps.check-tag.outputs.deploy }}
+      deploy_staging: ${{ steps.check-tag.outputs.deploy_staging }}
+      deploy_production: ${{ steps.check-tag.outputs.deploy_production }}
+      tags: ${{ steps.extract-tag.outputs.tags }}
+    steps:
+      - name: check tag ${{ github.ref }}
+        id: check-tag
+        run: |
+          if [[ ${{ github.ref }} =~ refs\/tags\/[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo ::set-output name=deploy::true
+            echo ::set-output name=deploy_production::true
+            echo ::set-output name=tags::latest,${{ github.ref_name }}
+          else
+            echo ::set-output name=deploy_production::false
+          fi
+
+          if [[ ${{ github.ref }} =~ refs\/tags\/[0-9]+\.[0-9]+\.[0-9]+-rc\.[0-9]+ ]]; then
+            echo ::set-output name=deploy::true
+            echo ::set-output name=deploy_staging::true
+            echo ::set-output name=tags::${{ github.ref_name }}
+          else
+            echo ::set-output name=deploy_staging::false
+          fi
+
   release:
     runs-on: ubuntu-latest
     needs: test
@@ -77,4 +105,56 @@ jobs:
         registry: ghcr.io
         dockerfile: Dockerfile
         buildargs: APP_REVISION
-        tags: "latest,${{ github.ref_name }}"
+        tags: ${{ needs.check_tag.tags }}
+
+  deploy_prod:
+    name: Deploy production
+    runs-on: ubuntu-latest
+    needs: [check_tag, release]
+    if: needs.check_tag.outputs.deploy_production == 'true'
+    env:
+      FLY_APP: sonosnow-staging
+
+    steps:
+      - name: Install Fly
+        run: apt install flyctl
+
+      - name: Create deployment (Prod)
+        uses: niklasmerz/github-deployment-action@master
+        with:
+          args: -o errkk -r playrequest -c master -e production
+
+      - name: Deploy to Production
+        run: flyctl deploy --config fly.prod.toml --image ghcr.io/errkk/playrequest/pr:${{ github.tag_name }}
+
+      - name: Mark successful deployment
+        if: success()
+        uses: niklasmerz/github-deployment-action@master
+        with:
+          args: -o errkk -r playrequest -s success -u https://sonosnow.fly.dev -f
+
+  deploy_staging:
+    name: Deploy Staging
+    runs-on: ubuntu-latest
+    needs: [check_tag, release]
+    if: needs.check_tag.outputs.deploy_staging == 'true'
+    env:
+      FLY_APP: sonosnow-staging
+
+    steps:
+      - name: Install Fly
+        run: apt install flyctl
+
+      - name: Create deployment (Staging)
+        uses: niklasmerz/github-deployment-action@master
+        with:
+          args: -o errkk -r playrequest -c master -e staging
+
+      - name: Deploy to Production
+        run: flyctl deploy --config fly.staging.toml --image ghcr.io/errkk/playrequest/pr:${{ github.tag_name }}
+
+      - name: Mark successful deployment
+        if: success()
+        uses: niklasmerz/github-deployment-action@master
+        with:
+          args: -o errkk -r playrequest -s success -u https://sonosnow-staging.fly.dev -f
