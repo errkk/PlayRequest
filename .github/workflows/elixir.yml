@@ -120,7 +120,7 @@ jobs:
 
     steps:
       - name: Install Fly
-        run: sudo apt install -y flyctl
+        run: sudo apt-get install -y flyctl
 
       - name: Create deployment (Prod)
         uses: niklasmerz/github-deployment-action@master
