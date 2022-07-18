@@ -118,6 +118,7 @@ jobs:
     env:
       FLY_APP: sonosnow-staging
       GITHUB_TOKEN: ${{ github.token }}
+      FLYCTL_INSTALL: /home/runner/.fly
 
     steps:
       - name: Install Fly
@@ -129,7 +130,9 @@ jobs:
           args: -o errkk -r playrequest -c master -e production
 
       - name: Deploy to Production
-        run: flyctl deploy --config fly.prod.toml --image ghcr.io/errkk/playrequest/pr:${{ github.tag_name }}
+        run: |
+          export PATH="$FLYCTL_INSTALL/bin:$PATH"
+          flyctl deploy --config fly.prod.toml --image ghcr.io/errkk/playrequest/pr:${{ github.tag_name }}
 
       - name: Mark successful deployment
         if: success()
@@ -145,6 +148,7 @@ jobs:
     env:
       FLY_APP: sonosnow-staging
       GITHUB_TOKEN: ${{ github.token }}
+      FLYCTL_INSTALL: /home/runner/.fly
 
     steps:
       - name: Install Fly
@@ -156,7 +160,9 @@ jobs:
           args: -o errkk -r playrequest -c master -e staging
 
       - name: Deploy to Staging
-        run: flyctl deploy --config fly.staging.toml --image ghcr.io/errkk/playrequest/pr:${{ github.tag_name }}
+        run: |
+          export PATH="$FLYCTL_INSTALL/bin:$PATH"
+          flyctl deploy --config fly.staging.toml --image ghcr.io/errkk/playrequest/pr:${{ github.tag_name }}
 
       - name: Mark successful deployment
         if: success()
