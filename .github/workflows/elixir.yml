@@ -120,7 +120,7 @@ jobs:
 
     steps:
       - name: Install Fly
-        run: sudo apt-get install -y flyctl
+        run: curl -L https://fly.io/install.sh | sh
 
       - name: Create deployment (Prod)
         uses: niklasmerz/github-deployment-action@master
@@ -146,7 +146,7 @@ jobs:
 
     steps:
       - name: Install Fly
-        run: sudo apt-get install -y flyctl
+        run: curl -L https://fly.io/install.sh | sh
 
       - name: Create deployment (Staging)
         uses: niklasmerz/github-deployment-action@master
