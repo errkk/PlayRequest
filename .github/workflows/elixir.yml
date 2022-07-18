@@ -117,6 +117,7 @@ jobs:
     if: needs.check_tag.outputs.deploy_production == 'true'
     env:
       FLY_APP: sonosnow-staging
+      GITHUB_TOKEN: ${{ github.token }}
 
     steps:
       - name: Install Fly
@@ -143,6 +144,7 @@ jobs:
     if: needs.check_tag.outputs.deploy_staging == 'true'
     env:
       FLY_APP: sonosnow-staging
+      GITHUB_TOKEN: ${{ github.token }}
 
     steps:
       - name: Install Fly
@@ -153,7 +155,7 @@ jobs:
         with:
           args: -o errkk -r playrequest -c master -e staging
 
-      - name: Deploy to Production
+      - name: Deploy to Staging
         run: flyctl deploy --config fly.staging.toml --image ghcr.io/errkk/playrequest/pr:${{ github.tag_name }}
 
       - name: Mark successful deployment
