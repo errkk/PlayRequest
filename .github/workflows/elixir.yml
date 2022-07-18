@@ -133,7 +133,7 @@ jobs:
       - name: Deploy to Production
         run: |
           export PATH="$FLYCTL_INSTALL/bin:$PATH"
-          flyctl deploy --config fly.prod.toml --image ghcr.io/errkk/playrequest/pr:${{ github.tag_name }}
+          flyctl deploy --config fly.prod.toml --image ghcr.io/errkk/playrequest/pr:${{ github.ref_name }}
 
       - name: Mark successful deployment
         if: success()
@@ -164,7 +164,7 @@ jobs:
       - name: Deploy to Staging
         run: |
           export PATH="$FLYCTL_INSTALL/bin:$PATH"
-          flyctl deploy --config fly.staging.toml --image ghcr.io/errkk/playrequest/pr:${{ github.tag_name }}
+          flyctl deploy --config fly.staging.toml --image ghcr.io/errkk/playrequest/pr:${{ github.ref_name }}
 
       - name: Mark successful deployment
         if: success()
