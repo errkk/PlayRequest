@@ -102,7 +102,7 @@
   }
 
   &__details {
-    flex: auto;
+    flex: 1;
     font-size: 16px;
     display: flex;
     flex-direction: column;
@@ -159,7 +159,7 @@
     border: none;
     background: url(/images/arrow.svg) 50% 50% no-repeat;
     background-size: 40% 40%;
-    transition: transform 200ms ease-out;
+    transition: transform 50ms ease-out;
     cursor: pointer;
     transform: translate(0, 0);
 
@@ -168,7 +168,8 @@
     }
 
     &:hover {
-      transform: translate(5px, 0) scale(1.1);
+      transform: translate(4px, 0) scale(1.05);
+      transition-duration: 100ms;
     }
   }
 

@@ -55,10 +55,12 @@ body {
 .col--left,
 .col--search {
   grid-area: left;
+  max-width: 100%;
 }
 .col--right,
 .col--playlist {
   grid-area: right;
+  max-width: 100%;
 }
 .col--main {
   grid-area: main;
