@@ -3,6 +3,9 @@ export const ICON_SIZE = 32;
 export default () => {
   const favicon = document.getElementById("favicon");
 
+  if (!("OffscreenCanvas" in window)) {
+    return
+  }
   const worker = new Worker('/assets/worker.js');
   const offcanvas = new OffscreenCanvas(ICON_SIZE, ICON_SIZE);
   worker.postMessage(offcanvas, [offcanvas]);
@@ -12,7 +15,7 @@ export default () => {
   canvas.height = ICON_SIZE;
   const ctx = canvas.getContext('2d');
 
-  worker.onmessage = ({data}) => {
+  worker.onmessage = ({ data }) => {
     if (window.playState !== "playing") {
       return;
     }

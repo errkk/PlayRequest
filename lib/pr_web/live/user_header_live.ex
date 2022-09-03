@@ -31,13 +31,13 @@ defmodule PRWeb.UserHeaderLive do
 
     # Register user on presence, and push the current presence state out
     if connected?(socket) do
-      {:ok, _} = Presence.track(self(), @presence, user_id, %{
-        online_at: inspect(System.system_time(:second))
-      })
+      {:ok, _} =
+        Presence.track(self(), @presence, user_id, %{
+          online_at: inspect(System.system_time(:second))
+        })
 
       PRWeb.Endpoint.subscribe(@presence)
     end
-
 
     socket =
       socket
@@ -46,7 +46,8 @@ defmodule PRWeb.UserHeaderLive do
         play_state: play_state,
         num_unplayed: Queue.num_unplayed()
       )
-      |> assign(:users, %{}) # Empty map to append on join/leave
+      # Empty map to append on join/leave
+      |> assign(:users, %{})
       |> handle_joins(Presence.list(@presence))
 
     {:ok, assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)}
@@ -98,7 +99,6 @@ defmodule PRWeb.UserHeaderLive do
       |> handle_joins(diff.joins)
     }
   end
-
 
   def handle_info(_, socket) do
     {:noreply, socket}

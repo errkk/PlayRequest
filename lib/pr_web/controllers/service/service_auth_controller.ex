@@ -10,6 +10,7 @@ defmodule PRWeb.Service.ServiceAuthController do
         conn
         |> put_flash(:info, "That worked fine")
         |> redirect(to: Routes.service_setup_path(conn, :index))
+
       {:error, _} ->
         conn
         |> put_flash(:error, "Didn't work")
@@ -23,6 +24,7 @@ defmodule PRWeb.Service.ServiceAuthController do
         conn
         |> put_flash(:info, "That worked fine")
         |> redirect(to: Routes.service_setup_path(conn, :index))
+
       {:error, _} ->
         conn
         |> put_flash(:error, "Didn't work")

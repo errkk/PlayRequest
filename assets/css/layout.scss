@@ -12,6 +12,10 @@ body {
   padding: 20px 40px 20px;
 }
 
+.content {
+  max-width: 100vw;
+}
+
 .container {
   padding: 20px 40px 0;
   display: grid;
@@ -55,10 +59,12 @@ body {
 .col--left,
 .col--search {
   grid-area: left;
+  max-width: min(100%, 85vw);
 }
 .col--right,
 .col--playlist {
   grid-area: right;
+  max-width: min(100%, 85vw);
 }
 .col--main {
   grid-area: main;
@@ -76,6 +82,7 @@ body {
   grid-area: header;
   text-align: right;
   padding: 20px 0;
+  max-width: min(100%, 85vw);
 
   @media (max-width: 800px) {
     padding: 0;

@@ -8,4 +8,3 @@ defmodule PRWeb.AuthTest do
     {:ok, %Auth.User{}} = Auth.find_or_create_user(params)
   end
 end
-

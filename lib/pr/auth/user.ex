@@ -9,17 +9,17 @@ defmodule PR.Auth.User do
   @derive {Jason.Encoder, only: [:first_name, :last_name, :image]}
 
   schema "users" do
-    field :display_name, :string
-    field :email, :string
-    field :first_name, :string
-    field :image, :string
-    field :last_name, :string
-    field :token, :string
-    field :is_trusted, :boolean
+    field(:display_name, :string)
+    field(:email, :string)
+    field(:first_name, :string)
+    field(:image, :string)
+    field(:last_name, :string)
+    field(:token, :string)
+    field(:is_trusted, :boolean)
 
-    field :points_received, :integer, virtual: true
+    field(:points_received, :integer, virtual: true)
 
-    has_many :tracks, Track
+    has_many(:tracks, Track)
 
     timestamps()
   end
@@ -34,13 +34,14 @@ defmodule PR.Auth.User do
   end
 
   def from_auth(%{
-    credentials: %{token: token},
-    info: %{
-      first_name: first_name,
-      last_name: last_name,
-      image: image,
-      email: email,
-    }}) do
+        credentials: %{token: token},
+        info: %{
+          first_name: first_name,
+          last_name: last_name,
+          image: image,
+          email: email
+        }
+      }) do
     %{
       first_name: first_name,
       last_name: last_name,
@@ -52,8 +53,8 @@ defmodule PR.Auth.User do
 
   defp validate_email_domain(changeset) do
     if changeset
-      |> get_change(:email)
-      |> check_domain() do
+       |> get_change(:email)
+       |> check_domain() do
       changeset
     else
       changeset
@@ -63,7 +64,7 @@ defmodule PR.Auth.User do
 
   defp check_domain(email) do
     get_allowed_domains()
-    |> Enum.any?(& String.ends_with?(email, &1))
+    |> Enum.any?(&String.ends_with?(email, &1))
   end
 
   defp get_allowed_domains do

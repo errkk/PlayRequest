@@ -13,10 +13,11 @@ defmodule PRWeb.LogoLive do
     if connected?(socket), do: PlayState.subscribe()
     play_state = PlayState.get(:play_state)
 
-    socket = assign(
-      socket,
-      play_state: play_state
-    )
+    socket =
+      assign(
+        socket,
+        play_state: play_state
+      )
 
     {:ok, socket}
   end
@@ -30,4 +31,3 @@ defmodule PRWeb.LogoLive do
     {:noreply, socket}
   end
 end
-

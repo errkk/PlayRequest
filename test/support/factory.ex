@@ -2,12 +2,11 @@ defmodule PR.Factory do
   # with Ecto
   use ExMachina.Ecto, repo: PR.Repo
 
-
   def user_factory do
     %PR.Auth.User{
       first_name: "Jane",
       last_name: "Jane",
-      email: sequence(:email, &"email-#{&1}@gmail.com"),
+      email: sequence(:email, &"email-#{&1}@gmail.com")
     }
   end
 
@@ -59,12 +58,13 @@ defmodule PR.Factory do
   # Build only, these are just maps, to be cast by
   # cast_metadata/1
   def metadata_track_factory(%{id: id}) do
-   track = %{
+    track = %{
       id: %{object_id: id},
       name: "track name",
       artist: %{name: "artist"},
       duration_millis: 10_000
     }
+
     %{track: track}
   end
 
@@ -93,4 +93,3 @@ defmodule PR.Factory do
     }
   end
 end
-

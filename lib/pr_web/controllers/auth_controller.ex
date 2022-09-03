@@ -1,6 +1,6 @@
 defmodule PRWeb.AuthController do
   use PRWeb, :controller
-  plug Ueberauth
+  plug(Ueberauth)
 
   alias Ueberauth.Strategy.Helpers
   alias PR.Auth
@@ -28,16 +28,17 @@ defmodule PRWeb.AuthController do
 
   def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
     with flattened <- Auth.User.from_auth(auth),
-      {:ok, user} <- Auth.find_or_create_user(flattened) do
-        conn
-        |> put_session(:user_id, user.id)
-        |> configure_session(renew: true)
-        |> redirect(to: Routes.live_path(conn, PRWeb.PlaybackLive))
+         {:ok, user} <- Auth.find_or_create_user(flattened) do
+      conn
+      |> put_session(:user_id, user.id)
+      |> configure_session(renew: true)
+      |> redirect(to: Routes.live_path(conn, PRWeb.PlaybackLive))
     else
       {:error, %Ecto.Changeset{errors: [email: _]}} ->
         conn
         |> put_flash(:error, "Wrong domain")
         |> redirect(to: Routes.auth_path(conn, :index))
+
       {:error, reason} ->
         conn
         |> put_flash(:error, reason)

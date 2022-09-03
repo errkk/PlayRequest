@@ -1,5 +1,4 @@
 defmodule PR.SonosHouseholds.GroupManager do
-
   require Logger
 
   alias PR.SonosHouseholds
@@ -10,8 +9,8 @@ defmodule PR.SonosHouseholds.GroupManager do
     with {:ok, groups} <- get_groups(),
          {:ok, expected_group_id, player_ids} <- get_active_group_id() do
       if groups
-        |> Enum.map(& &1.id)
-        |> Enum.member?(expected_group_id) do
+         |> Enum.map(& &1.id)
+         |> Enum.member?(expected_group_id) do
         Logger.info("Group ok #{expected_group_id}")
         :ok
       else
@@ -23,12 +22,15 @@ defmodule PR.SonosHouseholds.GroupManager do
       {:error, :cant_get_groups} ->
         Logger.error("Check groups: Can't get groups")
         {:error, "Can't get Sonos groups"}
+
       {:error, :no_active_group} ->
         Logger.error("Check groups: No active group")
         {:error, "Group not set"}
+
       {:error, :no_household_activated} ->
         Logger.error("Check groups: No household activated")
         {:error, "Household not activated"}
+
       _ ->
         Logger.error("Check groups: Error")
         {:error, "Something didn't work"}
@@ -44,6 +46,7 @@ defmodule PR.SonosHouseholds.GroupManager do
         SonosAPI.subscribe_webhooks()
         Logger.info("New group created")
         {:ok, "Recreated group"}
+
       _ ->
         Logger.error("Couldn't recreate group")
         {:error, "Couldn't recreate group"}
@@ -55,9 +58,11 @@ defmodule PR.SonosHouseholds.GroupManager do
     case SonosAPI.get_groups() do
       {:ok, %{groups: groups}, _} ->
         {:ok, groups}
+
       {:error, msg} ->
         Logger.error("Can't get groups from Sonos API: #{msg}")
         {:error, msg}
+
       _ ->
         {:error, :cant_get_groups}
     end
@@ -69,9 +74,9 @@ defmodule PR.SonosHouseholds.GroupManager do
     case SonosHouseholds.get_active_group() do
       %Group{group_id: group_id, player_ids: player_ids} ->
         {:ok, group_id, player_ids}
+
       _ ->
         {:error, :no_active_group}
     end
   end
 end
-

@@ -64,7 +64,8 @@ defmodule PR.Apis.EndpointHelper do
       defp encode_params(%{} = params), do: Jason.encode!(params)
       defp encode_params(params), do: params
 
-      @spec handle_api_response({:error | :ok, Response.t() | Error.t()}, String.t()) :: map() | nil
+      @spec handle_api_response({:error | :ok, Response.t() | Error.t()}, String.t()) ::
+              map() | nil
       defp handle_api_response({:error, %Response{status_code: 401, body: body}}, _resource) do
         Logger.error("Unauthorized token: #{__MODULE__}")
         {:unauthorized}
@@ -73,7 +74,8 @@ defmodule PR.Apis.EndpointHelper do
       defp handle_api_response({:ok, %Response{status_code: 200, body: body}}, _resource),
         do: Jason.decode!(body) |> convert_result()
 
-      defp handle_api_response({:ok, %Response{status_code: 204, body: body}}, _resource), do: {:ok, nil}
+      defp handle_api_response({:ok, %Response{status_code: 204, body: body}}, _resource),
+        do: {:ok, nil}
 
       defp handle_api_response({:ok, %Response{status_code: 201, body: body}}, _resource),
         do: Jason.decode!(body) |> convert_result()

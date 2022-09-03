@@ -80,8 +80,8 @@ defmodule PR.Queue do
   @spec has_participated?(User.t()) :: boolean()
   def has_participated?(%User{id: user_id} = user) do
     case Track
-    |> query_for_user(user)
-    |> Repo.aggregate(:count, :id) do
+         |> query_for_user(user)
+         |> Repo.aggregate(:count, :id) do
       0 -> false
       _ -> true
     end
@@ -140,71 +140,85 @@ defmodule PR.Queue do
     # if there is something playing since > 20 sec ago, mark it as played
     # if it's only jsut started, then mark it as not playing
     Logger.info("Set current: To no track")
+
     Track
-      |> query_is_playing()
-      |> query_has_been_playing()
-      |> Repo.update_all(set: [
+    |> query_is_playing()
+    |> query_has_been_playing()
+    |> Repo.update_all(
+      set: [
         playing_since: nil,
         played_at: dynamic([i], datetime_add(i.playing_since, i.duration, "millisecond"))
-      ])
-      |> case do
+      ]
+    )
+    |> case do
       {0, nil} ->
         Logger.info("Set current: not recently started: Nothing updated.")
         {:ok, [{:played, nil}, {:playing, nil}]}
+
       {rows, nil} ->
         Logger.warn("Set current: Something was playing, so updated to played.")
         {:ok, [{:played, rows}, {:playing, nil}]}
     end
 
     Track
-      |> query_is_playing()
-      |> Repo.update_all(set: [
+    |> query_is_playing()
+    |> Repo.update_all(
+      set: [
         playing_since: nil,
-        played_at: nil,
-      ])
-      |> case do
+        played_at: nil
+      ]
+    )
+    |> case do
       {0, nil} ->
         Logger.info("Set current: recently started: Nothing updated.")
         {:ok, [{:played, nil}, {:playing, nil}]}
+
       {rows, nil} ->
-        Logger.warn("Set current: Something was playing but not for long, so updated to un_played.")
+        Logger.warn(
+          "Set current: Something was playing but not for long, so updated to un_played."
+        )
+
         {:ok, [{:played, rows}, {:playing, nil}]}
     end
   end
 
-
-  @spec set_current_transaction(String.t(), DateTime.t()) :: {:ok, [played: integer, playing: integer]}
+  @spec set_current_transaction(String.t(), DateTime.t()) ::
+          {:ok, [played: integer, playing: integer]}
   defp set_current_transaction(spotify_id, now) do
     Repo.transaction(fn ->
       # Anything else that was playing now isn't, cos this new track is
-      played = Track
-      |> query_is_playing()
-      |> where([t], t.spotify_id != ^spotify_id)
-      |> Repo.update_all(set: [playing_since: nil, played_at: now])
-      |> case do
-        {0, nil} ->
-          Logger.info("Set current: transaction, nothing marked as played")
-          {:played, nil}
-        {rows, nil} ->
-          Logger.info("Set current: transaction, #{rows} marked as played")
-          {:played, rows}
-      end
+      played =
+        Track
+        |> query_is_playing()
+        |> where([t], t.spotify_id != ^spotify_id)
+        |> Repo.update_all(set: [playing_since: nil, played_at: now])
+        |> case do
+          {0, nil} ->
+            Logger.info("Set current: transaction, nothing marked as played")
+            {:played, nil}
+
+          {rows, nil} ->
+            Logger.info("Set current: transaction, #{rows} marked as played")
+            {:played, rows}
+        end
 
       # Update the track that's playing by spotify id
       # If its not already played or already marked as playing
-      playing = Track
-      |> where([t], t.spotify_id == ^spotify_id)
-      |> where([t], is_nil(t.played_at))
-      |> where([t], is_nil(t.playing_since))
-      |> Repo.update_all(set: [playing_since: now])
-      |> case do
-        {0, nil} ->
-          Logger.info("Set current: transaction, nothing marked as playing")
-          {:playing, nil}
-        {rows, nil} ->
-          Logger.info("Set current: transaction, #{rows} marked as playing")
-          {:playing, rows}
-      end
+      playing =
+        Track
+        |> where([t], t.spotify_id == ^spotify_id)
+        |> where([t], is_nil(t.played_at))
+        |> where([t], is_nil(t.playing_since))
+        |> Repo.update_all(set: [playing_since: now])
+        |> case do
+          {0, nil} ->
+            Logger.info("Set current: transaction, nothing marked as playing")
+            {:playing, nil}
+
+          {rows, nil} ->
+            Logger.info("Set current: transaction, #{rows} marked as playing")
+            {:playing, rows}
+        end
 
       [played, playing]
     end)
@@ -258,7 +272,8 @@ defmodule PR.Queue do
   defp query_given_points(query, user_id) do
     query
     |> join(
-      :left, [t],
+      :left,
+      [t],
       p in Point,
       on: t.id == p.track_id and p.user_id == ^user_id,
       as: :given_point
@@ -269,7 +284,8 @@ defmodule PR.Queue do
   defp query_received_points(query) do
     query
     |> join(
-      :left, [t],
+      :left,
+      [t],
       p in subquery(points_for()),
       on: t.id == p.track_id,
       as: :received_points
@@ -280,13 +296,15 @@ defmodule PR.Queue do
   defp query_novelty(query) do
     query
     |> join(
-      :left, [t],
+      :left,
+      [t],
       tn in TrackNovelty,
       on: tn.spotify_id == t.spotify_id,
       as: :track_novelty
     )
     |> join(
-      :left, [t],
+      :left,
+      [t],
       tn in ArtistNovelty,
       on: tn.artist == t.artist,
       as: :artist_novelty
@@ -322,12 +340,11 @@ defmodule PR.Queue do
   defp select_user_facing_fields(query) do
     query
     |> select([t, given_point: gp, received_points: rp, track_novelty: tn, artist_novelty: an], %{
-      t |
-      has_pointed: not is_nil(gp.id),
-      points_received: rp.points_received,
-      track_novelty: coalesce(tn.track_novelty, 100),
-      artist_novelty: coalesce(an.artist_novelty, 100),
+      t
+      | has_pointed: not is_nil(gp.id),
+        points_received: rp.points_received,
+        track_novelty: coalesce(tn.track_novelty, 100),
+        artist_novelty: coalesce(an.artist_novelty, 100)
     })
-
   end
 end

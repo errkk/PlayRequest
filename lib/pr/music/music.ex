@@ -27,8 +27,11 @@ defmodule PR.Music do
         tracks =
           tracks
           |> Enum.map(&SearchTrack.new/1)
-          {:ok, tracks}
-      err -> err
+
+        {:ok, tracks}
+
+      err ->
+        err
     end
   end
 
@@ -56,9 +59,11 @@ defmodule PR.Music do
 
   def sync_playlist do
     Logger.info("Syncing tracks to Spotify playlist")
+
     Queue.list_track_uris()
     |> Enum.map(fn {id} -> "spotify:track:" <> id end)
     |> SpotifyAPI.replace_playlist()
+
     Logger.debug("Spotify sync complete")
   end
 
@@ -66,24 +71,29 @@ defmodule PR.Music do
   # a few times, before it's had a chance to affect the play state
   def trigger_playlist do
     sync_playlist()
+
     with %Group{group_id: group_id} <- SonosHouseholds.get_active_group!(),
          {:ok, %{items: sonos_favorites}, _} <- SonosAPI.get_favorites(),
          {:ok, fav_id} <- find_playlist(sonos_favorites),
-        # Check if the play state is still idle
-         %PlaybackState{state: :idle} <- PlayState.get(:play_state),
-         %{}  <- SonosAPI.set_favorite(fav_id, group_id) do
-         Logger.info("Trigger playlist: OK")
+         # Check if the play state is still idle (allow paused too)
+         %PlaybackState{state: state} when state in [:idle, :paused] <-
+           PlayState.get(:play_state),
+         %{} <- SonosAPI.set_favorite(fav_id, group_id) do
+      Logger.info("Trigger playlist: OK")
       {:ok}
     else
       %PlaybackState{state: state} ->
         Logger.warn("Trigger playlist: Canceling trigger_playlist, PlayState is now: #{state}")
         {:error, "Cancelled trigger, state is now #{state}"}
+
       {:error, :playlist_not_created} ->
         Logger.error("Trigger playlist: Playlist not created")
         {:error, "Couldn't find #{get_playlist_name()} in Sonos favorites"}
+
       {:error, :gone} ->
         Logger.error("Trigger playlist: Fav gone, try re-saving groups")
         {:error, "API Sez 'gone', try re-saving groups"}
+
       _ ->
         Logger.error("Trigger playlist: Unknown error")
         {:error, "Could not load playlist #{get_playlist_name()}"}
@@ -101,9 +111,9 @@ defmodule PR.Music do
     |> broadcast(:queue_updated)
   end
 
-  def bump_and_reload do
+  def bump do
     Queue.bump()
-    trigger_playlist()
+    {:ok}
   end
 
   @spec broadcast(any(), :atom) :: no_return()
@@ -113,9 +123,10 @@ defmodule PR.Music do
 
   @spec find_playlist([map()]) :: {:ok, String.t()} | {:error, atom()}
   defp find_playlist(sonos_favorites) do
-    case Enum.find(sonos_favorites, & &1.name == get_playlist_name()) do
+    case Enum.find(sonos_favorites, &(&1.name == get_playlist_name())) do
       %{id: id} ->
         {:ok, id}
+
       _ ->
         {:error, :playlist_not_created}
     end

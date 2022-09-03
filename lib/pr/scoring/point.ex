@@ -7,8 +7,8 @@ defmodule PR.Scoring.Point do
   alias PR.Queue.Track
 
   schema "points" do
-    belongs_to :user, User
-    belongs_to :track, Track
+    belongs_to(:user, User)
+    belongs_to(:track, Track)
 
     timestamps()
   end
@@ -24,11 +24,13 @@ defmodule PR.Scoring.Point do
 
   def validate_vote_fraud(changeset) do
     user_id = get_change(changeset, :user_id)
+
     case changeset
-    |> get_change(:track_id)
-    |> Queue.get_track() do
+         |> get_change(:track_id)
+         |> Queue.get_track() do
       %Track{user_id: ^user_id} ->
         add_error(changeset, :user_id, "oh_no_you_dont")
+
       _ ->
         changeset
     end

@@ -24,7 +24,7 @@ defmodule PR.ExternalAuth do
 
   def insert_or_update_auth(%{"service" => service} = changes) do
     case Repo.get_by(Auth, service: service) do
-      nil  -> %Auth{service: service}
+      nil -> %Auth{service: service}
       auth -> auth
     end
     |> Auth.changeset(changes)

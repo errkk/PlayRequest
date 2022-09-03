@@ -1,10 +1,10 @@
-import {Socket} from "phoenix";
+import { Socket } from "phoenix";
 
 function connect() {
   if (!window.userToken.length) {
     return
   }
-  const socket = new Socket("/socket", {params: {token: window.userToken}});
+  const socket = new Socket("/socket", { params: { token: window.userToken } });
 
   socket.connect();
 
@@ -19,7 +19,7 @@ function connect() {
   channel.on("play_state", updatePlaystate);
 }
 
-function showNotification({track: {artist, name, img}, from: {first_name}}) {
+function showNotification({ track: { artist, name, img }, from: { first_name } }) {
   const msgTitle = `😍 ${first_name} liked ${name}`;
   const options = {
     image: img,
@@ -50,7 +50,7 @@ function updateError({ error_code }) {
   }
 }
 
-function updatePlaystate({state}) {
+function updatePlaystate({ state }) {
   // Update this flag for the favicon worker to pick up
   window.playState = state;
 }

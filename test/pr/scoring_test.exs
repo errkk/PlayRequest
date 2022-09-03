@@ -52,7 +52,10 @@ defmodule PR.ScoringTest do
       voter = insert(:user)
       player = insert(:user)
       tracks = insert_list(3, :track, user: player)
-      Enum.each(tracks, fn track -> insert(:point, track: track, user: voter, inserted_at: ~N[2019-01-01 00:00:00]) end)
+
+      Enum.each(tracks, fn track ->
+        insert(:point, track: track, user: voter, inserted_at: ~N[2019-01-01 00:00:00])
+      end)
 
       insert_list(3, :point)
 
@@ -87,8 +90,10 @@ defmodule PR.ScoringTest do
     end
 
     test "for today" do
-      yesterday = DateTime.utc_now()
-      |> Timex.shift(days: -1)
+      yesterday =
+        DateTime.utc_now()
+        |> Timex.shift(days: -1)
+
       voter = insert(:user)
       player = insert(:user)
       tracks = insert_list(3, :track, user: player)

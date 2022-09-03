@@ -6,10 +6,10 @@ defmodule PR.ExternalAuth.Auth do
   alias PR.ExternalAuth.Auth
 
   schema "tokens" do
-    field :access_token, :string
-    field :refresh_token, :string
-    field :service, :string
-    field :activated_at, :utc_datetime
+    field(:access_token, :string)
+    field(:refresh_token, :string)
+    field(:service, :string)
+    field(:activated_at, :utc_datetime)
 
     timestamps()
   end

@@ -7,8 +7,10 @@ defmodule PR.QueueTest do
 
   describe "list" do
     test "list_unplayed/1 lists in correct order" do
-      then = DateTime.utc_now()
-      |> DateTime.add(-1, :second)
+      then =
+        DateTime.utc_now()
+        |> DateTime.add(-1, :second)
+
       me = insert(:user)
       track_1_id = insert(:track, inserted_at: then).id
       track_2_id = insert(:track, inserted_at: DateTime.utc_now()).id
@@ -16,8 +18,10 @@ defmodule PR.QueueTest do
     end
 
     test "list_todays_tracks/1 lists in correct order" do
-      then = DateTime.utc_now()
-      |> DateTime.add(-1, :second)
+      then =
+        DateTime.utc_now()
+        |> DateTime.add(-1, :second)
+
       me = insert(:user)
       track_1_id = insert(:played_track, inserted_at: then).id
       track_2_id = insert(:played_track, inserted_at: DateTime.utc_now()).id
@@ -82,11 +86,22 @@ defmodule PR.QueueTest do
     end
 
     test "nothing is playing" do
-      previous_track = insert(:track, spotify_id: "herp", playing_since: ~N[2019-01-01 00:10:00], duration: 10_000)
+      previous_track =
+        insert(:track,
+          spotify_id: "herp",
+          playing_since: ~N[2019-01-01 00:10:00],
+          duration: 10_000
+        )
+
       assert {:ok, [played: nil, playing: nil]} = Queue.set_current(%{})
       assert Queue.get_playing() |> is_nil()
       refute Track |> Repo.get(previous_track.id) |> Map.get(:played_at) |> is_nil()
-      assert Track |> Repo.get(previous_track.id) |> Map.get(:played_at) |> DateTime.compare(~U[2019-01-01 00:10:10Z]) == :eq
+
+      assert Track
+             |> Repo.get(previous_track.id)
+             |> Map.get(:played_at)
+             |> DateTime.compare(~U[2019-01-01 00:10:10Z]) == :eq
+
       assert Track |> Repo.get(previous_track.id) |> Map.get(:playing_since) |> is_nil()
     end
 
@@ -104,7 +119,10 @@ defmodule PR.QueueTest do
 
     test "already played" do
       played_track = insert(:track, spotify_id: "herp", played_at: ~N[2019-01-01 00:00:00])
-      assert {:ok, [played: nil, playing: nil]} = Queue.set_current(%SonosItem{spotify_id: "herp"})
+
+      assert {:ok, [played: nil, playing: nil]} =
+               Queue.set_current(%SonosItem{spotify_id: "herp"})
+
       assert Queue.get_playing() |> is_nil()
       refute Track |> Repo.get(played_track.id) |> Map.get(:played_at) |> is_nil()
       assert Track |> Repo.get(played_track.id) |> Map.get(:playing_since) |> is_nil()
@@ -114,7 +132,10 @@ defmodule PR.QueueTest do
       {:ok, playing_since} = ~N[2019-01-01 00:00:00] |> DateTime.from_naive("Etc/UTC")
       insert(:track, spotify_id: "herple", played_at: ~N[2018-01-01 00:00:00])
       current_track = insert(:track, spotify_id: "herp", playing_since: playing_since)
-      assert {:ok, [played: nil, playing: nil]} = Queue.set_current(%SonosItem{spotify_id: "herp"})
+
+      assert {:ok, [played: nil, playing: nil]} =
+               Queue.set_current(%SonosItem{spotify_id: "herp"})
+
       assert %{spotify_id: "herp"} = Queue.get_playing()
       track = Track |> Repo.get(current_track.id)
       assert track |> Map.get(:played_at) |> is_nil()

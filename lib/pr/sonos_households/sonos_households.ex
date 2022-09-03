@@ -36,7 +36,7 @@ defmodule PR.SonosHouseholds do
 
   def insert_or_update_household(%{household_id: household_id} = changes) do
     case Repo.get_by(Household, household_id: household_id) do
-      nil  -> %Household{household_id: household_id}
+      nil -> %Household{household_id: household_id}
       household -> household
     end
     |> Household.changeset(changes)
@@ -83,7 +83,6 @@ defmodule PR.SonosHouseholds do
     |> Repo.one()
   end
 
-
   def create_groups(attrs \\ %{}) do
     %Group{}
     |> Group.changeset(attrs)
@@ -92,7 +91,7 @@ defmodule PR.SonosHouseholds do
 
   def insert_or_update_group(%{group_id: group_id} = changes) do
     case Repo.get_by(Group, group_id: group_id) do
-      nil  -> %Group{group_id: group_id}
+      nil -> %Group{group_id: group_id}
       group -> group
     end
     |> Group.changeset(changes)

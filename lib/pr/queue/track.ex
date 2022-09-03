@@ -6,23 +6,23 @@ defmodule PR.Queue.Track do
   alias PR.Scoring.Point
 
   schema "tracks" do
-    field :artist, :string
-    field :duration, :integer
-    field :img, :string
-    field :spotify_id, :string
-    field :name, :string
-    field :played_at, :utc_datetime
-    field :playing_since, :utc_datetime
+    field(:artist, :string)
+    field(:duration, :integer)
+    field(:img, :string)
+    field(:spotify_id, :string)
+    field(:name, :string)
+    field(:played_at, :utc_datetime)
+    field(:playing_since, :utc_datetime)
 
-    field :has_pointed, :boolean, virtual: true
-    field :points_received, :integer, virtual: true
+    field(:has_pointed, :boolean, virtual: true)
+    field(:points_received, :integer, virtual: true)
 
     # from a joined view
-    field :artist_novelty, :integer, virtual: true
-    field :track_novelty, :integer, virtual: true
+    field(:artist_novelty, :integer, virtual: true)
+    field(:track_novelty, :integer, virtual: true)
 
-    belongs_to :user, User
-    has_many :points, Point
+    belongs_to(:user, User)
+    has_many(:points, Point)
 
     timestamps()
   end

@@ -55,3 +55,11 @@ stop:
 format_code:
 	mix format mix.exs "lib/**/*.{ex,exs}" "test/**/*.{ex,exs}"
 .PHONY: format_code
+
+proxy:
+	fly proxy 5433:5432 --app sonosnow-postgres
+.PHONY: proxy
+
+proxy_staging:
+	fly proxy 5433:5432 --app sonosnow-staging-db
+.PHONY: proxy

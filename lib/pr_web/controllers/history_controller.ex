@@ -28,6 +28,7 @@ defmodule PRWeb.HistoryController do
         conn
         |> put_flash(:info, "😅 Sarry bout dat. Giving '#{name}' another try")
         |> redirect(to: "/")
+
       _ ->
         conn
         |> put_flash(:error, "⚠️ Didn't work")
@@ -58,4 +59,3 @@ defmodule PRWeb.HistoryController do
     Application.get_env(:pr, :timezone)
   end
 end
-
