@@ -101,9 +101,8 @@ defmodule PR.Music do
     |> broadcast(:queue_updated)
   end
 
-  def bump_and_reload do
+  def bump do
     Queue.bump()
-    trigger_playlist()
   end
 
   @spec broadcast(any(), :atom) :: no_return()
