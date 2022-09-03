@@ -113,6 +113,7 @@ defmodule PR.Music do
 
   def bump do
     Queue.bump()
+    {:ok}
   end
 
   @spec broadcast(any(), :atom) :: no_return()
