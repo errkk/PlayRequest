@@ -10,9 +10,8 @@ defmodule PR.PlayStateTest do
   # This is the bit that gets called after the group is verified
   # and the payload is converted to atoms. But that's all
   describe "process_metadata/1" do
-
     setup_with_mocks([
-      {DateTime, [:passthrough], utc_now: fn -> ~U[2022-01-01 00:00:00Z] end},
+      {DateTime, [:passthrough], utc_now: fn -> ~U[2022-01-01 00:00:00Z] end}
     ]) do
       {:ok, %{mocked_now: ~U[2022-01-01 00:00:00Z]}}
     end
@@ -32,8 +31,8 @@ defmodule PR.PlayStateTest do
       refute is_nil(playing_since)
 
       # Check agent state
-      assert %{current_item: %SonosItem{spotify_id: ^spotify_track_id}}
-        = PlayState.get(:metadata)
+      assert %{current_item: %SonosItem{spotify_id: ^spotify_track_id}} =
+               PlayState.get(:metadata)
     end
 
     test "updates playing track, marks last track played from metadata", %{mocked_now: now} do
@@ -51,7 +50,7 @@ defmodule PR.PlayStateTest do
       %{playing_since: playing_since, played_at: played_at} = Queue.get_track!(queue_track.id)
       assert is_nil(played_at)
       refute is_nil(playing_since)
-      assert playing_since == now 
+      assert playing_since == now
 
       %{playing_since: playing_since, played_at: played_at} = Queue.get_track!(previous_track.id)
       refute is_nil(played_at)
@@ -59,8 +58,8 @@ defmodule PR.PlayStateTest do
       assert played_at == now
 
       # Check agent state
-      assert %{current_item: %SonosItem{spotify_id: ^spotify_track_id}}
-        = PlayState.get(:metadata)
+      assert %{current_item: %SonosItem{spotify_id: ^spotify_track_id}} =
+               PlayState.get(:metadata)
     end
 
     test "error mode, dont update track when it says playing nothing", %{mocked_now: now} do
@@ -89,8 +88,10 @@ defmodule PR.PlayStateTest do
       playing_play_state = build(:sonos_play_state)
       # watch_play_state fetches metadata from the api, to see what's going on now error is over
       # so need to mock it here
-      mocked_metadata_response = build(:metadata, current_item: build(:metadata_track, id: spotify_id))
-      with_mock(PR.SonosAPI, [get_metadata: fn() -> mocked_metadata_response end]) do
+      mocked_metadata_response =
+        build(:metadata, current_item: build(:metadata_track, id: spotify_id))
+
+      with_mock(PR.SonosAPI, get_metadata: fn -> mocked_metadata_response end) do
         PlayState.process_play_state(playing_play_state)
       end
 

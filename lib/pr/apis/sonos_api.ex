@@ -1,5 +1,4 @@
 defmodule PR.SonosAPI do
-
   use PR.Apis.TokenHelper
   use PR.Apis.EndpointHelper
 
@@ -36,6 +35,7 @@ defmodule PR.SonosAPI do
       %Household{household_id: household_id, id: id} ->
         res = get("/households/#{household_id}/groups")
         {:ok, res, id}
+
       _ ->
         {:error, :no_household_activated}
     end
@@ -46,6 +46,7 @@ defmodule PR.SonosAPI do
       %Household{household_id: household_id, id: id} ->
         res = get("/households/#{household_id}/favorites")
         {:ok, res, id}
+
       _ ->
         {:error, :no_household_activated}
     end
@@ -58,8 +59,8 @@ defmodule PR.SonosAPI do
   def subscribe_playback do
     with %Group{group_id: group_id} <- group(),
          %{} <- post("/groups/#{group_id}/playback/subscription") do
-         Logger.info("Subscribed to playback webhook #{group_id}")
-        {:ok, %{}}
+      Logger.info("Subscribed to playback webhook #{group_id}")
+      {:ok, %{}}
     else
       {:error, message} ->
         Logger.error("Cant subscribe to playback #{message}")
@@ -74,8 +75,8 @@ defmodule PR.SonosAPI do
   def unsubscribe_playback do
     with %Group{group_id: group_id} <- group(),
          %{} <- delete("/groups/#{group_id}/playback/subscription") do
-         Logger.info("Un-subscribed to playback webhook #{group_id}")
-        {:ok, %{}}
+      Logger.info("Un-subscribed to playback webhook #{group_id}")
+      {:ok, %{}}
     else
       err ->
         err
@@ -89,12 +90,13 @@ defmodule PR.SonosAPI do
   def subscribe_metadata do
     with %Group{group_id: group_id} <- group(),
          %{} <- post("/groups/#{group_id}/playbackMetadata/subscription") do
-         Logger.info("Subscribed to metadata webhook #{group_id}")
-        {:ok, %{}}
+      Logger.info("Subscribed to metadata webhook #{group_id}")
+      {:ok, %{}}
     else
       {:error, message} ->
-         Logger.error("Cant subscribe to metadata #{message}")
+        Logger.error("Cant subscribe to metadata #{message}")
         {:error, message}
+
       err ->
         err
     end
@@ -103,8 +105,8 @@ defmodule PR.SonosAPI do
   def unsubscribe_metadata do
     with %Group{group_id: group_id} <- group(),
          %{} <- delete("/groups/#{group_id}/playbackMetadata/subscription") do
-         Logger.info("Un-subscribed to metadata webhook #{group_id}")
-        {:ok, %{}}
+      Logger.info("Un-subscribed to metadata webhook #{group_id}")
+      {:ok, %{}}
     else
       err ->
         err
@@ -132,9 +134,14 @@ defmodule PR.SonosAPI do
           |> Enum.map(fn %{id: id} -> %{household_id: id} end)
           |> Enum.map(&SonosHouseholds.insert_or_update_household(&1))
           |> length()
+
         {:ok, total}
-      {:error, msg} -> {:error, msg}
-      _ -> nil
+
+      {:error, msg} ->
+        {:error, msg}
+
+      _ ->
+        nil
     end
   end
 
@@ -143,14 +150,18 @@ defmodule PR.SonosAPI do
       {:ok, %{groups: groups}, household_id} ->
         total =
           groups
-          |> Enum.map(& fields_for_group(&1, household_id))
-          |> Enum.count(& SonosHouseholds.insert_or_update_group(&1))
+          |> Enum.map(&fields_for_group(&1, household_id))
+          |> Enum.count(&SonosHouseholds.insert_or_update_group(&1))
+
         Logger.info("Groups saved")
         {:ok, total}
+
       {:error, msg} ->
         Logger.error(msg)
         {:error, msg}
-      _ -> nil
+
+      _ ->
+        nil
     end
   end
 
@@ -167,6 +178,7 @@ defmodule PR.SonosAPI do
         |> fields_for_group(id)
         |> Map.put(:is_active, true)
         |> SonosHouseholds.insert_or_update_group()
+
       _ ->
         {:error, :no_household_activated}
     end
@@ -192,7 +204,7 @@ defmodule PR.SonosAPI do
 
   @spec client() :: Client.t()
   defp client do
-    Client.new([
+    Client.new(
       strategy: Strategy.AuthCode,
       client_id: get_config(:key),
       client_secret: get_config(:secret),
@@ -201,11 +213,10 @@ defmodule PR.SonosAPI do
       site: "https://api.ws.sonos.com/control/api/v1",
       authorize_url: "https://api.sonos.com/login/v3/oauth",
       token_url: "https://api.sonos.com/login/v3/oauth/access"
-    ])
+    )
   end
 
   defp get_config(key) do
     Application.get_env(:pr, :sonos)[key]
   end
 end
-

@@ -1,5 +1,4 @@
 defmodule PRWeb.Fixtures.Sonos.Error do
-
   def no_content do
     %{
       "errorCode" => "ERROR_PLAYBACK_NO_CONTENT",
@@ -16,4 +15,3 @@ defmodule PRWeb.Fixtures.Sonos.Error do
     |> Jason.encode!()
   end
 end
-

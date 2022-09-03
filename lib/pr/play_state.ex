@@ -285,7 +285,6 @@ defmodule PR.PlayState do
     {:ok, %{current_item: %{}}}
   end
 
-
   defp cast_metadata(data) do
     Logger.info("probably playing something else? #{Jason.encode!(data)}")
     {:error, :probably_playing_something_else}

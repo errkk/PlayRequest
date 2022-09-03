@@ -2,12 +2,14 @@ defmodule PR.Music.SearchTrack do
   defstruct [:name, :artist, :duration, :img, :spotify_id]
 
   @spec new(map()) :: SearchTrack.t()
-  def new(%{
-    id: id,
-    name: name,
-    duration_ms: duration,
-    artists: [%{name: artist} | _]
-  } = params) do
+  def new(
+        %{
+          id: id,
+          name: name,
+          duration_ms: duration,
+          artists: [%{name: artist} | _]
+        } = params
+      ) do
     %__MODULE__{
       name: name,
       artist: artist,
@@ -22,7 +24,9 @@ defmodule PR.Music.SearchTrack do
     case images do
       [_ | [%{url: url} | _]] ->
         %{img: url}
-      _ -> %{}
+
+      _ ->
+        %{}
     end
   end
 end

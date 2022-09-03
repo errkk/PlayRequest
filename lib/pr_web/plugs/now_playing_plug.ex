@@ -11,6 +11,7 @@ defmodule PRWeb.Plug.NowPlayingPlug do
     case Queue.get_playing() do
       %Track{} = track ->
         merge_assigns(conn, now_playing: track)
+
       _ ->
         conn
     end

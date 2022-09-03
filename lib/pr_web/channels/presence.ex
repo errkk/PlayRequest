@@ -2,7 +2,7 @@ defmodule PRWeb.Presence do
   use Phoenix.Presence,
     otp_app: :pr,
     pubsub_server: PR.PubSub
-  
+
   alias PR.Auth
 
   def fetch(_topic, presences) do

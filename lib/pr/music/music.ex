@@ -27,8 +27,11 @@ defmodule PR.Music do
         tracks =
           tracks
           |> Enum.map(&SearchTrack.new/1)
-          {:ok, tracks}
-      err -> err
+
+        {:ok, tracks}
+
+      err ->
+        err
     end
   end
 
@@ -56,9 +59,11 @@ defmodule PR.Music do
 
   def sync_playlist do
     Logger.info("Syncing tracks to Spotify playlist")
+
     Queue.list_track_uris()
     |> Enum.map(fn {id} -> "spotify:track:" <> id end)
     |> SpotifyAPI.replace_playlist()
+
     Logger.debug("Spotify sync complete")
   end
 
@@ -117,9 +122,10 @@ defmodule PR.Music do
 
   @spec find_playlist([map()]) :: {:ok, String.t()} | {:error, atom()}
   defp find_playlist(sonos_favorites) do
-    case Enum.find(sonos_favorites, & &1.name == get_playlist_name()) do
+    case Enum.find(sonos_favorites, &(&1.name == get_playlist_name())) do
       %{id: id} ->
         {:ok, id}
+
       _ ->
         {:error, :playlist_not_created}
     end

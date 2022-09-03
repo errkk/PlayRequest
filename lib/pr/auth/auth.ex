@@ -17,9 +17,10 @@ defmodule PR.Auth do
 
   def get_users_map(ids) do
     query =
-      from u in User,
+      from(u in User,
         where: u.id in ^ids,
         select: {u.id, u}
+      )
 
     query |> Repo.all() |> Enum.into(%{})
   end
@@ -28,6 +29,7 @@ defmodule PR.Auth do
     case Repo.get_by(User, email: email) do
       nil ->
         create_user(params)
+
       %User{} = user ->
         {:ok, user}
     end

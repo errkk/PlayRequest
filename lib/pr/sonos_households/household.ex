@@ -3,9 +3,9 @@ defmodule PR.SonosHouseholds.Household do
   import Ecto.Changeset
 
   schema "households" do
-    field :household_id, :string
-    field :is_active, :boolean, default: false
-    field :label, :string
+    field(:household_id, :string)
+    field(:is_active, :boolean, default: false)
+    field(:label, :string)
 
     timestamps()
   end

@@ -5,13 +5,13 @@ defmodule PR.SonosHouseholds.Group do
   alias PR.SonosHouseholds.Household
 
   schema "groups" do
-    field :group_id, :string
-    field :name, :string
-    field :player_ids, {:array, :string}
-    field :is_active, :boolean
-    field :subscribed_at, :utc_datetime
+    field(:group_id, :string)
+    field(:name, :string)
+    field(:player_ids, {:array, :string})
+    field(:is_active, :boolean)
+    field(:subscribed_at, :utc_datetime)
 
-    belongs_to :household, Household
+    belongs_to(:household, Household)
 
     timestamps()
   end

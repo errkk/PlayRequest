@@ -3,8 +3,8 @@ defmodule PR.SpotifyData.Playlist do
   import Ecto.Changeset
 
   schema "spotify_playlists" do
-    field :playlist_id, :string
-    field :spotify_id, :string
+    field(:playlist_id, :string)
+    field(:spotify_id, :string)
 
     timestamps()
   end

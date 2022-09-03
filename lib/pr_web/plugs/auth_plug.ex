@@ -19,13 +19,14 @@ defmodule PRWeb.Plug.AuthPlug do
 
   defp get_user(user_id, conn) do
     case Auth.get_user(user_id) do
-        %User{} = user ->
-          conn
-          |> put_session(:user_id, user_id)
-          |> assign(:current_user, user)
-        _ ->
+      %User{} = user ->
+        conn
+        |> put_session(:user_id, user_id)
+        |> assign(:current_user, user)
+
+      _ ->
         nope(conn)
-      end
+    end
   end
 
   defp nope(conn) do

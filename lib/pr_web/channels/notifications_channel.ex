@@ -30,9 +30,10 @@ defmodule PRWeb.NotificationsChannel do
       %{assigns: %{user_id: ^recipient_id}} ->
         Logger.info("Sending like to user:#{recipient_id}")
         push(socket, "like", %{user_id: recipient_id, track: track_data, from: user_data})
+
       _ ->
         :ok
-      :ok
+        :ok
     end
 
     {:noreply, socket}
@@ -61,17 +62,18 @@ defmodule PRWeb.NotificationsChannel do
     # just like we do here on info from Playstate pubsub
     case PlayState.get(:play_state) do
       %Music.PlaybackState{state: state} ->
-      push(socket, "play_state", %{state: state})
+        push(socket, "play_state", %{state: state})
+
       _ ->
-      push(socket, "play_state", %{state: nil})
+        push(socket, "play_state", %{state: nil})
     end
+
     {:noreply, socket}
   end
 
   def handle_info(_, socket) do
     {:noreply, socket}
   end
-
 
   # Add authorization logic here as required.
   defp authorized?(%{assigns: %{user_id: user_id}}) when not is_nil(user_id) do

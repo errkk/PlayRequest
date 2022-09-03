@@ -1,5 +1,4 @@
 defmodule PR.SpotifyAPI do
-
   use PR.Apis.TokenHelper
   use PR.Apis.EndpointHelper
 
@@ -21,9 +20,10 @@ defmodule PR.SpotifyAPI do
 
   def create_playlist do
     with %{id: spotify_id} <- get_current_user(),
-         %{id: playlist_id} <- post(%{name: get_playlist_name(), public: false}, "/v1/users/#{spotify_id}/playlists") do
-        SpotifyData.create_playlist(%{playlist_id: playlist_id, spotify_id: spotify_id})
-        {:ok, playlist_id, spotify_id}
+         %{id: playlist_id} <-
+           post(%{name: get_playlist_name(), public: false}, "/v1/users/#{spotify_id}/playlists") do
+      SpotifyData.create_playlist(%{playlist_id: playlist_id, spotify_id: spotify_id})
+      {:ok, playlist_id, spotify_id}
     else
       _ ->
         {:error, :cant_make_playlist}
@@ -32,7 +32,7 @@ defmodule PR.SpotifyAPI do
 
   def replace_playlist(uris) do
     with [%Playlist{playlist_id: playlist_id} | _] <- SpotifyData.list_playlists(),
-        %{snapshot_id: id} <- put(%{uris: uris}, "/v1/playlists/#{playlist_id}/tracks") do
+         %{snapshot_id: id} <- put(%{uris: uris}, "/v1/playlists/#{playlist_id}/tracks") do
       {:ok, id}
     else
       _ -> {:error, :cant_replace}
@@ -51,24 +51,27 @@ defmodule PR.SpotifyAPI do
 
   @spec search(String.t()) :: {:ok, [map()]} :: {:error}
   def search(q) do
-    query = %{
-      q: q,
-      type: "track",
-      market: "GB",
-      limit: 10
-    }
-    |> URI.encode_query()
+    query =
+      %{
+        q: q,
+        type: "track",
+        market: "GB",
+        limit: 10
+      }
+      |> URI.encode_query()
 
     case get("/v1/search/?#{query}") do
       %{tracks: %{items: tracks}} ->
         {:ok, tracks}
-      _ -> {:error}
+
+      _ ->
+        {:error}
     end
   end
 
   @spec client() :: Client.t()
   defp client do
-    Client.new([
+    Client.new(
       strategy: Strategy.AuthCode,
       client_id: get_config(:key),
       client_secret: get_config(:secret),
@@ -77,7 +80,7 @@ defmodule PR.SpotifyAPI do
       site: "https://api.spotify.com",
       authorize_url: "https://accounts.spotify.com/authorize",
       token_url: "https://accounts.spotify.com/api/token"
-    ])
+    )
   end
 
   defp get_config(key) do
@@ -88,4 +91,3 @@ defmodule PR.SpotifyAPI do
     Application.get_env(:pr, :playlist_name)
   end
 end
-

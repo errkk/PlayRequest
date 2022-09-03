@@ -14,4 +14,3 @@ defmodule PRWeb.Plug.UserSocketToken do
     end
   end
 end
-

@@ -19,13 +19,17 @@ defmodule PRWeb.Service.ServiceSetupController do
     sonos_token = ExternalAuth.get_auth(SonosAPI)
     spotify_token = ExternalAuth.get_auth(SpotifyAPI)
 
-    has_active_households = households
-    |> Enum.any?(& &1.is_active)
-    has_active_groups = groups
-    |> Enum.any?(& &1.is_active)
+    has_active_households =
+      households
+      |> Enum.any?(& &1.is_active)
 
-    active_group_subscribed = groups
-    |> Enum.any?(& &1.is_active and not is_nil(&1.subscribed_at))
+    has_active_groups =
+      groups
+      |> Enum.any?(& &1.is_active)
+
+    active_group_subscribed =
+      groups
+      |> Enum.any?(&(&1.is_active and not is_nil(&1.subscribed_at)))
 
     render(
       conn,
@@ -41,7 +45,7 @@ defmodule PRWeb.Service.ServiceSetupController do
       has_active_households: has_active_households,
       has_active_groups: has_active_groups,
       active_group_subscribed: active_group_subscribed,
-      spotify_playlist_created: [] != spotify_playlists,
+      spotify_playlist_created: [] != spotify_playlists
     )
   end
 
@@ -51,10 +55,12 @@ defmodule PRWeb.Service.ServiceSetupController do
         conn
         |> put_flash(:info, "Saved #{total} households. Plz activate one.")
         |> redirect(to: Routes.service_setup_path(conn, :index))
+
       {:error, msg} ->
         conn
         |> put_flash(:error, "⚠️ #{msg}")
         |> redirect(to: Routes.service_setup_path(conn, :index))
+
       _ ->
         conn
         |> put_flash(:error, "⚠️ Didn't work")
@@ -68,10 +74,12 @@ defmodule PRWeb.Service.ServiceSetupController do
         conn
         |> put_flash(:info, "Saved #{total} groups. Plz activate one.")
         |> redirect(to: Routes.service_setup_path(conn, :index))
+
       {:error, msg} ->
         conn
         |> put_flash(:error, "⚠️ #{msg}")
         |> redirect(to: Routes.service_setup_path(conn, :index))
+
       _ ->
         conn
         |> put_flash(:error, "⚠️ Didn't work")
@@ -81,6 +89,7 @@ defmodule PRWeb.Service.ServiceSetupController do
 
   def toggle_household(conn, %{"id" => id}) do
     household = SonosHouseholds.get_household!(id)
+
     household
     |> SonosHouseholds.update_household(%{is_active: not household.is_active})
 
@@ -90,6 +99,7 @@ defmodule PRWeb.Service.ServiceSetupController do
 
   def toggle_group(conn, %{"id" => id}) do
     group = SonosHouseholds.get_group!(id)
+
     group
     |> SonosHouseholds.update_group(%{is_active: not group.is_active})
 
@@ -103,6 +113,7 @@ defmodule PRWeb.Service.ServiceSetupController do
         conn
         |> put_flash(:info, "Subscribed to playback and metadata")
         |> redirect(to: Routes.service_setup_path(conn, :index))
+
       _ ->
         conn
         |> put_flash(:error, "⚠️ Didn't work")
@@ -116,6 +127,7 @@ defmodule PRWeb.Service.ServiceSetupController do
         conn
         |> put_flash(:info, "Playlist created on Spotify (#{spotify_id})")
         |> redirect(to: Routes.service_setup_path(conn, :index))
+
       {:error, msg} ->
         conn
         |> put_flash(:error, "⚠️ #{msg}")
@@ -129,6 +141,7 @@ defmodule PRWeb.Service.ServiceSetupController do
         conn
         |> put_flash(:info, "Playlist synced")
         |> redirect(to: Routes.service_setup_path(conn, :index))
+
       _ ->
         conn
         |> put_flash(:error, "⚠️ There was an error syncing the playlist")
@@ -142,6 +155,7 @@ defmodule PRWeb.Service.ServiceSetupController do
         conn
         |> put_flash(:info, "That seemed to work")
         |> redirect(to: Routes.service_setup_path(conn, :index))
+
       {:error, msg} ->
         conn
         |> put_flash(:error, "⚠️ #{msg}")
@@ -169,6 +183,7 @@ defmodule PRWeb.Service.ServiceSetupController do
         conn
         |> put_flash(:info, "That seemed to work")
         |> redirect(to: Routes.service_setup_path(conn, :index))
+
       {:error, msg} ->
         conn
         |> put_flash(:error, "⚠️ #{msg}")
@@ -176,4 +191,3 @@ defmodule PRWeb.Service.ServiceSetupController do
     end
   end
 end
-

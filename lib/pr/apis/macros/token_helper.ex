@@ -18,18 +18,18 @@ defmodule PR.Apis.TokenHelper do
       @spec handle_auth_callback(map()) :: {:error, atom()} | {:ok}
       def handle_auth_callback(%{"code" => code}) do
         client()
-          |> Client.put_header("accept", "application/json")
-          |> Client.get_token(code: code)
-          |> handle_token_response()
+        |> Client.put_header("accept", "application/json")
+        |> Client.get_token(code: code)
+        |> handle_token_response()
       end
 
       @spec handle_token_response({:error, any()} | {:ok, Client.t()}) :: {:error, atom()} | {:ok}
       defp handle_token_response({:ok, client}) do
         try do
-            client
-            |> Map.get(:token)
-            |> Map.get(:access_token)
-            |> Jason.decode!()
+          client
+          |> Map.get(:token)
+          |> Map.get(:access_token)
+          |> Jason.decode!()
         rescue
           _ ->
             {:error, :other}
@@ -42,9 +42,10 @@ defmodule PR.Apis.TokenHelper do
 
             Logger.info("Saving refresh token for #{__MODULE__}")
             cache_stored_credential()
-          {:ok}
+            {:ok}
         end
       end
+
       defp handle_token_response({:error, _}) do
         {:error, :auth}
       end
@@ -59,10 +60,11 @@ defmodule PR.Apis.TokenHelper do
 
       @spec get_access_token() :: AccessToken.t() | {:error, atom()}
       defp get_access_token do
-        case Agent.get(__MODULE__,  & &1) do
+        case Agent.get(__MODULE__, & &1) do
           %AccessToken{} = token ->
             Logger.debug("Getting token from cache")
             token
+
           _ ->
             Logger.debug("Getting token from DB")
             cache_stored_credential()
@@ -89,8 +91,9 @@ defmodule PR.Apis.TokenHelper do
         case ExternalAuth.get_auth(__MODULE__) do
           %Auth{} = auth ->
             Auth.to_token(auth)
+
           _ ->
-          {:error, :no_token}
+            {:error, :no_token}
         end
       end
 
@@ -99,17 +102,19 @@ defmodule PR.Apis.TokenHelper do
         Client.get_token!(
           client(),
           code: code,
-          redirect_uri: get_config(:redirect_uri))
+          redirect_uri: get_config(:redirect_uri)
+        )
       end
 
       @spec get_refresh_token() :: {:error, atom()} | {:ok}
       def get_refresh_token() do
         Logger.info("Refreshing token for #{__MODULE__}")
 
-        refresh_token = client()
-        |> authenticated_client()
-        |> Map.get(:token)
-        |> Map.get(:refresh_token)
+        refresh_token =
+          client()
+          |> authenticated_client()
+          |> Map.get(:token)
+          |> Map.get(:refresh_token)
 
         client()
         |> Map.put(:strategy, Strategy.Refresh)
@@ -124,6 +129,7 @@ defmodule PR.Apis.TokenHelper do
         case get_config(:scopes) do
           scopes when is_list(scopes) ->
             Enum.join(scopes, ",")
+
           scopes ->
             scopes
         end

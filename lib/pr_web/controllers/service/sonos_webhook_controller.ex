@@ -9,6 +9,7 @@ defmodule PRWeb.Service.SonosWebhookController do
       [group_id | _tail] ->
         PlayState.handle_play_state_webhook(params, group_id, request_id())
         render(conn, "index.json")
+
       _ ->
         Logger.error("PlaybackState webhook, no group id provided")
         render(conn, "index.json")
@@ -20,6 +21,7 @@ defmodule PRWeb.Service.SonosWebhookController do
       [group_id | _tail] ->
         PlayState.handle_metadata_webhook(params, group_id, request_id())
         render(conn, "index.json")
+
       _ ->
         Logger.error("Metadata webhook, no group id provided")
         render(conn, "index.json")
@@ -31,6 +33,7 @@ defmodule PRWeb.Service.SonosWebhookController do
       [group_id | _tail] ->
         PlayState.handle_error_webhook(params, group_id, request_id())
         render(conn, "index.json")
+
       _ ->
         Logger.error("Error webhook, no group id provided")
         render(conn, "index.json")
@@ -41,7 +44,6 @@ defmodule PRWeb.Service.SonosWebhookController do
     Logger.warn("Ignoring metadata playing #{name}")
     render(conn, "index.json")
   end
-
 
   def callback(conn, params) do
     {:ok, json} = Jason.encode(params)
@@ -54,4 +56,3 @@ defmodule PRWeb.Service.SonosWebhookController do
     |> Keyword.get(:request_id)
   end
 end
-
