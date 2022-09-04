@@ -122,7 +122,7 @@
       </li>
       <li>
         <h3>
-          <%= check %>
+          <%= check() %>
           Fav the playlist on Sonos
         </h3>
         <p>
@@ -134,6 +134,24 @@
     <h2>Actions</h2>
     <ol class="setup-list">
       <li>
+        <h3>Trigger playlist</h3>
+
+        <%= link "Trigger playlist on Sonos",
+            to: Routes.service_setup_path(@conn, :trigger_playlist),
+            method: :post,
+            class: "button" %>
+        <p>
+          Trigger the playlist to play on Sonos, it's kept as a favorite and triggering that will make it play.
+        </p>
+        <%= link "Bump",
+            to: Routes.service_setup_path(@conn, :bump),
+            method: :post,
+            class: "button" %>
+        <p>
+          Skip to next track, press trigger again to make the next thing play if there is something to play.
+        </p>
+      </li>
+      <li>
         <h3>Sync queue</h3>
 
         <%= link "Sync queue to Spotify playlist",
@@ -142,24 +160,6 @@
             class: "button" %>
         <p>
           Sync queue to Spotify playlist, this happens automatically when tracks are added or played.
-        </p>
-      </li>
-      <li>
-        <h3>Load playlist</h3>
-
-        <%= link "Load playlist on Sonos",
-            to: Routes.service_setup_path(@conn, :trigger_playlist),
-            method: :post,
-            class: "button" %>
-        <p>
-          Load the playlist into Sonos, it's kept as a favorite and needs to be activated
-        </p>
-        <%= link "Bump",
-            to: Routes.service_setup_path(@conn, :bump),
-            method: :post,
-            class: "button" %>
-        <p>
-          Skip to next track, re-sync the playlist and load it up to play on Sonos.
         </p>
       </li>
     </ol>

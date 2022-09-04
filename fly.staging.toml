@@ -10,6 +10,8 @@ processes = []
   PORT = "8080"
   REDIRECT_URL_BASE = "https://sonosnow-staging.fly.dev"
   HOSTNAME = "sonosnow-staging.fly.dev"
+  FF_VOLUME = "true"
+  FF_TOGGLE_PLAYBACK = "true"
 
 [build]
   image = "ghcr.io/errkk/playrequest/pr:latest"

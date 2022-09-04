@@ -121,6 +121,11 @@ defmodule PR.SonosAPI do
     post("/groups/#{group_id!()}/playback/togglePlayPause")
   end
 
+  def set_volume(volume) do
+    %{volume: volume}
+    |> post("/groups/#{group_id!()}/groupVolume")
+  end
+
   def set_favorite(fav_id, group_id) do
     %{favoriteId: fav_id, playOnCompletion: true}
     |> post("/groups/#{group_id}/favorites")

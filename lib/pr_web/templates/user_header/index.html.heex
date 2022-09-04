@@ -1,38 +1,46 @@
 <%= if assigns[:current_user] do %>
   <nav role="navigation" class="nav">
     <ul>
+        <li class="nav__item">
+          <%= link "History", to: Routes.history_path(@socket, :index), class: "link" %>
+        </li>
         <%= if @current_user.is_trusted do %>
-          <li class="nav__item">
-            <%= play_pause @play_state, @num_unplayed %>
-          </li>
           <li class="nav__item">
             <%= link "Setup", to: Routes.service_setup_path(@socket, :index), class: "link" %>
           </li>
         <% end %>
         <li class="nav__item">
-          <%= link "History", to: Routes.history_path(@socket, :index), class: "link" %>
+            <%= link "Logout #{@current_user.first_name}",
+                to: Routes.auth_path(@socket, :delete),
+                class: "link" %>
         </li>
-      <li class="nav__item">
-          <%= link "Logout #{@current_user.first_name}",
-              to: Routes.auth_path(@socket, :delete),
-              class: "link" %>
-      </li>
     </ul>
-
     <div class="user">
       <%= img_tag @current_user.image, class: "profile-image" %>
       <span class="user__hearts">
         <%= @points %> <%= heart(1) %>
       </span>
     </div>
-
-    <div class="users-container">
-      <div class="users">
-      <%= for {_id, user} <- @users do %>
-        <%= img_tag user.image, class: "profile-image", title: user.first_name %>
-      <% end %>
-      <span class="users--title">online</span>
-      </div>
-    </div>
   </nav>
+
+  <div class="playback-controls">
+    <%= if @show_toggle_playback or @current_user.is_trusted, do: play_pause @play_state, @num_unplayed %>
+    <%= if @show_volume or @current_user.is_trusted do %>
+      <div class="volume">
+        <%= for volume <- 5..25//5 do %>
+          <button title={"Set volume to #{volume}"} class="button--vol" phx-click="volume" value={volume}><span class="inner">Set to <%= volume %></span></button>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="users-container">
+    <div class="users">
+    <%= for {_id, user} <- @users do %>
+      <%= img_tag user.image, class: "profile-image", title: user.first_name %>
+    <% end %>
+    <span class="users--title">online</span>
+    </div>
+  </div>
+
 <% end %>

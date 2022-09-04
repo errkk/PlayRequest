@@ -42,3 +42,7 @@ config :ueberauth, Ueberauth.Strategy.Google.OAuth,
 config :pr,
   allowed_user_domains: System.get_env("ALLOWED_USER_DOMAINS", ""),
   installation_name: System.get_env("INSTALLATION_NAME", "PlayRequest")
+
+config :pr, :feature_flags,
+  show_volume: System.get_env("FF_VOLUME", ""),
+  show_toggle_playback: System.get_env("FF_TOGGLE_PLAYBACK", "")
