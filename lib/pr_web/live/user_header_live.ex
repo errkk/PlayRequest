@@ -111,11 +111,22 @@ defmodule PRWeb.UserHeaderLive do
   @impl true
   def handle_event("toggle_playback", _, socket) do
     SonosAPI.toggle_playback()
+    %{ assigns: %{ current_user: %{ first_name: name } } } = socket
+    Logger.info("Toggle playback – #{name}")
     {:noreply, socket}
   end
 
   def handle_event("start", _, socket) do
     Music.trigger_playlist()
+    %{ assigns: %{ current_user: %{ first_name: name } } } = socket
+    Logger.info("Trigger playback – #{name}")
+    {:noreply, socket}
+  end
+
+  def handle_event("volume", %{"value" => volume}, socket) do
+    SonosAPI.set_volume(volume)
+    %{ assigns: %{ current_user: %{ first_name: name } } } = socket
+    Logger.info("Vol #{volume} – #{name}")
     {:noreply, socket}
   end
 

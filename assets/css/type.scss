@@ -80,7 +80,7 @@ a:hover .link {
   display: inline-block;
   padding: 10px 20px;
   text-transform: uppercase;
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid $border;
   transition: border 200ms ease;
   font-size: 14px;
   background: none;
@@ -160,5 +160,50 @@ a:hover .link {
 
   h3 {
     margin-top: 0;
+  }
+}
+
+
+.volume {
+  display: flex;
+  width: 200px;
+  margin-left: 20px;
+}
+.button--vol {
+  flex: 1;
+  color: inherit;
+  background-color: transparent;
+  border: 1px solid $border;
+  border-right-color: rgba(255, 255, 255, 0.25);
+  padding: 10px 0.8ex;
+  margin: 0;
+  // border-right: 0;
+  margin-left: -1px;
+
+  font-size: 14px;
+
+  transition: background-color 200ms ease-out;
+
+  &:hover {
+    border-color: white;
+    border-right-color: white;
+    cursor: pointer;
+  }
+
+  &:last-of-type {
+    border-right-color: $border;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    padding-right: 10px;
+
+    &:hover {
+      border-right-color: white;
+    }
+  }
+
+  &:first-of-type {
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    padding-left: 10px;
   }
 }
