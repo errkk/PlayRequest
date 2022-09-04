@@ -27,7 +27,7 @@
     <%= play_pause @play_state, @num_unplayed %>
     <div class="volume">
       <%= for volume <- 5..25//5 do %>
-        <button title="Set volume" class="button--vol" phx-click="volume" value={volume}><%= volume %></button>
+        <button title={"Set volume to #{volume}"} class="button--vol" phx-click="volume" value={volume}><span class="inner">Set to <%= volume %></span></button>
       <% end %>
     </div>
   </div>

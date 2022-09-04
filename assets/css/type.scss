@@ -166,44 +166,38 @@ a:hover .link {
 
 .volume {
   display: flex;
-  width: 200px;
+  width: 100px;
   margin-left: 20px;
+  justify-content: space-between;
+  border: 1px solid $border;
+  border-radius: 20px;
+  padding: 5px 10px;
 }
 .button--vol {
-  flex: 1;
-  color: inherit;
-  background-color: transparent;
-  border: 1px solid $border;
-  border-right-color: rgba(255, 255, 255, 0.25);
-  padding: 10px 0.8ex;
-  margin: 0;
-  // border-right: 0;
-  margin-left: -1px;
+  border: none;
+  background: none;
+  display: flex;
+  align-items: center;
+  height: 20px;
 
-  font-size: 14px;
-
-  transition: background-color 200ms ease-out;
+  .inner {
+    flex: 1;
+    background: $border;
+    display: inline-block;
+    height: 5px;
+    width: 5px;
+    border-radius: 10px;
+    transform: scale(1);
+    text-indent: -100px;
+    overflow: hidden;
+    transition: background-color 200ms ease-out, transform 200ms ease-in;
+  }
 
   &:hover {
-    border-color: white;
-    border-right-color: white;
     cursor: pointer;
-  }
-
-  &:last-of-type {
-    border-right-color: $border;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
-    padding-right: 10px;
-
-    &:hover {
-      border-right-color: white;
+    .inner {
+      background: white;
+      transform: scale(1.5);
     }
-  }
-
-  &:first-of-type {
-    border-top-left-radius: 20px;
-    border-bottom-left-radius: 20px;
-    padding-left: 10px;
   }
 }
