@@ -116,7 +116,7 @@ jobs:
     needs: [check_tag, release]
     if: needs.check_tag.outputs.deploy_production == 'true'
     env:
-      FLY_APP: sonosnow-staging
+      FLY_APP: sonosnow-prod
       FLY_ACCESS_TOKEN: ${{ secrets.FLY_ACCESS_TOKEN }}
       GITHUB_TOKEN: ${{ github.token }}
       FLYCTL_INSTALL: /home/runner/.fly
