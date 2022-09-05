@@ -4,7 +4,8 @@ defmodule PRWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_pr_web_key",
-    signing_salt: "ZG+jiBR2"
+    signing_salt: "ZG+jiBR2",
+    same_site: "None"
   ]
 
   socket("/live", Phoenix.LiveView.Socket,
