@@ -1,6 +1,7 @@
 defmodule PRWeb.SharedView do
   use Phoenix.HTML
   alias PR.Queue.Track
+  alias PR.Auth.User
   alias PRWeb.Router.Helpers, as: Routes
 
   def heart(points, heart_file \\ "heart_pink") when is_integer(points) and points > 0 do
@@ -17,6 +18,10 @@ defmodule PRWeb.SharedView do
   end
 
   def heart(_, _), do: ""
+
+  def name(%User{first_name: first_name, last_name: last_name}) do
+    first_name <> " " <> String.first(last_name)
+  end
 
   def installation_name do
     Application.get_env(:pr, :installation_name, "PlayRequest")
