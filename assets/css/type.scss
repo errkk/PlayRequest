@@ -3,7 +3,7 @@ $headingFontBlack: "GrotaBlack";
 $fontName: "GrotaSansRd";
 
 @font-face {
-  font-family: "#{$headingFont}Black";
+  font-family: $headingFontBlack;
   src: url("/fonts/#{$fontName}-Bold.woff") format("woff"), url("/fonts/#{$fontName}-Bold.ttf")  format("truetype"); /* Safari, Android, iOS */
   font-weight: bold;
 }
@@ -22,6 +22,7 @@ $fontName: "GrotaSansRd";
 body {
   line-height: 1.4;
   color: transparentize($white, 0.2);
+  font-family: 'Source Sans Pro', sans-serif;
 }
 
 h1, h2, h3, h4 {
