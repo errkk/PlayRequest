@@ -10,7 +10,7 @@ defmodule PR.Music.SonosItem do
             artist: %{name: artist},
             duration_millis: duration
           }
-        } = params
+        }
       ) do
     %__MODULE__{
       name: name,

@@ -60,11 +60,12 @@ defmodule PR.Music do
   def sync_playlist do
     Logger.info("Syncing tracks to Spotify playlist")
 
-    Queue.list_track_uris()
+    res = Queue.list_track_uris()
     |> Enum.map(fn {id} -> "spotify:track:" <> id end)
     |> SpotifyAPI.replace_playlist()
 
     Logger.debug("Spotify sync complete")
+    res
   end
 
   # This take a little while to run, so there can be race conditions if it gets called

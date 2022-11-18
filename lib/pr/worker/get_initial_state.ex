@@ -5,7 +5,7 @@ defmodule PR.Worker.GetInitialState do
     Task.start_link(__MODULE__, :run, [arg])
   end
 
-  def run(arg) do
+  def run(_arg) do
     PR.PlayState.get_initial_state()
   end
 end

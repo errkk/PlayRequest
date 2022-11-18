@@ -4,8 +4,6 @@ defmodule PR.Music.PlaybackState do
     :state
   ]
 
-  alias PR.Music.PlaybackState
-
   def new(%{
         position_millis: position,
         playback_state: playback_state

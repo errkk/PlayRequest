@@ -162,6 +162,17 @@
           Sync queue to Spotify playlist, this happens automatically when tracks are added or played.
         </p>
       </li>
+      <li>
+        <h3>Get State</h3>
+
+        <%= link "Get state",
+            to: Routes.service_setup_path(@conn, :get_state),
+            method: :post,
+            class: "button" %>
+        <p>
+          Webhook should do this, but this will fetch the state
+        </p>
+      </li>
     </ol>
   </div>
 </div>

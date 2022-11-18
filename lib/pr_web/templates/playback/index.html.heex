@@ -52,7 +52,7 @@
 
               <div class="track__img__container">
               <%= if can_vote?(track, @current_user) do %>
-                <button class="flip__container animate" phx-click="like" value={track.id} title={"Give some appreciation to #{track.user.first_name}"}>
+                <button class="flip__container animate" phx-click="like" value={track.id} title={"Give some appreciation to #{name track.user}"}>
                   <div class="flip__flipper">
                     <%= img_tag track.img, width: 100, class: "track__img flip__front" %>
                     <span class="flip__back"></span>
@@ -82,21 +82,9 @@
                 <div class="chips">
                   <div class="chip">
                     <%= img_tag track.user.image, width: 40, class: "chip__img" %>
-                    <%= track.user.first_name %> <%= track.user.last_name %>
+                    <%= name track.user %>
                   </div>
 
-                  <% if false do %>
-                  <div class="chip chip--grey">
-                    <span class="pie teal mask no-round" style={"--p:#{max(5, track.track_novelty)}"}>
-                    </span>
-                      Track novelty: <%= track.track_novelty %>%
-                  </div>
-                  <div class="chip chip--grey">
-                    <span class="pie teal mask no-round" style={"--p:#{max(5, track.artist_novelty)}"}>
-                    </span>
-                      Artist novelty: <%= track.artist_novelty %>%
-                  </div>
-                  <% end %>
                   <%= heart track %>
                 </div>
               </div>

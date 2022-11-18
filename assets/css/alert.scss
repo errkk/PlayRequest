@@ -12,11 +12,10 @@
   margin: 0;
   padding: 0;
   transition: box-shadow 300ms ease-in 300ms;
+  grid-column: main;
 }
 
 .alert:not(:empty) {
-  grid-column: main;
-
   padding: 20px 30px 20px;
   margin-top: 30px;
 
