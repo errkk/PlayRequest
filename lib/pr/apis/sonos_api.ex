@@ -7,25 +7,29 @@ defmodule PR.SonosAPI do
   alias PR.SonosHouseholds.{Household, Group}
 
   def subscribe_webhooks do
-    with %Group{} = group <- SonosHouseholds.get_active_group(),
+    with %Group{} = group <- get_group(),
          {:ok, _} <- subscribe_metadata(),
          {:ok, _} <- subscribe_playback() do
       SonosHouseholds.update_group(group, %{subscribed_at: DateTime.utc_now()})
       {:ok}
     else
+      {:error, :no_active_group} ->
+        {:ok}
       res -> res
     end
   end
 
   def unsubscribe_webhooks do
-    with %Group{} = group <- SonosHouseholds.get_active_group(),
+    with %Group{} = group <- get_group(),
          {:ok, _} <- unsubscribe_metadata(),
          {:ok, _} <- unsubscribe_playback() do
       SonosHouseholds.update_group(group, %{subscribed_at: nil})
       {:ok}
     else
+      {:error, :no_active_group} ->
+        {:ok}
+
       res ->
-        SonosHouseholds.update_group(group, %{subscribed_at: nil})
         res
     end
   end
@@ -57,7 +61,7 @@ defmodule PR.SonosAPI do
   end
 
   def subscribe_playback do
-    with %Group{group_id: group_id} <- group(),
+    with %Group{group_id: group_id} <- get_group(),
          %{} <- post("/groups/#{group_id}/playback/subscription") do
       Logger.info("Subscribed to playback webhook #{group_id}")
       {:ok, %{}}
@@ -73,7 +77,7 @@ defmodule PR.SonosAPI do
   end
 
   def unsubscribe_playback do
-    with %Group{group_id: group_id} <- group(),
+    with %Group{group_id: group_id} <- get_group(),
          %{} <- delete("/groups/#{group_id}/playback/subscription") do
       Logger.info("Un-subscribed to playback webhook #{group_id}")
       {:ok, %{}}
@@ -88,7 +92,7 @@ defmodule PR.SonosAPI do
   end
 
   def subscribe_metadata do
-    with %Group{group_id: group_id} <- group(),
+    with %Group{group_id: group_id} <- get_group(),
          %{} <- post("/groups/#{group_id}/playbackMetadata/subscription") do
       Logger.info("Subscribed to metadata webhook #{group_id}")
       {:ok, %{}}
@@ -103,7 +107,7 @@ defmodule PR.SonosAPI do
   end
 
   def unsubscribe_metadata do
-    with %Group{group_id: group_id} <- group(),
+    with %Group{group_id: group_id} <- get_group(),
          %{} <- delete("/groups/#{group_id}/playbackMetadata/subscription") do
       Logger.info("Un-subscribed to metadata webhook #{group_id}")
       {:ok, %{}}
@@ -196,7 +200,7 @@ defmodule PR.SonosAPI do
     end
   end
 
-  def group do
+  def get_group do
     case SonosHouseholds.get_active_group() do
       %Group{} = group -> group
       _ -> {:error, :no_active_group}

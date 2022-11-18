@@ -9,7 +9,7 @@ defmodule PR.ReleaseTasks do
     :ecto_sql
   ]
 
-  @repos Application.get_env(:pr, :ecto_repos, [])
+  @repos Application.compile_env(:pr, :ecto_repos, [])
 
   require Logger
 

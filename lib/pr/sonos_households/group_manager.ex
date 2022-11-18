@@ -42,7 +42,7 @@ defmodule PR.SonosHouseholds.GroupManager do
     SonosAPI.unsubscribe_webhooks()
 
     case SonosAPI.create_group(player_ids) do
-      {:ok, %Group{id: id}} ->
+      {:ok, %Group{id: id}} when is_binary(id) ->
         SonosAPI.subscribe_webhooks()
         Logger.info("New group created")
         {:ok, "Recreated group"}

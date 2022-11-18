@@ -78,7 +78,7 @@ defmodule PR.Queue do
   end
 
   @spec has_participated?(User.t()) :: boolean()
-  def has_participated?(%User{id: user_id} = user) do
+  def has_participated?(%User{} = user) do
     case Track
          |> query_for_user(user)
          |> Repo.aggregate(:count, :id) do
@@ -222,14 +222,6 @@ defmodule PR.Queue do
 
       [played, playing]
     end)
-  end
-
-  @spec get_playing_since() :: DateTime.t() | {:ok}
-  defp get_playing_since do
-    case get_playing() do
-      %Track{playing_since: playing_since} -> playing_since
-      _ -> {:ok}
-    end
   end
 
   @spec bump() :: {:ok}

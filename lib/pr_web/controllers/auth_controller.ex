@@ -2,7 +2,6 @@ defmodule PRWeb.AuthController do
   use PRWeb, :controller
   plug(Ueberauth)
 
-  alias Ueberauth.Strategy.Helpers
   alias PR.Auth
 
   def index(conn, _params) do

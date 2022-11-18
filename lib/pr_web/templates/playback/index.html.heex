@@ -85,18 +85,6 @@
                     <%= name track.user %>
                   </div>
 
-                  <% if false do %>
-                  <div class="chip chip--grey">
-                    <span class="pie teal mask no-round" style={"--p:#{max(5, track.track_novelty)}"}>
-                    </span>
-                      Track novelty: <%= track.track_novelty %>%
-                  </div>
-                  <div class="chip chip--grey">
-                    <span class="pie teal mask no-round" style={"--p:#{max(5, track.artist_novelty)}"}>
-                    </span>
-                      Artist novelty: <%= track.artist_novelty %>%
-                  </div>
-                  <% end %>
                   <%= heart track %>
                 </div>
               </div>

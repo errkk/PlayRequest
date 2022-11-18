@@ -190,4 +190,9 @@ defmodule PRWeb.Service.ServiceSetupController do
         |> redirect(to: Routes.service_setup_path(conn, :index))
     end
   end
+
+  def get_state(conn, _) do
+    PR.PlayState.get_initial_state()
+    redirect(conn, to: Routes.service_setup_path(conn, :index))
+  end
 end

@@ -4,7 +4,8 @@ defmodule PRWeb.SharedView do
   alias PR.Auth.User
   alias PRWeb.Router.Helpers, as: Routes
 
-  def heart(points, heart_file \\ "heart_pink") when is_integer(points) and points > 0 do
+  def heart(points, heart_file \\ "heart_pink")
+  def heart(points, heart_file) when is_integer(points) and points > 0 do
     1..points
     |> Enum.map(fn _ ->
       PRWeb.Endpoint

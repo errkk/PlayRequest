@@ -49,7 +49,7 @@ defmodule PR.Auth do
     User.changeset(user, %{})
   end
 
-  defp create_user(attrs \\ %{}) do
+  defp create_user(attrs) do
     %User{}
     |> User.changeset(attrs)
     |> Repo.insert()

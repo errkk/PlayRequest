@@ -49,7 +49,7 @@ defmodule PR.SpotifyAPI do
     get("/v1/tracks/#{id}")
   end
 
-  @spec search(String.t()) :: {:ok, [map()]} :: {:error}
+  @spec search(String.t()) :: {:ok, [map()]} | {:error}
   def search(q) do
     query =
       %{
