@@ -59,7 +59,6 @@ jobs:
     name: Check tag
     runs-on: ubuntu-latest
     outputs:
-      deploy: ${{ steps.check-tag.outputs.deploy }}
       deploy_staging: ${{ steps.check-tag.outputs.deploy_staging }}
       deploy_production: ${{ steps.check-tag.outputs.deploy_production }}
       tags: ${{ steps.check-tag.outputs.tags }}
@@ -68,7 +67,6 @@ jobs:
         id: check-tag
         run: |
           if [[ ${{ github.ref }} =~ refs\/tags\/[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "deploy=true" >> $GITHUB_OUTPUT
             echo "deploy_production=true" >> $GITHUB_OUTPUT
             echo "tags=latest,${{ github.ref_name }}" >> $GITHUB_OUTPUT
           else
@@ -76,7 +74,6 @@ jobs:
           fi
 
           if [[ ${{ github.ref }} =~ refs\/tags\/[0-9]+\.[0-9]+\.[0-9]+-rc\.[0-9]+ ]]; then
-            echo "deploy=true" >> $GITHUB_OUTPUT
             echo "deploy_staging=true" >> $GITHUB_OUTPUT
             echo "tags=${{ github.ref_name }}" >> $GITHUB_OUTPUT
           else
