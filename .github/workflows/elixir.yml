@@ -68,19 +68,19 @@ jobs:
         id: check-tag
         run: |
           if [[ ${{ github.ref }} =~ refs\/tags\/[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo ::set-output name=deploy::true
-            echo ::set-output name=deploy_production::true
-            echo ::set-output name=tags::latest,${{ github.ref_name }}
+            echo "deploy=true" >> $GITHUB_OUTPUT
+            echo "deploy_production=true" >> $GITHUB_OUTPUT
+            echo "tags=latest,${{ github.ref_name }}" >> $GITHUB_OUTPUT
           else
-            echo ::set-output name=deploy_production::false
+            echo "deploy_production=false" >> $GITHUB_OUTPUT
           fi
 
           if [[ ${{ github.ref }} =~ refs\/tags\/[0-9]+\.[0-9]+\.[0-9]+-rc\.[0-9]+ ]]; then
-            echo ::set-output name=deploy::true
-            echo ::set-output name=deploy_staging::true
-            echo ::set-output name=tags::${{ github.ref_name }}
+            echo "deploy=true" >> $GITHUB_OUTPUT
+            echo "deploy_staging=true" >> $GITHUB_OUTPUT
+            echo "tags=${{ github.ref_name }}" >> $GITHUB_OUTPUT
           else
-            echo ::set-output name=deploy_staging::false
+            echo "deploy_staging=false" >> $GITHUB_OUTPUT
           fi
 
   release:
