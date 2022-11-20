@@ -5,7 +5,7 @@ defmodule PR.MixProject do
     [
       app: :pr,
       version: "0.1.0",
-      elixir: "~> 1.12",
+      elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -38,23 +38,25 @@ defmodule PR.MixProject do
       {:certifi, "~> 2.2"},
       {:telemetry_poller, "~> 0.4"},
       {:telemetry_metrics, "~> 0.4"},
-      {:phoenix, "~> 1.6.0"},
+      {:phoenix, "~> 1.7.0-rc.0", override: true},
+      {:phoenix_live_view, "~> 0.18.3"},
+      {:phoenix_live_dashboard, "~> 0.7.2"},
       {:phoenix_ecto, "~> 4.1"},
       {:phoenix_html, "~> 3.0"},
+      {:phoenix_view, "~> 2.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:gettext, "~> 0.11"},
       {:plug_cowboy, "~> 2.0"},
-      {:phoenix_live_view, "~> 0.17.0"},
       {:ueberauth_google, "~> 0.8"},
       {:ex_machina, "~> 2.7", only: :test},
       {:timex, "~> 3.5"},
-      {:phoenix_live_dashboard, "~> 0.3 or ~> 0.2.9"},
       {:logger_json, "~> 5.0"},
       {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
       {:logger_papertrail_backend, "~> 1.1"},
       {:dart_sass, "~> 0.4", runtime: Mix.env() == :dev},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
-      {:mock, "~> 0.3.6", only: :test}
+      {:mock, "~> 0.3.6", only: :test},
+      {:heroicons, "~> 0.5"}
     ]
   end
 

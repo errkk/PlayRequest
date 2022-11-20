@@ -8,8 +8,8 @@
 </header>
 <main role="main">
   <div class="alert-container">
-    <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-    <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+    <.flash class="alert alert-info" kind={:info} title="Success!" flash={@flash} />
+    <.flash class="alert alert-danger" kind={:error} title="Error!" flash={@flash} />
   </div>
   <%= @inner_content %>
 </main>

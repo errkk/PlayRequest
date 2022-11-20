@@ -11,11 +11,14 @@ defmodule PRWeb.PlaybackLive do
   alias PR.Scoring.Point
   alias PR.Queue.Track
   alias PR.Queue
-  alias PRWeb.PlaybackView
+  # TMP do this to get these until they're components
+  import PRWeb.PlaybackView
+  import PRWeb.SharedView
 
-  def render(assigns) do
-    PlaybackView.render("index.html", assigns)
-  end
+  embed_templates "*"
+  # def render(assigns) do
+  #   PlaybackView.render("index.html", assigns)
+  # end
 
   def mount(_params, %{"user_id" => user_id}, socket) do
     if connected?(socket), do: PlayState.subscribe()

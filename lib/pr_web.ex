@@ -17,13 +17,19 @@ defmodule PRWeb do
   and import those modules here.
   """
 
+  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
+
   def controller do
     quote do
       use Phoenix.Controller, namespace: PRWeb
+      # formats: [:html, :json],
+      # layouts: [html: PRWeb.Layouts]
       import Plug.Conn
       import PRWeb.Gettext
       alias PRWeb.Router.Helpers, as: Routes
       import Phoenix.LiveView.Controller
+
+      unquote(verified_routes())
     end
   end
 
@@ -35,7 +41,7 @@ defmodule PRWeb do
 
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [get_flash: 1, get_flash: 2, view_module: 1]
-      import Phoenix.LiveView.Helpers
+      import Phoenix.Component
 
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
@@ -44,6 +50,8 @@ defmodule PRWeb do
       import PRWeb.Gettext
       import PRWeb.SharedView
       alias PRWeb.Router.Helpers, as: Routes
+      unquote(html_helpers())
+      unquote(verified_routes())
     end
   end
 
@@ -62,13 +70,68 @@ defmodule PRWeb do
       import Plug.Conn
       use Phoenix.Controller, namespace: PRWeb
       alias PRWeb.Router.Helpers, as: Routes
+      unquote(verified_routes())
     end
   end
 
   def channel do
     quote do
       use Phoenix.Channel, log_join: :debug, log_handle_in: false
+    end
+  end
+
+  def live_view do
+    quote do
+      use Phoenix.LiveView,
+        layout: {PRWeb.Layouts, :app}
+
+      unquote(html_helpers())
+    end
+  end
+
+  def live_component do
+    quote do
+      use Phoenix.LiveComponent
+
+      unquote(html_helpers())
+    end
+  end
+
+  def html do
+    quote do
+      use Phoenix.Component
+
+      # Import convenience functions from controllers
+      import Phoenix.Controller,
+        only: [get_csrf_token: 0, view_module: 1, view_template: 1]
+
+      # Include general helpers for rendering HTML
+      unquote(html_helpers())
+    end
+  end
+
+  defp html_helpers do
+    quote do
+      # HTML escaping functionality
+      import Phoenix.HTML
+      # Core UI components and translation
+      import PRWeb.CoreComponents
       import PRWeb.Gettext
+
+      # Shortcut for generating JS commands
+      alias Phoenix.LiveView.JS
+
+      # Routes generation with the ~p sigil
+      unquote(verified_routes())
+    end
+  end
+
+  def verified_routes do
+    quote do
+      use Phoenix.VerifiedRoutes,
+        endpoint: PRWeb.Endpoint,
+        router: PRWeb.Router,
+        statics: PRWeb.static_paths()
     end
   end
 

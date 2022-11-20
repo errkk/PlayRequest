@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content={installation_name()} />
+    <meta property="og:description" content="🎶 Contribute to the Sonos playlist" />
+    <%= unless assigns[:now_playing] do %>
+      <meta property="og:image" content={url(~p"/assets/pr.png")} />
+    <% end %>
+    <meta name="twitter:site" content={installation_name()} />
+    <meta name="twitter:card" content="summary" />
+
+    <%= if assigns[:now_playing] do %>
+      <meta property="og:image" content={@now_playing.img} />
+      <meta name="twitter:label1" content="Now Playing" />
+      <meta name="twitter:data1" content={@now_playing.name} />
+      <meta name="twitter:label2" content="By" />
+      <meta name="twitter:data2" content={@now_playing.artist} />
+    <% end %>
+
+    <%= csrf_meta_tag() %>
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap"
+      rel="stylesheet"
+    />
+    <.live_title suffix=" · Phoenix Framework">
+      <%= assigns[:page_title] || "UPDATEME" %>
+    </.live_title>
+    <link phx-track-static rel="icon" href={~p"/images/favicon.png"} />
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+  </head>
+  <body>
+    <div class="content">
+      <%= @inner_content %>
+    </div>
+    <footer class="footer">
+      <p class="version">
+        Version: <%= @version %>
+      </p>
+    </footer>
+    <script>
+      window.userToken = "<%= assigns[:user_token] %>";
+    </script>
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"} />
+  </body>
+</html>
