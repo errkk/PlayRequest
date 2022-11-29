@@ -41,5 +41,6 @@ defmodule PR.Queue.Track do
       :user_id
     ])
     |> validate_required([:name, :artist, :img, :spotify_id, :duration, :user_id])
+    |> validate_exclusion(:name, ["World in Motion"])
   end
 end
