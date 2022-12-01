@@ -11,7 +11,7 @@ processes = []
   REDIRECT_URL_BASE = "https://sonosnow.fly.dev"
   HOSTNAME = "sonosnow.fly.dev"
   FF_VOLUME = "true"
-  FF_TOGGLE_PLAYBACK = "true"
+  FF_TOGGLE_PLAYBACK = "false"
 
 [build]
   image = "ghcr.io/errkk/playrequest/pr:latest"
