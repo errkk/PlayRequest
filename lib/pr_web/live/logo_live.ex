@@ -1,13 +1,17 @@
 defmodule PRWeb.LogoLive do
   use Phoenix.LiveView
+  # Use for stuff like img_tag till those are <.img etc
   use Phoenix.HTML
+  use PRWeb, :html
 
   alias PR.PlayState
-  alias PRWeb.LogoView
 
-  def render(assigns) do
-    LogoView.render("index.html", assigns)
-  end
+  # TMP do this to get these until they're components
+  import PRWeb.PlaybackView
+  import PRWeb.UserHeaderView
+  import PRWeb.SharedView
+
+  embed_templates "*"
 
   def mount(_params, _session, socket) do
     if connected?(socket), do: PlayState.subscribe()

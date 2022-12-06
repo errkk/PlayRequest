@@ -26,7 +26,7 @@ defmodule PRWeb.Endpoint do
     at: "/",
     from: :pr,
     gzip: false,
-    only: ~w(assets fonts images favicon.png robots.txt)
+    only: PRWeb.static_paths()
   )
 
   # Code reloading can be explicitly enabled under the

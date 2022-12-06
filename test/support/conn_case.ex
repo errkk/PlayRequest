@@ -23,6 +23,7 @@ defmodule PRWeb.ConnCase do
       alias PRWeb.Router.Helpers, as: Routes
       import PRWeb.ConnCaseHelper
       import PR.Factory
++     use PRWeb, :verified_routes
 
       # The default endpoint for testing
       @endpoint PRWeb.Endpoint

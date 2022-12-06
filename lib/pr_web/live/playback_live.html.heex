@@ -9,6 +9,7 @@
       <p class={"alert alert-error #{if assigns[:error], do: "alert--entrance"}"} role="alert"><%= if assigns[:error], do: @error %></p>
     </div>
 
+
     <%= unless @participated do %>
     <div class="box">
       <h2>
@@ -25,7 +26,7 @@
         <div class="track track--light">
           <div class="track__inner">
             <div class="track__img__container">
-              <%= img_tag track.img, width: 100, class: "track__img" %>
+              <img src={track.img} width="100" class="track__img" />
             </div>
 
             <div class="track__details">
@@ -54,12 +55,12 @@
               <%= if can_vote?(track, @current_user) do %>
                 <button class="flip__container animate" phx-click="like" value={track.id} title={"Give some appreciation to #{name track.user}"}>
                   <div class="flip__flipper">
-                    <%= img_tag track.img, width: 100, class: "track__img flip__front" %>
+                    <img src={track.img} width="100" class="track__img flip__front" />
                     <span class="flip__back"></span>
                   </div>
                 </button>
               <% else %>
-                <%= img_tag track.img, width: 100, class: "track__img" %>
+                <img src={track.img} width="100" class="track__img" />
               <% end %>
               </div>
 
@@ -81,7 +82,7 @@
 
                 <div class="chips">
                   <div class="chip">
-                    <%= img_tag track.user.image, width: 40, class: "chip__img" %>
+                    <img src={track.user.image} width="40" class="chip__img" />
                     <%= name track.user %>
                   </div>
 

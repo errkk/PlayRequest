@@ -1,7 +1,9 @@
 defmodule PRWeb.PlaybackLive do
   require Logger
-  use Phoenix.LiveView, layout: {PRWeb.LayoutView, "live.html"}
+  use Phoenix.LiveView#, layout: {PRWeb.LayoutView, "live.html"}
+  # Use for stuff like img_tag till those are <.img etc
   use Phoenix.HTML
+  use PRWeb, :html
 
   alias PR.{Music, PlayState}
   alias PR.Music.{SonosItem, PlaybackState}
@@ -13,12 +15,10 @@ defmodule PRWeb.PlaybackLive do
   alias PR.Queue
   # TMP do this to get these until they're components
   import PRWeb.PlaybackView
+  import PRWeb.UserHeaderView
   import PRWeb.SharedView
 
   embed_templates "*"
-  # def render(assigns) do
-  #   PlaybackView.render("index.html", assigns)
-  # end
 
   def mount(_params, %{"user_id" => user_id}, socket) do
     if connected?(socket), do: PlayState.subscribe()

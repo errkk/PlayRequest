@@ -1,7 +1,9 @@
 defmodule PRWeb.UserHeaderLive do
   require Logger
   use Phoenix.LiveView
+  # Use for stuff like img_tag till those are <.img etc
   use Phoenix.HTML
+  use PRWeb, :html
 
   alias PR.Auth
   alias PR.Auth.User
@@ -12,16 +14,16 @@ defmodule PRWeb.UserHeaderLive do
   alias PR.Queue.Track
   alias PR.Queue
   alias PR.SonosAPI
-  alias PRWeb.PlaybackView
-  alias PRWeb.UserHeaderView
   alias PRWeb.Presence
+
+  # TMP do this to get these until they're components
+  import PRWeb.PlaybackView
+  import PRWeb.UserHeaderView
+  import PRWeb.SharedView
 
   @presence "presence"
 
-  @impl true
-  def render(assigns) do
-    UserHeaderView.render("index.html", assigns)
-  end
+  embed_templates "*"
 
   @impl true
   def mount(_params, %{"user_id" => user_id}, socket) when not is_nil(user_id) do

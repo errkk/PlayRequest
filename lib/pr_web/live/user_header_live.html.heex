@@ -1,22 +1,20 @@
-<%= if assigns[:current_user] do %>
+<%= if @current_user do %>
   <nav role="navigation" class="nav">
     <ul>
         <li class="nav__item">
-          <%= link "History", to: Routes.history_path(@socket, :index), class: "link" %>
+          <.link class="link" href={~p"/history"}>History</.link>
         </li>
         <%= if @current_user.is_trusted do %>
           <li class="nav__item">
-            <%= link "Setup", to: Routes.service_setup_path(@socket, :index), class: "link" %>
+            <.link class="link" href={~p"/setup"}>Setup</.link>
           </li>
         <% end %>
         <li class="nav__item">
-            <%= link "Logout #{@current_user.first_name}",
-                to: Routes.auth_path(@socket, :delete),
-                class: "link" %>
+          <.link class="link" href={~p"/auth/delete"}>Logout <%= @current_user.first_name %></.link>
         </li>
     </ul>
     <div class="user">
-      <%= img_tag @current_user.image, class: "profile-image" %>
+      <img src={@current_user.image} class="profile-image" />
       <span class="user__hearts">
         <%= @points %> <%= heart(1) %>
       </span>
@@ -37,7 +35,7 @@
   <div class="users-container">
     <div class="users">
     <%= for {_id, user} <- @users do %>
-      <%= img_tag user.image, class: "profile-image", title: user.first_name %>
+      <img src={user.image} class="profile-image" title={user.first_name} />
     <% end %>
     <span class="users--title">online</span>
     </div>
