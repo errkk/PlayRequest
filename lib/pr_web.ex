@@ -93,6 +93,7 @@ defmodule PRWeb do
     quote do
       use Phoenix.LiveComponent
 
+      unquote(verified_routes())
       unquote(html_helpers())
     end
   end
@@ -120,6 +121,9 @@ defmodule PRWeb do
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
+
+      # installation_name() etc
+      import PRWeb.Shared
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())

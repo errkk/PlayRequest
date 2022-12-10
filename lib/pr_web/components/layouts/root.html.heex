@@ -21,19 +21,20 @@
       <meta name="twitter:data2" content={@now_playing.artist} />
     <% end %>
 
-    <%= csrf_meta_tag() %>
+    <meta name="csrf-token" content={get_csrf_token()} />
 
     <link
       href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap"
       rel="stylesheet"
     />
-    <.live_title suffix=" · Phoenix Framework">
-      <%= assigns[:page_title] || "UPDATEME" %>
+    <.live_title suffix={" . " <> installation_name()}>
+      <%= assigns[:page_title] || installation_name() %>
     </.live_title>
     <link phx-track-static rel="icon" href={~p"/images/favicon.png"} />
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
   </head>
   <body>
+
     <div class="content">
       <%= @inner_content %>
     </div>
@@ -48,3 +49,4 @@
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"} />
   </body>
 </html>
+

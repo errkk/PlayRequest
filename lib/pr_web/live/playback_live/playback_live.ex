@@ -1,9 +1,7 @@
 defmodule PRWeb.PlaybackLive do
   require Logger
-  use Phoenix.LiveView#, layout: {PRWeb.LayoutView, "live.html"}
-  # Use for stuff like img_tag till those are <.img etc
   use Phoenix.HTML
-  use PRWeb, :html
+  use PRWeb, :live_view
 
   alias PR.{Music, PlayState}
   alias PR.Music.{SonosItem, PlaybackState}
@@ -13,6 +11,7 @@ defmodule PRWeb.PlaybackLive do
   alias PR.Scoring.Point
   alias PR.Queue.Track
   alias PR.Queue
+
   # TMP do this to get these until they're components
   import PRWeb.PlaybackView
   import PRWeb.UserHeaderView
@@ -20,6 +19,7 @@ defmodule PRWeb.PlaybackLive do
 
   embed_templates "*"
 
+  @impl true
   def mount(_params, %{"user_id" => user_id}, socket) do
     if connected?(socket), do: PlayState.subscribe()
     if connected?(socket), do: Music.subscribe()
@@ -52,25 +52,30 @@ defmodule PRWeb.PlaybackLive do
   #
 
   # Playback state update
+  @impl true
   def handle_info({PlayState, %{} = play_state, :play_state}, socket) do
     {:noreply, assign(socket, play_state: play_state, page_title: page_title(play_state))}
   end
 
   # Progress update (interpolated from timer)
+  @impl true
   def handle_info({PlayState, progress, :progress}, socket) do
     {:noreply, assign(socket, progress: progress)}
   end
 
   # Metadata webhook. Player is playing something else now
+  @impl true
   def handle_info({PlayState, %{} = metadata, :metadata}, socket) do
     {:noreply, assign(socket, metadata: metadata, page_title: page_title(metadata))}
   end
 
   # Clear errormode
+  @impl true
   def handle_info({PlayState, nil, :sonos_error}, socket) do
     {:noreply, assign(socket, error: nil)}
   end
 
+  @impl true
   def handle_info({PlayState, %{error_code: error_code}, :sonos_error}, socket) do
     {:noreply,
      assign(socket,
@@ -79,12 +84,14 @@ defmodule PRWeb.PlaybackLive do
   end
 
   # Queue has changed either from addition or track has played
+  @impl true
   def handle_info({Music, _num_unplayed, :queue_updated}, socket) do
     send(self(), {:get_playlist, nil})
     {:noreply, socket}
   end
 
   # Someone got a point. Was it me?
+  @impl true
   def handle_info({Music, %Point{track: %Track{name: name} = track}, :point}, socket) do
     send(self(), {:get_playlist, nil})
 
@@ -102,7 +109,7 @@ defmodule PRWeb.PlaybackLive do
   #
   # Async UI functions
   #
-
+  @impl true
   def handle_info({:search, ""}, socket) do
     # Empty serach query
     {:noreply, assign(socket, loading: false, result: [])}
@@ -118,11 +125,13 @@ defmodule PRWeb.PlaybackLive do
     end
   end
 
+  @impl true
   def handle_info({:get_playlist, _}, %{assigns: %{current_user: user}} = socket) do
     items = Music.get_playlist(user)
     {:noreply, assign(socket, playlist: items)}
   end
 
+  @impl true
   def handle_info({:queue, spotify_id}, %{assigns: %{current_user: user}} = socket) do
     case Music.queue(user, spotify_id) do
       {:ok, _track} ->
@@ -133,6 +142,7 @@ defmodule PRWeb.PlaybackLive do
     end
   end
 
+  @impl true
   def handle_info({:like, track_id}, %{assigns: %{current_user: %User{id: user_id}}} = socket) do
     Scoring.create_point(%{track_id: track_id, user_id: user_id})
     send(self(), {:get_playlist, nil})
@@ -141,32 +151,37 @@ defmodule PRWeb.PlaybackLive do
 
   ## User events
 
+  @impl true
   def handle_event("queue", %{"value" => spotify_id}, socket) do
     send(self(), {:queue, spotify_id})
     {:noreply, assign(socket, participated: true)}
   end
 
+  @impl true
   def handle_event("search", %{"q" => q}, socket) when byte_size(q) <= 100 do
     send(self(), {:search, q})
     {:noreply, assign(socket, q: q, result: [], loading: true)}
   end
 
+  @impl true
   def handle_event("like", %{"value" => track_id}, socket) do
     send(self(), {:like, track_id})
     {:noreply, socket}
   end
 
+  @impl true
   def handle_event("clear_info", _, socket) do
     {:noreply, assign(socket, info: nil)}
   end
 
+  @impl true
   def handle_event(%{"event" => "clear_info"}, socket) do
     {:noreply, assign(socket, info: nil)}
   end
 
   # This is all happening cos the @page_title is a single var and cant match playback_state and metadata in the template
-  defp page_title(%PlaybackState{state: :paused}), do: PRWeb.SharedView.installation_name()
-  defp page_title(%PlaybackState{state: :idle}), do: PRWeb.SharedView.installation_name()
+  defp page_title(%PlaybackState{state: :paused}), do: "⏸️"
+  defp page_title(%PlaybackState{state: :idle}), do: "..."
 
   defp page_title(%PlaybackState{state: :playing}),
     do: :metadata |> PlayState.get() |> page_title()
@@ -177,9 +192,9 @@ defmodule PRWeb.PlaybackLive do
         "🎵 #{name} – #{artist}"
 
       _ ->
-        PRWeb.SharedView.installation_name()
+        "..."
     end
   end
 
-  defp page_title(_), do: PRWeb.SharedView.installation_name()
+  defp page_title(_), do: "..."
 end

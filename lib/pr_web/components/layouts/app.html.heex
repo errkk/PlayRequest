@@ -1,10 +1,6 @@
 <header class="container container--header">
-  <div class="col--header">
-    <%= live_render(@conn, PRWeb.UserHeaderLive, id: "user") %>
-  </div>
-  <div class="col--logo">
-    <%= live_render(@conn, PRWeb.LogoLive, id: "logo") %>
-  </div>
+  <%= live_render(@socket, PRWeb.LogoLive, id: :logo) %>
+  <%= live_render(@socket, PRWeb.UserHeaderLive, id: :user_header) %>
 </header>
 <main role="main">
   <div class="alert-container">
@@ -13,3 +9,4 @@
   </div>
   <%= @inner_content %>
 </main>
+

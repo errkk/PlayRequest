@@ -20,11 +20,4 @@ defmodule PRWeb.SharedView do
 
   def heart(_, _), do: ""
 
-  def name(%User{first_name: first_name, last_name: last_name}) do
-    first_name <> " " <> String.first(last_name)
-  end
-
-  def installation_name do
-    Application.get_env(:pr, :installation_name, "PlayRequest")
-  end
 end

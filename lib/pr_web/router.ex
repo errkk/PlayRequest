@@ -7,7 +7,7 @@ defmodule PRWeb.Router do
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
     plug(:fetch_live_flash)
-    plug(:put_root_layout, {PRWeb.LayoutView, :root})
+    plug(:put_root_layout, {PRWeb.Layouts, :root})
     plug(PRWeb.Plug.ReleaseMetadataPlug)
   end
 

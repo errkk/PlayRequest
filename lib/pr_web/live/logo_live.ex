@@ -1,19 +1,36 @@
 defmodule PRWeb.LogoLive do
-  use Phoenix.LiveView
-  # Use for stuff like img_tag till those are <.img etc
-  use Phoenix.HTML
-  use PRWeb, :html
+  use PRWeb, :live_view
 
   alias PR.PlayState
+  alias PR.Music.PlaybackState
 
-  # TMP do this to get these until they're components
-  import PRWeb.PlaybackView
-  import PRWeb.UserHeaderView
-  import PRWeb.SharedView
+  @impl true
+  def render(assigns) do
+    ~H"""
+      <h1 class="logo-heading">
+        <.link to={~p"/"} class="logo-link">
+          <.logo play_state={@play_state} />
+          <%= installation_name() %>
+        </.link>
+      </h1>
+    """
+  end
 
-  embed_templates "*"
+  def logo(%{play_state: %PlaybackState{state: :playing}} = assigns) do
+    ~H"""
+      <img src={~p"/images/playing.svg"} class="logo" />
+    """
+  end
 
+  def logo(%{play_state: _} = assigns) do
+    ~H"""
+      <img src={~p"/images/not-playing.svg"} class="logo" />
+    """
+  end
+
+  @impl true
   def mount(_params, _session, socket) do
+    IO.puts "mounting logo"
     if connected?(socket), do: PlayState.subscribe()
     play_state = PlayState.get(:play_state)
 
