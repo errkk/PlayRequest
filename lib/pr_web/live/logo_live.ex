@@ -8,7 +8,7 @@ defmodule PRWeb.LogoLive do
   def render(assigns) do
     ~H"""
       <h1 class="logo-heading">
-        <.link to={~p"/"} class="logo-link">
+        <.link href={~p"/"} class="logo-link">
           <.logo play_state={@play_state} />
           <%= installation_name() %>
         </.link>

@@ -14,6 +14,8 @@ defmodule PRWeb.UserHeaderLive do
   alias PR.SonosAPI
   alias PRWeb.Presence
 
+  import PRWeb.Shared
+
   embed_templates "*"
 
   @presence "presence"
@@ -39,12 +41,6 @@ defmodule PRWeb.UserHeaderLive do
   def heart(assigns) do
     ~H"""
       <img src={~p"/images/heart_pink.svg"} class="heart" />
-    """
-  end
-
-  def play_pause(assigns) do
-    ~H"""
-    <button class="button" phx-click="toggle_playback">Pause</button>
     """
   end
 

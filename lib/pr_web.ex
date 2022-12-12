@@ -48,7 +48,6 @@ defmodule PRWeb do
 
       import PRWeb.ErrorHelpers
       import PRWeb.Gettext
-      import PRWeb.SharedView
       alias PRWeb.Router.Helpers, as: Routes
       unquote(html_helpers())
       unquote(verified_routes())

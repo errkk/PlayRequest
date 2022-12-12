@@ -12,11 +12,6 @@ defmodule PRWeb.PlaybackLive do
   alias PR.Queue.Track
   alias PR.Queue
 
-  # TMP do this to get these until they're components
-  import PRWeb.PlaybackView
-  import PRWeb.UserHeaderView
-  import PRWeb.SharedView
-
   import PRWeb.TrackComponent
 
   embed_templates "*"
@@ -60,24 +55,20 @@ defmodule PRWeb.PlaybackLive do
   end
 
   # Progress update (interpolated from timer)
-  @impl true
   def handle_info({PlayState, progress, :progress}, socket) do
     {:noreply, assign(socket, progress: progress)}
   end
 
   # Metadata webhook. Player is playing something else now
-  @impl true
   def handle_info({PlayState, %{} = metadata, :metadata}, socket) do
     {:noreply, assign(socket, metadata: metadata, page_title: page_title(metadata))}
   end
 
   # Clear errormode
-  @impl true
   def handle_info({PlayState, nil, :sonos_error}, socket) do
     {:noreply, assign(socket, error: nil)}
   end
 
-  @impl true
   def handle_info({PlayState, %{error_code: error_code}, :sonos_error}, socket) do
     {:noreply,
      assign(socket,
@@ -86,18 +77,16 @@ defmodule PRWeb.PlaybackLive do
   end
 
   # Queue has changed either from addition or track has played
-  @impl true
   def handle_info({Music, _num_unplayed, :queue_updated}, socket) do
     send(self(), {:get_playlist, nil})
     {:noreply, socket}
   end
 
   # Someone got a point. Was it me?
-  @impl true
   def handle_info({Music, %Point{track: %Track{name: name} = track}, :point}, socket) do
     send(self(), {:get_playlist, nil})
 
-    if PlaybackView.it_me?(track, socket) do
+    if it_me?(track, socket) do
       {:noreply,
        assign(socket,
          info: "🙌 You've received a unit of appreciation for \"#{name}\"",
@@ -111,7 +100,6 @@ defmodule PRWeb.PlaybackLive do
   #
   # Async UI functions
   #
-  @impl true
   def handle_info({:search, ""}, socket) do
     # Empty serach query
     {:noreply, assign(socket, loading: false, result: [])}
@@ -127,13 +115,11 @@ defmodule PRWeb.PlaybackLive do
     end
   end
 
-  @impl true
   def handle_info({:get_playlist, _}, %{assigns: %{current_user: user}} = socket) do
     items = Music.get_playlist(user)
     {:noreply, assign(socket, playlist: items)}
   end
 
-  @impl true
   def handle_info({:queue, spotify_id}, %{assigns: %{current_user: user}} = socket) do
     case Music.queue(user, spotify_id) do
       {:ok, _track} ->
@@ -144,7 +130,6 @@ defmodule PRWeb.PlaybackLive do
     end
   end
 
-  @impl true
   def handle_info({:like, track_id}, %{assigns: %{current_user: %User{id: user_id}}} = socket) do
     Scoring.create_point(%{track_id: track_id, user_id: user_id})
     send(self(), {:get_playlist, nil})
@@ -159,24 +144,20 @@ defmodule PRWeb.PlaybackLive do
     {:noreply, assign(socket, participated: true)}
   end
 
-  @impl true
   def handle_event("search", %{"q" => q}, socket) when byte_size(q) <= 100 do
     send(self(), {:search, q})
     {:noreply, assign(socket, q: q, result: [], loading: true)}
   end
 
-  @impl true
   def handle_event("like", %{"value" => track_id}, socket) do
     send(self(), {:like, track_id})
     {:noreply, socket}
   end
 
-  @impl true
   def handle_event("clear_info", _, socket) do
     {:noreply, assign(socket, info: nil)}
   end
 
-  @impl true
   def handle_event(%{"event" => "clear_info"}, socket) do
     {:noreply, assign(socket, info: nil)}
   end

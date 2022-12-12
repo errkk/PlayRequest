@@ -259,7 +259,8 @@ defmodule PR.PlayState do
          %{playing_since: %DateTime{} = playing_since} <- Queue.get_playing(),
          diff <- DateTime.diff(DateTime.utc_now(), playing_since, :millisecond),
          true <- Kernel.>(duration, diff) do
-      diff
+      percentage = diff / duration * 100
+      percentage
       |> update_state(:progress)
       |> broadcast(:progress)
     else
