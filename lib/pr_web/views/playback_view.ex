@@ -3,7 +3,6 @@ defmodule PRWeb.PlaybackView do
 
   alias PR.Queue.Track
   alias PR.Music.PlaybackState
-  alias PR.Queue.Track
   alias PR.Auth.User
 
   def playing?(%Track{playing_since: playing}, %PlaybackState{state: :playing})

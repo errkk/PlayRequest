@@ -18,19 +18,24 @@ defmodule PRWeb.LogoLive do
 
   def logo(%{play_state: %PlaybackState{state: :playing}} = assigns) do
     ~H"""
-      <img src={~p"/images/playing.svg"} class="logo" />
+      <img src={~p"/images/logo-playing.svg"} class="logo" />
+    """
+  end
+
+  def logo(%{play_state: %PlaybackState{state: :buffering}} = assigns) do
+    ~H"""
+      <img src={~p"/images/logo-buffering.svg"} class="logo" />
     """
   end
 
   def logo(%{play_state: _} = assigns) do
     ~H"""
-      <img src={~p"/images/not-playing.svg"} class="logo" />
+      <img src={~p"/images/logo-not-playing.svg"} class="logo" />
     """
   end
 
   @impl true
   def mount(_params, _session, socket) do
-    IO.puts "mounting logo"
     if connected?(socket), do: PlayState.subscribe()
     play_state = PlayState.get(:play_state)
 
@@ -44,6 +49,7 @@ defmodule PRWeb.LogoLive do
   end
 
   # Playback state update
+  @impl true
   def handle_info({PlayState, %{} = play_state, :play_state}, socket) do
     {:noreply, assign(socket, play_state: play_state)}
   end

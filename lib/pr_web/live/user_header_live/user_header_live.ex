@@ -162,6 +162,7 @@ defmodule PRWeb.UserHeaderLive do
   # UI events
   #
 
+  @impl true
   def handle_event("toggle_playback", _, socket) do
     SonosAPI.toggle_playback()
     %{ assigns: %{ current_user: %{ first_name: name } } } = socket

@@ -5,7 +5,7 @@
          <animate attributeName="height" calcMode="spline" values="50;70;30;50" keyTimes="0;0.33;0.66;1" dur="1.4" keySplines="0.5 0 0.5 1;0.5 0 0.5 1;0.5 0 0.5 1" begin="-0.5599999999999999s" repeatCount="indefinite" />
       </rect>
       <rect ng-attr-x="{{config.x2}}" y="15" ng-attr-width="{{config.width}}" height="51.9636" fill="#32fad7" x="35" width="15" rx="5">
-         <animate attributeName="height" calcMode="spline" values="50;70;30;50" keyTimes="0;0.33;0.66;1" dur="1.4" keySplines="0.5 0 0.5 1;0.5 0 0.5 1;0.5 0 0.5 1" begin="-0.27999999999999997s" repeatCount="indefinite" />
+         <animate attributeName="opacity" calcMode="spline" values="50;70;30;50" keyTimes="0;0.33;0.66;1" dur="1.4" keySplines="0.5 0 0.5 1;0.5 0 0.5 1;0.5 0 0.5 1" begin="-0.27999999999999997s" repeatCount="indefinite" />
       </rect>
       <rect ng-attr-x="{{config.x3}}" y="15" ng-attr-width="{{config.width}}" height="53.5006" fill="#FF1D79" x="55" width="15" rx="5">
          <animate attributeName="height" calcMode="spline" values="50;70;30;50" keyTimes="0;0.33;0.66;1" dur="1.4" keySplines="0.5 0 0.5 1;0.5 0 0.5 1;0.5 0 0.5 1" begin="-0.84s" repeatCount="indefinite" />

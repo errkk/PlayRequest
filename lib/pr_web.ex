@@ -108,6 +108,7 @@ defmodule PRWeb do
 
       # Include general helpers for rendering HTML
       unquote(html_helpers())
+      unquote(verified_routes())
     end
   end
 

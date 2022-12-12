@@ -17,6 +17,8 @@ defmodule PRWeb.PlaybackLive do
   import PRWeb.UserHeaderView
   import PRWeb.SharedView
 
+  import PRWeb.TrackComponent
+
   embed_templates "*"
 
   @impl true
