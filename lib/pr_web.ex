@@ -21,13 +21,14 @@ defmodule PRWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller, namespace: PRWeb
-      # formats: [:html, :json],
-      # layouts: [html: PRWeb.Layouts]
+      use Phoenix.Controller,
+        namespace: PRWeb,
+        formats: [:html, :json],
+        layouts: [html: PRWeb.Layouts]
+
       import Plug.Conn
       import PRWeb.Gettext
-      alias PRWeb.Router.Helpers, as: Routes
-      import Phoenix.LiveView.Controller
+      # import Phoenix.LiveView.Controller
 
       unquote(verified_routes())
     end

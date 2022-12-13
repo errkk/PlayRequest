@@ -16,7 +16,7 @@ defmodule PRWeb.HistoryController do
 
     top_scorers = Scoring.list_top_scorers()
 
-    render(conn, "index.html", items: items, top_scorers: top_scorers)
+    render(conn, :index, items: items, top_scorers: top_scorers)
   end
 
   def mark_unplayed(conn, %{"id" => id}) do

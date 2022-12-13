@@ -12,6 +12,7 @@ defmodule PRWeb.PlaybackLive do
   alias PR.Queue.Track
   alias PR.Queue
 
+  import PRWeb.PlaybackComponents
   import PRWeb.TrackComponent
 
   embed_templates "*"
