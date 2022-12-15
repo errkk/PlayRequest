@@ -32,14 +32,14 @@ defmodule PRWeb.HistoryController do
       _ ->
         conn
         |> put_flash(:error, "⚠️ Didn't work")
-        |> redirect(to: Routes.history_path(conn, :index))
+        |> redirect(to: "/")
     end
   end
 
   def mark_unplayed(conn, _) do
     conn
     |> put_flash(:error, "⚠️ Didn't work")
-    |> redirect(to: Routes.history_path(conn, :index))
+        |> redirect(to: "/")
   end
 
   defp group_by_hour(items) do

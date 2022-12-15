@@ -24,11 +24,12 @@ defmodule PRWeb do
       use Phoenix.Controller,
         namespace: PRWeb,
         formats: [:html, :json],
-        layouts: [html: PRWeb.Layouts]
+        layouts: [html: PRWeb.Layouts],
+        layout: {PRWeb.Layouts, :page}
 
       import Plug.Conn
       import PRWeb.Gettext
-      # import Phoenix.LiveView.Controller
+      import Phoenix.LiveView.Controller
 
       unquote(verified_routes())
     end
@@ -83,7 +84,7 @@ defmodule PRWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {PRWeb.Layouts, :app}
+        layout: {PRWeb.Layouts, :live}
 
       unquote(html_helpers())
     end

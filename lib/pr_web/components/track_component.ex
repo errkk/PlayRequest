@@ -1,9 +1,6 @@
 defmodule PRWeb.TrackComponent do
   use PRWeb, :html
 
-  alias PR.Queue.Track
-  alias PR.Music.PlaybackState
-
   import PRWeb.PlaybackComponents
 
   def tracks(assigns) do
@@ -39,7 +36,7 @@ defmodule PRWeb.TrackComponent do
             <div class="track__details">
               <%= render_slot(@details, track) %>
 
-              <% if @chips do %>
+              <%= if @chips do %>
               <div class="chips">
                 <%= render_slot(@chips, track) %>
               </div>

@@ -62,10 +62,10 @@ defmodule PRWeb.Router do
       put("/group/:id", ServiceSetupController, :toggle_group)
       post("/subscribe", ServiceSetupController, :subscribe_sonos_webhooks)
       post("/sync-playlist", ServiceSetupController, :sync_playlist)
-      post("/load-playlist", ServiceSetupController, :trigger_playlist)
+      post("/trigger-playlist", ServiceSetupController, :trigger_playlist)
       post("/create-playlist", ServiceSetupController, :create_spotify_playlist)
       post("/bump", ServiceSetupController, :bump)
-      post("/get_state", ServiceSetupController, :get_state)
+      post("/get-state", ServiceSetupController, :get_state)
     end
 
     get("/sonos/authorized", ServiceAuthController, :authorized_sonos, as: :sonos_auth)

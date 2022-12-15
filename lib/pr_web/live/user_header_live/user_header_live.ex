@@ -122,7 +122,7 @@ defmodule PRWeb.UserHeaderLive do
         {Music, %Point{track: %Track{} = track}, :point},
         %{assigns: %{current_user: %User{id: user_id}}} = socket
       ) do
-    if PlaybackView.it_me?(track, socket) do
+    if it_me?(track, socket) do
       {:noreply,
        assign(
          socket,

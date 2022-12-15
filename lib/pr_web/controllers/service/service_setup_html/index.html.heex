@@ -4,31 +4,28 @@
     <ol class="setup-list">
       <li>
         <h3>
-          <%= check @has_token_sonos and @has_token_spotify %>
+          <.check checked={@has_token_sonos and @has_token_spotify} />
           Authenticate accounts
         </h3>
         <%= unless @has_token_sonos and @has_token_spotify do %>
         <p>
-          <%= unless @has_token_sonos, do: link "Authorise Sonos",
-              to: @sonos_auth_link,
-              class: "button" %>
-          <%= unless @has_token_spotify, do: link "Authorise Spotify",
-              to: @spotify_auth_link,
-              class: "button" %>
+          <%= unless @has_token_sonos do %>
+            <.link href={@sonos_auth_link} class="button">Authorise Sonos</.link>
+          <% end %>
+          <%= unless @has_token_spotify do %>
+            <.link href={@spotify_auth_link} class="button">Authorise Spotify</.link>
+          <% end %>
         </p>
         <% end %>
       </li>
       <li>
         <h3>
-          <%= check @has_households %>
+          <.check checked={@has_households} />
           Set Sonos household
         </h3>
         <%= unless @has_households do %>
           <p>
-            <%= link "Save households",
-                to: Routes.service_setup_path(@conn, :save_households),
-                method: :post,
-                class: "button" %>
+            <.link href={~p"/setup/save-households"} method="post" class="button">Save households</.link>
           </p>
         <% end %>
 
@@ -36,9 +33,7 @@
           <div class="box">
             <h3>Households</h3>
             <%= for item <- @households do %>
-              <%= link if(item.is_active, do: "🙋‍♂️", else: "🙅‍♀️"),
-                  to: Routes.service_setup_path(@conn, :toggle_household, item),
-                  method: :put %>
+              <.toggle href={~p"/setup/household/#{item}"} is_active={item.is_active} />
               <%= unless is_nil(item.label), do: item.label, else: item.household_id %>
             <% end %>
             <p>
@@ -49,16 +44,13 @@
       </li>
       <li>
         <h3>
-          <%= check @has_active_groups %>
+          <.check checked={@has_active_groups} />
           Set Sonos speaker group
         </h3>
 
         <%= if @has_active_households and not @has_active_groups do %>
           <p>
-            <%= unless @has_groups, do: link "Save groups",
-                to: Routes.service_setup_path(@conn, :save_groups),
-                method: :post,
-                class: "button" %>
+            <.link href={~p"/setup/save-groups"} method="post" class="button">Save groups</.link>
           </p>
 
           <%= unless @has_active_groups do %>
@@ -69,9 +61,7 @@
                 Make sure to create a group that has the speakers you want in it.
               </p>
               <%= for item <- @groups do %>
-                <%= link if(item.is_active, do: "🙋‍♂️", else: "🙅‍♀️"),
-                    to: Routes.service_setup_path(@conn, :toggle_group, item),
-                    method: :put %>
+                <.toggle href={~p"/setup/group/#{item}"} is_active={item.is_active} />
                 <%= item.name %>
               <% end %>
             </div>
@@ -79,24 +69,18 @@
         <% end %>
         <%= if @has_active_households and @has_groups do %>
           <p>
-            <%= link "Clear groups",
-                to: Routes.service_setup_path(@conn, :clear_groups),
-                method: :delete,
-                class: "button" %>
+            <.link href={~p"/setup/clear-groups"} method="delete" class="button">Clear groups</.link>
           </p>
         <% end %>
       </li>
       <li>
         <h3>
-          <%= check @active_group_subscribed %>
+          <.check checked={@active_group_subscribed} />
           Setup webhook
         </h3>
         <%= if @has_groups and @has_active_groups and not @active_group_subscribed do %>
           <p>
-          <%= link "Subscribe webooks",
-              to: Routes.service_setup_path(@conn, :subscribe_sonos_webhooks),
-              method: :post,
-              class: "button" %>
+            <.link href={~p"/setup/subscribe"} method="post" class="button">Subscribe webhooks</.link>
           </p>
           <p>
             Subscribe to Sonos metadata and playback events
@@ -105,15 +89,12 @@
       </li>
       <li>
         <h3>
-          <%= check @spotify_playlist_created %>
+          <.check checked={@spotify_playlist_created} />
           Create PlayRequest playlist
         </h3>
         <%= unless @spotify_playlist_created do %>
           <p>
-            <%= link "Create playlist on Spotify",
-                to: Routes.service_setup_path(@conn, :create_spotify_playlist),
-                method: :post,
-                class: "button" %>
+            <.link href={~p"/setup/create-playlist"} method="post" class="button">Create Spotify playlist</.link>
           </p>
           <p>
             Makes a playlist on Spotify called PlayRequest
@@ -122,7 +103,7 @@
       </li>
       <li>
         <h3>
-          <%= check() %>
+          <.check />
           Fav the playlist on Sonos
         </h3>
         <p>
@@ -135,40 +116,25 @@
     <ol class="setup-list">
       <li>
         <h3>Trigger playlist</h3>
-
-        <%= link "Trigger playlist on Sonos",
-            to: Routes.service_setup_path(@conn, :trigger_playlist),
-            method: :post,
-            class: "button" %>
+          <.link href={~p"/setup/trigger-playlist"} method="post" class="button">Trigger playlist on Sonos</.link>
         <p>
           Trigger the playlist to play on Sonos, it's kept as a favorite and triggering that will make it play.
         </p>
-        <%= link "Bump",
-            to: Routes.service_setup_path(@conn, :bump),
-            method: :post,
-            class: "button" %>
+          <.link href={~p"/setup/bump"} method="post" class="button">Bump</.link>
         <p>
           Skip to next track, press trigger again to make the next thing play if there is something to play.
         </p>
       </li>
       <li>
         <h3>Sync queue</h3>
-
-        <%= link "Sync queue to Spotify playlist",
-            to: Routes.service_setup_path(@conn, :sync_playlist),
-            method: :post,
-            class: "button" %>
+          <.link href={~p"/setup/sync-playlist"} method="post" class="button">Sync queue to Spotify playlist</.link>
         <p>
           Sync queue to Spotify playlist, this happens automatically when tracks are added or played.
         </p>
       </li>
       <li>
         <h3>Get State</h3>
-
-        <%= link "Get state",
-            to: Routes.service_setup_path(@conn, :get_state),
-            method: :post,
-            class: "button" %>
+          <.link href={~p"/setup/get-state"} method="post" class="button">Get state</.link>
         <p>
           Webhook should do this, but this will fetch the state
         </p>
