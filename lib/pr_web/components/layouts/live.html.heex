@@ -1,4 +1,4 @@
-<header class="container container--header">
+<header class="container--header">
   <%= live_render(@socket, PRWeb.LogoLive, id: :logo) %>
   <%= live_render(@socket, PRWeb.UserHeaderLive, id: :user_header) %>
 </header>
@@ -9,3 +9,4 @@
   </div>
   <%= @inner_content %>
 </main>
+

@@ -42,9 +42,7 @@ defmodule PRWeb.TrackComponent do
               </div>
               <% end %>
             </div>
-            <%= if @extra do%>
-              <%= render_slot(@extra, track) %>
-            <% end %>
+            <%= if @extra, do: render_slot(@extra, track) %>
         </div>
         <.progress track={track} play_state={@play_state} progress={@progress} />
       </div>

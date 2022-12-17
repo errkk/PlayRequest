@@ -78,7 +78,7 @@
           <.check checked={@active_group_subscribed} />
           Setup webhook
         </h3>
-        <%= if @has_groups and @has_active_groups and not @active_group_subscribed do %>
+        <%= if @has_groups and @has_active_groups do %>
           <p>
             <.link href={~p"/setup/subscribe"} method="post" class="button">Subscribe webhooks</.link>
           </p>

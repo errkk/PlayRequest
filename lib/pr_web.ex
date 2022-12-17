@@ -24,13 +24,19 @@ defmodule PRWeb do
       use Phoenix.Controller,
         namespace: PRWeb,
         formats: [:html, :json],
-        layouts: [html: PRWeb.Layouts],
-        layout: {PRWeb.Layouts, :page}
+        layouts: [html: PRWeb.Layouts]
 
       import Plug.Conn
       import PRWeb.Gettext
-      import Phoenix.LiveView.Controller
+      # import Phoenix.HTML
 
+      unquote(verified_routes())
+    end
+  end
+
+  def helpers do
+    quote do
+      unquote(html_helpers())
       unquote(verified_routes())
     end
   end
@@ -40,10 +46,6 @@ defmodule PRWeb do
       use Phoenix.View,
         root: "lib/pr_web/templates",
         namespace: PRWeb
-
-      # Import convenience functions from controllers
-      import Phoenix.Controller, only: [get_flash: 1, get_flash: 2, view_module: 1]
-      import Phoenix.Component
 
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
@@ -85,8 +87,6 @@ defmodule PRWeb do
     quote do
       use Phoenix.LiveView,
         layout: {PRWeb.Layouts, :live}
-
-      unquote(html_helpers())
     end
   end
 

@@ -2,6 +2,8 @@ defmodule PRWeb.PlaybackLive do
   require Logger
   use Phoenix.HTML
   use PRWeb, :live_view
+  use PRWeb, :helpers
+
 
   alias PR.{Music, PlayState}
   alias PR.Music.{SonosItem, PlaybackState}

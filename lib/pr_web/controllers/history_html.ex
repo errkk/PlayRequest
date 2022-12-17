@@ -14,5 +14,4 @@ defmodule PRWeb.HistoryHTML do
   defp tz do
     Application.get_env(:pr, :timezone)
   end
-  
 end

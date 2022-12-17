@@ -8,6 +8,10 @@ defmodule PRWeb.Shared do
     Application.get_env(:pr, :installation_name, "PlayRequest")
   end
 
+  def is_december? do
+    match?(%Date{month: 12}, Date.utc_today)
+  end
+
   def name(%User{first_name: first_name, last_name: last_name}) do
     first_name <> " " <> String.first(last_name)
   end

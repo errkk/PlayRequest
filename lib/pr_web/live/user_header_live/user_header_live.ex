@@ -1,6 +1,12 @@
 defmodule PRWeb.UserHeaderLive do
   require Logger
-  use PRWeb, :live_view
+  # This is a small live view embedeed in PlaybackLive or in Controllers
+  # live_render needs socket or conn so there is a live and an app layout
+  # They're the same tho.
+  # Small embedded live_views need to use this lighter layout so that live.html.heex
+  # doesn't re-import UserHeaderLive and LogoLive again!
+  use Phoenix.LiveView, layout: {PRWeb.Layouts, :live_embedded}
+  use PRWeb, :helpers
 
   alias PR.Auth
   alias PR.Auth.User
@@ -23,15 +29,11 @@ defmodule PRWeb.UserHeaderLive do
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="user-header">
       <.nav current_user={@current_user} points={@points} />
       <div class="playback-controls">
-        <%= if (@show_toggle_playback or @current_user.is_trusted) and @num_unplayed > 0 do %>
-          <.play_pause play_state={@play_state} />
-        <% end %>
-        <%= if @show_volume or @current_user.is_trusted do %>
-          <.volume />
-        <% end %>
+        <.play_pause play_state={@play_state} :if={(@show_toggle_playback or @current_user.is_trusted) and @num_unplayed > 0} />
+        <.volume :if={@show_volume or @current_user.is_trusted} />
       </div>
       <.online_users users={@users} />
     </div>

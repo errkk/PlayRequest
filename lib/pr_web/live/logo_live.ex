@@ -1,5 +1,11 @@
 defmodule PRWeb.LogoLive do
-  use PRWeb, :live_view
+  # This is a small live view embedeed in PlaybackLive or in Controllers
+  # live_render needs socket or conn so there is a live and an app layout
+  # They're the same tho.
+  # Small embedded live_views need to use this lighter layout so that live.html.heex
+  # doesn't re-import UserHeaderLive and LogoLive again!
+  use Phoenix.LiveView, layout: {PRWeb.Layouts, :live_embedded}
+  use PRWeb, :helpers
 
   alias PR.PlayState
   alias PR.Music.PlaybackState

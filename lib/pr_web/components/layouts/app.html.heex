@@ -1,5 +1,6 @@
-<header class="container container--header">
-  HEader
+<header class="container--header">
+  <%= live_render(@conn, PRWeb.LogoLive, id: :logo) %>
+  <%= live_render(@conn, PRWeb.UserHeaderLive, id: :user_header) %>
 </header>
 <main role="main">
   <div class="alert-container">
