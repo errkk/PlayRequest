@@ -1,7 +1,7 @@
 <div class="container">
   <div class="col--right">
 
-    <%= img_tag Routes.static_path(@conn, "/images/promo-image.svg"), class: "promo-image" %>
+    <img src={~p"/images/promo-image.svg"} class="promo-image" />
   </div>
   <div class="col--left">
     <h2>Wat dis?</h2>
@@ -16,9 +16,7 @@
       Prove you work here with Google to get started.
     </p>
     <p>
-      <%= link "Login with Google",
-          to: Routes.auth_path(@conn, :request, :google),
-          class: "button button--primary" %>
+      <.link href={~p"/auth/google"} class="button button--primary">Login with Google</.link>
     </p>
   </div>
 </div>
