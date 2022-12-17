@@ -6,7 +6,6 @@ defmodule PRWeb do
   This can be used in your application as:
 
       use PRWeb, :controller
-      use PRWeb, :view
 
   The definitions below will be executed for every view,
   controller, etc, so keep them short and clean, focused
@@ -28,7 +27,6 @@ defmodule PRWeb do
 
       import Plug.Conn
       import PRWeb.Gettext
-      # import Phoenix.HTML
 
       unquote(verified_routes())
     end
@@ -36,23 +34,6 @@ defmodule PRWeb do
 
   def helpers do
     quote do
-      unquote(html_helpers())
-      unquote(verified_routes())
-    end
-  end
-
-  def view do
-    quote do
-      use Phoenix.View,
-        root: "lib/pr_web/templates",
-        namespace: PRWeb
-
-      # Use all HTML functionality (forms, tags, etc)
-      use Phoenix.HTML
-
-      import PRWeb.ErrorHelpers
-      import PRWeb.Gettext
-      alias PRWeb.Router.Helpers, as: Routes
       unquote(html_helpers())
       unquote(verified_routes())
     end
@@ -72,7 +53,6 @@ defmodule PRWeb do
     quote do
       import Plug.Conn
       use Phoenix.Controller, namespace: PRWeb
-      alias PRWeb.Router.Helpers, as: Routes
       unquote(verified_routes())
     end
   end

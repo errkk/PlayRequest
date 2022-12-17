@@ -20,13 +20,16 @@ defmodule PRWeb.ConnCase do
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
-      alias PRWeb.Router.Helpers, as: Routes
       import PRWeb.ConnCaseHelper
       import PR.Factory
-+     use PRWeb, :verified_routes
 
       # The default endpoint for testing
       @endpoint PRWeb.Endpoint
+
+      use Phoenix.VerifiedRoutes,
+        endpoint: @endpoint,
+        router: PRWeb.Router,
+        statics: PRWeb.static_paths()
     end
   end
 
