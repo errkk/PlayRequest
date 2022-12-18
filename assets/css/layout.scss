@@ -62,12 +62,12 @@ body {
 .col--left,
 .col--search {
   grid-area: left;
-  max-width: min(100%, 85vw);
+  // max-width: min(100%, 85vw);
 }
 .col--right,
 .col--playlist {
   grid-area: right;
-  max-width: min(100%, 85vw);
+  // max-width: min(100%, 85vw);
 }
 .col--main {
   grid-area: main;

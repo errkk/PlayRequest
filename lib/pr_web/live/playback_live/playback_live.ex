@@ -4,7 +4,6 @@ defmodule PRWeb.PlaybackLive do
   use PRWeb, :live_view
   use PRWeb, :helpers
 
-
   alias PR.{Music, PlayState}
   alias PR.Music.{SonosItem, PlaybackState}
   alias PR.Auth
@@ -36,8 +35,6 @@ defmodule PRWeb.PlaybackLive do
         result: [],
         q: nil,
         loading: nil,
-        info: nil,
-        error: nil,
         recently_liked: nil,
         participated: Queue.has_participated?(%User{id: user_id}),
         playlist: Music.get_playlist(%User{id: user_id}),
@@ -69,14 +66,11 @@ defmodule PRWeb.PlaybackLive do
 
   # Clear errormode
   def handle_info({PlayState, nil, :sonos_error}, socket) do
-    {:noreply, assign(socket, error: nil)}
+    {:noreply, clear_flash(socket, :error)}
   end
 
   def handle_info({PlayState, %{error_code: error_code}, :sonos_error}, socket) do
-    {:noreply,
-     assign(socket,
-       error: "😵 Oh shit, an error from Sonos: \"#{error_code}\""
-     )}
+    {:noreply, put_flash(socket, :error, "😵 Oh shit, an error from Sonos: \"#{error_code}\"")}
   end
 
   # Queue has changed either from addition or track has played
@@ -90,11 +84,12 @@ defmodule PRWeb.PlaybackLive do
     send(self(), {:get_playlist, nil})
 
     if it_me?(track, socket) do
-      {:noreply,
-       assign(socket,
-         info: "🙌 You've received a unit of appreciation for \"#{name}\"",
-         recently_liked: track
-       )}
+      socket =
+        socket
+        |> put_flash(:info, "🙌 You've received a unit of appreciation for \"#{name}\"")
+        |> assign(recently_liked: track)
+
+      {:noreply, socket}
     else
       {:noreply, socket}
     end
@@ -155,14 +150,6 @@ defmodule PRWeb.PlaybackLive do
   def handle_event("like", %{"value" => track_id}, socket) do
     send(self(), {:like, track_id})
     {:noreply, socket}
-  end
-
-  def handle_event("clear_info", _, socket) do
-    {:noreply, assign(socket, info: nil)}
-  end
-
-  def handle_event(%{"event" => "clear_info"}, socket) do
-    {:noreply, assign(socket, info: nil)}
   end
 
   # This is all happening cos the @page_title is a single var and cant match playback_state and metadata in the template

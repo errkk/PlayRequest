@@ -1,47 +1,49 @@
 <div class="container">
   <div class="col--search">
     <.search_form result={@result} loading={@loading} q={@q} />
-    <p phx-click="clear_info" class={"alert alert-info #{if assigns[:info], do: "alert--entrance"}"} role="alert"><%= if assigns[:info], do: @info %></p>
-    <p class={"alert alert-error #{if assigns[:error], do: "alert--entrance"}"} role="alert"><%= if assigns[:error], do: @error %></p>
 
     <%= unless @participated do %>
       <.welcome current_user={@current_user} />
     <% end %>
 
     <.search_results result={@result} />
-    
   </div>
 
   <div class="col--playlist">
     <h2>Queue</h2>
     <div class="queue">
-        <.tracks playlist={@playlist} play_state={@play_state} progress={@progress} current_user={@current_user} recently_liked={@recently_liked}>
-          <:details :let={track}>
-            <h3 class="track__name">
-              <%= if is_playing?(track, @play_state) do %>
-                <img src={~p"/images/playing-icon.svg"} class="track__playing" />
-              <% end %>
-              <%= track.name %>
-              <%= if track.track_novelty < 20 do %>
-                <span title={"Track novelty: #{track.track_novelty}"}>😴</span>
-              <% end %>
-            </h3>
-            <p class="track__artist">
-              <%= track.artist %>
-              <%= if track.artist_novelty < 20 do %>
-                <span title={"Artist novelty: #{track.artist_novelty}"}>😴</span>
-              <% end %>
-            </p>
-          </:details>
-          <:chips :let={track}>
-            <.chip text={name track.user} img={track.user.image} />
-            <.heart points={track.points_received} />
-          </:chips>
-          <:extra :let={track}>
-            <.novelty score={get_track_novelty track} />
-          </:extra>
-        </.tracks>
+      <.tracks
+        playlist={@playlist}
+        play_state={@play_state}
+        progress={@progress}
+        current_user={@current_user}
+        recently_liked={@recently_liked}
+      >
+        <:details :let={track}>
+          <h3 class="track__name">
+            <%= if is_playing?(track, @play_state) do %>
+              <img src={~p"/images/playing-icon.svg"} class="track__playing" />
+            <% end %>
+            <%= track.name %>
+            <%= if track.track_novelty < 20 do %>
+              <span title={"Track novelty: #{track.track_novelty}"}>😴</span>
+            <% end %>
+          </h3>
+          <p class="track__artist">
+            <%= track.artist %>
+            <%= if track.artist_novelty < 20 do %>
+              <span title={"Artist novelty: #{track.artist_novelty}"}>😴</span>
+            <% end %>
+          </p>
+        </:details>
+        <:chips :let={track}>
+          <.chip text={name(track.user)} img={track.user.image} />
+          <.heart points={track.points_received} />
+        </:chips>
+        <:extra :let={track}>
+          <.novelty score={get_track_novelty(track)} />
+        </:extra>
+      </.tracks>
     </div>
   </div>
 </div>
-
