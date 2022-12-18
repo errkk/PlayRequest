@@ -7,34 +7,24 @@
 
     <meta property="og:title" content={installation_name()} />
     <meta property="og:description" content="🎶 Contribute to the Sonos playlist" />
-    <%= unless assigns[:now_playing] do %>
-      <meta property="og:image" content={url(~p"/assets/pr.png")} />
-    <% end %>
-    <meta name="twitter:site" content={installation_name()} />
-    <meta name="twitter:card" content="summary" />
-
     <%= if assigns[:now_playing] do %>
       <meta property="og:image" content={@now_playing.img} />
-      <meta name="twitter:label1" content="Now Playing" />
-      <meta name="twitter:data1" content={@now_playing.name} />
-      <meta name="twitter:label2" content="By" />
-      <meta name="twitter:data2" content={@now_playing.artist} />
+      <meta property="og:image" content={url(~p"/images/pr.png")} />
+    <% else %>
+      <meta property="og:image" content={url(~p"/images/pr.png")} />
     <% end %>
-
     <meta name="csrf-token" content={get_csrf_token()} />
-
     <link
       href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap"
       rel="stylesheet"
     />
-    <.live_title suffix={" . " <> installation_name()}>
+    <.live_title>
       <%= assigns[:page_title] || installation_name() %>
     </.live_title>
     <link phx-track-static rel="icon" href={~p"/images/favicon.png"} />
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
   </head>
   <body>
-
     <div class="content">
       <%= @inner_content %>
     </div>
@@ -50,4 +40,3 @@
     <script :if={is_december?()} src="https://app.embed.im/snow.js" defer />
   </body>
 </html>
-

@@ -33,7 +33,7 @@ defmodule PRWeb.Service.ServiceSetupController do
 
     render(
       conn,
-      "index.html",
+      :index,
       households: households,
       groups: groups,
       sonos_auth_link: sonos_auth_link,
@@ -54,11 +54,6 @@ defmodule PRWeb.Service.ServiceSetupController do
       {:ok, total} ->
         conn
         |> put_flash(:info, "Saved #{total} households. Plz activate one.")
-        |> redirect(to: ~p"/setup")
-
-      {:error, msg} ->
-        conn
-        |> put_flash(:error, "⚠️ #{msg}")
         |> redirect(to: ~p"/setup")
 
       _ ->
@@ -104,7 +99,7 @@ defmodule PRWeb.Service.ServiceSetupController do
     |> SonosHouseholds.update_group(%{is_active: not group.is_active})
 
     conn
-        |> redirect(to: ~p"/setup")
+    |> redirect(to: ~p"/setup")
   end
 
   def subscribe_sonos_webhooks(conn, _) do

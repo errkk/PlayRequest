@@ -15,7 +15,9 @@ defmodule PR.SonosAPI do
     else
       {:error, :no_active_group} ->
         {:ok}
-      res -> res
+
+      res ->
+        res
     end
   end
 
@@ -145,9 +147,6 @@ defmodule PR.SonosAPI do
           |> length()
 
         {:ok, total}
-
-      {:error, msg} ->
-        {:error, msg}
 
       _ ->
         nil

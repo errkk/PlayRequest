@@ -43,16 +43,16 @@ defmodule PRWeb.UserHeaderLive do
     </div>
     """
   end
+
   def render(assigns) do
     ~H"""
-    <div class="user-header">
-    </div>
+    <div class="user-header"></div>
     """
   end
 
   def heart(assigns) do
     ~H"""
-      <img src={~p"/images/heart_pink.svg"} class="heart" />
+    <img src={~p"/images/heart_pink.svg"} class="heart" />
     """
   end
 
@@ -76,7 +76,7 @@ defmodule PRWeb.UserHeaderLive do
 
   def play_pause(%{play_state: %PlaybackState{state: :idle}} = assigns) do
     ~H"""
-    <button class="button" phx-click="toggle_playback">start</button>
+    <button class="button" phx-click="start">start</button>
     """
   end
 
@@ -113,7 +113,6 @@ defmodule PRWeb.UserHeaderLive do
     {:ok, assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)}
   end
 
-  @impl true
   def mount(_, _, socket) do
     socket =
       assign(
@@ -128,7 +127,6 @@ defmodule PRWeb.UserHeaderLive do
   #
   # Subscription handlers
   #
-
   @impl true
   def handle_info(
         {Music, %Point{track: %Track{} = track}, :point},
@@ -173,21 +171,21 @@ defmodule PRWeb.UserHeaderLive do
   @impl true
   def handle_event("toggle_playback", _, socket) do
     SonosAPI.toggle_playback()
-    %{ assigns: %{ current_user: %{ first_name: name } } } = socket
+    %{assigns: %{current_user: %{first_name: name}}} = socket
     Logger.info("Toggle playback – #{name}")
     {:noreply, socket}
   end
 
   def handle_event("start", _, socket) do
     Music.trigger_playlist()
-    %{ assigns: %{ current_user: %{ first_name: name } } } = socket
+    %{assigns: %{current_user: %{first_name: name}}} = socket
     Logger.info("Trigger playback – #{name}")
     {:noreply, socket}
   end
 
   def handle_event("volume", %{"value" => volume}, socket) do
     SonosAPI.set_volume(volume)
-    %{ assigns: %{ current_user: %{ first_name: name } } } = socket
+    %{assigns: %{current_user: %{first_name: name}}} = socket
     Logger.info("Vol #{volume} – #{name}")
     {:noreply, socket}
   end
@@ -204,4 +202,3 @@ defmodule PRWeb.UserHeaderLive do
     end)
   end
 end
-
