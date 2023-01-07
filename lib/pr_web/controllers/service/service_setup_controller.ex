@@ -58,7 +58,7 @@ defmodule PRWeb.Service.ServiceSetupController do
 
       _ ->
         conn
-        |> put_flash(:error, "⚠️ Didn't work")
+        |> put_flash(:error, "Didn't work")
         |> redirect(to: ~p"/setup")
     end
   end
@@ -72,12 +72,12 @@ defmodule PRWeb.Service.ServiceSetupController do
 
       {:error, msg} ->
         conn
-        |> put_flash(:error, "⚠️ #{msg}")
+        |> put_flash(:error, msg)
         |> redirect(to: ~p"/setup")
 
       _ ->
         conn
-        |> put_flash(:error, "⚠️ Didn't work")
+        |> put_flash(:error, "Didn't work")
         |> redirect(to: ~p"/setup")
     end
   end
@@ -111,7 +111,7 @@ defmodule PRWeb.Service.ServiceSetupController do
 
       _ ->
         conn
-        |> put_flash(:error, "⚠️ Didn't work")
+        |> put_flash(:error, "Didn't work")
         |> redirect(to: ~p"/setup")
     end
   end
@@ -125,7 +125,7 @@ defmodule PRWeb.Service.ServiceSetupController do
 
       {:error, msg} ->
         conn
-        |> put_flash(:error, "⚠️ #{msg}")
+        |> put_flash(:error, msg)
         |> redirect(to: ~p"/setup")
     end
   end
@@ -139,7 +139,7 @@ defmodule PRWeb.Service.ServiceSetupController do
 
       _ ->
         conn
-        |> put_flash(:error, "⚠️ There was an error syncing the playlist")
+        |> put_flash(:error, "There was an error syncing the playlist")
         |> redirect(to: ~p"/setup")
     end
   end
@@ -153,7 +153,7 @@ defmodule PRWeb.Service.ServiceSetupController do
 
       {:error, msg} ->
         conn
-        |> put_flash(:error, "⚠️ #{msg}")
+        |> put_flash(:error, msg)
         |> redirect(to: ~p"/setup")
     end
   end
@@ -167,7 +167,7 @@ defmodule PRWeb.Service.ServiceSetupController do
 
       {:error, msg} ->
         conn
-        |> put_flash(:error, "⚠️ #{msg}")
+        |> put_flash(:error, msg)
         |> redirect(to: ~p"/setup")
     end
   end
@@ -181,7 +181,7 @@ defmodule PRWeb.Service.ServiceSetupController do
 
       {:error, msg} ->
         conn
-        |> put_flash(:error, "⚠️ #{msg}")
+        |> put_flash(:error, msg)
         |> redirect(to: ~p"/setup")
     end
   end

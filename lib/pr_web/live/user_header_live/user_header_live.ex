@@ -33,7 +33,7 @@ defmodule PRWeb.UserHeaderLive do
       <.nav current_user={@current_user} points={@points} />
       <div class="playback-controls">
         <%= if @show_toggle_playback or @current_user.is_trusted == true and @num_unplayed > 0 do %>
-          <.play_pause play_state={@play_state} />
+          <.play_pause play_state={@play_state} show_skip={@show_skip} />
         <% end %>
         <%= if @show_volume or @current_user.is_trusted do %>
           <.volume />
@@ -59,7 +59,7 @@ defmodule PRWeb.UserHeaderLive do
   def play_pause(%{play_state: %PlaybackState{state: :playing}} = assigns) do
     ~H"""
     <button class="button" phx-click="toggle_playback">Pause</button>
-    <button class="button" phx-click="skip">Skip</button>
+    <button :if={@show_skip} class="button" phx-click="skip">Skip</button>
     """
   end
 
@@ -193,9 +193,20 @@ defmodule PRWeb.UserHeaderLive do
     case SonosAPI.skip() do
       {:error, :no_content} ->
         Logger.info("Skip – Nothing in Sonos queue, re-triggering")
+        # Bump out current song from local playlist and re-trigger
+        # TODO don't do this 
         Queue.bump()
-        Music.trigger_playlist(:force)
-        {:noreply, socket}
+
+        case Music.trigger_playlist(:force) do
+          {:ok} ->
+            {:noreply, socket}
+
+          {:error, message} ->
+            # TODO can't put to flash from this live view, cos it's a different socket
+            # might be better to send it via a pubsub to playbacklive which renders flashes
+            # Or just set a flag in here and write something else to the button label
+            {:noreply, put_flash(socket, :error, message)}
+        end
 
       _ ->
         Logger.info("Skip – Skipped")

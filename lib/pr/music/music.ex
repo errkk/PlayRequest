@@ -83,7 +83,7 @@ defmodule PR.Music do
     else
       {:error, :nothing_in_local_queue} ->
         Logger.warn("Trigger playlist: Nothing in local queue")
-        {:error, :nothing_in_local_queue}
+        {:error, "Nothing in local queue"}
 
       {:error, :playstate, state} ->
         Logger.warn("Trigger playlist: Canceling trigger_playlist, PlayState is now: #{state}")
