@@ -127,6 +127,10 @@ defmodule PR.SonosAPI do
     post("/groups/#{group_id!()}/playback/togglePlayPause")
   end
 
+  def skip do
+    post("/groups/#{group_id!()}/playback/skipToNextTrack")
+  end
+
   def set_volume(volume) do
     %{volume: volume}
     |> post("/groups/#{group_id!()}/groupVolume")

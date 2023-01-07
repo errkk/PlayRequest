@@ -59,6 +59,7 @@ defmodule PRWeb.UserHeaderLive do
   def play_pause(%{play_state: %PlaybackState{state: :playing}} = assigns) do
     ~H"""
     <button class="button" phx-click="toggle_playback">Pause</button>
+    <button class="button" phx-click="skip">Skip</button>
     """
   end
 
@@ -70,13 +71,22 @@ defmodule PRWeb.UserHeaderLive do
 
   def play_pause(%{play_state: %PlaybackState{state: :paused}} = assigns) do
     ~H"""
-    <button class="button" phx-click="toggle_playback">Play</button>
+    <button title="Resume playback of whatever was playing" class="button" phx-click="toggle_playback">
+      Resume
+    </button>
+    <button
+      title="Trigger playlist again, if it's playing the wrong thing."
+      class="button button--danger"
+      phx-click="start"
+    >
+      Start
+    </button>
     """
   end
 
   def play_pause(%{play_state: %PlaybackState{state: :idle}} = assigns) do
     ~H"""
-    <button class="button" phx-click="start">start</button>
+    <button class="button" phx-click="start">Start</button>
     """
   end
 
@@ -174,6 +184,23 @@ defmodule PRWeb.UserHeaderLive do
     %{assigns: %{current_user: %{first_name: name}}} = socket
     Logger.info("Toggle playback – #{name}")
     {:noreply, socket}
+  end
+
+  def handle_event("skip", _, socket) do
+    %{assigns: %{current_user: %{first_name: name}}} = socket
+    Logger.info("Skip track – #{name}")
+
+    case SonosAPI.skip() do
+      {:error, :no_content} ->
+        Logger.info("Skip – Nothing in Sonos queue, re-triggering")
+        Queue.bump()
+        Music.trigger_playlist(:force)
+        {:noreply, socket}
+
+      _ ->
+        Logger.info("Skip – Skipped")
+        {:noreply, socket}
+    end
   end
 
   def handle_event("start", _, socket) do

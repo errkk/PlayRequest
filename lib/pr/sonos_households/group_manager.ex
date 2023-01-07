@@ -47,6 +47,10 @@ defmodule PR.SonosHouseholds.GroupManager do
         Logger.info("New group created")
         {:ok, "Recreated group"}
 
+      {:error, :no_household_activated} ->
+        Logger.error("Couldn't recreate group, no household activated")
+        {:error, "Couldn't recreate group"}
+
       _ ->
         Logger.error("Couldn't recreate group")
         {:error, "Couldn't recreate group"}
