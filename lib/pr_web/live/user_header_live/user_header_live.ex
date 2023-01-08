@@ -33,7 +33,7 @@ defmodule PRWeb.UserHeaderLive do
     <div class="user-header">
       <.nav current_user={@current_user} points={@points} />
       <div class="playback-controls">
-        <%= if @show_toggle_playback or @current_user.is_trusted == true and @num_unplayed > 0 do %>
+        <%= if (@show_toggle_playback or @current_user.is_trusted == true) and @num_unplayed > 0 do %>
           <.play_pause play_state={@play_state} show_skip={@show_skip && @num_unplayed > 1} />
         <% end %>
         <%= if @show_volume or @current_user.is_trusted do %>
