@@ -8,6 +8,7 @@ defmodule PRWeb.UserHeaderLive do
   use Phoenix.LiveView, layout: {PRWeb.Layouts, :live_embedded}
   use PRWeb, :helpers
 
+  alias PR.Repo
   alias PR.Auth
   alias PR.Auth.User
   alias PR.Music
@@ -33,7 +34,7 @@ defmodule PRWeb.UserHeaderLive do
       <.nav current_user={@current_user} points={@points} />
       <div class="playback-controls">
         <%= if @show_toggle_playback or @current_user.is_trusted == true and @num_unplayed > 0 do %>
-          <.play_pause play_state={@play_state} show_skip={@show_skip} />
+          <.play_pause play_state={@play_state} show_skip={@show_skip && @num_unplayed > 1} />
         <% end %>
         <%= if @show_volume or @current_user.is_trusted do %>
           <.volume />
@@ -58,7 +59,7 @@ defmodule PRWeb.UserHeaderLive do
 
   def play_pause(%{play_state: %PlaybackState{state: :playing}} = assigns) do
     ~H"""
-    <button class="button" phx-click="toggle_playback">Pause</button>
+    <button class="button button--primary" phx-click="toggle_playback">Pause</button>
     <button :if={@show_skip} class="button" phx-click="skip">Skip</button>
     """
   end
@@ -71,22 +72,26 @@ defmodule PRWeb.UserHeaderLive do
 
   def play_pause(%{play_state: %PlaybackState{state: :paused}} = assigns) do
     ~H"""
-    <button title="Resume playback of whatever was playing" class="button" phx-click="toggle_playback">
+    <button
+      title="Resume playback of whatever was playing"
+      class="button button--primary"
+      phx-click="toggle_playback"
+    >
       Resume
     </button>
     <button
       title="Trigger playlist again, if it's playing the wrong thing."
-      class="button button--danger"
+      class="button"
       phx-click="start"
     >
-      Start
+      Re-Start
     </button>
     """
   end
 
   def play_pause(%{play_state: %PlaybackState{state: :idle}} = assigns) do
     ~H"""
-    <button class="button" phx-click="start">Start</button>
+    <button class="button button--primary" phx-click="start">Start</button>
     """
   end
 
@@ -190,23 +195,33 @@ defmodule PRWeb.UserHeaderLive do
     %{assigns: %{current_user: %{first_name: name}}} = socket
     Logger.info("Skip track – #{name}")
 
+    # Tell sonos to skip to next track
+    # If there is nothing else yet in the Sonos Queue then Sonos returns :no_content
+    # There might be something in the  local queue, so we need to bump the current track out
+    # and sync the revised playlist as the next update to sonos.
+    # The trigger_playlist function returns an error tuple for any reason why that hasn't happened
+    # Including if there are no more songs in the queue.
+    # In this case, we need to rollback the bump that just happened.
+
     case SonosAPI.skip() do
       {:error, :no_content} ->
-        Logger.info("Skip – Nothing in Sonos queue, re-triggering")
+        Logger.warn("Skip – Nothing in Sonos queue, re-triggering")
         # Bump out current song from local playlist and re-trigger
-        # TODO don't do this 
-        Queue.bump()
+        # Rollback the bump if trigger can't be performed
+        Repo.transaction(fn ->
+          Queue.bump()
 
-        case Music.trigger_playlist(:force) do
-          {:ok} ->
-            {:noreply, socket}
+          case Music.trigger_playlist(:force) do
+            {:error, message} ->
+              Logger.warn("Rolling back bump #{message}")
+              Repo.rollback(:didnt_trigger_new_items)
 
-          {:error, message} ->
-            # TODO can't put to flash from this live view, cos it's a different socket
-            # might be better to send it via a pubsub to playbacklive which renders flashes
-            # Or just set a flag in here and write something else to the button label
-            {:noreply, put_flash(socket, :error, message)}
-        end
+            _ ->
+              Logger.info("Skip – Trigger succeeded")
+          end
+        end)
+
+        {:noreply, socket}
 
       _ ->
         Logger.info("Skip – Skipped")

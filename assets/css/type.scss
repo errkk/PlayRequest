@@ -112,19 +112,9 @@ a:hover .link {
   }
 
   &--primary {
-    background-color: $darkerBlue;
-    border: none;
-    transition: box-shadow 200ms ease-in;
-    box-shadow: 1px 0 0px $shad;
-
-    &:hover {
-      box-shadow: 1px 0 20px $shad;
-    }
-  }
-
-  &--danger {
-    background-color: $blue;
-    border-color: $darkerBlue;
+    background-color: $white;
+    color: $blue;
+    border-color: $white;
     border-width: 1px;
     transition: box-shadow 200ms ease-in;
     box-shadow: 1px 0 0px $shad;
@@ -178,12 +168,12 @@ a:hover .link {
 
 .volume {
   display: flex;
-  // width: 100px;
   margin-left: 20px;
   justify-content: space-between;
+  align-items: center;
   border: 1px solid $border;
   border-radius: 20px;
-  padding: 5px 10px 5px 15px;
+  padding: 0 5px 0 15px;
   text-transform: uppercase;
   font-size: 14px;
   .label {
@@ -195,14 +185,14 @@ a:hover .link {
   background: none;
   display: flex;
   align-items: center;
-  height: 20px;
+  padding: 10px 6px;
 
   .inner {
     flex: 1;
     background: $border;
     display: inline-block;
-    height: 5px;
-    width: 5px;
+    height: 8px;
+    width: 8px;
     border-radius: 10px;
     transform: scale(1);
     text-indent: -100px;
@@ -213,8 +203,8 @@ a:hover .link {
   &:hover {
     cursor: pointer;
     .inner {
-      background: white;
-      transform: scale(1.5);
+      background: $white;
+      transform: scale(2);
     }
   }
 }
