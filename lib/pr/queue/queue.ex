@@ -87,6 +87,17 @@ defmodule PR.Queue do
     end
   end
 
+  @spec has_participated?(User.t()) :: boolean()
+  def has_participated?(%User{} = user, :today) do
+    case Track
+         |> query_for_today()
+         |> query_for_user(user)
+         |> Repo.aggregate(:count, :id) do
+      0 -> false
+      _ -> true
+    end
+  end
+
   @spec get_track!(integer()) :: Track.t()
   def get_track!(id), do: Repo.get!(Track, id)
 

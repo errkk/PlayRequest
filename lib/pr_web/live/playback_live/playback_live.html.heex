@@ -5,7 +5,7 @@
     <%= unless @participated do %>
       <.welcome current_user={@current_user} />
     <% else %>
-      <.nothing_queued :if={@num_unplayed == 0 && length(@result) == 0} />
+      <.nothing_queued :if={@show_encouraging_message && length(@result) == 0} />
     <% end %>
 
     <.search_results result={@result} />
