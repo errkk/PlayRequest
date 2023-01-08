@@ -6,6 +6,17 @@ defmodule PR.Worker.GetInitialState do
   end
 
   def run(_arg) do
-    PR.PlayState.get_initial_state()
+    case env() do
+      :test ->
+        :ok
+
+      _ ->
+        PR.PlayState.get_initial_state()
+        PR.SonosAPI.subscribe_webhooks()
+    end
+  end
+
+  def env do
+    Application.get_env(:pr, :env)
   end
 end

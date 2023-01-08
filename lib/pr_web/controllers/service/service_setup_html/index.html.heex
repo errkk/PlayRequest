@@ -1,0 +1,144 @@
+<div class="container container--middle">
+  <div class="col--main">
+    <h2>Setup</h2>
+    <ol class="setup-list">
+      <li>
+        <h3>
+          <.check checked={@has_token_sonos and @has_token_spotify} />
+          Authenticate accounts
+        </h3>
+        <%= unless @has_token_sonos and @has_token_spotify do %>
+        <p>
+          <%= unless @has_token_sonos do %>
+            <.link href={@sonos_auth_link} class="button">Authorise Sonos</.link>
+          <% end %>
+          <%= unless @has_token_spotify do %>
+            <.link href={@spotify_auth_link} class="button">Authorise Spotify</.link>
+          <% end %>
+        </p>
+        <% end %>
+      </li>
+      <li>
+        <h3>
+          <.check checked={@has_households} />
+          Set Sonos household
+        </h3>
+        <%= unless @has_households do %>
+          <p>
+            <.link href={~p"/setup/save-households"} method="post" class="button">Save households</.link>
+          </p>
+        <% end %>
+
+        <%= unless @has_active_households do %>
+          <div class="box">
+            <h3>Households</h3>
+            <%= for item <- @households do %>
+              <.toggle href={~p"/setup/household/#{item}"} is_active={item.is_active} />
+              <%= unless is_nil(item.label), do: item.label, else: item.household_id %>
+            <% end %>
+            <p>
+              All sonos stuff done via this household id
+            </p>
+          </div>
+        <% end %>
+      </li>
+      <li>
+        <h3>
+          <.check checked={@has_active_groups} />
+          Set Sonos speaker group
+        </h3>
+
+        <%= if @has_active_households and not @has_active_groups do %>
+          <p>
+            <.link href={~p"/setup/save-groups"} method="post" class="button">Save groups</.link>
+          </p>
+
+          <%= unless @has_active_groups do %>
+            <div class="box">
+              <h3>Groups</h3>
+              <p>
+                Pick a group that this thing will play to.
+                Make sure to create a group that has the speakers you want in it.
+              </p>
+              <%= for item <- @groups do %>
+                <.toggle href={~p"/setup/group/#{item}"} is_active={item.is_active} />
+                <%= item.name %>
+              <% end %>
+            </div>
+          <% end %>
+        <% end %>
+        <%= if @has_active_households and @has_groups do %>
+          <p>
+            <.link href={~p"/setup/clear-groups"} method="delete" class="button">Clear groups</.link>
+          </p>
+        <% end %>
+      </li>
+      <li>
+        <h3>
+          <.check checked={@active_group_subscribed} />
+          Setup webhook
+        </h3>
+        <%= if @has_groups and @has_active_groups do %>
+          <p>
+            <.link href={~p"/setup/subscribe"} method="post" class="button">Subscribe webhooks</.link>
+          </p>
+          <p>
+            Subscribe to Sonos metadata and playback events
+          </p>
+        <% end %>
+      </li>
+      <li>
+        <h3>
+          <.check checked={@spotify_playlist_created} />
+          Create PlayRequest playlist
+        </h3>
+        <%= unless @spotify_playlist_created do %>
+          <p>
+            <.link href={~p"/setup/create-playlist"} method="post" class="button">Create Spotify playlist</.link>
+          </p>
+          <p>
+            Makes a playlist on Spotify called PlayRequest
+          </p>
+        <% end %>
+      </li>
+      <li>
+        <h3>
+          <.check />
+          Fav the playlist on Sonos
+        </h3>
+        <p>
+          You have to do that in the (Sonos) app
+        </p>
+      </li>
+    </ol>
+
+    <h2>Actions</h2>
+    <ol class="setup-list">
+      <li>
+        <h3>Trigger playlist</h3>
+          <.link href={~p"/setup/trigger-playlist"} method="post" class="button">Trigger playlist on Sonos</.link>
+        <p>
+          Trigger the playlist to play on Sonos, it's kept as a favorite and triggering that will make it play.
+        </p>
+          <.link href={~p"/setup/bump"} method="post" class="button">Bump</.link>
+        <p>
+          Skip to next track, press trigger again to make the next thing play if there is something to play.
+        </p>
+      </li>
+      <li>
+        <h3>Sync queue</h3>
+          <.link href={~p"/setup/sync-playlist"} method="post" class="button">Sync queue to Spotify playlist</.link>
+        <p>
+          Sync queue to Spotify playlist, this happens automatically when tracks are added or played.
+        </p>
+      </li>
+      <li>
+        <h3>Get State</h3>
+          <.link href={~p"/setup/get-state"} method="post" class="button">Get state</.link>
+        <p>
+          Webhook should do this, but this will fetch the state
+        </p>
+      </li>
+    </ol>
+  </div>
+</div>

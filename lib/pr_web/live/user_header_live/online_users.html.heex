@@ -1,0 +1,9 @@
+<div class="users-container">
+  <div class="users">
+  <%= for {_id, user} <- @users do %>
+    <img src={user.image} class="profile-image" title={user.first_name} />
+  <% end %>
+  <span class="users--title">online</span>
+  </div>
+</div>
+

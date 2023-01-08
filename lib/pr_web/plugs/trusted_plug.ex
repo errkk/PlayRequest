@@ -16,7 +16,7 @@ defmodule PRWeb.Plug.TrustedPlug do
 
   defp nope(conn) do
     conn
-    |> redirect(to: Routes.auth_path(conn, :index))
+    |> redirect(to: ~p"/auth")
     |> halt()
   end
 end

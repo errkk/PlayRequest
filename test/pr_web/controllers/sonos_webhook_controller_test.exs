@@ -19,9 +19,9 @@ defmodule PRWeb.SonosWebhookControllerTest do
           conn
           |> put_req_header("content-type", "application/json")
           |> put_req_header("x-sonos-target-value", "RINCON:GROUPID")
-          |> post(Routes.sonos_webhook_path(conn, :callback), CurrentAndNext.json())
+          |> post(~p"/sonos/callback", CurrentAndNext.json())
 
-        assert json_response(conn, 200)
+        assert response(conn, 202)
       end)
     end
   end
@@ -35,9 +35,9 @@ defmodule PRWeb.SonosWebhookControllerTest do
         conn
         |> put_req_header("content-type", "application/json")
         |> put_req_header("x-sonos-target-value", "RINCON:GROUPID")
-        |> post(Routes.sonos_webhook_path(conn, :callback), CurrentAndNext.json())
+        |> post(~p"/sonos/callback", CurrentAndNext.json())
 
-      assert json_response(conn, 200)
+      assert response(conn, 202)
       assert %{spotify_id: "0XhXnY0lBzbdEWktDHknsl"} = Queue.get_playing()
     end
 
@@ -49,9 +49,9 @@ defmodule PRWeb.SonosWebhookControllerTest do
                  conn
                  |> put_req_header("content-type", "application/json")
                  |> put_req_header("x-sonos-target-value", "RINCON:WHODIS???")
-                 |> post(Routes.sonos_webhook_path(conn, :callback), CurrentAndNext.json())
+                 |> post(~p"/sonos/callback", CurrentAndNext.json())
 
-               assert json_response(conn, 200)
+               assert response(conn, 202)
                assert is_nil(Queue.get_playing())
              end) =~ "Skipping"
     end
@@ -64,9 +64,9 @@ defmodule PRWeb.SonosWebhookControllerTest do
         conn
         |> put_req_header("content-type", "application/json")
         |> put_req_header("x-sonos-target-value", "RINCON:GROUPID")
-        |> post(Routes.sonos_webhook_path(conn, :callback), CurrentAndNext.json())
+        |> post(~p"/sonos/callback", CurrentAndNext.json())
 
-      assert json_response(conn, 200)
+      assert response(conn, 202)
       assert %{spotify_id: "0XhXnY0lBzbdEWktDHknsl"} = Queue.get_playing()
     end
 
@@ -78,9 +78,9 @@ defmodule PRWeb.SonosWebhookControllerTest do
         conn
         |> put_req_header("content-type", "application/json")
         |> put_req_header("x-sonos-target-value", "RINCON:GROUPID")
-        |> post(Routes.sonos_webhook_path(conn, :callback), CurrentAndNext.json())
+        |> post(~p"/sonos/callback", CurrentAndNext.json())
 
-      assert json_response(conn, 200)
+      assert response(conn, 202)
       refute Queue.get_playing()
       assert %{played_at: %DateTime{}} = Repo.get(Track, old.id)
     end
@@ -94,9 +94,9 @@ defmodule PRWeb.SonosWebhookControllerTest do
         conn
         |> put_req_header("content-type", "application/json")
         |> put_req_header("x-sonos-target-value", "RINCON:GROUPID")
-        |> post(Routes.sonos_webhook_path(conn, :callback), CurrentAndNext.json())
+        |> post(~p"/sonos/callback", CurrentAndNext.json())
 
-      assert json_response(conn, 200)
+      assert response(conn, 202)
       assert %{spotify_id: "0XhXnY0lBzbdEWktDHknsl"} = Queue.get_playing()
       assert %{played_at: %DateTime{}} = Repo.get(Track, old.id)
     end
@@ -108,9 +108,9 @@ defmodule PRWeb.SonosWebhookControllerTest do
         conn
         |> put_req_header("content-type", "application/json")
         |> put_req_header("x-sonos-target-value", "RINCON:GROUPID")
-        |> post(Routes.sonos_webhook_path(conn, :callback), Error.lost_connection())
+        |> post(~p"/sonos/callback", Error.lost_connection())
 
-      assert json_response(conn, 200)
+      assert response(conn, 202)
     end
   end
 end

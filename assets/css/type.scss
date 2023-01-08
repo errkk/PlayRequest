@@ -56,12 +56,17 @@ p {
 }
 .intro {
   font-size: 1.5em;
-  margin-bottom: 0.3em;
+  margin-bottom: 1em;
   & + p {
     margin-top: 0;
   }
+  h2 + & {
+    margin-top: -10px;
+  }
 }
-
+.login {
+  padding-top: 30px;
+}
 a {
   text-decoration: none;
   color: $white;
@@ -112,8 +117,10 @@ a:hover .link {
   }
 
   &--primary {
-    background-color: $darkerBlue;
-    border: none;
+    background-color: $white;
+    color: $blue;
+    border-color: $white;
+    border-width: 1px;
     transition: box-shadow 200ms ease-in;
     box-shadow: 1px 0 0px $shad;
 
@@ -133,7 +140,6 @@ a:hover .link {
   &-link {
     color: $white;
     letter-spacing: 0.06ex;
-
   }
 }
 
@@ -143,7 +149,7 @@ a:hover .link {
     margin: 0 6px 7px 0;
 
     &-link {
-      font-size: 30px;
+      font-size: 40px;
     }
   }
 }
@@ -167,26 +173,31 @@ a:hover .link {
 
 .volume {
   display: flex;
-  width: 100px;
   margin-left: 20px;
   justify-content: space-between;
+  align-items: center;
   border: 1px solid $border;
   border-radius: 20px;
-  padding: 5px 10px;
+  padding: 0 5px 0 15px;
+  text-transform: uppercase;
+  font-size: 14px;
+  .label {
+    margin-right: 1ex;
+  }
 }
 .button--vol {
   border: none;
   background: none;
   display: flex;
   align-items: center;
-  height: 20px;
+  padding: 10px 6px;
 
   .inner {
     flex: 1;
     background: $border;
     display: inline-block;
-    height: 5px;
-    width: 5px;
+    height: 8px;
+    width: 8px;
     border-radius: 10px;
     transform: scale(1);
     text-indent: -100px;
@@ -197,8 +208,8 @@ a:hover .link {
   &:hover {
     cursor: pointer;
     .inner {
-      background: white;
-      transform: scale(1.5);
+      background: $white;
+      transform: scale(2);
     }
   }
 }

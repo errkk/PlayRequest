@@ -33,7 +33,7 @@ defmodule PRWeb.Service.ServiceSetupController do
 
     render(
       conn,
-      "index.html",
+      :index,
       households: households,
       groups: groups,
       sonos_auth_link: sonos_auth_link,
@@ -54,17 +54,12 @@ defmodule PRWeb.Service.ServiceSetupController do
       {:ok, total} ->
         conn
         |> put_flash(:info, "Saved #{total} households. Plz activate one.")
-        |> redirect(to: Routes.service_setup_path(conn, :index))
-
-      {:error, msg} ->
-        conn
-        |> put_flash(:error, "⚠️ #{msg}")
-        |> redirect(to: Routes.service_setup_path(conn, :index))
+        |> redirect(to: ~p"/setup")
 
       _ ->
         conn
-        |> put_flash(:error, "⚠️ Didn't work")
-        |> redirect(to: Routes.service_setup_path(conn, :index))
+        |> put_flash(:error, "Didn't work")
+        |> redirect(to: ~p"/setup")
     end
   end
 
@@ -73,17 +68,17 @@ defmodule PRWeb.Service.ServiceSetupController do
       {:ok, total} ->
         conn
         |> put_flash(:info, "Saved #{total} groups. Plz activate one.")
-        |> redirect(to: Routes.service_setup_path(conn, :index))
+        |> redirect(to: ~p"/setup")
 
       {:error, msg} ->
         conn
-        |> put_flash(:error, "⚠️ #{msg}")
-        |> redirect(to: Routes.service_setup_path(conn, :index))
+        |> put_flash(:error, msg)
+        |> redirect(to: ~p"/setup")
 
       _ ->
         conn
-        |> put_flash(:error, "⚠️ Didn't work")
-        |> redirect(to: Routes.service_setup_path(conn, :index))
+        |> put_flash(:error, "Didn't work")
+        |> redirect(to: ~p"/setup")
     end
   end
 
@@ -94,7 +89,7 @@ defmodule PRWeb.Service.ServiceSetupController do
     |> SonosHouseholds.update_household(%{is_active: not household.is_active})
 
     conn
-    |> redirect(to: Routes.service_setup_path(conn, :index))
+    |> redirect(to: ~p"/setup")
   end
 
   def toggle_group(conn, %{"id" => id}) do
@@ -104,7 +99,7 @@ defmodule PRWeb.Service.ServiceSetupController do
     |> SonosHouseholds.update_group(%{is_active: not group.is_active})
 
     conn
-    |> redirect(to: Routes.service_setup_path(conn, :index))
+    |> redirect(to: ~p"/setup")
   end
 
   def subscribe_sonos_webhooks(conn, _) do
@@ -112,12 +107,12 @@ defmodule PRWeb.Service.ServiceSetupController do
       {:ok} ->
         conn
         |> put_flash(:info, "Subscribed to playback and metadata")
-        |> redirect(to: Routes.service_setup_path(conn, :index))
+        |> redirect(to: ~p"/setup")
 
       _ ->
         conn
-        |> put_flash(:error, "⚠️ Didn't work")
-        |> redirect(to: Routes.service_setup_path(conn, :index))
+        |> put_flash(:error, "Didn't work")
+        |> redirect(to: ~p"/setup")
     end
   end
 
@@ -126,12 +121,12 @@ defmodule PRWeb.Service.ServiceSetupController do
       {:ok, _, spotify_id} ->
         conn
         |> put_flash(:info, "Playlist created on Spotify (#{spotify_id})")
-        |> redirect(to: Routes.service_setup_path(conn, :index))
+        |> redirect(to: ~p"/setup")
 
       {:error, msg} ->
         conn
-        |> put_flash(:error, "⚠️ #{msg}")
-        |> redirect(to: Routes.service_setup_path(conn, :index))
+        |> put_flash(:error, msg)
+        |> redirect(to: ~p"/setup")
     end
   end
 
@@ -140,12 +135,12 @@ defmodule PRWeb.Service.ServiceSetupController do
       {:ok, _} ->
         conn
         |> put_flash(:info, "Playlist synced")
-        |> redirect(to: Routes.service_setup_path(conn, :index))
+        |> redirect(to: ~p"/setup")
 
       _ ->
         conn
-        |> put_flash(:error, "⚠️ There was an error syncing the playlist")
-        |> redirect(to: Routes.service_setup_path(conn, :index))
+        |> put_flash(:error, "There was an error syncing the playlist")
+        |> redirect(to: ~p"/setup")
     end
   end
 
@@ -154,12 +149,12 @@ defmodule PRWeb.Service.ServiceSetupController do
       {:ok} ->
         conn
         |> put_flash(:info, "That seemed to work")
-        |> redirect(to: Routes.service_setup_path(conn, :index))
+        |> redirect(to: ~p"/setup")
 
       {:error, msg} ->
         conn
-        |> put_flash(:error, "⚠️ #{msg}")
-        |> redirect(to: Routes.service_setup_path(conn, :index))
+        |> put_flash(:error, msg)
+        |> redirect(to: ~p"/setup")
     end
   end
 
@@ -168,12 +163,12 @@ defmodule PRWeb.Service.ServiceSetupController do
       {:ok} ->
         conn
         |> put_flash(:info, "That seemed to work")
-        |> redirect(to: Routes.service_setup_path(conn, :index))
+        |> redirect(to: ~p"/setup")
 
       {:error, msg} ->
         conn
-        |> put_flash(:error, "⚠️ #{msg}")
-        |> redirect(to: Routes.service_setup_path(conn, :index))
+        |> put_flash(:error, msg)
+        |> redirect(to: ~p"/setup")
     end
   end
 
@@ -182,17 +177,17 @@ defmodule PRWeb.Service.ServiceSetupController do
       {:ok} ->
         conn
         |> put_flash(:info, "That seemed to work")
-        |> redirect(to: Routes.service_setup_path(conn, :index))
+        |> redirect(to: ~p"/setup")
 
       {:error, msg} ->
         conn
-        |> put_flash(:error, "⚠️ #{msg}")
-        |> redirect(to: Routes.service_setup_path(conn, :index))
+        |> put_flash(:error, msg)
+        |> redirect(to: ~p"/setup")
     end
   end
 
   def get_state(conn, _) do
     PR.PlayState.get_initial_state()
-    redirect(conn, to: Routes.service_setup_path(conn, :index))
+    redirect(conn, to: ~p"/setup")
   end
 end

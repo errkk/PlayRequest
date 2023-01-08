@@ -33,7 +33,6 @@ defmodule PRWeb.NotificationsChannel do
 
       _ ->
         :ok
-        :ok
     end
 
     {:noreply, socket}

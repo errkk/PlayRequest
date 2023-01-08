@@ -15,7 +15,9 @@ defmodule PR.SonosAPI do
     else
       {:error, :no_active_group} ->
         {:ok}
-      res -> res
+
+      res ->
+        res
     end
   end
 
@@ -125,6 +127,10 @@ defmodule PR.SonosAPI do
     post("/groups/#{group_id!()}/playback/togglePlayPause")
   end
 
+  def skip do
+    post("/groups/#{group_id!()}/playback/skipToNextTrack")
+  end
+
   def set_volume(volume) do
     %{volume: volume}
     |> post("/groups/#{group_id!()}/groupVolume")
@@ -145,9 +151,6 @@ defmodule PR.SonosAPI do
           |> length()
 
         {:ok, total}
-
-      {:error, msg} ->
-        {:error, msg}
 
       _ ->
         nil

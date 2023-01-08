@@ -13,6 +13,23 @@
   padding: 0;
   transition: box-shadow 300ms ease-in 300ms;
   grid-column: main;
+  display: flex;
+  flex: 1;
+
+  .title {
+    font-weight: bold;
+    display: block;
+    margin: 0;
+    padding: 0;
+  }
+  .message {
+    margin: 0;
+    padding: 0;
+  }
+  .inner {
+    flex: 1;
+    margin-right: 20px;
+  }
 }
 
 .alert:not(:empty) {
@@ -30,7 +47,7 @@
   background: $teal;
 }
 
-.alert.alert-error {
+.alert.alert-danger {
   color: $white;
 }
 
@@ -38,4 +55,26 @@
 .alert.alert--entrance:not(:empty) {
   animation: bounce-in-top 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both;
   box-shadow: 1px 0 20px $strongShad;
+}
+
+.alert .icon {
+  width: 40px;
+  height: 40px;
+  align-self: center;
+  margin-right: 20px;
+}
+
+.close {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  align-self: center;
+}
+.close-icon {
+  width: 100%;
+  height: 100%;
+  display: block;
 }

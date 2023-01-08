@@ -8,11 +8,11 @@ defmodule PRWeb.Service.SonosWebhookController do
     case get_req_header(conn, "x-sonos-target-value") do
       [group_id | _tail] ->
         PlayState.handle_play_state_webhook(params, group_id, request_id())
-        render(conn, "index.json")
+        send_resp(conn, 202, "")
 
       _ ->
         Logger.error("PlaybackState webhook, no group id provided")
-        render(conn, "index.json")
+        send_resp(conn, 202, "")
     end
   end
 
@@ -20,11 +20,11 @@ defmodule PRWeb.Service.SonosWebhookController do
     case get_req_header(conn, "x-sonos-target-value") do
       [group_id | _tail] ->
         PlayState.handle_metadata_webhook(params, group_id, request_id())
-        render(conn, "index.json")
+        send_resp(conn, 202, "")
 
       _ ->
         Logger.error("Metadata webhook, no group id provided")
-        render(conn, "index.json")
+        send_resp(conn, 202, "")
     end
   end
 
@@ -32,23 +32,23 @@ defmodule PRWeb.Service.SonosWebhookController do
     case get_req_header(conn, "x-sonos-target-value") do
       [group_id | _tail] ->
         PlayState.handle_error_webhook(params, group_id, request_id())
-        render(conn, "index.json")
+        send_resp(conn, 202, "")
 
       _ ->
         Logger.error("Error webhook, no group id provided")
-        render(conn, "index.json")
+        send_resp(conn, 202, "")
     end
   end
 
   def callback(conn, %{"container" => %{"name" => name}}) do
     Logger.warn("Ignoring metadata playing #{name}")
-    render(conn, "index.json")
+    send_resp(conn, 202, "")
   end
 
   def callback(conn, params) do
     {:ok, json} = Jason.encode(params)
     Logger.error("Other webhook: #{json}")
-    render(conn, "index.json")
+    send_resp(conn, 202, "")
   end
 
   defp request_id do

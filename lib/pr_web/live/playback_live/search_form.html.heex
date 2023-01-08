@@ -1,0 +1,17 @@
+<div class={"search #{unless length(@result) > 0, do: " search--sticky"}"}>
+  <h2>Search</h2>
+  <form
+    phx-submit="search"
+    class={"#{if @loading, do: "loading"} #{if length(@result) > 0, do: "active"}"}
+  >
+    <input
+      id="search"
+      placeholder="Search for a track"
+      autocomplete="off"
+      type="text"
+      name="q"
+      value={@q}
+      readonly={@loading}
+    />
+  </form>
+</div>

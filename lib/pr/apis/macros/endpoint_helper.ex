@@ -95,6 +95,10 @@ defmodule PR.Apis.EndpointHelper do
         {:error, :gone}
       end
 
+      defp handle_api_response({:error, %Response{status_code: 499}}, resource) do
+        {:error, :no_content}
+      end
+
       defp handle_api_response({:error, %Response{status_code: code, body: body}}, resource) do
         Logger.error("Error: #{code}, #{resource} #{__MODULE__}")
         {:error, body}

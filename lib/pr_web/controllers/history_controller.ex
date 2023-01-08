@@ -16,7 +16,7 @@ defmodule PRWeb.HistoryController do
 
     top_scorers = Scoring.list_top_scorers()
 
-    render(conn, "index.html", items: items, top_scorers: top_scorers)
+    render(conn, :index, items: items, top_scorers: top_scorers)
   end
 
   def mark_unplayed(conn, %{"id" => id}) do
@@ -32,14 +32,14 @@ defmodule PRWeb.HistoryController do
       _ ->
         conn
         |> put_flash(:error, "⚠️ Didn't work")
-        |> redirect(to: Routes.history_path(conn, :index))
+        |> redirect(to: "/")
     end
   end
 
   def mark_unplayed(conn, _) do
     conn
     |> put_flash(:error, "⚠️ Didn't work")
-    |> redirect(to: Routes.history_path(conn, :index))
+        |> redirect(to: "/")
   end
 
   defp group_by_hour(items) do

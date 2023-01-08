@@ -12,6 +12,7 @@ processes = []
   HOSTNAME = "sonosnow.fly.dev"
   FF_VOLUME = "true"
   FF_TOGGLE_PLAYBACK = "true"
+  FF_SKIP = "false"
 
 [build]
   image = "ghcr.io/errkk/playrequest/pr:latest"

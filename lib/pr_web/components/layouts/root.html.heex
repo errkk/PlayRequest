@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta property="og:title" content={installation_name()} />
+    <meta property="og:description" content="🎶 Contribute to the Sonos playlist" />
+    <%= if assigns[:now_playing] do %>
+      <meta property="og:image" content={@now_playing.img} />
+      <meta property="og:image" content={url(~p"/images/pr.png")} />
+    <% else %>
+      <meta property="og:image" content={url(~p"/images/pr.png")} />
+    <% end %>
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <link
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap"
+      rel="stylesheet"
+    />
+    <.live_title>
+      <%= assigns[:page_title] || installation_name() %>
+    </.live_title>
+    <link phx-track-static rel="icon" href={~p"/images/favicon.png"} />
+    <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+  </head>
+  <body>
+    <div class="content">
+      <%= @inner_content %>
+    </div>
+    <footer class="footer">
+      <p class="version">
+        Version: <%= @version %>
+      </p>
+    </footer>
+    <script>
+      window.userToken = "<%= assigns[:user_token] %>";
+    </script>
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"} />
+    <script :if={is_december?()} src="https://app.embed.im/snow.js" defer />
+  </body>
+</html>

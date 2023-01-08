@@ -1,14 +1,46 @@
 defmodule PRWeb.LogoLive do
-  use Phoenix.LiveView
-  use Phoenix.HTML
+  # This is a small live view embedeed in PlaybackLive or in Controllers
+  # live_render needs socket or conn so there is a live and an app layout
+  # They're the same tho.
+  # Small embedded live_views need to use this lighter layout so that live.html.heex
+  # doesn't re-import UserHeaderLive and LogoLive again!
+  use Phoenix.LiveView, layout: {PRWeb.Layouts, :live_embedded}
+  use PRWeb, :helpers
 
   alias PR.PlayState
-  alias PRWeb.LogoView
+  alias PR.Music.PlaybackState
 
+  @impl true
   def render(assigns) do
-    LogoView.render("index.html", assigns)
+    ~H"""
+      <h1 class="logo-heading">
+        <.link href={~p"/"} class="logo-link">
+          <.logo play_state={@play_state} />
+          <%= installation_name() %>
+        </.link>
+      </h1>
+    """
   end
 
+  def logo(%{play_state: %PlaybackState{state: :playing}} = assigns) do
+    ~H"""
+      <img src={~p"/images/logo-playing.svg"} class="logo" />
+    """
+  end
+
+  def logo(%{play_state: %PlaybackState{state: :buffering}} = assigns) do
+    ~H"""
+      <img src={~p"/images/logo-buffering.svg"} class="logo" />
+    """
+  end
+
+  def logo(%{play_state: _} = assigns) do
+    ~H"""
+      <img src={~p"/images/logo-not-playing.svg"} class="logo" />
+    """
+  end
+
+  @impl true
   def mount(_params, _session, socket) do
     if connected?(socket), do: PlayState.subscribe()
     play_state = PlayState.get(:play_state)
@@ -23,6 +55,7 @@ defmodule PRWeb.LogoLive do
   end
 
   # Playback state update
+  @impl true
   def handle_info({PlayState, %{} = play_state, :play_state}, socket) do
     {:noreply, assign(socket, play_state: play_state)}
   end

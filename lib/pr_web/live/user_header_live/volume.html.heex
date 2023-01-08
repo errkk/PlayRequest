@@ -1,0 +1,15 @@
+<div class="volume">
+  <span class="label">
+    Volume:
+  </span>
+  <%= for volume <- 5..25//5 do %>
+    <button
+      title={"Set volume to #{volume}"}
+      class="button--vol"
+      phx-click="volume"
+      value={volume}
+    >
+      <span class="inner">Set to <%= volume %></span>
+    </button>
+  <% end %>
+</div>

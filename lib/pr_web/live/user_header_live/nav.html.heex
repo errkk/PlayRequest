@@ -1,0 +1,22 @@
+      <nav role="navigation" class="nav">
+        <ul>
+            <li class="nav__item">
+              <.link class="link" href={~p"/history"}>History</.link>
+            </li>
+            <%= if @current_user.is_trusted do %>
+              <li class="nav__item">
+                <.link class="link" href={~p"/setup"}>Setup</.link>
+              </li>
+            <% end %>
+            <li class="nav__item">
+              <.link class="link" href={~p"/auth/delete"}>Logout <%= @current_user.first_name %></.link>
+            </li>
+        </ul>
+        <div class="user">
+          <img src={@current_user.image} class="profile-image" />
+          <span class="user__hearts">
+            <%= @points %> <.heart />
+          </span>
+        </div>
+      </nav>
+

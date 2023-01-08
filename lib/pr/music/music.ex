@@ -60,30 +60,32 @@ defmodule PR.Music do
   def sync_playlist do
     Logger.info("Syncing tracks to Spotify playlist")
 
-    res = Queue.list_track_uris()
+    Queue.list_track_uris()
     |> Enum.map(fn {id} -> "spotify:track:" <> id end)
     |> SpotifyAPI.replace_playlist()
-
-    Logger.debug("Spotify sync complete")
-    res
+    |> tap(fn _ -> Logger.debug("Spotify sync completed") end)
   end
 
   # This take a little while to run, so there can be race conditions if it gets called
   # a few times, before it's had a chance to affect the play state
-  def trigger_playlist do
+  def trigger_playlist(force \\ :dont_force) do
     sync_playlist()
 
-    with %Group{group_id: group_id} <- SonosHouseholds.get_active_group!(),
+    with {:ok} <- check_unplayed(),
+         %Group{group_id: group_id} <- SonosHouseholds.get_active_group!(),
          {:ok, %{items: sonos_favorites}, _} <- SonosAPI.get_favorites(),
          {:ok, fav_id} <- find_playlist(sonos_favorites),
          # Check if the play state is still idle (allow paused too)
-         %PlaybackState{state: state} when state in [:idle, :paused] <-
-           PlayState.get(:play_state),
+         {:ok} <- check_current_playstate(PlayState.get(:play_state), force),
          %{} <- SonosAPI.set_favorite(fav_id, group_id) do
       Logger.info("Trigger playlist: OK")
       {:ok}
     else
-      %PlaybackState{state: state} ->
+      {:error, :nothing_in_local_queue} ->
+        Logger.warn("Trigger playlist: Nothing in local queue")
+        {:error, "Nothing in local queue"}
+
+      {:error, :playstate, state} ->
         Logger.warn("Trigger playlist: Canceling trigger_playlist, PlayState is now: #{state}")
         {:error, "Cancelled trigger, state is now #{state}"}
 
@@ -98,6 +100,27 @@ defmodule PR.Music do
       _ ->
         Logger.error("Trigger playlist: Unknown error")
         {:error, "Could not load playlist #{get_playlist_name()}"}
+    end
+  end
+
+  def check_current_playstate(%PlaybackState{state: state}, :dont_force)
+      when state in [:idle, :paused],
+      do: {:ok}
+
+  def check_current_playstate(%PlaybackState{state: state}, :force)
+      when state in [:idle, :paused, :playing],
+      do: {:ok}
+
+  def check_current_playstate(%PlaybackState{state: state}, _mode),
+    do: {:error, :playstate, state}
+
+  def check_unplayed() do
+    cond do
+      Queue.has_unplayed() |> dbg() == 0 ->
+        {:error, :nothing_in_local_queue}
+
+      true ->
+        {:ok}
     end
   end
 
