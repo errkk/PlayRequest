@@ -56,12 +56,17 @@ p {
 }
 .intro {
   font-size: 1.5em;
-  margin-bottom: 0.3em;
+  margin-bottom: 1em;
   & + p {
     margin-top: 0;
   }
+  h2 + & {
+    margin-top: -10px;
+  }
 }
-
+.login {
+  padding-top: 30px;
+}
 a {
   text-decoration: none;
   color: $white;

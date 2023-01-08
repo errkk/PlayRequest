@@ -38,7 +38,8 @@ defmodule PRWeb.PlaybackLive do
         recently_liked: nil,
         participated: Queue.has_participated?(%User{id: user_id}),
         playlist: Music.get_playlist(%User{id: user_id}),
-        page_title: page_title(metadata)
+        page_title: page_title(metadata),
+        num_unplayed: Queue.num_unplayed()
       )
 
     {:ok, assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)}
@@ -61,7 +62,12 @@ defmodule PRWeb.PlaybackLive do
 
   # Metadata webhook. Player is playing something else now
   def handle_info({PlayState, %{} = metadata, :metadata}, socket) do
-    {:noreply, assign(socket, metadata: metadata, page_title: page_title(metadata))}
+    {:noreply,
+     assign(socket,
+       metadata: metadata,
+       page_title: page_title(metadata),
+       num_unplayed: Queue.num_unplayed()
+     )}
   end
 
   # Clear errormode
