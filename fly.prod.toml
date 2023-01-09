@@ -10,6 +10,8 @@ processes = []
   PORT = "8080"
   REDIRECT_URL_BASE = "https://sonosnow.fly.dev"
   HOSTNAME = "sonosnow.fly.dev"
+  # Set feature flags in secrets now they override this
+  # These wont be applied from a CI deploy, that requires a local CLI deploy
   FF_VOLUME = "true"
   FF_TOGGLE_PLAYBACK = "true"
   FF_SKIP = "true"
