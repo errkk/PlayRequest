@@ -39,10 +39,17 @@ defmodule PRWeb.PlaybackLive do
         participated: Queue.has_participated?(%User{id: user_id}),
         playlist: Music.get_playlist(%User{id: user_id}),
         page_title: page_title(metadata),
-        num_unplayed: Queue.num_unplayed()
+        show_encouraging_message: show_encouraging_message(user_id)
       )
 
     {:ok, assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)}
+  end
+
+  defp show_encouraging_message(user_id) do
+    Enum.all?([
+      not Queue.has_participated?(%User{id: user_id}, :today),
+      Queue.num_unplayed() == 0
+    ])
   end
 
   #
@@ -66,7 +73,7 @@ defmodule PRWeb.PlaybackLive do
      assign(socket,
        metadata: metadata,
        page_title: page_title(metadata),
-       num_unplayed: Queue.num_unplayed()
+       show_encouraging_message: false
      )}
   end
 
