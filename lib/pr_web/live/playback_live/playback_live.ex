@@ -108,6 +108,10 @@ defmodule PRWeb.PlaybackLive do
     end
   end
 
+  def handle_info({Music, :error, message}, socket) do
+    {:noreply, put_flash(socket, :error, message)}
+  end
+
   #
   # Async UI functions
   #

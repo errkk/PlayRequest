@@ -8,7 +8,7 @@ defmodule PRWeb.UserHeaderLive do
   use Phoenix.LiveView, layout: {PRWeb.Layouts, :live_embedded}
   use PRWeb, :helpers
 
-  alias PR.Repo
+  alias PR.Music
   alias PR.Auth
   alias PR.Auth.User
   alias PR.Music
@@ -166,6 +166,11 @@ defmodule PRWeb.UserHeaderLive do
     {:noreply, assign(socket, num_unplayed: num_unplayed)}
   end
 
+  def handle_info({Music, _, _}, socket) do
+    # Can't do antying about this no flash, playback_live will do it
+    {:noreply, socket}
+  end
+
   def handle_info(%Phoenix.Socket.Broadcast{event: "presence_diff", payload: diff}, socket) do
     {
       :noreply,
@@ -194,39 +199,8 @@ defmodule PRWeb.UserHeaderLive do
   def handle_event("skip", _, socket) do
     %{assigns: %{current_user: %{first_name: name}}} = socket
     Logger.info("Skip track – #{name}")
-
-    # Tell sonos to skip to next track
-    # If there is nothing else yet in the Sonos Queue then Sonos returns :no_content
-    # There might be something in the  local queue, so we need to bump the current track out
-    # and sync the revised playlist as the next update to sonos.
-    # The trigger_playlist function returns an error tuple for any reason why that hasn't happened
-    # Including if there are no more songs in the queue.
-    # In this case, we need to rollback the bump that just happened.
-
-    case SonosAPI.skip() do
-      {:error, :no_content} ->
-        Logger.warn("Skip – Nothing in Sonos queue, re-triggering")
-        # Bump out current song from local playlist and re-trigger
-        # Rollback the bump if trigger can't be performed
-        Repo.transaction(fn ->
-          Queue.bump()
-
-          case Music.trigger_playlist(:force) do
-            {:error, message} ->
-              Logger.warn("Rolling back bump #{message}")
-              Repo.rollback(:didnt_trigger_new_items)
-
-            _ ->
-              Logger.info("Skip – Trigger succeeded")
-          end
-        end)
-
-        {:noreply, socket}
-
-      _ ->
-        Logger.info("Skip – Skipped")
-        {:noreply, socket}
-    end
+    Music.skip()
+    {:noreply, socket}
   end
 
   def handle_event("start", _, socket) do

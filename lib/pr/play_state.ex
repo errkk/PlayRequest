@@ -143,7 +143,7 @@ defmodule PR.PlayState do
         state
 
       _ ->
-        Logger.info("Player idle, Queue empty.")
+        Logger.notice("Player idle, Queue empty.")
         state
     end
   end
@@ -152,7 +152,7 @@ defmodule PR.PlayState do
   defp watch_play_state(%{state: :playing} = state) do
     if get(:error_mode) do
       Logger.metadata(error_mode: nil)
-      Logger.info("Clearing error mode")
+      Logger.notice("Clearing error mode")
       # Update agent
       update_state(nil, :error_mode)
       # Update live view 
@@ -174,7 +174,7 @@ defmodule PR.PlayState do
   defp trigger_on_sonos_system do
     case get(:play_state) do
       %PlaybackState{state: :idle} ->
-        Logger.info("Still idle, triggering")
+        Logger.notice("Still idle, triggering")
         Music.trigger_playlist()
 
       %PlaybackState{state: state} ->
@@ -195,7 +195,7 @@ defmodule PR.PlayState do
         metadata
 
       _ ->
-        Logger.info("not processing metadata")
+        Logger.info("Not processing metadata")
         data
     end
   end
@@ -246,7 +246,7 @@ defmodule PR.PlayState do
       state
     else
       Queue.set_current(%{})
-      Logger.info("Nothing playing on the Sonos")
+      Logger.notice("Nothing playing on the Sonos")
       state
     end
   end
@@ -260,6 +260,7 @@ defmodule PR.PlayState do
          diff <- DateTime.diff(DateTime.utc_now(), playing_since, :millisecond),
          true <- Kernel.>(duration, diff) do
       percentage = diff / duration * 100
+
       percentage
       |> update_state(:progress)
       |> broadcast(:progress)

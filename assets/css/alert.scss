@@ -30,6 +30,9 @@
     flex: 1;
     margin-right: 20px;
   }
+  .close {
+    color: currentColor;
+  }
 }
 
 .alert:not(:empty) {
