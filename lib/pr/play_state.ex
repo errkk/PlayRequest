@@ -143,7 +143,7 @@ defmodule PR.PlayState do
         state
 
       _ ->
-        Logger.notice("Player idle, Queue empty.")
+        Logger.info("Player idle, Queue empty.")
         state
     end
   end
@@ -152,7 +152,7 @@ defmodule PR.PlayState do
   defp watch_play_state(%{state: :playing} = state) do
     if get(:error_mode) do
       Logger.metadata(error_mode: nil)
-      Logger.notice("Clearing error mode")
+      Logger.info("Clearing error mode")
       # Update agent
       update_state(nil, :error_mode)
       # Update live view 
@@ -174,7 +174,7 @@ defmodule PR.PlayState do
   defp trigger_on_sonos_system do
     case get(:play_state) do
       %PlaybackState{state: :idle} ->
-        Logger.notice("Still idle, triggering")
+        Logger.info("Still idle, triggering")
         Music.trigger_playlist()
 
       %PlaybackState{state: state} ->
@@ -246,7 +246,7 @@ defmodule PR.PlayState do
       state
     else
       Queue.set_current(%{})
-      Logger.notice("Nothing playing on the Sonos")
+      Logger.info("Nothing playing on the Sonos")
       state
     end
   end

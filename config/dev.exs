@@ -79,7 +79,7 @@ config :pr, PRWeb.Endpoint,
 
 # Do not include metadata nor timestamps in development logs
 # config :logger, :console, format: "[$level] $message\n"
-config :logger, level: :notice
+config :logger, level: :info
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime

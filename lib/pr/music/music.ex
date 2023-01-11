@@ -139,7 +139,7 @@ defmodule PR.Music do
 
     case SonosAPI.skip() do
       {:error, :no_content} ->
-        Logger.notice("Skip – Nothing in Sonos queue, re-triggering")
+        Logger.info("Skip – Nothing in Sonos queue, re-triggering")
         # Bump out current song from local playlist and re-trigger
         # Rollback the bump if trigger can't be performed
         PR.Repo.transaction(fn ->
@@ -152,14 +152,14 @@ defmodule PR.Music do
               PR.Repo.rollback(:didnt_trigger_new_items)
 
             _ ->
-              Logger.notice("Skip – Trigger succeeded")
+              Logger.info("Skip – Trigger succeeded")
           end
         end)
 
         {:ok, :bump_and_triggered}
 
       _ ->
-        Logger.notice("Skip – Skipped")
+        Logger.info("Skip – Skipped")
         {:ok, :skipped}
     end
   end

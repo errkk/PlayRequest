@@ -140,7 +140,7 @@ defmodule PR.Queue do
 
   @spec set_current(SonosItem.t()) :: {:started | :already_started, DateTime.t()} | {:ok}
   def set_current(%SonosItem{spotify_id: spotify_id, name: name}) do
-    Logger.notice("Set current: #{name}")
+    Logger.info("Set current: #{name}")
     now = DateTime.utc_now()
 
     set_current_transaction(spotify_id, now)
@@ -150,7 +150,7 @@ defmodule PR.Queue do
     # Set current to none of whats in the queue
     # if there is something playing since > 20 sec ago, mark it as played
     # if it's only jsut started, then mark it as not playing
-    Logger.notice("Set current: To no track")
+    Logger.info("Set current: To no track")
 
     Track
     |> query_is_playing()
