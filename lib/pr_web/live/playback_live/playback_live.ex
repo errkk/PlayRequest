@@ -108,8 +108,20 @@ defmodule PRWeb.PlaybackLive do
     end
   end
 
-  def handle_info({Music, :error, message}, socket) do
-    {:noreply, put_flash(socket, :error, message)}
+  def handle_info(
+        {Music, :flash, {level, message, user_id}},
+        %{assigns: %{current_user: %User{id: requester_user_id}}} = socket
+      )
+      when requester_user_id == user_id do
+    {:noreply, put_flash(socket, level, message)}
+  end
+
+  def handle_info({Music, :flash, {level, message, nil}}, socket) do
+    {:noreply, put_flash(socket, level, message)}
+  end
+
+  def handle_info({Music, _, _}, socket) do
+    {:noreply, socket}
   end
 
   #

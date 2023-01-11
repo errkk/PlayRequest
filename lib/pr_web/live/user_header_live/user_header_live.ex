@@ -197,9 +197,9 @@ defmodule PRWeb.UserHeaderLive do
   end
 
   def handle_event("skip", _, socket) do
-    %{assigns: %{current_user: %{first_name: name}}} = socket
+    %{assigns: %{current_user: %{first_name: name, id: user_id}}} = socket
     Logger.info("Skip track – #{name}")
-    Music.skip()
+    Music.skip(user_id)
     {:noreply, socket}
   end
 

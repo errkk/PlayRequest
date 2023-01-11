@@ -128,7 +128,7 @@ defmodule PR.Music do
     end
   end
 
-  def skip do
+  def skip(user_id) do
     # Tell sonos to skip to next track
     # If there is nothing else yet in the Sonos Queue then Sonos returns :no_content
     # There might be something in the  local queue, so we need to bump the current track out
@@ -148,9 +148,7 @@ defmodule PR.Music do
           case trigger_playlist(:force) do
             {:error, message} ->
               Logger.warn("Rolling back bump #{message}")
-              # TODO this broadcasts to everyone, so might be better to route it
-              # to a requester's id
-              broadcast(:error, "Couldn't skip: #{message}")
+              broadcast(:flash, {:error, "Couldn't skip: #{message}", user_id})
               PR.Repo.rollback(:didnt_trigger_new_items)
 
             _ ->
