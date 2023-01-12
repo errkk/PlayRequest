@@ -31,8 +31,7 @@ defmodule PR.PlayStateTest do
       refute is_nil(playing_since)
 
       # Check agent state
-      assert %{current_item: %SonosItem{spotify_id: ^spotify_track_id}} =
-               PlayState.get(:metadata)
+      assert %{current_item: %SonosItem{spotify_id: ^spotify_track_id}} = PlayState.get(:metadata)
     end
 
     test "updates playing track, marks last track played from metadata", %{mocked_now: now} do
@@ -58,8 +57,7 @@ defmodule PR.PlayStateTest do
       assert played_at == now
 
       # Check agent state
-      assert %{current_item: %SonosItem{spotify_id: ^spotify_track_id}} =
-               PlayState.get(:metadata)
+      assert %{current_item: %SonosItem{spotify_id: ^spotify_track_id}} = PlayState.get(:metadata)
     end
 
     test "error mode, dont update track when it says playing nothing", %{mocked_now: now} do
@@ -131,30 +129,31 @@ defmodule PR.PlayStateTest do
       assert %{current_item: %{}} = PlayState.get(:metadata)
     end
 
-    test "no track playing on sonos, 2 tracks in queue, one is playing since < 20 sec" do
-      spotify_track_id = "123"
-      spotify_id = "spotify:track:#{spotify_track_id}"
+    # This is commented out while query_has_been_playing() is deactivated. to see what happens
+    # test "no track playing on sonos, 2 tracks in queue, one is playing since < 20 sec" do
+    #   spotify_track_id = "123"
+    #   spotify_id = "spotify:track:#{spotify_track_id}"
 
-      previous_track = insert(:recently_playing_track)
-      queue_track = insert(:track, spotify_id: spotify_track_id)
-      metadata = build(:metadata, current_item: %{}, next_item: %{})
+    #   previous_track = insert(:recently_playing_track)
+    #   queue_track = insert(:track, spotify_id: spotify_track_id)
+    #   metadata = build(:metadata, current_item: %{}, next_item: %{})
 
-      # Act
-      PlayState.process_metadata(metadata)
+    #   # Act
+    #   PlayState.process_metadata(metadata)
 
-      # Assert
-      %{playing_since: playing_since, played_at: played_at} = Queue.get_track!(queue_track.id)
-      assert is_nil(played_at)
-      assert is_nil(playing_since)
+    #   # Assert
+    #   %{playing_since: playing_since, played_at: played_at} = Queue.get_track!(queue_track.id)
+    #   assert is_nil(played_at)
+    #   assert is_nil(playing_since)
 
-      %{playing_since: playing_since, played_at: played_at} = Queue.get_track!(previous_track.id)
-      # The playnig track is marked as not played nor playing
-      assert is_nil(played_at)
-      assert is_nil(playing_since)
+    #   %{playing_since: playing_since, played_at: played_at} = Queue.get_track!(previous_track.id)
+    #   # The playnig track is marked as not played nor playing
+    #   assert is_nil(played_at)
+    #   assert is_nil(playing_since)
 
-      # Check agent state
-      assert %{current_item: %{}} = PlayState.get(:metadata)
-    end
+    #   # Check agent state
+    #   assert %{current_item: %{}} = PlayState.get(:metadata)
+    # end
 
     # When it finishes, current track will not be in DB queue
     # Playstate will be idle (or soon)

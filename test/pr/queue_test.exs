@@ -105,17 +105,17 @@ defmodule PR.QueueTest do
       assert Track |> Repo.get(previous_track.id) |> Map.get(:playing_since) |> is_nil()
     end
 
-    test "nothing is playing but it might be lets give it 10 seconds" do
-      track = insert(:recently_playing_track, spotify_id: "herp", duration: 10_000)
-      assert {:ok, [played: 1, playing: nil]} = Queue.set_current(%{})
-      assert %{played_at: nil, playing_since: nil} = Queue.get_track!(track.id)
-    end
+    # test "nothing is playing but it might be lets give it 10 seconds" do
+    #   track = insert(:recently_playing_track, spotify_id: "herp", duration: 10_000)
+    #   assert {:ok, [played: 1, playing: nil]} = Queue.set_current(%{})
+    #   assert %{played_at: nil, playing_since: nil} = Queue.get_track!(track.id)
+    # end
 
-    test "nothing is playing but it might be lets give it 10 seconds its had 10 seconds" do
-      previous_track = insert(:playing_track, spotify_id: "herp", duration: 10_000)
-      assert {:ok, [played: nil, playing: nil]} = Queue.set_current(%{})
-      assert Queue.get_playing() |> is_nil()
-    end
+    # test "nothing is playing but it might be lets give it 10 seconds its had 10 seconds" do
+    #   previous_track = insert(:playing_track, spotify_id: "herp", duration: 10_000)
+    #   assert {:ok, [played: nil, playing: nil]} = Queue.set_current(%{})
+    #   assert Queue.get_playing() |> is_nil()
+    # end
 
     test "already played" do
       played_track = insert(:track, spotify_id: "herp", played_at: ~N[2019-01-01 00:00:00])

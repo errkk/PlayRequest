@@ -195,7 +195,7 @@ defmodule PR.PlayState do
         metadata
 
       _ ->
-        Logger.info("not processing metadata")
+        Logger.info("Not processing metadata")
         data
     end
   end
@@ -260,6 +260,7 @@ defmodule PR.PlayState do
          diff <- DateTime.diff(DateTime.utc_now(), playing_since, :millisecond),
          true <- Kernel.>(duration, diff) do
       percentage = diff / duration * 100
+
       percentage
       |> update_state(:progress)
       |> broadcast(:progress)

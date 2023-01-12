@@ -63,3 +63,7 @@ proxy:
 proxy_staging:
 	fly proxy 5433:5432 --app sonosnow-staging-db
 .PHONY: proxy
+
+tunnel:
+	ssh -p 7878 -R0:localhost:4000 fff4bb2a-e798-4169-97ee-a643f0750e16@b.pinggy.io
+.PHONY: tunnel

@@ -140,7 +140,7 @@ defmodule PR.Queue do
 
   @spec set_current(SonosItem.t()) :: {:started | :already_started, DateTime.t()} | {:ok}
   def set_current(%SonosItem{spotify_id: spotify_id, name: name}) do
-    Logger.info("Sonos current track is: #{name}. Update Queue if this is in there.")
+    Logger.info("Set current: #{name}")
     now = DateTime.utc_now()
 
     set_current_transaction(spotify_id, now)
@@ -154,7 +154,8 @@ defmodule PR.Queue do
 
     Track
     |> query_is_playing()
-    |> query_has_been_playing()
+    # Trying without this for a bit
+    # |> query_has_been_playing()
     |> Repo.update_all(
       set: [
         playing_since: nil,
@@ -167,7 +168,7 @@ defmodule PR.Queue do
         {:ok, [{:played, nil}, {:playing, nil}]}
 
       {rows, nil} ->
-        Logger.warn("Set current: Something was playing, so updated to played.")
+        Logger.info("Set current: Something was playing, so updated to played.")
         {:ok, [{:played, rows}, {:playing, nil}]}
     end
 
