@@ -152,8 +152,23 @@ defmodule PRWeb.PlaybackLive do
       {:ok, _track} ->
         {:noreply, assign(socket, loading: false, result: [], q: nil)}
 
+      #  Only pass error message for spotify_id field, as there are some other changeset
+      # errors that we don't want to tell people about
+      {:error, %{errors: [{:spotify_id, {message, _}} | _tail]}} ->
+        socket =
+          socket
+          |> put_flash(:error, message)
+          |> assign(loading: false)
+
+        {:noreply, socket}
+
       _ ->
-        {:noreply, assign(socket, loading: false)}
+        socket =
+          socket
+          |> put_flash(:error, "Something went wrong")
+          |> assign(loading: false)
+
+        {:noreply, socket}
     end
   end
 
