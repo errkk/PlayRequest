@@ -108,6 +108,7 @@ defmodule PRWeb.PlaybackLive do
     end
   end
 
+  # Send flash message received from PubSub
   def handle_info(
         {Music, :flash, {level, message, user_id}},
         %{assigns: %{current_user: %User{id: requester_user_id}}} = socket
@@ -150,11 +151,18 @@ defmodule PRWeb.PlaybackLive do
   def handle_info({:queue, spotify_id}, %{assigns: %{current_user: user}} = socket) do
     case Music.queue(user, spotify_id) do
       {:ok, _track} ->
-        {:noreply, assign(socket, loading: false, result: [], q: nil)}
+        socket =
+          socket
+          |> clear_flash(:error)
+          |> assign(loading: false, result: [], q: nil)
+
+        {:noreply, socket}
 
       #  Only pass error message for spotify_id field, as there are some other changeset
       # errors that we don't want to tell people about
       {:error, %{errors: [{:spotify_id, {message, _}} | _tail]}} ->
+        Logger.warn("Double unplayed queue prevented: #{spotify_id}")
+
         socket =
           socket
           |> put_flash(:error, message)
@@ -163,6 +171,8 @@ defmodule PRWeb.PlaybackLive do
         {:noreply, socket}
 
       _ ->
+        Logger.error("Track not queued for other reason: #{spotify_id}")
+
         socket =
           socket
           |> put_flash(:error, "Something went wrong")
