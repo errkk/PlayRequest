@@ -49,14 +49,32 @@ defmodule PR.QueueTest do
   describe "queuing" do
     test "can't queue something twice if its unplayed" do
       me = insert(:user)
-      insert(:track, spotify_id: "derp")
-      assert {:error, _} = Queue.create_track(%{user_id: me.id, spotify_id: "derp"})
+      insert(:track, spotify_id: "derp", played_at: nil, playing_since: nil)
+      params = params_for(:track, spotify_id: "derp", user_id: me.id)
+
+      assert {:error, %{errors: errors}} = Queue.create_track(params)
+      assert {:spotify_id, {"Already queued", _}} = errors |> Enum.at(0)
     end
 
-    test "can't queue something twice if its playing" do
+    test "can't queue something twice if its playing and marked unplayed" do
       me = insert(:user)
-      insert(:track, spotify_id: "derp", playing_since: DateTime.utc_now())
-      assert {:error, _} = Queue.create_track(%{user_id: me.id, spotify_id: "derp"})
+
+      insert(:track, spotify_id: "derp", played_at: nil, playing_since: DateTime.utc_now())
+
+      params = params_for(:track, spotify_id: "derp", user_id: me.id)
+
+      assert {:error, %{errors: errors}} = Queue.create_track(params)
+      assert {:spotify_id, {"Already queued", _}} = errors |> Enum.at(0)
+    end
+
+    test "can queue same track if it's been played" do
+      me = insert(:user)
+
+      insert(:track, spotify_id: "derp", played_at: DateTime.utc_now())
+
+      params = params_for(:track, spotify_id: "derp", user_id: me.id)
+
+      assert {:ok, track} = Queue.create_track(params)
     end
   end
 
@@ -65,14 +83,6 @@ defmodule PR.QueueTest do
       current_track = insert(:track, spotify_id: "derp")
       assert {:ok, [played: nil, playing: 1]} = Queue.set_current(%SonosItem{spotify_id: "derp"})
       refute Track |> Repo.get(current_track.id) |> Map.get(:playing_since) |> is_nil()
-    end
-
-    test "set playing since if there's a dupe" do
-      current_track = insert(:track, spotify_id: "derp")
-      oops_dupe = insert(:track, spotify_id: "derp")
-      assert {:ok, [played: nil, playing: 2]} = Queue.set_current(%SonosItem{spotify_id: "derp"})
-      refute Track |> Repo.get(current_track.id) |> Map.get(:playing_since) |> is_nil()
-      refute Track |> Repo.get(oops_dupe.id) |> Map.get(:playing_since) |> is_nil()
     end
 
     test "set playing since and played at" do
