@@ -51,7 +51,6 @@ defmodule PR.MixProject do
       {:timex, "~> 3.5"},
       {:logger_json, "~> 5.1"},
       {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
-      {:logger_papertrail_backend, "~> 1.1"},
       {:dart_sass, "~> 0.4", runtime: Mix.env() == :dev},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:mock, "~> 0.3.6", only: :test},
