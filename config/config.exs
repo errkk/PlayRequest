@@ -31,6 +31,11 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id, :playback_state, :error_mode, :error]
 
+config :logger_json, :backend,
+  metadata: :all,
+  json_encoder: Jason,
+  formatter: LoggerJSON.Formatters.BasicLogger
+
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
