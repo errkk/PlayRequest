@@ -22,7 +22,7 @@ defmodule PR.Application do
     :ok =
       :telemetry.attach(
         "logger-json-ecto",
-        [:my_app, :repo, :query],
+        [:pr, :repo, :query],
         &LoggerJSON.Ecto.telemetry_logging_handler/4,
         :debug
       )
