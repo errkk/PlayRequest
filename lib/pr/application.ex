@@ -19,8 +19,6 @@ defmodule PR.Application do
       PRWeb.Presence
     ]
 
-    Supervisor.start_link(children, strategy: :one_for_one, name: PR.Supervisor)
-
     :ok =
       :telemetry.attach(
         "logger-json-ecto",
@@ -28,6 +26,8 @@ defmodule PR.Application do
         &LoggerJSON.Ecto.telemetry_logging_handler/4,
         :debug
       )
+
+    Supervisor.start_link(children, strategy: :one_for_one, name: PR.Supervisor)
   end
 
   # Tell Phoenix to update the endpoint configuration
