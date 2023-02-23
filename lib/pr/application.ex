@@ -24,7 +24,7 @@ defmodule PR.Application do
         "logger-json-ecto",
         [:pr, :repo, :query],
         &LoggerJSON.Ecto.telemetry_logging_handler/4,
-        :debug
+        :info
       )
 
     Supervisor.start_link(children, strategy: :one_for_one, name: PR.Supervisor)
