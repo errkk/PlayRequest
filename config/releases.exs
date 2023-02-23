@@ -13,14 +13,6 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id, :playback_state, :error_mode]
 
-config :logger, :logger_papertrail_backend,
-  host: System.get_env("PAPERTRAIL_HOST"),
-  level: :info,
-  system_name: System.get_env("HOSTNAME"),
-  metadata_filter: [],
-  format: "[$level]$levelpad$metadata $message",
-  metadata: [:request_id, :pid, :playback_state, :error_mode, :error]
-
 config :pr, :sonos,
   scopes: "playback-control-all",
   redirect_uri: "#{System.get_env("REDIRECT_URL_BASE")}/sonos/authorized",

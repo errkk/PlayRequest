@@ -29,6 +29,8 @@ defmodule PRWeb.Endpoint do
     only: PRWeb.static_paths()
   )
 
+  plug(LoggerJSON.Plug)
+
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
@@ -43,7 +45,8 @@ defmodule PRWeb.Endpoint do
   )
 
   plug(Plug.RequestId)
-  plug(Plug.Telemetry, event_prefix: [:phoenix, :endpoint])
+  # Log level debug, cos Plug.LoggerJSON logs requests for non-dev
+  plug(Plug.Telemetry, event_prefix: [:phoenix, :endpoint], log: :debug)
 
   plug(Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
