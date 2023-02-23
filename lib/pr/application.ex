@@ -19,12 +19,13 @@ defmodule PR.Application do
       PRWeb.Presence
     ]
 
+    # This will only show up if log level is set <= :debug
     :ok =
       :telemetry.attach(
         "logger-json-ecto",
         [:pr, :repo, :query],
         &LoggerJSON.Ecto.telemetry_logging_handler/4,
-        :info
+        :debug
       )
 
     Supervisor.start_link(children, strategy: :one_for_one, name: PR.Supervisor)
