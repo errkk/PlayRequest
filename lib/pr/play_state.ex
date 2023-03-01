@@ -269,7 +269,7 @@ defmodule PR.PlayState do
     end
   end
 
-  defp cast_metadata(%{container: %{}, current_item: %{track: %{}} = current_item}) do
+  defp cast_metadata(%{container: %{}, current_item: %{track: %{}} = current_item} = full_data) do
     try do
       sonos_item = SonosItem.new(current_item)
       data = %{current_item: sonos_item}
@@ -277,7 +277,7 @@ defmodule PR.PlayState do
       {:ok, data}
     rescue
       _ ->
-        Logger.warn("Error casting metadata so setting %{}")
+        Logger.warn("Error casting metadata so setting %{} data: #{Jason.encode!(full_data)}")
         {:ok, %{current_item: %{}}}
     end
   end
