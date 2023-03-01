@@ -1,4 +1,4 @@
-FROM elixir:1.14-alpine AS build
+FROM elixir:1.14.3-alpine AS build
 RUN apk update \
   && apk add --virtual build-dependencies \
   build-base
@@ -45,7 +45,7 @@ COPY config/releases.exs config/
 # assemble release
 RUN mix release
 
-FROM alpine:3.16 AS app
+FROM alpine:3.17 AS app
 RUN apk update \
   && apk add --virtual build-dependencies \
   build-base
