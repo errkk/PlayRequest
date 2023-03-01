@@ -45,6 +45,7 @@ app_name =
     raise "FLY_APP_NAME not available"
 
 config :libcluster,
+  debug: true,
   topologies: [
     fly6pn: [
       strategy: Cluster.Strategy.DNSPoll,
