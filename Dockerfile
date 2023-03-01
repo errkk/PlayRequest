@@ -41,6 +41,7 @@ RUN mix compile
 
 # copy runtime configuration file
 COPY config/releases.exs config/
+COPY rel rel
 
 # assemble release
 RUN mix release
