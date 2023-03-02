@@ -113,4 +113,16 @@ defmodule PRWeb.SonosWebhookControllerTest do
       assert response(conn, 202)
     end
   end
+
+  describe "group state webhook" do
+    test "works", %{conn: conn} do
+      conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put_req_header("x-sonos-target-value", "RINCON:GROUPID")
+        |> post(~p"/sonos/callback", Error.group_status_gone())
+
+      assert response(conn, 202)
+    end
+  end
 end
