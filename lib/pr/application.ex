@@ -6,6 +6,8 @@ defmodule PR.Application do
   use Application
 
   def start(_type, _args) do
+    topologies = Application.get_env(:libcluster, :topologies) || []
+
     children = [
       PR.Repo,
       PR.PlayState,
@@ -16,7 +18,8 @@ defmodule PR.Application do
       PRWeb.Endpoint,
       {Phoenix.PubSub, [name: PR.PubSub, adapter: Phoenix.PubSub.PG2]},
       {PR.Worker.GetInitialState, [nil]},
-      PRWeb.Presence
+      PRWeb.Presence,
+      {Cluster.Supervisor, [topologies, [name: PR.ClusterSupervisor]]}
     ]
 
     # This will only show up if log level is set <= :debug

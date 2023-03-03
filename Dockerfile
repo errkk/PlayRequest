@@ -1,4 +1,4 @@
-FROM elixir:1.14-alpine AS build
+FROM elixir:1.14.3-alpine AS build
 RUN apk update \
   && apk add --virtual build-dependencies \
   build-base
@@ -41,11 +41,12 @@ RUN mix compile
 
 # copy runtime configuration file
 COPY config/releases.exs config/
+COPY rel rel
 
 # assemble release
 RUN mix release
 
-FROM alpine:3.16 AS app
+FROM alpine:3.17 AS app
 RUN apk update \
   && apk add --virtual build-dependencies \
   build-base
@@ -61,6 +62,8 @@ ENV USER="elixir"
 ENV LANG en_GB.UTF-8
 ENV LANGUAGE en_GB:en
 ENV LC_ALL en_GB.UTF-8
+ENV ECTO_IPV6 true
+ENV ERL_AFLAGS "-proto_dist inet6_tcp"
 
 WORKDIR "/home/${USER}/app"
 RUN mkdir "/home/${USER}/app/tmp"

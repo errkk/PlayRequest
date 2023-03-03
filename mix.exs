@@ -54,7 +54,8 @@ defmodule PR.MixProject do
       {:dart_sass, "~> 0.4", runtime: Mix.env() == :dev},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:mock, "~> 0.3.6", only: :test},
-      {:heroicons, "~> 0.5"}
+      {:heroicons, "~> 0.5"},
+      {:libcluster, "~> 3.3"}
     ]
   end
 

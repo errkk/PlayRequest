@@ -15,6 +15,7 @@ processes = []
   FF_VOLUME = "true"
   FF_TOGGLE_PLAYBACK = "true"
   FF_SKIP = "true"
+  RELEASE_COOKIE = "sonosnow"
 
 [build]
   image = "ghcr.io/errkk/playrequest/pr:latest"
