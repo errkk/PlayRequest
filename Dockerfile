@@ -62,6 +62,8 @@ ENV USER="elixir"
 ENV LANG en_GB.UTF-8
 ENV LANGUAGE en_GB:en
 ENV LC_ALL en_GB.UTF-8
+ENV ECTO_IPV6 true
+ENV ERL_AFLAGS "-proto_dist inet6_tcp"
 
 WORKDIR "/home/${USER}/app"
 RUN mkdir "/home/${USER}/app/tmp"
