@@ -6,15 +6,15 @@ defmodule PR.SonosHouseholds.GroupManager do
   alias PR.SonosAPI
 
   def check_groups do
-    with {:ok, groups} <- get_groups(),
-         {:ok, expected_group_id, player_ids} <- get_active_group_id() do
+    with {:ok, groups} <- get_sonos_groups(),
+         {:ok, active_group_id, player_ids} <- get_active_group_id() do
       if groups
          |> Enum.map(& &1.id)
-         |> Enum.member?(expected_group_id) do
-        Logger.info("Group ok #{expected_group_id}")
+         |> Enum.member?(active_group_id) do
+        Logger.info("Group with id #{active_group_id} still exists on Sonos")
         :ok
       else
-        Logger.error("Active group #{expected_group_id} not found. Trying to recreate.")
+        Logger.error("Active group #{active_group_id} not found. Trying to recreate.")
         handle_mismatch(player_ids)
         {:error, :mismatch}
       end
@@ -39,26 +39,28 @@ defmodule PR.SonosHouseholds.GroupManager do
 
   @spec handle_mismatch(List.t()) :: :ok | {:error, String.t()}
   defp handle_mismatch(player_ids) do
+    # Do this before making the new group
     SonosAPI.unsubscribe_webhooks()
 
+    # Make a new group with the player ids from the last saved group
     case SonosAPI.create_group(player_ids) do
-      {:ok, %Group{id: id}} when is_binary(id) ->
+      {:ok, %Group{group_id: id}} ->
         SonosAPI.subscribe_webhooks()
-        Logger.info("New group created")
-        {:ok, "Recreated group"}
+        Logger.info("New group created #{id}")
+        {:ok, "Re-created group"}
 
       {:error, :no_household_activated} ->
-        Logger.error("Couldn't recreate group, no household activated")
-        {:error, "Couldn't recreate group"}
+        Logger.error("Couldn't re-create group, no household activated")
+        {:error, "Couldn't re-create group"}
 
       _ ->
-        Logger.error("Couldn't recreate group")
-        {:error, "Couldn't recreate group"}
+        Logger.error("Couldn't re-create group")
+        {:error, "Couldn't re-create group"}
     end
   end
 
-  @spec get_groups() :: {:ok, [map()]} | {:error, atom()}
-  defp get_groups do
+  @spec get_sonos_groups() :: {:ok, [map()]} | {:error, atom()}
+  defp get_sonos_groups do
     case SonosAPI.get_groups() do
       {:ok, %{groups: groups}, _} ->
         {:ok, groups}
