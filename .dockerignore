@@ -2,5 +2,3 @@ assets/node_modules
 _build
 deps
 test
-mix.lock
-package-lock.json
