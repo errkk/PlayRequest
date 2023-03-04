@@ -38,7 +38,7 @@ defmodule PR.MixProject do
       {:certifi, "~> 2.2"},
       {:telemetry_poller, "~> 0.4"},
       {:telemetry_metrics, "~> 0.4"},
-      {:phoenix, "~> 1.7.0-rc.0", override: true},
+      {:phoenix, "~> 1.7.0"},
       {:phoenix_live_view, "~> 0.18.3"},
       {:phoenix_live_dashboard, "~> 0.7.2"},
       {:phoenix_ecto, "~> 4.1"},

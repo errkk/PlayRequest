@@ -56,14 +56,31 @@ format_code:
 	mix format mix.exs "lib/**/*.{ex,exs}" "test/**/*.{ex,exs}"
 .PHONY: format_code
 
-proxy:
+proxy_production:
 	fly proxy 5433:5432 --app sonosnow-postgres
-.PHONY: proxy
+.PHONY: proxy_production
 
 proxy_staging:
 	fly proxy 5433:5432 --app sonosnow-staging-db
-.PHONY: proxy
+.PHONY: proxy_staging
+
+console_staging:
+	fly ssh console --app sonosnow-staging
+.PHONY: console_staging
+
+console_production:
+	fly ssh console --app sonosnow
+.PHONY: console_production
+
+remote_staging:
+	fly ssh console -C "/home/elixir/app/bin/pr remote"  --app sonosnow-staging
+.PHONY: console_staging
+
+remote_production:
+	fly ssh console -C "/home/elixir/app/bin/pr remote"  --app sonosnow
+.PHONY: console_production
 
 tunnel:
-	ssh -p 7878 -R0:localhost:4000 fff4bb2a-e798-4169-97ee-a643f0750e16@b.pinggy.io
+	$(ENV)\
+	ssh -p 443 -R0:localhost:4000 ${PINGY_TOKEN}@a.pinggy.io
 .PHONY: tunnel

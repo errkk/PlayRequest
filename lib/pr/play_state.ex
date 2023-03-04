@@ -124,6 +124,22 @@ defmodule PR.PlayState do
     end
   end
 
+  def handle_group_status_webhook(%{"groupStatus" => group_status} = params, group_id, request_id) do
+    case SonosHouseholds.get_active_group() do
+      %Group{group_id: ^group_id} ->
+        Logger.metadata(group_id: group_id, request_id: request_id, group_status: group_status)
+
+        # TODO should this only be if it's gone
+        Logger.warn("Handling Group Status webhook – Checking groups", data: Jason.encode!(params))
+
+        GroupManager.check_groups()
+
+      _ ->
+        Logger.metadata(group_id: group_id)
+        Logger.warn("Skipping Error webhook unrecongnised group_id: #{group_id}")
+    end
+  end
+
   def is_idle? do
     match?(%PlaybackState{state: :idle}, get(:play_state))
   end
@@ -277,7 +293,8 @@ defmodule PR.PlayState do
       {:ok, data}
     rescue
       _ ->
-        Logger.warn("Error casting metadata so setting %{}")
+        Logger.warn("Current item isn't a SonosItem with Spotify ID. Setting current to %{}")
+
         {:ok, %{current_item: %{}}}
     end
   end
@@ -288,7 +305,7 @@ defmodule PR.PlayState do
   end
 
   defp cast_metadata(data) do
-    Logger.info("probably playing something else? #{Jason.encode!(data)}")
+    Logger.info("Probably playing something else? #{Jason.encode!(data)}")
     {:error, :probably_playing_something_else}
   end
 end

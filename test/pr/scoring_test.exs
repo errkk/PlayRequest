@@ -1,5 +1,5 @@
 defmodule PR.ScoringTest do
-  use PR.DataCase, async: true
+  use PR.DataCase
 
   alias PR.Scoring
   alias PR.Scoring.Point

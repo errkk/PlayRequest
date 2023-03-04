@@ -98,8 +98,7 @@ defmodule PRWeb.Service.ServiceSetupController do
     group
     |> SonosHouseholds.update_group(%{is_active: not group.is_active})
 
-    conn
-    |> redirect(to: ~p"/setup")
+    subscribe_sonos_webhooks(conn, %{})
   end
 
   def subscribe_sonos_webhooks(conn, _) do
@@ -175,9 +174,7 @@ defmodule PRWeb.Service.ServiceSetupController do
   def clear_groups(conn, _) do
     case SonosHouseholds.clear_groups() do
       {:ok} ->
-        conn
-        |> put_flash(:info, "That seemed to work")
-        |> redirect(to: ~p"/setup")
+        save_groups(conn, %{})
 
       {:error, msg} ->
         conn
