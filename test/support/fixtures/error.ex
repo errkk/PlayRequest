@@ -20,6 +20,5 @@ defmodule PRWeb.Fixtures.Sonos.Error do
       "groupStatus" => "GROUP_STATUS_GONE",
       "groupID" => "RINCON:GROUPID"
     }
-    |> Jason.encode!()
   end
 end

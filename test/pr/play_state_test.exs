@@ -1,5 +1,5 @@
 defmodule PR.PlayStateTest do
-  use PR.DataCase, async: true
+  use PR.DataCase
   import Mock
 
   alias PRWeb.Fixtures.Sonos.Error
@@ -201,12 +201,11 @@ defmodule PR.PlayStateTest do
   end
 
   describe "handle_group_status_webhook" do
-    group_id = "RINCON:GROUPID"
-    request_id = "lolhai"
-    insert(:group, group_id: group_id, is_active: true)
-    PlayState.handle_group_status_webhook(Error.group_status_gone(), group_id, request_id)
-  end
-
-  describe "process_playstate/1" do
+    test "handle" do
+      group_id = "RINCON:GROUPID"
+      request_id = "lolhai"
+      insert(:group, group_id: group_id, is_active: true)
+      PlayState.handle_group_status_webhook(Error.group_status_gone(), group_id, request_id)
+    end
   end
 end

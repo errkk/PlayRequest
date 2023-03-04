@@ -1,5 +1,5 @@
 defmodule PRWeb.SonosWebhookControllerTest do
-  use PRWeb.ConnCase, async: true
+  use PRWeb.ConnCase
   import ExUnit.CaptureLog
 
   alias PRWeb.Fixtures.Sonos.CurrentAndNext
