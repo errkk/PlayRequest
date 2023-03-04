@@ -65,5 +65,6 @@ proxy_staging:
 .PHONY: proxy
 
 tunnel:
-	ssh -p 443 -R0:localhost:4000 $(PINGY_TOKEN)@a.pinggy.io
+	$(ENV)\
+	ssh -p 443 -R0:localhost:4000 ${PINGY_TOKEN}@a.pinggy.io
 .PHONY: tunnel
