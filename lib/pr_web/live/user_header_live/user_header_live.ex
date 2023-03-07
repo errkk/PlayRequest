@@ -95,7 +95,7 @@ defmodule PRWeb.UserHeaderLive do
     """
   end
 
-  def play_pause(_, _), do: nil
+  def play_pause(_), do: nil
 
   @impl true
   def mount(_params, %{"user_id" => user_id}, socket) when not is_nil(user_id) do
