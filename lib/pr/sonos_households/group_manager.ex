@@ -6,35 +6,45 @@ defmodule PR.SonosHouseholds.GroupManager do
   alias PR.SonosAPI
 
   def check_groups do
-    # TODO maybe if this doesn't work, refetch groups, look for one with the same name
-    # maybe player ids and then set that as the current group here
+    # Fetch groups from SonosAPI look for one that has the same name as the one that's stored
+    # If not, the players may have become un-grouped, so create and save a new group with the
+    # player ids that we had before.
     Logger.info("Checking active group")
 
-    with {:ok, groups} <- get_sonos_groups(),
-         {:ok, active_group_id, active_group_name, player_ids} <- get_active_group(),
-         {:ok, matching_group_id} = group_name_present?(groups, active_group_name) do
-      # This gets all the groups and looks in there for the active group_id
-      # maybe it should look up the active group BY id, if that gives the GONE response,
-      # then perhaps it should be recreated. 
+    SonosHouseholds.get_active_group()
+    |> check_or_recrate_active_group()
+  end
 
-      # OR, look for one with the same name and update the id on the active group
+  defp check_or_recrate_active_group(%Group{name: active_group_name, player_ids: player_ids}) do
+    with {:ok, groups} <- get_sonos_groups(),
+         {:ok, active_group_name} <- group_name_present?(groups, active_group_name) do
       Logger.info("Group named #{active_group_name} still exists on Sonos")
+      # TODO maybe resubscribe to webhooks here?
       :ok
     else
       {:error, :group_name_is_gone} ->
-        Logger.warn("Check groups: Group #{active_group_name} isn't present on Sonos. Recreating with player ids")
+        Logger.warn(
+          "Check groups: Group #{active_group_name} isn't present on Sonos. Recreating with player ids",
+          player_ids: player_ids
+        )
+
         recreate_group(player_ids)
+
       {:error, :cant_get_groups} ->
-        Logger.error("Check groups: Can't get groups")
-        {:error, "Can't get Sonos groups"}
+        # This has happened when this is run from the group_status_change webhook
+        # The household/groups endpoint returns GONE, so might be to do with the network going down
+        # Maybe this could trigger a delay before re accessing the group (or poll it?)
+        # When the GONE case happens, i think it kills the webhook subscription.
+        # So once the group is found after getting here, probs needs a resubscription
+        Logger.warn(
+          "Couldn't retrieve Sonos groups when trying to check_groups",
+          player_ids: player_ids,
+          active_group_name: active_group_name
+        )
 
-      {:error, :no_active_group} ->
-        Logger.error("Check groups: No active group")
+      {:error, reason} ->
+        Logger.error("Check groups: #{Atom.to_string(reason)}")
         {:error, "Group not set"}
-
-      {:error, :no_household_activated} ->
-        Logger.error("Check groups: No household activated")
-        {:error, "Household not activated"}
 
       _ ->
         Logger.error("Check groups: Error")
@@ -42,7 +52,12 @@ defmodule PR.SonosHouseholds.GroupManager do
     end
   end
 
-  @spec recreate_group(List.t()) :: :ok | {:error, String.t()}
+  defp check_or_recrate_active_group(_) do
+    Logger.error("No active group selected")
+    :ok
+  end
+
+  @spec recreate_group(List.t()) :: {:ok, String.t()} | {:error, String.t()}
   defp recreate_group(player_ids) do
     # Do this before making the new group
     Logger.info("Unsubscribing")
@@ -54,23 +69,22 @@ defmodule PR.SonosHouseholds.GroupManager do
       {:ok, %Group{group_id: id}} ->
         SonosAPI.subscribe_webhooks()
         Logger.info("New group created #{id}")
-        {:ok, "Re-created group"}
+        {:ok, id}
 
       {:error, :no_household_activated} ->
         Logger.error("Couldn't re-create group, no household activated")
-        {:error, "Couldn't re-create group"}
+        {:error, :no_household_activated}
 
       _ ->
         Logger.error("Couldn't re-create group")
-        {:error, "Couldn't re-create group"}
+        {:error, :couldnt_recreate_group}
     end
   end
 
   defp group_name_present?(groups, active_group_name) do
-    case Enum.find(groups, & &1.name == active_group_name) do
-      %{name: name, id: matching_group_id} ->
-      {:ok, matching_group_id}
-      _ ->
+    if Enum.any?(groups, &match?(%{name: ^active_group_name}, &1)) do
+      {:ok, active_group_name}
+    else
       {:error, :group_name_is_gone}
     end
   end
@@ -83,7 +97,7 @@ defmodule PR.SonosHouseholds.GroupManager do
 
       {:error, msg} ->
         Logger.error("Can't get groups from Sonos API: #{msg}")
-        {:error, msg}
+        {:error, :cant_get_groups}
 
       _ ->
         {:error, :cant_get_groups}
