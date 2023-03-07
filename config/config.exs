@@ -20,7 +20,10 @@ config :pr,
 config :pr, PRWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "MBQFquRClfM/IuOPei8yy0dwxawJRGOnuEH4zbPsKx7+PPc3UWVYJqKufr76yDbe",
-  render_errors: [view: PRWeb.ErrorView, accepts: ~w(html json)],
+  render_errors: [
+    formats: [html: PRWeb.ErrorHTML],
+    layout: {PRWeb.Layouts, :error}
+  ],
   pubsub_server: PR.PubSub,
   live_view: [
     signing_salt: "SECRET_SALT"
