@@ -129,8 +129,7 @@ defmodule PR.PlayState do
       %Group{group_id: ^group_id} ->
         Logger.metadata(group_id: group_id, request_id: request_id, group_status: group_status)
 
-        # TODO should this only be if it's gone
-        Logger.warn("Handling Group Status webhook – Checking groups", data: Jason.encode!(params))
+        Logger.warn("Handling Group Status webhook #{group_status}", data: Jason.encode!(params))
 
         case group_status do
           "GROUP_STATUS_GONE" ->
