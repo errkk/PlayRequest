@@ -69,7 +69,7 @@ defmodule PR.Auth.User do
 
   defp get_allowed_domains do
     :pr
-    |> Application.get_env(:allowed_user_domains)
+    |> Application.get_env(:allowed_user_domains, "")
     |> String.split(",")
   end
 end
