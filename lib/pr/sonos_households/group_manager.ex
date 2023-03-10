@@ -12,14 +12,25 @@ defmodule PR.SonosHouseholds.GroupManager do
     Logger.info("Checking active group")
 
     SonosHouseholds.get_active_group()
-    |> check_or_recrate_active_group()
+    |> check_or_recrate_active_group(:initial_call)
   end
 
-  defp check_or_recrate_active_group(%Group{name: active_group_name, player_ids: player_ids}) do
+  defp check_or_recrate_active_group(
+         %Group{name: active_group_name, player_ids: player_ids},
+         retry
+       ) do
     with {:ok, groups} <- get_sonos_groups(),
          {:ok, active_group_name} <- group_name_present?(groups, active_group_name) do
       Logger.info("Group named #{active_group_name} still exists on Sonos")
-      # TODO maybe resubscribe to webhooks here?
+
+      if retry == :retry do
+        # Resubscribes after groupstatus gone, which i thin unsubscribes
+        # TODO it only matches on group name, so might need to update the group id
+        # saved here, in case that has changed
+        Logger.info("Resubscribing webhooks for group #{active_group_name}")
+        SonosAPI.subscribe_webhooks()
+      end
+
       :ok
     else
       {:error, :group_name_is_gone} ->
@@ -35,11 +46,21 @@ defmodule PR.SonosHouseholds.GroupManager do
         # The household/groups endpoint returns GONE, so might be to do with the network going down
         # Maybe this could trigger a delay before re accessing the group (or poll it?)
         # When the GONE case happens, i think it kills the webhook subscription.
-        # So once the group is found after getting here, probs needs a resubscription
+        # So if the group can found after getting here, probs needs a resubscription
         Logger.warn(
-          "Couldn't retrieve Sonos groups when trying to check_groups",
+          "Couldn't retrieve Sonos groups when trying to check_groups. Retry in 10sec",
           player_ids: player_ids,
           active_group_name: active_group_name
+        )
+
+        # TODO maybe this should be a GenServer if we don't wanna leave the 
+        # webhook connection open doing it synchronously
+        Process.sleep(10_000)
+        Logger.info("Retrying")
+        # Flag to say its a retry from here, in which case the ok state needs to resubscribe?
+        check_or_recrate_active_group(
+          %Group{name: active_group_name, player_ids: player_ids},
+          :retry
         )
 
       {:error, reason} ->
@@ -52,7 +73,7 @@ defmodule PR.SonosHouseholds.GroupManager do
     end
   end
 
-  defp check_or_recrate_active_group(_) do
+  defp check_or_recrate_active_group(_, _) do
     Logger.error("No active group selected")
     :ok
   end
