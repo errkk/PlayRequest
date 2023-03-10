@@ -37,10 +37,14 @@ defmodule PR.SonosHouseholds.GroupManager do
         # When the GONE case happens, i think it kills the webhook subscription.
         # So once the group is found after getting here, probs needs a resubscription
         Logger.warn(
-          "Couldn't retrieve Sonos groups when trying to check_groups",
+          "Couldn't retrieve Sonos groups when trying to check_groups. Retry in 10sec",
           player_ids: player_ids,
           active_group_name: active_group_name
         )
+
+        Process.sleep(10_000)
+        Logger.info("Retrying")
+        check_groups()
 
       {:error, reason} ->
         Logger.error("Check groups: #{Atom.to_string(reason)}")
