@@ -1,7 +1,8 @@
 import Config
 
 config :pr,
-  allowed_user_domains: "example.com"
+  allowed_user_domains: "example.com",
+  sleep: 0
 
 # Configure your database
 config :pr, PR.Repo,
