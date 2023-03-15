@@ -11,8 +11,6 @@ defmodule PR.SonosHouseholds.GroupManager do
     # Fetch groups from SonosAPI look for one that has the same name as the one that's stored
     # If not, the players may have become un-grouped, so create and save a new group with the
     # player ids that we had before.
-    Logger.info("Checking active group")
-
     SonosHouseholds.get_active_group()
     |> check_or_recrate_active_group(@retries)
   end
@@ -50,9 +48,11 @@ defmodule PR.SonosHouseholds.GroupManager do
         # The household/groups endpoint returns GONE, so might be to do with the network going down
         # Maybe this could trigger a delay before re accessing the group (or poll it?)
         # When the GONE case happens, i think it kills the webhook subscription.
-        # So if the group can found after getting here, probs needs a resubscription
+        # So if the group can found after getting here and retrying, probs needs a resubscription (above)
+        sleep = Application.get_env(:pr, :sleep)
+
         Logger.warn(
-          "Couldn't retrieve Sonos groups when trying to check_groups. Retry in 10sec",
+          "Couldn't retrieve Sonos groups when trying to check_groups. Retry in #{sleep}ms",
           player_ids: player_ids,
           active_group_id: active_group_id,
           retries: retries
@@ -60,8 +60,7 @@ defmodule PR.SonosHouseholds.GroupManager do
 
         # TODO maybe this should be a GenServer if we don't wanna leave the 
         # webhook connection open doing it synchronously
-        Application.get_env(:pr, :sleep)
-        |> Process.sleep()
+        Process.sleep(sleep)
 
         Logger.warn("Retrying #{retries}")
         # Flag to say its a retry from here, in which case the ok state needs to resubscribe?

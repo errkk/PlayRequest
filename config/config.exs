@@ -15,7 +15,7 @@ config :pr,
   playlist_name: "PlayRequest",
   timezone: "Europe/London",
   env: config_env(),
-  sleep: 10_000
+  sleep: 5_000
 
 # Configures the endpoint
 config :pr, PRWeb.Endpoint,
