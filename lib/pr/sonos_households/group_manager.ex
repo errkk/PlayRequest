@@ -7,7 +7,7 @@ defmodule PR.SonosHouseholds.GroupManager do
 
   @retries 5
 
-  def check_groups do
+  def check_groups() do
     # Fetch groups from SonosAPI look for one that has the same name as the one that's stored
     # If not, the players may have become un-grouped, so create and save a new group with the
     # player ids that we had before.
@@ -131,7 +131,7 @@ defmodule PR.SonosHouseholds.GroupManager do
   end
 
   @spec get_active_group() :: {:ok, String.t(), List.t()} | {:error, atom()}
-  def get_active_group do
+  defp get_active_group do
     # Get Group ID and expected player_ids from the database
     case SonosHouseholds.get_active_group() do
       %Group{id: active_group_id, name: name, player_ids: player_ids} ->
