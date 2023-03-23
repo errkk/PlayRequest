@@ -14,7 +14,8 @@ config :pr,
   ecto_repos: [PR.Repo],
   playlist_name: "PlayRequest",
   timezone: "Europe/London",
-  env: config_env()
+  env: config_env(),
+  sleep: 5_000
 
 # Configures the endpoint
 config :pr, PRWeb.Endpoint,
