@@ -11,3 +11,6 @@ config :pr, PRWeb.Endpoint,
   server: true,
   root: ".",
   version: Application.spec(:pr, :vsn)
+
+config :pr,
+  sleep: 20_000
