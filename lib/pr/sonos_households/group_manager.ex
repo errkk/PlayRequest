@@ -6,7 +6,7 @@ defmodule PR.SonosHouseholds.GroupManager do
   alias PR.SonosAPI
   alias PR.Worker.GroupCheck
 
-  @retries 5
+  @retries 10
 
   def check_groups() do
     # Fetch groups from SonosAPI look for one that has the same name as the one that's stored

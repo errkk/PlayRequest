@@ -13,4 +13,4 @@ config :pr, PRWeb.Endpoint,
   version: Application.spec(:pr, :vsn)
 
 config :pr,
-  sleep: 20_000
+  sleep: 60_000
