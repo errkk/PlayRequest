@@ -1,55 +1,45 @@
-# fly.toml file generated for sonosnow on 2022-05-07T16:42:17+01:00
+# fly.toml app configuration file generated for sonosnow on 2023-04-27T09:10:21+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
 app = "sonosnow"
-
+primary_region = "lhr"
 kill_signal = "SIGINT"
-kill_timeout = 5
-processes = []
+kill_timeout = "5s"
 
-[env]
-  PORT = "8080"
-  REDIRECT_URL_BASE = "https://sonosnow.fly.dev"
-  HOSTNAME = "sonosnow.fly.dev"
-  # Set feature flags in secrets now they override this
-  # These wont be applied from a CI deploy, that requires a local CLI deploy
-  FF_VOLUME = "true"
-  FF_TOGGLE_PLAYBACK = "true"
-  FF_SKIP = "true"
-  RELEASE_COOKIE = "sonosnow"
+[experimental]
+  auto_rollback = true
 
 [build]
   image = "ghcr.io/errkk/playrequest/pr:latest"
 
-[experimental]
-  allowed_public_ports = []
-  auto_rollback = true
-
-# [deploy]
-#   release_command = "bin/pr eval 'PR.ReleaseTasks.migrate'"
+[env]
+  HOSTNAME = "sonosnow.fly.dev"
+  PORT = "8080"
+  REDIRECT_URL_BASE = "https://sonosnow.fly.dev"
+  RELEASE_COOKIE = "sonosnow"
 
 [[services]]
-  http_checks = []
+  protocol = "tcp"
   internal_port = 8080
   processes = ["app"]
-  protocol = "tcp"
-  script_checks = []
 
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    force_https = true
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
   [services.concurrency]
+    type = "connections"
     hard_limit = 25
     soft_limit = 20
-    type = "connections"
-
-  [[services.ports]]
-    force_https = true
-    handlers = ["http"]
-    port = 80
-
-  [[services.ports]]
-    handlers = ["tls", "http"]
-    port = 443
 
   [[services.tcp_checks]]
-    grace_period = "1s"
     interval = "15s"
-    restart_limit = 0
     timeout = "2s"
+    grace_period = "1s"
+    restart_limit = 0
