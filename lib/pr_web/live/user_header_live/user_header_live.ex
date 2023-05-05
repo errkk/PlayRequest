@@ -23,7 +23,7 @@ defmodule PRWeb.UserHeaderLive do
 
   import PRWeb.Shared
 
-  embed_templates "*"
+  embed_templates("*")
 
   @presence "presence"
 
@@ -95,7 +95,7 @@ defmodule PRWeb.UserHeaderLive do
     """
   end
 
-  def play_pause(_) do
+  def play_pause(assigns) do
     ~H"""
     <p>😵</p>
     """
