@@ -13,30 +13,30 @@ defmodule PRWeb.LogoLive do
   @impl true
   def render(assigns) do
     ~H"""
-      <h1 class="logo-heading">
-        <.link href={~p"/"} class="logo-link">
-          <.logo play_state={@play_state} />
-          <%= installation_name() %>
-        </.link>
-      </h1>
+    <h1 class="logo-heading">
+      <.link href={~p"/"} class="logo-link">
+        <.logo play_state={@play_state} />
+        <%= installation_name() %>
+      </.link>
+    </h1>
     """
   end
 
   def logo(%{play_state: %PlaybackState{state: :playing}} = assigns) do
     ~H"""
-      <img src={~p"/images/logo-playing.svg"} class="logo" />
+    <img src={~p"/images/logo-playing-de.svg"} class="logo" />
     """
   end
 
   def logo(%{play_state: %PlaybackState{state: :buffering}} = assigns) do
     ~H"""
-      <img src={~p"/images/logo-buffering.svg"} class="logo" />
+    <img src={~p"/images/logo-buffering-de.svg"} class="logo" />
     """
   end
 
   def logo(%{play_state: _} = assigns) do
     ~H"""
-      <img src={~p"/images/logo-not-playing.svg"} class="logo" />
+    <img src={~p"/images/logo-not-playing-de.svg"} class="logo" />
     """
   end
 
