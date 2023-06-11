@@ -24,20 +24,34 @@ defmodule PRWeb.LogoLive do
 
   def logo(%{play_state: %PlaybackState{state: :playing}} = assigns) do
     ~H"""
-    <img src={~p"/images/logo-playing-de.svg"} class="logo" />
+    <img src={~p"/images/logo-playing#{suffix()}"} class="logo" />
     """
   end
 
   def logo(%{play_state: %PlaybackState{state: :buffering}} = assigns) do
     ~H"""
-    <img src={~p"/images/logo-buffering-de.svg"} class="logo" />
+    <img src={~p"/images/logo-buffering#{suffix()}"} class="logo" />
     """
   end
 
   def logo(%{play_state: _} = assigns) do
     ~H"""
-    <img src={~p"/images/logo-not-playing-de.svg"} class="logo" />
+    <img src={~p"/images/logo-playing#{suffix()}"} class="logo" />
     """
+  end
+
+  def is_deutsches_freitag?() do
+    Timex.today()
+    |> Timex.weekday()
+    |> Kernel.==(5)
+  end
+
+  def suffix do
+    if is_deutsches_freitag?() do
+      "-de.svg"
+    else
+      ".svg"
+    end
   end
 
   @impl true
