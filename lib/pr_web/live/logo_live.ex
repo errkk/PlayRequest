@@ -36,7 +36,7 @@ defmodule PRWeb.LogoLive do
 
   def logo(%{play_state: _} = assigns) do
     ~H"""
-    <img src={~p"/images/logo-playing#{suffix()}"} class="logo" />
+    <img src={~p"/images/logo-not-playing#{suffix()}"} class="logo" />
     """
   end
 
