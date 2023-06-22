@@ -9,7 +9,11 @@ defmodule PRWeb.Shared do
   end
 
   def is_december? do
-    match?(%Date{month: 12}, Date.utc_today)
+    match?(%Date{month: 12}, Date.utc_today())
+  end
+
+  def name(%User{first_name: first_name, last_name: nil}) do
+    first_name
   end
 
   def name(%User{first_name: first_name, last_name: last_name}) do
@@ -20,7 +24,6 @@ defmodule PRWeb.Shared do
     Application.get_env(:pr, :feature_flags)
     |> Map.new(fn {k, v} -> {k, v == "true"} end)
   end
-
 
   def it_me?(%Track{user_id: user_id}, %User{id: id}) when id == user_id, do: true
   def it_me?(track, %{assigns: assigns}), do: it_me?(track, assigns)
