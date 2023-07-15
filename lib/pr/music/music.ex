@@ -27,6 +27,7 @@ defmodule PR.Music do
         tracks =
           tracks
           |> Enum.map(&SearchTrack.new/1)
+          |> Queue.get_novelty_for_search_results()
 
         {:ok, tracks}
 

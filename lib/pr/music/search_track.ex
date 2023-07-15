@@ -1,5 +1,5 @@
 defmodule PR.Music.SearchTrack do
-  defstruct [:name, :artist, :duration, :img, :spotify_id]
+  defstruct [:name, :artist, :duration, :img, :spotify_id, :track_novelty, :artist_novelty]
 
   @spec new(map()) :: SearchTrack.t()
   def new(

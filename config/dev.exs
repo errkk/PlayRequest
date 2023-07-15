@@ -113,4 +113,5 @@ config :pr,
 config :pr, :feature_flags,
   show_volume: System.get_env("FF_VOLUME", ""),
   show_toggle_playback: System.get_env("FF_TOGGLE_PLAYBACK", ""),
-  show_skip: System.get_env("FF_SKIP", "")
+  show_skip: System.get_env("FF_SKIP", ""),
+  scale_play_button: System.get_env("FF_SCALE_PLAY_BUTTON", "")

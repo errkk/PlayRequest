@@ -5,6 +5,7 @@ defmodule PR.Queue do
 
   require Logger
   import Ecto.Query, warn: false
+  alias PR.Music.SearchTrack
   alias PR.Repo
 
   alias PR.Queue.{Track, TrackNovelty, ArtistNovelty}
@@ -96,6 +97,43 @@ defmodule PR.Queue do
       0 -> false
       _ -> true
     end
+  end
+
+  @spec get_novelty_for_search_results([SearchTrack.t()]) :: []
+  def get_novelty_for_search_results(tracks) do
+    search_results =
+      for %{spotify_id: spotify_id, artist: artist} <- tracks do
+        "('#{spotify_id}', '#{artist}')"
+      end
+      |> Enum.join(", ")
+
+    query = """
+    WITH
+      search_results(spotify_id, artist) AS (
+        VALUES #{search_results}
+      )
+    select
+      coalesce(track_novelty, 100) as track_novelty,
+      coalesce(artist_novelty, 100) as artist_novelty
+    from
+      search_results
+      left join track_novelty on search_results.spotify_id = track_novelty.spotify_id
+      left join artist_novelty on search_results.artist = artist_novelty.artist
+    """
+
+    types = %{
+      track_novelty: :integer,
+      artist_novelty: :integer
+    }
+
+    result = Ecto.Adapters.SQL.query!(Repo, query, [])
+    novelty = Enum.map(result.rows, &Repo.load(types, {result.columns, &1}))
+
+    tracks
+    |> Enum.with_index()
+    |> Enum.map(fn {track, index} ->
+      Map.merge(track, Enum.at(novelty, index))
+    end)
   end
 
   @spec get_track!(integer()) :: Track.t()

@@ -3,13 +3,13 @@ defmodule PRWeb.PlaybackComponents do
 
   alias PR.Queue.Track
   alias PR.Music.PlaybackState
-  
+
   def chip(assigns) do
     ~H"""
-      <div class="chip">
-        <img src={@img} width="40" class="chip__img" />
-        <%= @text %>
-      </div>
+    <div class="chip">
+      <img src={@img} width="40" class="chip__img" />
+      <%= @text %>
+    </div>
     """
   end
 
@@ -25,28 +25,28 @@ defmodule PRWeb.PlaybackComponents do
 
   def novelty(assigns) do
     ~H"""
-      <div class="novelty__container">
-        <div class="pie blue mask" style={"--p:#{max(5, @score)}; --w:62px; --b:5px;"}>
-          <div class="novelty__inner">
-            <span class="novelty__title">
-              Novelty
-            </span>
-            <span class="novelty__score">
-              <%= @score %>
-            </span>
-          </div>
+    <div class="novelty__container">
+      <div class="pie blue mask" style={"--p:#{max(5, @score)}; --w:62px; --b:5px;"}>
+        <div class="novelty__inner">
+          <span class="novelty__title">
+            Novelty
+          </span>
+          <span class="novelty__score">
+            <%= @score %>
+          </span>
         </div>
       </div>
+    </div>
     """
   end
 
   def progress(assigns) do
     ~H"""
-      <%= if is_playing?(@track, @play_state) do %>
-        <span class="progress">
-          <span class="progress__bar" style={"width: #{@progress}%"}></span>
-        </span>
-      <% end %>
+    <%= if is_playing?(@track, @play_state) do %>
+      <span class="progress">
+        <span class="progress__bar" style={"width: #{@progress}%"}></span>
+      </span>
+    <% end %>
     """
   end
 
@@ -59,7 +59,7 @@ defmodule PRWeb.PlaybackComponents do
 
   def is_playing?(track, play_state, _), do: is_playing?(track, play_state)
 
-  def get_track_novelty(%Track{track_novelty: track_novelty, artist_novelty: artist_novelty}) do
+  def get_track_novelty(%{track_novelty: track_novelty, artist_novelty: artist_novelty}) do
     floor((track_novelty + artist_novelty + artist_novelty) / 3)
   end
 end
