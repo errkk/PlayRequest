@@ -14,7 +14,14 @@
             <%= track.artist %>
           </p>
         </div>
-        <button title="Add to queue" class="track__queue" phx-click="queue" value={track.spotify_id}></button>
+        <.novelty score={get_track_novelty(track)} />
+        <button
+          title="Add to queue"
+          class="track__queue"
+          phx-click="queue"
+          value={track.spotify_id}
+        >
+        </button>
       </div>
     </div>
   <% end %>
