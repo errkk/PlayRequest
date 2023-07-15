@@ -9,13 +9,31 @@
         <div class="track__details">
           <h3 class="track__name">
             <%= track.name %>
+            <%= if track.track_novelty < 20 do %>
+              <span title={"Track novelty: #{track.track_novelty}"}>😴</span>
+            <% end %>
           </h3>
           <p class="track__artist">
             <%= track.artist %>
+            <%= if track.artist_novelty < 20 do %>
+              <span title={"Artist novelty: #{track.artist_novelty}"}>😴</span>
+            <% end %>
           </p>
         </div>
         <.novelty score={get_track_novelty(track)} />
         <button
+          :if={@scale_play_button}
+          title="Add to queue"
+          class="track__queue"
+          phx-click="queue"
+          value={track.spotify_id}
+          style={
+             "transform: scale(#{max(get_track_novelty(track) / 100, 0.2)})"
+          }
+        >
+        </button>
+        <button
+          :if={not @scale_play_button}
           title="Add to queue"
           class="track__queue"
           phx-click="queue"

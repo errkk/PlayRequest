@@ -15,6 +15,7 @@ defmodule PRWeb.PlaybackLive do
 
   import PRWeb.PlaybackComponents
   import PRWeb.TrackComponent
+  import PRWeb.Shared
 
   embed_templates "*"
 
@@ -41,6 +42,7 @@ defmodule PRWeb.PlaybackLive do
         page_title: page_title(metadata),
         show_encouraging_message: show_encouraging_message(user_id)
       )
+      |> assign(feature_flags())
 
     {:ok, assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)}
   end

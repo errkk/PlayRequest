@@ -8,7 +8,7 @@
       <.nothing_queued :if={@show_encouraging_message && length(@result) == 0} />
     <% end %>
 
-    <.search_results result={@result} />
+    <.search_results result={@result} scale_play_button={@scale_play_button} />
   </div>
 
   <div class="col--playlist">
