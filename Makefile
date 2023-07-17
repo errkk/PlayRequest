@@ -82,5 +82,5 @@ remote_production:
 
 tunnel:
 	$(ENV)\
-	ssh -p 443 -R0:localhost:4000 ${PINGY_TOKEN}@a.pinggy.io
+	ssh -p 443 -R0:localhost:4000 ${PINGY_TOKEN}@a.pinggy.online
 .PHONY: tunnel
