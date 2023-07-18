@@ -99,12 +99,20 @@ defmodule PR.Queue do
     end
   end
 
+  def escape_quotes(string) do
+    String.replace(string, "'", "''")
+  end
+
   @spec get_novelty_for_search_results([SearchTrack.t()]) :: []
   def get_novelty_for_search_results(tracks) do
     search_results =
-      for %{spotify_id: spotify_id, artist: artist} <- tracks do
-        "('#{spotify_id}', '#{artist}')"
-      end
+      tracks
+      |> Enum.map(fn %{spotify_id: spotify_id, artist: artist} -> [spotify_id, artist] end)
+      |> Enum.map(fn values -> values |> Enum.map(&escape_quotes/1) end)
+      |> Enum.map(fn values -> values |> Enum.map(&"'#{&1}'") end)
+      |> Enum.map(fn values ->
+        "(#{Enum.join(values, ", ")})"
+      end)
       |> Enum.join(", ")
 
     query = """
