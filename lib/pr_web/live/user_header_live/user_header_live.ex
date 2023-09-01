@@ -40,7 +40,7 @@ defmodule PRWeb.UserHeaderLive do
           <.play_pause play_state={@play_state} show_skip={@show_skip && @num_unplayed > 1} />
         <% end %>
         <%= if @show_volume or @current_user.is_trusted do %>
-          <.volume max={@max_vol} />
+          <.volume max_vol={@max_vol} />
         <% end %>
       </div>
       <.online_users users={@users} />
@@ -126,7 +126,7 @@ defmodule PRWeb.UserHeaderLive do
         points: Scoring.count_points(%User{id: user_id}),
         play_state: play_state,
         num_unplayed: Queue.num_unplayed(),
-        max_vol: (is_deutsches_freitag?() && 30) || 25
+        max_vol: max_vol()
       )
       # Empty map to append on join/leave
       |> assign(:users, %{})
@@ -134,6 +134,14 @@ defmodule PRWeb.UserHeaderLive do
       |> handle_joins(Presence.list(@presence))
 
     {:ok, assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)}
+  end
+
+  def max_vol() do
+    if is_deutsches_freitag?() do
+      35
+    else
+      25
+    end
   end
 
   def mount(_, _, socket) do
