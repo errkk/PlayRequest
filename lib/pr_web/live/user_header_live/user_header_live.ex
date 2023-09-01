@@ -21,6 +21,9 @@ defmodule PRWeb.UserHeaderLive do
   alias PR.SonosAPI
   alias PRWeb.Presence
 
+  # TODO: Move this
+  import PRWeb.LogoLive, only: [is_deutsches_freitag?: 0]
+
   import PRWeb.Shared
 
   embed_templates("*")
@@ -37,7 +40,7 @@ defmodule PRWeb.UserHeaderLive do
           <.play_pause play_state={@play_state} show_skip={@show_skip && @num_unplayed > 1} />
         <% end %>
         <%= if @show_volume or @current_user.is_trusted do %>
-          <.volume />
+          <.volume max_vol={@max_vol} />
         <% end %>
       </div>
       <.online_users users={@users} />
@@ -122,7 +125,8 @@ defmodule PRWeb.UserHeaderLive do
       |> assign(
         points: Scoring.count_points(%User{id: user_id}),
         play_state: play_state,
-        num_unplayed: Queue.num_unplayed()
+        num_unplayed: Queue.num_unplayed(),
+        max_vol: max_vol()
       )
       # Empty map to append on join/leave
       |> assign(:users, %{})
@@ -130,6 +134,14 @@ defmodule PRWeb.UserHeaderLive do
       |> handle_joins(Presence.list(@presence))
 
     {:ok, assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)}
+  end
+
+  def max_vol() do
+    if is_deutsches_freitag?() do
+      35
+    else
+      25
+    end
   end
 
   def mount(_, _, socket) do

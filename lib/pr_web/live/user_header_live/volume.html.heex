@@ -2,7 +2,7 @@
   <span class="label">
     Volume:
   </span>
-  <%= for volume <- 5..25//5 do %>
+  <%= for volume <- 5..@max_vol//5 do %>
     <button
       title={"Set volume to #{volume}"}
       class="button--vol"
