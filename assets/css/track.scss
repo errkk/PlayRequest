@@ -295,6 +295,19 @@
   }
 }
 
+.fire {
+  width: 15px;
+  height: 18px;
+  padding-left: 5px;
+  vertical-align: middle;
+  margin-bottom: 2px;
+  display: inline-block;
+
+  &:first-of-type {
+    padding-left: 8px;
+  }
+}
+
 .flip {
   &__back,
   &__front {
@@ -363,4 +376,31 @@ h2 + .track {
 
 .spotify {
   margin-right: 0.8ex;
+}
+
+button {
+  border: none;
+  background: none;
+  border-radius: 0;
+  color: currentColor;
+}
+.like {
+  padding: 2px 0.5em 2px calc(20px + 0.5ex);
+  margin: 0 1ex 0 0;
+  background-image: url(/images/heart_pink.svg);
+  background-repeat: no-repeat;
+  background-position: 5px 50%;
+  border-radius: 20px;
+  background-size: 12px;
+  border: 2px solid lighten($blue, 40);
+  cursor: pointer;
+
+  &.super {
+    background-size: 18px;
+    background-image: url(/images/fire.svg);
+  }
+
+  &:hover {
+    border: 2px solid lighten($blue, 30);
+  }
 }

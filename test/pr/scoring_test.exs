@@ -40,6 +40,17 @@ defmodule PR.ScoringTest do
       assert 3 == Scoring.count_points(player)
     end
 
+    test "countts likes and superlikes for tracks of the user" do
+      voter = insert(:user)
+      player = insert(:user)
+      tracks = insert_list(3, :track, user: player)
+      insert(:point, track: Enum.at(tracks, 0), user: voter)
+      insert(:point, track: Enum.at(tracks, 1), user: voter)
+      insert(:point, track: Enum.at(tracks, 2), user: voter, is_super: true)
+
+      assert %{likes: 2, super_likes: 1} = Scoring.count_likes(player)
+    end
+
     test "its ok to has no points" do
       player = insert(:user)
       insert_list(3, :track, user: player)

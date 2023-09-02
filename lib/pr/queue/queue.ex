@@ -336,9 +336,16 @@ defmodule PR.Queue do
     |> join(
       :left,
       [t],
-      p in subquery(points_for()),
+      p in subquery(points_for(false)),
       on: t.id == p.track_id,
       as: :received_points
+    )
+    |> join(
+      :left,
+      [t],
+      p in subquery(points_for(true)),
+      on: t.id == p.track_id,
+      as: :received_super_likes
     )
   end
 
@@ -361,10 +368,11 @@ defmodule PR.Queue do
     )
   end
 
-  @spec points_for() :: Ecto.Queryable.t()
-  defp points_for() do
+  @spec points_for(is_super :: boolean()) :: Ecto.Queryable.t()
+  defp points_for(is_super) do
     Point
     |> group_by([p], p.track_id)
+    |> where([p], p.is_super == ^is_super)
     |> select([p], %{track_id: p.track_id, points_received: count(p.id)})
   end
 
@@ -389,12 +397,23 @@ defmodule PR.Queue do
   @spec select_user_facing_fields(Ecto.Queryable.t()) :: Ecto.Queryable.t()
   defp select_user_facing_fields(query) do
     query
-    |> select([t, given_point: gp, received_points: rp, track_novelty: tn, artist_novelty: an], %{
-      t
-      | has_pointed: not is_nil(gp.id),
-        points_received: rp.points_received,
-        track_novelty: coalesce(tn.track_novelty, 100),
-        artist_novelty: coalesce(an.artist_novelty, 100)
-    })
+    |> select(
+      [
+        t,
+        given_point: gp,
+        received_points: rp,
+        received_super_likes: rs,
+        track_novelty: tn,
+        artist_novelty: an
+      ],
+      %{
+        t
+        | has_pointed: not is_nil(gp.id),
+          points_received: rp.points_received,
+          super_likes_received: rs.points_received,
+          track_novelty: coalesce(tn.track_novelty, 100),
+          artist_novelty: coalesce(an.artist_novelty, 100)
+      }
+    )
   end
 end

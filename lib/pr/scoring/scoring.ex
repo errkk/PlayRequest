@@ -32,11 +32,28 @@ defmodule PR.Scoring do
     |> Repo.all()
   end
 
+  # deprecate
   def count_points(%User{} = user) do
     Point
     |> query_for_user(user)
     |> query_for_today()
     |> Repo.aggregate(:count, :id)
+  end
+
+  def count_likes(%User{} = user) do
+    Point
+    |> query_for_user(user)
+    |> query_for_today()
+    |> group_by(:is_super)
+    |> select([p], [p.is_super, count(p.is_super)])
+    |> Repo.all()
+    |> Enum.reduce(
+      %{likes: 0, super_likes: 0},
+      fn
+        [false, likes], acc -> Map.put(acc, :likes, likes)
+        [true, super_likes], acc -> Map.put(acc, :super_likes, super_likes)
+      end
+    )
   end
 
   def create_point(attrs \\ %{}) do

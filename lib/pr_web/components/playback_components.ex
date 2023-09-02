@@ -23,6 +23,16 @@ defmodule PRWeb.PlaybackComponents do
     """
   end
 
+  def fire(assigns) do
+    ~H"""
+    <%= unless is_nil(@super_likes) do %>
+      <%= for _p <- 1..@super_likes do %>
+        <img src={~p"/images/fire.svg"} class="fire" />
+      <% end %>
+    <% end %>
+    """
+  end
+
   def novelty(assigns) do
     ~H"""
     <div class="novelty__container">
