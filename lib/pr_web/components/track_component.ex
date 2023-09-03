@@ -12,29 +12,17 @@ defmodule PRWeb.TrackComponent do
 
     ~H"""
     <%= for track <- @playlist do %>
-      <div class={"track #{wobble?(@recently_liked, track)}#{if is_playing?(track, @play_state), do: "playing"} #{if dun_voted?(track), do: "has-voted"}"}>
+      <div class={"track #{wobble?(@recently_liked, track)}#{if is_playing?(track, @play_state), do: "playing"} #{if dun_voted?(track), do: "has-voted"} #{if super_liked?(track), do: "has-super-liked"}"}>
         <div class="track__inner">
           <div class="track__img__container">
-            <%= if can_vote?(track, @current_user) do %>
-              <button
-                class="flip__container animate"
-                phx-click="like"
-                value={track.id}
-                title={"Give some appreciation to #{name track.user}"}
-              >
-                <div class="flip__flipper">
-                  <img src={track.img} width="100" class="track__img flip__front" />
-                  <span class="flip__back"></span>
-                </div>
-              </button>
-            <% else %>
-              <img src={track.img} width="100" class="track__img" />
+            <%= if not is_nil(track.super_likes_received) do %>
+              <.particles />
             <% end %>
+            <img src={track.img} width="100" class="track__img" />
           </div>
 
           <div class="track__details">
             <%= render_slot(@details, track) %>
-
             <%= if @chips do %>
               <div class="chips">
                 <%= render_slot(@chips, track) %>

@@ -325,8 +325,15 @@ defmodule PR.Queue do
       :left,
       [t],
       p in Point,
-      on: t.id == p.track_id and p.user_id == ^user_id,
+      on: t.id == p.track_id and p.user_id == ^user_id and not p.is_super,
       as: :given_point
+    )
+    |> join(
+      :left,
+      [t],
+      p in Point,
+      on: t.id == p.track_id and p.user_id == ^user_id and p.is_super,
+      as: :given_super_like
     )
   end
 
@@ -401,6 +408,7 @@ defmodule PR.Queue do
       [
         t,
         given_point: gp,
+        given_super_like: gs,
         received_points: rp,
         received_super_likes: rs,
         track_novelty: tn,
@@ -409,6 +417,7 @@ defmodule PR.Queue do
       %{
         t
         | has_pointed: not is_nil(gp.id),
+          has_super_liked: not is_nil(gs.id),
           points_received: rp.points_received,
           super_likes_received: rs.points_received,
           track_novelty: coalesce(tn.track_novelty, 100),

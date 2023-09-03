@@ -136,18 +136,31 @@
     height: 100px;
     margin: 10px 15px 10px 10px;
 
+    .has-super-liked &,
     .has-voted & {
       &::after {
         content: "";
         position: absolute;
         z-index: 1;
         display: block;
-        background: url(/images/heart_pink.svg) 50% 50% no-repeat;
-        background-size: 16px 16px;
         width: 16px;
         height: 16px;
         bottom: -3px;
         right: -3px;
+      }
+    }
+
+    .has-voted & {
+      &::after {
+        background: url(/images/heart_pink.svg) 50% 50% no-repeat;
+        background-size: 16px 16px;
+      }
+    }
+
+    .has-super-liked & {
+      &::after {
+        background: url(/images/fire.svg) 50% 50% no-repeat;
+        background-size: 18px;
       }
     }
   }
@@ -404,3 +417,4 @@ button {
     border: 2px solid lighten($blue, 30);
   }
 }
+

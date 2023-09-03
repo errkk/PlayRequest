@@ -33,6 +33,14 @@ defmodule PRWeb.PlaybackComponents do
     """
   end
 
+  def particles(assigns) do
+    ~H"""
+    <%= for _p <- 1..50 do %>
+      <div class="particle"></div>
+    <% end %>
+    """
+  end
+
   def novelty(assigns) do
     ~H"""
     <div class="novelty__container">
