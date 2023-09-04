@@ -34,7 +34,12 @@ defmodule PRWeb.UserHeaderLive do
   def render(%{current_user: cu} = assigns) when not is_nil(cu) do
     ~H"""
     <div class="user-header">
-      <.nav current_user={@current_user} points={@points} super_likes={@super_likes} />
+      <.nav
+        current_user={@current_user}
+        points={@points}
+        super_likes={@super_likes}
+        show_super_like={@show_super_like}
+      />
       <div class="playback-controls">
         <%= if (@show_toggle_playback or @current_user.is_trusted == true) and @num_unplayed > 0 do %>
           <.play_pause play_state={@play_state} show_skip={@show_skip && @num_unplayed > 1} />

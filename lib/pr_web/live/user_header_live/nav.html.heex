@@ -17,7 +17,7 @@
     <span class="user__hearts">
       <%= @points %> <.heart />
     </span>
-    <span class="user__hearts">
+    <span :if={@show_super_like} class="user__hearts">
       <%= @super_likes %> <.fire />
     </span>
   </div>

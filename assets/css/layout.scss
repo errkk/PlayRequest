@@ -62,12 +62,10 @@ body {
 .col--left,
 .col--search {
   grid-area: left;
-  overflow: clip;
 }
 .col--right,
 .col--playlist {
   grid-area: right;
-  overflow: clip;
 }
 .col--main {
   grid-area: main;
@@ -127,7 +125,7 @@ body {
   justify-self: flex-end;
   margin-left: 20px;
   background: silver;
-  padding: 4px 5px;
+  padding: 4px 1em 4px 5px;
   border-radius: 30px;
   background: $blue;
   display: inline-block;
@@ -138,7 +136,7 @@ body {
     margin-left: 1ex;
 
     .heart {
-      margin-right: 10px;
+      animation: 1.5s ease 0s infinite beat;
     }
   }
 }

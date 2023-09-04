@@ -42,7 +42,14 @@
           <.chip text={name(track.user)} img={track.user.image} />
           <%= if can_vote?(track, @current_user) do %>
             <button phx-click="like" value={track.id} class="like">Like</button>
-            <button phx-click="super_like" value={track.id} class="like super">OMG</button>
+            <button
+              :if={@show_super_like}
+              phx-click="super_like"
+              value={track.id}
+              class="like super"
+            >
+              Super like
+            </button>
           <% end %>
           <.heart points={track.points_received} />
           <.fire super_likes={track.super_likes_received} />

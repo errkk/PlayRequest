@@ -14,6 +14,7 @@
   background: $blue;
   color: #fff;
   padding: 2px 9px 2px 2px;
+  flex-shrink: 0;
 
   justify-content: flex-start;
   align-items: center;
@@ -63,6 +64,13 @@
   }
   a:hover .link {
     box-shadow: inset 0 -8px 0 0 transparentize($pink, 0.8);
+  }
+  &.has-super-liked {
+    animation: ease-out 1s pop;
+  }
+
+  &.has-voted {
+    animation: ease-out 1s beat 2;
   }
 
   &__inner {
@@ -154,6 +162,7 @@
       &::after {
         background: url(/images/heart_pink.svg) 50% 50% no-repeat;
         background-size: 16px 16px;
+        animation: 1.5s ease 0s infinite beat;
       }
     }
 
@@ -408,13 +417,19 @@ button {
   border: 2px solid lighten($blue, 40);
   cursor: pointer;
 
+  &:hover {
+    animation: 1.5s ease 0s infinite beat;
+  }
+
   &.super {
     background-size: 18px;
     background-image: url(/images/fire.svg);
-  }
+    &:hover {
+      animation: 0.5s infinite shake;
+    }
+ }
 
   &:hover {
     border: 2px solid lighten($blue, 30);
   }
 }
-

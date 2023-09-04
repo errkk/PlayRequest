@@ -12,7 +12,13 @@ defmodule PRWeb.TrackComponent do
 
     ~H"""
     <%= for track <- @playlist do %>
-      <div class={"track #{wobble?(@recently_liked, track)}#{if is_playing?(track, @play_state), do: "playing"} #{if dun_voted?(track), do: "has-voted"} #{if super_liked?(track), do: "has-super-liked"}"}>
+      <div class={"
+          track
+          #{wobble?(@recently_liked, track)}
+          #{if is_playing?(track, @play_state), do: "playing"}
+          #{if dun_voted?(track), do: "has-voted"}
+          #{if super_liked?(track), do: "has-super-liked"}
+      "}>
         <div class="track__inner">
           <div class="track__img__container">
             <%= if not is_nil(track.super_likes_received) do %>
@@ -20,7 +26,6 @@ defmodule PRWeb.TrackComponent do
             <% end %>
             <img src={track.img} width="100" class="track__img" />
           </div>
-
           <div class="track__details">
             <%= render_slot(@details, track) %>
             <%= if @chips do %>
