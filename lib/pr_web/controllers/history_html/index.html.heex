@@ -4,9 +4,12 @@
     <%= for {hour, tracks} <- @items do %>
       <h3><%= hour %></h3>
       <%= for track <- tracks do %>
-        <div class="track">
+        <div class="track show">
           <div class="track__inner">
             <div class="track__img__container">
+              <%= if not is_nil(track.super_likes_received) do %>
+                <.particles />
+              <% end %>
               <img src={track.img} width="100" class="track__img" />
             </div>
 
@@ -27,23 +30,27 @@
                 <% end %>
               </p>
 
-                <div class="chips">
-                  <.chip img={track.user.image} text={name track.user} />
-                  <span class="chip chip--teal">
-                    <span class="chip_img">@</span>
-                    <%= time(track.played_at) %>
-                  </span>
-                  <.heart points={track.points_received} />
-                  <span>
-                    <.link href={~p"/history/track-unplayed/#{track}"} method="post" class="track__skipped-link">
-                      😫 It skipped, plz re-queue
-                    </.link>
-                  </span>
-                </div>
+              <div class="chips">
+                <.chip img={track.user.image} text={name(track.user)} />
+                <span class="chip chip--teal">
+                  <span class="chip_img">@</span>
+                  <%= time(track.played_at) %>
+                </span>
+                <.heart points={track.points_received} />
+                <.fire super_likes={track.super_likes_received} />
+                <span>
+                  <.link
+                    href={~p"/history/track-unplayed/#{track}"}
+                    method="post"
+                    class="track__skipped-link"
+                  >
+                    😫 It skipped, plz re-queue
+                  </.link>
+                </span>
+              </div>
             </div>
-              
-            <.novelty score={get_track_novelty track} />
 
+            <.novelty score={get_track_novelty(track)} />
           </div>
         </div>
       <% end %>
@@ -53,7 +60,7 @@
   <div class="col--right">
     <h3>Point Receivers</h3>
     <%= for user <- @top_scorers do %>
-      <div class="track track--dark">
+      <div class="track show track--dark">
         <div class="track__inner">
           <div class="track__img__container">
             <img src={user.image} width="100" class="track__img" />
@@ -72,4 +79,3 @@
     <% end %>
   </div>
 </div>
-

@@ -34,7 +34,12 @@ defmodule PRWeb.UserHeaderLive do
   def render(%{current_user: cu} = assigns) when not is_nil(cu) do
     ~H"""
     <div class="user-header">
-      <.nav current_user={@current_user} points={@points} />
+      <.nav
+        current_user={@current_user}
+        points={@points}
+        super_likes={@super_likes}
+        show_super_like={@show_super_like}
+      />
       <div class="playback-controls">
         <%= if (@show_toggle_playback or @current_user.is_trusted == true) and @num_unplayed > 0 do %>
           <.play_pause play_state={@play_state} show_skip={@show_skip && @num_unplayed > 1} />
@@ -57,6 +62,12 @@ defmodule PRWeb.UserHeaderLive do
   def heart(assigns) do
     ~H"""
     <img src={~p"/images/heart_pink.svg"} class="heart" />
+    """
+  end
+
+  def fire(assigns) do
+    ~H"""
+    <img src={~p"/images/fire.svg"} class="fire" />
     """
   end
 
@@ -120,10 +131,13 @@ defmodule PRWeb.UserHeaderLive do
       PRWeb.Endpoint.subscribe(@presence)
     end
 
+    %{likes: likes, super_likes: super_likes} = Scoring.count_likes_received(%User{id: user_id})
+
     socket =
       socket
       |> assign(
-        points: Scoring.count_points(%User{id: user_id}),
+        points: likes,
+        super_likes: super_likes,
         play_state: play_state,
         num_unplayed: Queue.num_unplayed(),
         max_vol: max_vol()
@@ -136,23 +150,24 @@ defmodule PRWeb.UserHeaderLive do
     {:ok, assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)}
   end
 
+  def mount(_, _, socket) do
+    socket =
+      assign(
+        socket,
+        points: 0,
+        super_likes: 0
+      )
+      |> assign(feature_flags())
+
+    {:ok, socket}
+  end
+
   def max_vol() do
     if is_deutsches_freitag?() do
       35
     else
       25
     end
-  end
-
-  def mount(_, _, socket) do
-    socket =
-      assign(
-        socket,
-        points: 0
-      )
-      |> assign(feature_flags())
-
-    {:ok, socket}
   end
 
   #
@@ -164,10 +179,13 @@ defmodule PRWeb.UserHeaderLive do
         %{assigns: %{current_user: %User{id: user_id}}} = socket
       ) do
     if it_me?(track, socket) do
+      %{likes: likes, super_likes: super_likes} = Scoring.count_likes_received(%User{id: user_id})
+
       {:noreply,
        assign(
          socket,
-         points: Scoring.count_points(%User{id: user_id})
+         points: likes,
+         super_likes: super_likes
        )}
     else
       {:noreply, socket}

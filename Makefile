@@ -1,5 +1,5 @@
 define PG
-brew services start postgresql &&
+brew services start postgresql@14 &&
 endef
 
 define ENV

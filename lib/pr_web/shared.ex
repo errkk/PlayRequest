@@ -34,16 +34,21 @@ defmodule PRWeb.Shared do
 
   def it_me?(_, _), do: false
 
-  def wobble?(%Track{id: liked_id}, %Track{id: track_id}) when track_id == liked_id,
-    do: "track--liked"
+  def wobble?(%Track{id: track_id}, {liked_id, :super}) when track_id == liked_id,
+    do: "is-super-liked"
+
+  def wobble?(%Track{id: track_id}, {liked_id, :like}) when track_id == liked_id,
+    do: "is-liked"
 
   def wobble?(_, _), do: ""
 
   def dun_voted?(%Track{has_pointed: true}), do: true
   def dun_voted?(_), do: false
+  def super_liked?(%Track{has_super_liked: true}), do: true
+  def super_liked?(_), do: false
 
   def can_vote?(%Track{} = track, %User{} = user),
-    do: not it_me?(track, user) and not dun_voted?(track)
+    do: not it_me?(track, user) and not dun_voted?(track) and not super_liked?(track)
 
   def can_vote?(_, _), do: true
 end
