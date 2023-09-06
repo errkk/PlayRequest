@@ -25,6 +25,7 @@ defmodule PR.Scoring do
       on: fragment("?::date", p.inserted_at) == ^Date.utc_today(),
       as: :points
     )
+    |> where([u, points: p], p.is_super == false)
     |> group_by([u], u.id)
     |> having([u], not is_nil(u.id))
     |> select([u], %{u | points_received: count(1)})
@@ -32,28 +33,30 @@ defmodule PR.Scoring do
     |> Repo.all()
   end
 
-  # deprecate
-  def count_points(%User{} = user) do
+  @doc """
+  Counts likes and super likes that a user has received
+  returns: %{likes: 0, super_likes: 0}
+  """
+  def count_likes_received(%User{} = user) do
     Point
-    |> query_for_user(user)
+    |> query_for_recipient(user)
     |> query_for_today()
-    |> Repo.aggregate(:count, :id)
+    |> aggregate_points()
+    |> Repo.all()
+    |> remap_aggregates()
   end
 
-  def count_likes(%User{} = user) do
+  @doc """
+  Counts likes and super likes that a user has given
+  returns: %{likes: 0, super_likes: 0}
+  """
+  def count_likes_sent(%User{} = user) do
     Point
-    |> query_for_user(user)
+    |> query_for_sender(user)
     |> query_for_today()
-    |> group_by(:is_super)
-    |> select([p], [p.is_super, count(p.is_super)])
+    |> aggregate_points()
     |> Repo.all()
-    |> Enum.reduce(
-      %{likes: 0, super_likes: 0},
-      fn
-        [false, likes], acc -> Map.put(acc, :likes, likes)
-        [true, super_likes], acc -> Map.put(acc, :super_likes, super_likes)
-      end
-    )
+    |> remap_aggregates()
   end
 
   def create_point(attrs \\ %{}) do
@@ -73,7 +76,18 @@ defmodule PR.Scoring do
     end
   end
 
-  defp query_for_user(query, %User{id: user_id}) do
+  defp remap_aggregates(results) do
+    results
+    |> Enum.reduce(
+      %{likes: 0, super_likes: 0},
+      fn
+        [false, likes], acc -> Map.put(acc, :likes, likes)
+        [true, super_likes], acc -> Map.put(acc, :super_likes, super_likes)
+      end
+    )
+  end
+
+  defp query_for_recipient(query, %User{id: user_id}) do
     query
     |> join(
       :right,
@@ -84,9 +98,20 @@ defmodule PR.Scoring do
     )
   end
 
+  defp query_for_sender(query, %User{id: user_id}) do
+    query
+    |> where([p], p.user_id == ^user_id)
+  end
+
   @spec query_for_today(Ecto.Queryable.t()) :: Ecto.Queryable.t()
   defp query_for_today(query) do
     query
     |> where([p], fragment("?::date", p.inserted_at) == ^Date.utc_today())
+  end
+
+  defp aggregate_points(query) do
+    query
+    |> group_by(:is_super)
+    |> select([p], [p.is_super, count(p.is_super)])
   end
 end

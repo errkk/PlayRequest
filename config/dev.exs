@@ -108,7 +108,8 @@ config :ueberauth, Ueberauth.Strategy.Google.OAuth,
 
 config :pr,
   allowed_user_domains: System.get_env("ALLOWED_USER_DOMAINS"),
-  installation_name: System.get_env("INSTALLATION_NAME", "PlayRequest")
+  installation_name: System.get_env("INSTALLATION_NAME", "PlayRequest"),
+  super_likes_allowed: System.get_env("SUPER_LIKES_ALLOWED", "2")
 
 config :pr, :feature_flags,
   show_volume: System.get_env("FF_VOLUME", ""),

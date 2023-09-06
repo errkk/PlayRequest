@@ -40,18 +40,26 @@ defmodule PRWeb.PlaybackLive do
         participated: Queue.has_participated?(%User{id: user_id}),
         playlist: Music.get_playlist(%User{id: user_id}),
         page_title: page_title(metadata),
-        show_encouraging_message: show_encouraging_message(user_id)
+        show_encouraging_message: show_encouraging_message(%User{id: user_id}),
+        can_super_like: can_super_like?(%User{id: user_id})
       )
       |> assign(feature_flags())
 
     {:ok, assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)}
   end
 
-  defp show_encouraging_message(user_id) do
+  defp show_encouraging_message(user) do
     Enum.all?([
-      not Queue.has_participated?(%User{id: user_id}, :today),
+      not Queue.has_participated?(user, :today),
       Queue.num_unplayed() == 0
     ])
+  end
+
+  defp can_super_like?(user) do
+    user
+    |> Scoring.count_likes_sent()
+    |> Map.get(:super_likes)
+    |> Kernel.<(super_likes_allowed())
   end
 
   #
@@ -206,6 +214,12 @@ defmodule PRWeb.PlaybackLive do
     Scoring.create_point(%{track_id: track_id, user_id: user_id, is_super: true})
 
     send(self(), {:get_playlist, nil})
+
+    # Update this in case they've used their limit for the day
+    socket =
+      socket
+      |> assign(can_super_like: can_super_like?(%User{id: user_id}))
+
     {:noreply, socket}
   end
 
@@ -251,4 +265,10 @@ defmodule PRWeb.PlaybackLive do
   end
 
   defp page_title(_), do: "..."
+
+  defp super_likes_allowed() do
+    :pr
+    |> Application.get_env(:super_likes_allowed)
+    |> String.to_integer()
+  end
 end

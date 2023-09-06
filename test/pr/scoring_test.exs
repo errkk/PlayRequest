@@ -29,26 +29,18 @@ defmodule PR.ScoringTest do
   end
 
   describe "aggregates" do
-    test "countts points for tracks of the user" do
+    test "counts likes and superlikes for tracks of the user" do
       voter = insert(:user)
+      other_voter = insert(:user)
       player = insert(:user)
       tracks = insert_list(3, :track, user: player)
-      Enum.each(tracks, fn track -> insert(:point, track: track, user: voter) end)
-
-      insert_list(3, :point)
-
-      assert 3 == Scoring.count_points(player)
-    end
-
-    test "countts likes and superlikes for tracks of the user" do
-      voter = insert(:user)
-      player = insert(:user)
-      tracks = insert_list(3, :track, user: player)
-      insert(:point, track: Enum.at(tracks, 0), user: voter)
+      insert(:point, track: Enum.at(tracks, 0), user: other_voter)
       insert(:point, track: Enum.at(tracks, 1), user: voter)
       insert(:point, track: Enum.at(tracks, 2), user: voter, is_super: true)
 
-      assert %{likes: 2, super_likes: 1} = Scoring.count_likes(player)
+      assert %{likes: 2, super_likes: 1} = Scoring.count_likes_received(player)
+      # Voter sent one of each
+      assert %{likes: 1, super_likes: 1} = Scoring.count_likes_sent(voter)
     end
 
     test "its ok to has no points" do
@@ -56,7 +48,7 @@ defmodule PR.ScoringTest do
       insert_list(3, :track, user: player)
       insert_list(3, :point)
 
-      assert 0 == Scoring.count_points(player)
+      assert %{likes: 0, super_likes: 0} = Scoring.count_likes_received(player)
     end
 
     test "old news" do
@@ -70,7 +62,7 @@ defmodule PR.ScoringTest do
 
       insert_list(3, :point)
 
-      assert 0 == Scoring.count_points(player)
+      assert %{likes: 0, super_likes: 0} = Scoring.count_likes_received(player)
     end
   end
 

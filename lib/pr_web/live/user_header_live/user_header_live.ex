@@ -131,7 +131,7 @@ defmodule PRWeb.UserHeaderLive do
       PRWeb.Endpoint.subscribe(@presence)
     end
 
-    %{likes: likes, super_likes: super_likes} = Scoring.count_likes(%User{id: user_id})
+    %{likes: likes, super_likes: super_likes} = Scoring.count_likes_received(%User{id: user_id})
 
     socket =
       socket
@@ -179,7 +179,7 @@ defmodule PRWeb.UserHeaderLive do
         %{assigns: %{current_user: %User{id: user_id}}} = socket
       ) do
     if it_me?(track, socket) do
-      %{likes: likes, super_likes: super_likes} = Scoring.count_likes(%User{id: user_id})
+      %{likes: likes, super_likes: super_likes} = Scoring.count_likes_received(%User{id: user_id})
 
       {:noreply,
        assign(

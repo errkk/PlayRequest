@@ -33,14 +33,15 @@ config :ueberauth, Ueberauth.Strategy.Google.OAuth,
 
 config :pr,
   allowed_user_domains: System.get_env("ALLOWED_USER_DOMAINS", ""),
-  installation_name: System.get_env("INSTALLATION_NAME", "PlayRequest")
+  installation_name: System.get_env("INSTALLATION_NAME", "PlayRequest"),
+  super_likes_allowed: System.get_env("SUPER_LIKES_ALLOWED", "2")
 
 config :pr, :feature_flags,
   show_volume: System.get_env("FF_VOLUME", ""),
   show_toggle_playback: System.get_env("FF_TOGGLE_PLAYBACK", ""),
   show_skip: System.get_env("FF_SKIP", ""),
   scale_play_button: System.get_env("FF_SCALE_PLAY_BUTTON", ""),
-  show_super_like: System.get_env("FF_SUPER_LIKE", "")
+  show_super_like: System.get_env("FF_SUPER_LIKE", ""),
 
 app_name =
   System.get_env("FLY_APP_NAME") ||

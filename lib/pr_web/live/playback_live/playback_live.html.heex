@@ -43,7 +43,7 @@
           <%= if can_vote?(track, @current_user) do %>
             <button phx-click="like" value={track.id} class="like">Like</button>
             <button
-              :if={@show_super_like}
+              :if={@show_super_like and @can_super_like}
               phx-click="super_like"
               value={track.id}
               class="like super"
