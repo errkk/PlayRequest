@@ -11,14 +11,17 @@ defmodule PRWeb.TrackComponent do
       |> assign_new(:extra, fn -> [] end)
 
     ~H"""
-    <%= for track <- @playlist do %>
-      <div class={"
+    <%= for {track, i} <- @playlist |> Enum.with_index() do %>
+      <div
+        class={"
           track
-          #{wobble?(@recently_liked, track)}
+          #{wobble?(track, @recently_liked)}
           #{if is_playing?(track, @play_state), do: "playing"}
-          #{if dun_voted?(track), do: "has-voted"}
-          #{if super_liked?(track), do: "has-super-liked"}
-      "}>
+          #{if dun_voted?(track), do: "has-voted is-liked"}
+          #{if super_liked?(track), do: "has-super-liked is-super-liked"}
+        "}
+        phx-mounted={JS.transition({"", "hide", "show"}, time: (i + 1) * 50)}
+      >
         <div class="track__inner">
           <div class="track__img__container">
             <%= if not is_nil(track.super_likes_received) do %>

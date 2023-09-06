@@ -1,6 +1,9 @@
 <div class="search-results">
-  <%= for track <- @result do %>
-    <div class="track track--light">
+  <%= for {track, i} <- @result |> Enum.with_index() do %>
+    <div
+      class="track track--light"
+      phx-mounted={JS.transition({"", "hide", "show"}, time: (i + 1) * 50)}
+    >
       <div class="track__inner">
         <div class="track__img__container">
           <img src={track.img} width="100" class="track__img" />
