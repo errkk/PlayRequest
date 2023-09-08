@@ -113,7 +113,7 @@ defmodule PRWeb.PlaybackLive do
       socket =
         if is_super do
           socket
-          |> put_flash(:info, "🔥 You've received a superlike for \"#{name}\"")
+          |> put_flash(:info, "🔥 You've been fired for \"#{name}\"")
           |> assign(recently_liked: {track.id, :super})
         else
           socket
