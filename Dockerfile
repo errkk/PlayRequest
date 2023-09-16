@@ -33,6 +33,7 @@ COPY assets assets
 # Build sass here, cos doing it via mix dun werk on fly
 RUN cd assets && \
   sass --no-source-map --style=compressed css/app.scss ../priv/static/assets/app.css
+RUN npm install
 RUN mix assets.deploy
 
 # compile project
