@@ -36,7 +36,7 @@ defmodule PR.ScoringTest do
       tracks = insert_list(3, :track, user: player)
       insert(:point, track: Enum.at(tracks, 0), user: other_voter)
       insert(:point, track: Enum.at(tracks, 1), user: voter)
-      insert(:point, track: Enum.at(tracks, 2), user: voter, is_super: true)
+      insert(:point, track: Enum.at(tracks, 2), user: voter, reason: :super_like)
 
       assert %{likes: 2, super_likes: 1} = Scoring.count_likes_received(player)
       # Voter sent one of each

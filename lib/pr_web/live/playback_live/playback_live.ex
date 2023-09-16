@@ -104,21 +104,23 @@ defmodule PRWeb.PlaybackLive do
 
   # Someone got a point. Was it me?
   def handle_info(
-        {Music, %Point{is_super: is_super, track: %Track{name: name} = track}, :point},
+        {Music, %Point{reason: reason, track: %Track{name: name} = track}, :point},
         socket
       ) do
     send(self(), {:get_playlist, nil})
 
     if it_me?(track, socket) do
       socket =
-        if is_super do
-          socket
-          |> put_flash(:info, "🤩 You've got a superlike for \"#{name}\"!")
-          |> assign(recently_liked: {track.id, :super})
-        else
-          socket
-          |> put_flash(:info, "🙌 You've received a unit of appreciation for \"#{name}\"")
-          |> assign(recently_liked: {track.id, :like})
+        case reason do
+          :super_like ->
+            socket
+            |> put_flash(:info, "🤩 You've got a superlike for \"#{name}\"!")
+            |> assign(recently_liked: {track.id, reason})
+
+          :like ->
+            socket
+            |> put_flash(:info, "🙌 You've received a unit of appreciation for \"#{name}\"")
+            |> assign(recently_liked: {track.id, reason})
         end
 
       {:noreply, socket}
@@ -202,7 +204,7 @@ defmodule PRWeb.PlaybackLive do
   end
 
   def handle_info({:like, track_id}, %{assigns: %{current_user: %User{id: user_id}}} = socket) do
-    Scoring.create_point(%{track_id: track_id, user_id: user_id})
+    Scoring.create_point(%{track_id: track_id, user_id: user_id, reason: :like})
     send(self(), {:get_playlist, nil})
     {:noreply, socket}
   end
@@ -211,7 +213,7 @@ defmodule PRWeb.PlaybackLive do
         {:super_like, track_id},
         %{assigns: %{current_user: %User{id: user_id}}} = socket
       ) do
-    Scoring.create_point(%{track_id: track_id, user_id: user_id, is_super: true})
+    Scoring.create_point(%{track_id: track_id, user_id: user_id, reason: :super_like})
 
     send(self(), {:get_playlist, nil})
 

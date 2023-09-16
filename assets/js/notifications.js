@@ -21,19 +21,25 @@ function connect() {
   channel.on("play_state", updatePlaystate);
 }
 
-function showNotification({ track: { artist, name, img }, from: { first_name }, is_super }) {
-  const msgTitle = `😍 ${first_name} liked ${name}`;
+const confettis = {
+  like: confetti,
+  super_like: bigConfetti,
+  burn: () => { },
+}
+
+function showNotification({ track: { artist, name, img }, from: { first_name }, reason }) {
+  const titles = {
+    like: `😍 ${first_name} liked ${name}`,
+    super_like: `🤩 ${first_name} SUPERLIKED ${name}!`,
+    burn: `🔥 Oh dear ${name}`,
+  }
+  const msgTitle = titles[reason];
   const options = {
     image: img,
     icon: img,
     body: `${name} – ${artist}`
   };
-  if (is_super) {
-    bigConfetti()
-
-  } else {
-    confetti()
-  }
+  confettis[reason]()
   if (!("Notification" in window)) {
     return;
   }

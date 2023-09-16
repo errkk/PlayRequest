@@ -25,7 +25,7 @@ defmodule PR.Scoring do
       on: fragment("?::date", p.inserted_at) == ^Date.utc_today(),
       as: :points
     )
-    |> where([u, points: p], p.is_super == false)
+    |> where([u, points: p], p.reason == :like)
     |> group_by([u], u.id)
     |> having([u], not is_nil(u.id))
     |> select([u], %{u | points_received: count(1)})
@@ -79,10 +79,11 @@ defmodule PR.Scoring do
   defp remap_aggregates(results) do
     results
     |> Enum.reduce(
-      %{likes: 0, super_likes: 0},
+      %{likes: 0, super_likes: 0, burns: 0},
       fn
-        [false, likes], acc -> Map.put(acc, :likes, likes)
-        [true, super_likes], acc -> Map.put(acc, :super_likes, super_likes)
+        [:like, likes], acc -> Map.put(acc, :likes, likes)
+        [:super_like, super_likes], acc -> Map.put(acc, :super_likes, super_likes)
+        [:burn, burns], acc -> Map.put(acc, :burns, burns)
       end
     )
   end
@@ -111,7 +112,7 @@ defmodule PR.Scoring do
 
   defp aggregate_points(query) do
     query
-    |> group_by(:is_super)
-    |> select([p], [p.is_super, count(p.is_super)])
+    |> group_by(:reason)
+    |> select([p], [p.reason, count(p.reason)])
   end
 end
