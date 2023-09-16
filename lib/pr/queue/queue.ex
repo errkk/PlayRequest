@@ -325,14 +325,14 @@ defmodule PR.Queue do
       :left,
       [t],
       p in Point,
-      on: t.id == p.track_id and p.user_id == ^user_id and not p.is_super,
+      on: t.id == p.track_id and p.user_id == ^user_id and p.reason == :like,
       as: :given_point
     )
     |> join(
       :left,
       [t],
       p in Point,
-      on: t.id == p.track_id and p.user_id == ^user_id and p.is_super,
+      on: t.id == p.track_id and p.user_id == ^user_id and p.reason == :super_like,
       as: :given_super_like
     )
   end
@@ -343,14 +343,14 @@ defmodule PR.Queue do
     |> join(
       :left,
       [t],
-      p in subquery(points_for(false)),
+      p in subquery(points_for(:like)),
       on: t.id == p.track_id,
       as: :received_points
     )
     |> join(
       :left,
       [t],
-      p in subquery(points_for(true)),
+      p in subquery(points_for(:super_like)),
       on: t.id == p.track_id,
       as: :received_super_likes
     )
@@ -375,11 +375,11 @@ defmodule PR.Queue do
     )
   end
 
-  @spec points_for(is_super :: boolean()) :: Ecto.Queryable.t()
-  defp points_for(is_super) do
+  @spec points_for(reason :: atom()) :: Ecto.Queryable.t()
+  defp points_for(reason) do
     Point
     |> group_by([p], p.track_id)
-    |> where([p], p.is_super == ^is_super)
+    |> where([p], p.reason == ^reason)
     |> select([p], %{track_id: p.track_id, points_received: count(p.id)})
   end
 

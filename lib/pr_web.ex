@@ -66,7 +66,8 @@ defmodule PRWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {PRWeb.Layouts, :live}
+        layout: {PRWeb.Layouts, :live},
+        container: {:div, class: "content"}
     end
   end
 

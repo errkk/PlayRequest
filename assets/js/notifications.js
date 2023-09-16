@@ -1,4 +1,5 @@
 import { Socket } from "phoenix";
+import confetti from "canvas-confetti";
 
 function connect() {
   if (!window.userToken.length) {
@@ -7,6 +8,7 @@ function connect() {
   const socket = new Socket("/socket", { params: { token: window.userToken } });
 
   socket.connect();
+
 
   const channel = socket.channel("notifications:*", {})
 
@@ -19,8 +21,25 @@ function connect() {
   channel.on("play_state", updatePlaystate);
 }
 
-function showNotification({ track: { artist, name, img }, from: { first_name } }) {
-  const msgTitle = `😍 ${first_name} liked ${name}`;
+const confettis = {
+  like: confetti,
+  super_like: bigConfetti,
+  burn: () => { },
+}
+
+
+window.addEventListener("phx:point-given", ({ detail: { reason } }) => {
+  confettis[reason]();
+}, false)
+
+function showNotification({ track: { artist, name, img }, from: { first_name }, reason }) {
+  const titles = {
+    like: `😍 ${first_name} liked ${name}`,
+    super_like: `🤩 ${first_name} SUPERLIKED ${name}!`,
+    burn: `🔥 Oh dear ${name}`,
+  }
+  const msgTitle = titles[reason];
+  confettis[reason]()
   const options = {
     image: img,
     icon: img,
@@ -58,4 +77,29 @@ function updatePlaystate({ state }) {
 export default function() {
   requestNotificationPermission();
   connect();
+};
+
+var duration = 20 * 1000;
+var end = Date.now() + duration;
+
+function bigConfetti() {
+  // launch a few confetti from the left edge
+  confetti({
+    particleCount: 7,
+    angle: 60,
+    spread: 55,
+    origin: { x: 0 }
+  });
+  // and launch a few from the right edge
+  confetti({
+    particleCount: 7,
+    angle: 120,
+    spread: 55,
+    origin: { x: 1 }
+  });
+
+  // keep going until we are out of time
+  if (Date.now() < end) {
+    requestAnimationFrame(bigConfetti);
+  }
 };

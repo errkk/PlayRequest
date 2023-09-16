@@ -16,15 +16,16 @@ defmodule PRWeb.TrackComponent do
         class={"
           track
           #{wobble?(track, @recently_liked)}
-          #{if is_playing?(track, @play_state), do: "playing"}
-          #{if dun_voted?(track), do: "has-voted is-liked"}
-          #{if super_liked?(track), do: "has-super-liked is-super-liked"}
+          #{if is_playing?(track, @play_state), do: " playing "}
+          #{if dun_voted?(track), do: " has-voted is-liked "}
+          #{if super_liked?(track), do: " has-super-liked "}
+          #{if not is_nil(track.super_likes_received), do: " is-super-liked "}
         "}
         phx-mounted={JS.transition({"", "hide", "show"}, time: (i + 1) * 50)}
       >
         <div class="track__inner">
           <div class="track__img__container">
-            <%= if not is_nil(track.super_likes_received) do %>
+            <%= if false do %>
               <.particles />
             <% end %>
             <img src={track.img} width="100" class="track__img" />

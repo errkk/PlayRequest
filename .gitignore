@@ -21,3 +21,4 @@ erl_crash.dump
 .env
 .DS_Store
 tmp
+assets/node_modules/

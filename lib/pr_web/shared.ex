@@ -34,7 +34,7 @@ defmodule PRWeb.Shared do
 
   def it_me?(_, _), do: false
 
-  def wobble?(%Track{id: track_id}, {liked_id, :super}) when track_id == liked_id,
+  def wobble?(%Track{id: track_id}, {liked_id, :super_like}) when track_id == liked_id,
     do: "is-super-liked"
 
   def wobble?(%Track{id: track_id}, {liked_id, :like}) when track_id == liked_id,

@@ -10,7 +10,7 @@ defmodule PR.Scoring.Point do
     belongs_to(:user, User)
     belongs_to(:track, Track)
 
-    field :is_super, :boolean, default: false
+    field :reason, Ecto.Enum, values: [:like, :super_like, :burn], default: :like
 
     timestamps()
   end
@@ -18,7 +18,7 @@ defmodule PR.Scoring.Point do
   @doc false
   def changeset(point, attrs) do
     point
-    |> cast(attrs, [:user_id, :track_id, :is_super])
+    |> cast(attrs, [:user_id, :track_id, :reason])
     |> validate_required([:user_id, :track_id])
     |> unique_constraint(:track, name: :user_track)
     |> validate_vote_fraud()
