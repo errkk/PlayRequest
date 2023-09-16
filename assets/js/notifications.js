@@ -27,6 +27,11 @@ const confettis = {
   burn: () => { },
 }
 
+
+window.addEventListener("phx:point-given", ({ detail: { reason } }) => {
+  confettis[reason]();
+}, false)
+
 function showNotification({ track: { artist, name, img }, from: { first_name }, reason }) {
   const titles = {
     like: `😍 ${first_name} liked ${name}`,
@@ -34,12 +39,12 @@ function showNotification({ track: { artist, name, img }, from: { first_name }, 
     burn: `🔥 Oh dear ${name}`,
   }
   const msgTitle = titles[reason];
+  confettis[reason]()
   const options = {
     image: img,
     icon: img,
     body: `${name} – ${artist}`
   };
-  confettis[reason]()
   if (!("Notification" in window)) {
     return;
   }
@@ -74,7 +79,7 @@ export default function() {
   connect();
 };
 
-var duration = 30 * 1000;
+var duration = 20 * 1000;
 var end = Date.now() + duration;
 
 function bigConfetti() {

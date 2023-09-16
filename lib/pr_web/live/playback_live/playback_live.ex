@@ -206,7 +206,8 @@ defmodule PRWeb.PlaybackLive do
   def handle_info({:like, track_id}, %{assigns: %{current_user: %User{id: user_id}}} = socket) do
     Scoring.create_point(%{track_id: track_id, user_id: user_id, reason: :like})
     send(self(), {:get_playlist, nil})
-    {:noreply, socket}
+    #  Push event for addEventListener to pick up in JS
+    {:noreply, push_event(socket, "point-given", %{reason: :like})}
   end
 
   def handle_info(
@@ -221,6 +222,7 @@ defmodule PRWeb.PlaybackLive do
     socket =
       socket
       |> assign(can_super_like: can_super_like?(%User{id: user_id}))
+      |> push_event("point-given", %{reason: :super_like})
 
     {:noreply, socket}
   end
