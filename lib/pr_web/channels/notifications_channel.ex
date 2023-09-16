@@ -21,7 +21,7 @@ defmodule PRWeb.NotificationsChannel do
 
   # PubSub callbacks from Music subscription
   def handle_info({Music, point, :point}, socket) do
-    %Point{track: %Track{user_id: recipient_id} = track, user: user} = point
+    %Point{track: %Track{user_id: recipient_id} = track, user: user, is_super: is_super} = point
 
     track_data = Map.take(track, [:name, :artist, :img])
     user_data = Map.take(user, [:first_name, :last_name])
@@ -29,7 +29,13 @@ defmodule PRWeb.NotificationsChannel do
     case socket do
       %{assigns: %{user_id: ^recipient_id}} ->
         Logger.info("Sending like to user:#{recipient_id}")
-        push(socket, "like", %{user_id: recipient_id, track: track_data, from: user_data})
+
+        push(socket, "like", %{
+          user_id: recipient_id,
+          track: track_data,
+          from: user_data,
+          is_super: is_super
+        })
 
       _ ->
         :ok

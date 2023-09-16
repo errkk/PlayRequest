@@ -62,12 +62,12 @@ body {
 .col--left,
 .col--search {
   grid-area: left;
-  overflow: overlay;
+  overflow: visible;
 }
 .col--right,
 .col--playlist {
   grid-area: right;
-  overflow: overlay;
+  overflow: visible;
 }
 .col--main {
   grid-area: main;

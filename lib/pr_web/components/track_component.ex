@@ -24,7 +24,7 @@ defmodule PRWeb.TrackComponent do
       >
         <div class="track__inner">
           <div class="track__img__container">
-            <%= if not is_nil(track.super_likes_received) do %>
+            <%= if false do %>
               <.particles />
             <% end %>
             <img src={track.img} width="100" class="track__img" />

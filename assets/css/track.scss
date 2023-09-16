@@ -180,6 +180,19 @@
         background-size: 18px;
       }
     }
+
+    .is-super-liked & {
+      &::before {
+        content: "👑";
+        font-size: 50px;
+        display: block;
+        position: absolute;
+        top: -30px;
+        left: -30px;
+        transform: rotate(-45deg);
+        z-index: 1;
+      }
+    }
   }
   &__img {
     width: 100%;
