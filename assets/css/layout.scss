@@ -96,6 +96,7 @@ body {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
+  gap: 10px;
 
   ul {
     display: flex;
@@ -181,6 +182,8 @@ body {
   align-content: flex-end;
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
+  gap: 10px 0;
 }
 
 .profile-image {
