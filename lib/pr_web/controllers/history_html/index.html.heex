@@ -4,12 +4,12 @@
     <%= for {hour, tracks} <- @items do %>
       <h3><%= hour %></h3>
       <%= for track <- tracks do %>
-        <div class="track show">
+        <div class={"
+          track show
+          #{if not is_nil(track.super_likes_received), do: " is-super-liked "}
+        "}>
           <div class="track__inner">
             <div class="track__img__container">
-              <%= if not is_nil(track.super_likes_received) do %>
-                <.particles />
-              <% end %>
               <img src={track.img} width="100" class="track__img" />
             </div>
 
