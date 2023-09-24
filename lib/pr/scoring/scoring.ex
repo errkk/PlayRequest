@@ -25,8 +25,8 @@ defmodule PR.Scoring do
       on: fragment("?::date", p.inserted_at) == ^Date.utc_today(),
       as: :points
     )
-    |> where([u, points: p], p.reason == :like)
-    |> group_by([u], u.id)
+    # |> where([u, points: p], p.reason == :like)
+    |> group_by([u, points: p], [u.id, p.reason])
     |> having([u], not is_nil(u.id))
     |> select([u], %{u | points_received: count(1)})
     |> order_by([u], desc: fragment("count(1)"))

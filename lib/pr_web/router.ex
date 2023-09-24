@@ -28,11 +28,6 @@ defmodule PRWeb.Router do
     plug(PRWeb.Plug.NowPlayingPlug)
   end
 
-  scope "/stats" do
-    pipe_through([:browser, :auth, :trusted])
-    live_dashboard("/dashboard", metrics: PR.Telemetry)
-  end
-
   scope "/", PRWeb do
     pipe_through([:browser, :auth, :now_playing])
     live("/", PlaybackLive)
