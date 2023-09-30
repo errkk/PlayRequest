@@ -29,6 +29,7 @@ const confettis = {
 
 
 window.addEventListener("phx:point-given", ({ detail: { reason } }) => {
+  // Point given BY this session
   confettis[reason]();
 }, false)
 
@@ -39,6 +40,7 @@ function showNotification({ track: { artist, name, img }, from: { first_name }, 
     burn: `🔥 Oh dear ${name}`,
   }
   const msgTitle = titles[reason];
+  // Point received
   confettis[reason]()
   const options = {
     image: img,
@@ -79,7 +81,7 @@ export default function() {
   connect();
 };
 
-var duration = 20 * 1000;
+var duration = 10 * 1000;
 var end = Date.now() + duration;
 
 function bigConfetti() {
@@ -100,6 +102,6 @@ function bigConfetti() {
 
   // keep going until we are out of time
   if (Date.now() < end) {
-    requestAnimationFrame(bigConfetti);
+    setTimeout(bigConfetti, 10);
   }
 };
