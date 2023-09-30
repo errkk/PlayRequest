@@ -88,6 +88,8 @@ config :phoenix, :plug_init_mode, :runtime
 # in production as building large stacktraces may be expensive.
 config :phoenix, :stacktrace_depth, 20
 
+config :phoenix_live_view, :debug_heex_annotations, true
+
 config :pr, :sonos,
   scopes: "playback-control-all",
   redirect_uri: "#{System.get_env("REDIRECT_URL_BASE")}/sonos/authorized",

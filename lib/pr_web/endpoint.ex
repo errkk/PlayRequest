@@ -39,11 +39,6 @@ defmodule PRWeb.Endpoint do
     plug(Phoenix.CodeReloader)
   end
 
-  plug(Phoenix.LiveDashboard.RequestLogger,
-    param_key: "request_logger",
-    cookie_key: "request_logger"
-  )
-
   plug(Plug.RequestId)
   # Log level debug, cos Plug.LoggerJSON logs requests for non-dev
   plug(Plug.Telemetry, event_prefix: [:phoenix, :endpoint], log: :debug)
