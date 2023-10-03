@@ -21,7 +21,7 @@ defmodule PRWeb.TrackComponent do
           #{if super_liked?(track), do: " has-super-liked "}
           #{if not is_nil(track.super_likes_received), do: " is-super-liked "}
         "}
-        phx-mounted={JS.transition({"", "hide", "show"}, time: (i + 1) * 50)}
+        phx-mounted={JS.transition({"noop", "hide", "show"}, time: (i + 1) * 50)}
       >
         <div class="track__inner">
           <div class="track__img__container">

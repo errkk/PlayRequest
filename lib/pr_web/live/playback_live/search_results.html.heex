@@ -2,7 +2,7 @@
   <%= for {track, i} <- @result |> Enum.with_index() do %>
     <div
       class="track track--light"
-      phx-mounted={JS.transition({"", "hide", "show"}, time: (i + 1) * 50)}
+      phx-mounted={JS.transition({"noop", "hide", "show"}, time: (i + 1) * 50)}
     >
       <div class="track__inner">
         <div class="track__img__container">
