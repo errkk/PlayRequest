@@ -4,7 +4,6 @@ import "phoenix_html"
 import { LiveSocket } from "phoenix_live_view"
 import { Socket } from "phoenix"
 
-import favicon from "./favicon"
 import notifications from "./notifications";
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content");
@@ -25,5 +24,4 @@ if (searchInput) {
   }, false);
 }
 
-favicon();
 notifications();
