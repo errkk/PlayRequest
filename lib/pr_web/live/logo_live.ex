@@ -48,7 +48,7 @@ defmodule PRWeb.LogoLive do
 
   def suffix do
     if is_deutsches_freitag?() do
-      "-ie.svg"
+      "-de.svg"
     else
       ".svg"
     end
