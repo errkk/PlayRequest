@@ -54,7 +54,8 @@ defmodule PR.MixProject do
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:mock, "~> 0.3.6", only: :test},
       {:heroicons, "~> 0.5"},
-      {:libcluster, "~> 3.3"}
+      {:libcluster, "~> 3.3"},
+      {:sentry, "~> 8.0"}
     ]
   end
 

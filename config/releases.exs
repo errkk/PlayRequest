@@ -59,3 +59,11 @@ config :libcluster,
       ]
     ]
   ]
+
+config :sentry,
+  dsn: System.get_env("SENTRY_DSN"),
+  tags: %{
+    env: System.get_env("RELEASE_STAGE") || "dev"
+  },
+  environment_name: System.get_env("RELEASE_STAGE") || "dev",
+  included_environments: [:staging, :prod]
