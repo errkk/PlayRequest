@@ -1,4 +1,5 @@
 defmodule PRWeb.Endpoint do
+  use Sentry.PlugCapture
   use Phoenix.Endpoint, otp_app: :pr
 
   @session_options [
@@ -49,6 +50,7 @@ defmodule PRWeb.Endpoint do
     json_decoder: Phoenix.json_library()
   )
 
+  plug(Sentry.PlugContext)
   plug(Plug.MethodOverride)
   plug(Plug.Head)
 

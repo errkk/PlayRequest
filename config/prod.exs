@@ -14,3 +14,7 @@ config :pr, PRWeb.Endpoint,
 
 config :pr,
   sleep: 60_000
+
+config :sentry,
+  enable_source_code_context: true,
+  root_source_code_path: File.cwd!()

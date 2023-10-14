@@ -30,8 +30,9 @@ defmodule PR.PlayState do
       SonosAPI.get_metadata()
       |> process_metadata()
     rescue
-      _err ->
+      err ->
         Logger.warn("PlayState could not fetch initial state")
+        raise err
     end
   end
 

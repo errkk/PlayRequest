@@ -119,3 +119,13 @@ config :pr, :feature_flags,
   show_skip: System.get_env("FF_SKIP", ""),
   scale_play_button: System.get_env("FF_SCALE_PLAY_BUTTON", ""),
   show_super_like: System.get_env("FF_SUPER_LIKE", "")
+
+config :sentry,
+  dsn: System.get_env("SENTRY_DSN"),
+  environment_name: :dev,
+  enable_source_code_context: true,
+  root_source_code_path: File.cwd!(),
+  tags: %{
+    env: "dev"
+  },
+  included_environments: [:dev]
