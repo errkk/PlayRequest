@@ -1,0 +1,10 @@
+canvas#ghost {
+  position: fixed;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  z-index: 10000;
+  pointer-events: none;
+}
