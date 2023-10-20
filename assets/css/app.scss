@@ -35,31 +35,28 @@ body {
   margin: 0;
   font-size: 18px;
 
-  background: $blue;
-  background: linear-gradient(160deg, $blue, darken($blue, 20));
+  background-image: linear-gradient(160deg, $blue, darken($blue, 20));
   background-attachment: fixed;
-  transition: background 500ms ease-out;
 
   &.error {
     background-image: linear-gradient(45deg, $pink, $blue);
     background-size: 200% 200%;
     animation: gradient 1s ease infinite;
   }
+
+  &.spooky {
+    background-image: linear-gradient(
+      3deg,
+      rgba(2, 0, 36, 1) 4%,
+      rgba(224, 61, 18, 1) 14%,
+      rgba(181, 112, 39, 1) 26%,
+      rgba(133, 33, 103, 1) 40%,
+      rgba(25, 21, 88, 1) 70%,
+      rgba(0, 0, 3, 1) 100%
+    );
+  }
 }
 
-.spooky {
-  background: rgb(2, 0, 36);
-  background: linear-gradient(
-    3deg,
-    rgba(2, 0, 36, 1) 4%,
-    rgba(224, 61, 18, 1) 14%,
-    rgba(181, 112, 39, 1) 26%,
-    rgba(133, 33, 103, 1) 40%,
-    rgba(25, 21, 88, 1) 70%,
-    rgba(0, 0, 3, 1) 100%
-  );
-  background-attachment: fixed;
-}
 
 .is-pending {
   opacity: 0.5;
