@@ -1,7 +1,7 @@
 defmodule PRWeb.Layouts do
   use PRWeb, :html
 
-  embed_templates "layouts/*"
+  embed_templates("layouts/*")
 
   def ghost(assigns) do
     halloween = ~D[2023-10-31]

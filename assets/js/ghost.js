@@ -1,7 +1,7 @@
 export default function init() {
   const canvasEl = document.querySelector("#ghost");
 
-  document.querySelector("body").classList.add("spooky");
+  // document.querySelector("body").classList.add("spooky");
 
   if (!canvasEl) {
     return;
@@ -109,7 +109,7 @@ export default function init() {
       if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
         console.error(
           "An error occurred compiling the shaders: " +
-            gl.getShaderInfoLog(shader),
+          gl.getShaderInfoLog(shader),
         );
         gl.deleteShader(shader);
         return null;
@@ -130,7 +130,7 @@ export default function init() {
       if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
         console.error(
           "Unable to initialize the shader program: " +
-            gl.getProgramInfoLog(program),
+          gl.getProgramInfoLog(program),
         );
         return null;
       }
