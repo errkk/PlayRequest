@@ -14,15 +14,15 @@
 @import "ghost";
 
 @keyframes gradient {
-	0% {
-		background-position: 0% 50%;
-	}
-	50% {
-		background-position: 100% 50%;
-	}
-	100% {
-		background-position: 0% 50%;
-	}
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 html {
@@ -35,7 +35,6 @@ body {
   margin: 0;
   font-size: 18px;
 
-  background-color: $blue;
   background-image: linear-gradient(160deg, $blue, darken($blue, 20));
   background-attachment: fixed;
 
@@ -44,7 +43,20 @@ body {
     background-size: 200% 200%;
     animation: gradient 1s ease infinite;
   }
+
+  &.spooky {
+    background-image: linear-gradient(
+      3deg,
+      rgba(2, 0, 36, 1) 4%,
+      rgba(224, 61, 18, 1) 14%,
+      rgba(181, 112, 39, 1) 26%,
+      rgba(133, 33, 103, 1) 40%,
+      rgba(25, 21, 88, 1) 70%,
+      rgba(0, 0, 3, 1) 100%
+    );
+  }
 }
+
 
 .is-pending {
   opacity: 0.5;

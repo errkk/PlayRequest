@@ -17,7 +17,9 @@ input[type="text"] {
 
   color: $text;
   font-family: inherit;
-  transition: background 200ms ease, box-shadow 200ms ease;
+  transition:
+    background 200ms ease,
+    box-shadow 200ms ease;
 
   &::placeholder {
     transition: color 200ms ease;

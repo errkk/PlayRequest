@@ -1,5 +1,11 @@
 {
+  "scripts": {
+    "format": "npx prettier . --write"
+  },
   "dependencies": {
     "canvas-confetti": "^1.6.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.0.3"
   }
 }

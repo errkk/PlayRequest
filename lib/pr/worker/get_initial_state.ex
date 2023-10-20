@@ -10,6 +10,9 @@ defmodule PR.Worker.GetInitialState do
       :test ->
         :ok
 
+      :dev ->
+        :ok
+
       _ ->
         PR.PlayState.get_initial_state()
         PR.SonosAPI.subscribe_webhooks()
