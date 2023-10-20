@@ -1,11 +1,11 @@
 export default function init() {
   const canvasEl = document.querySelector("#ghost");
 
-  // document.querySelector("body").classList.add("spooky");
-
   if (!canvasEl) {
     return;
   }
+
+  document.querySelector("body").classList.add("spooky");
 
   const mouseThreshold = 0.1;
   const devicePixelRatio = Math.min(window.devicePixelRatio, 2);
