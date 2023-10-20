@@ -37,9 +37,8 @@ body {
   }
 
   &.container--middle {
-    grid-template-areas:
-      "left_ main main right_";
-    }
+    grid-template-areas: "left_ main main right_";
+  }
 }
 
 .container--header {

@@ -4,28 +4,37 @@ $fontName: "GrotaSansRd";
 
 @font-face {
   font-family: $headingFontBlack;
-  src: url("/fonts/#{$fontName}-Bold.woff") format("woff"), url("/fonts/#{$fontName}-Bold.ttf")  format("truetype"); /* Safari, Android, iOS */
+  src:
+    url("/fonts/#{$fontName}-Bold.woff") format("woff"),
+    url("/fonts/#{$fontName}-Bold.ttf") format("truetype"); /* Safari, Android, iOS */
   font-weight: bold;
 }
 @font-face {
   font-family: $headingFont;
-  src: url("/fonts/#{$fontName}-SemiBold.woff") format("woff"), url("/fonts/#{$fontName}-SemiBold.ttf")  format("truetype"); /* Safari, Android, iOS */
+  src:
+    url("/fonts/#{$fontName}-SemiBold.woff") format("woff"),
+    url("/fonts/#{$fontName}-SemiBold.ttf") format("truetype"); /* Safari, Android, iOS */
   font-weight: bold;
 }
 
 @font-face {
   font-family: $headingFont;
-  src: url("/fonts/#{$fontName}-Light.woff") format("woff"), url("/fonts/#{$fontName}-Light.ttf")  format("truetype"); /* Safari, Android, iOS */
+  src:
+    url("/fonts/#{$fontName}-Light.woff") format("woff"),
+    url("/fonts/#{$fontName}-Light.ttf") format("truetype"); /* Safari, Android, iOS */
   font-weight: normal;
 }
 
 body {
   line-height: 1.4;
   color: transparentize($white, 0.2);
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: "Source Sans Pro", sans-serif;
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   font-family: $headingFont, sans-serif;
   margin: 0;
   padding: 0;
@@ -170,7 +179,6 @@ a:hover .link {
   }
 }
 
-
 .volume {
   display: flex;
   margin-left: 20px;
@@ -202,7 +210,9 @@ a:hover .link {
     transform: scale(1);
     text-indent: -100px;
     overflow: hidden;
-    transition: background-color 200ms ease-out, transform 200ms ease-in;
+    transition:
+      background-color 200ms ease-out,
+      transform 200ms ease-in;
   }
 
   &:hover {

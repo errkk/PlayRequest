@@ -101,7 +101,6 @@
   }
 }
 
-
 /**
  * ----------------------------------------
  * animation swing-in-top-fwd
@@ -120,7 +119,6 @@
   }
 }
 
-
 /**
  * ----------------------------------------
  * animation pulsate-fwd
@@ -138,7 +136,6 @@
   }
 }
 
-
 /**
  * ----------------------------------------
  * animation flip-vertical-fwd
@@ -154,35 +151,85 @@
 }
 
 @keyframes shake {
-  0% { transform: translate(1px, 1px) rotate(0deg); }
-  10% { transform: translate(-1px, -2px) rotate(-1deg); }
-  20% { transform: translate(-3px, 0px) rotate(1deg); }
-  30% { transform: translate(3px, 2px) rotate(0deg); }
-  40% { transform: translate(1px, -1px) rotate(1deg); }
-  50% { transform: translate(-1px, 2px) rotate(-1deg); }
-  60% { transform: translate(-3px, 1px) rotate(0deg); }
-  70% { transform: translate(3px, 1px) rotate(-1deg); }
-  80% { transform: translate(-1px, -1px) rotate(1deg); }
-  90% { transform: translate(1px, 2px) rotate(0deg); }
-  100% { transform: translate(1px, -2px) rotate(-1deg); }
+  0% {
+    transform: translate(1px, 1px) rotate(0deg);
+  }
+  10% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+  20% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+  30% {
+    transform: translate(3px, 2px) rotate(0deg);
+  }
+  40% {
+    transform: translate(1px, -1px) rotate(1deg);
+  }
+  50% {
+    transform: translate(-1px, 2px) rotate(-1deg);
+  }
+  60% {
+    transform: translate(-3px, 1px) rotate(0deg);
+  }
+  70% {
+    transform: translate(3px, 1px) rotate(-1deg);
+  }
+  80% {
+    transform: translate(-1px, -1px) rotate(1deg);
+  }
+  90% {
+    transform: translate(1px, 2px) rotate(0deg);
+  }
+  100% {
+    transform: translate(1px, -2px) rotate(-1deg);
+  }
 }
 
 @keyframes beat {
-  0%, 50%, 100% { transform: scale(1, 1); }
-  30%, 80% { transform: scale(0.92, 0.95); }
+  0%,
+  50%,
+  100% {
+    transform: scale(1, 1);
+  }
+  30%,
+  80% {
+    transform: scale(0.92, 0.95);
+  }
 }
 
 @keyframes pulse {
-  0%, 50%, 100% {  background: #fee; }
-  30%, 80% { background: #fff; }
+  0%,
+  50%,
+  100% {
+    background: #fee;
+  }
+  30%,
+  80% {
+    background: #fff;
+  }
 }
 
 @keyframes pop {
-  0% { transform: scale(1); }
-  10% { transform: translate(-1px, -2px) rotate(-1deg); }
-  20% { transform: translate(-3px, 0px) rotate(1deg) scale(0.92);; }
-  30% { transform: translate(3px, 2px) rotate(0deg) scale(1.2); }
-  40% { transform: translate(1px, -1px) rotate(1deg); }
-  50% { transform: translate(-1px, 2px) rotate(-1deg); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  10% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+  20% {
+    transform: translate(-3px, 0px) rotate(1deg) scale(0.92);
+  }
+  30% {
+    transform: translate(3px, 2px) rotate(0deg) scale(1.2);
+  }
+  40% {
+    transform: translate(1px, -1px) rotate(1deg);
+  }
+  50% {
+    transform: translate(-1px, 2px) rotate(-1deg);
+  }
+  100% {
+    transform: scale(1);
+  }
 }

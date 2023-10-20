@@ -1,13 +1,13 @@
-:root --p{
-  syntax: '<number>';
+:root --p {
+  syntax: "<number>";
   inherits: true;
   initial-value: 50;
 }
 
 .pie {
-  --b:4px;
-  --c:#{$white};
-  --w:17px;
+  --b: 4px;
+  --c: #{$white};
+  --w: 17px;
 
   width: var(--w);
   aspect-ratio: 1;
@@ -17,25 +17,32 @@
   font-weight: bold;
 
   .chip & {
-
     background: darken($lightGrey, 20);
     border-radius: 50%;
 
-    -webkit-mask: radial-gradient(farthest-side,#0000 calc(99% - var(--b)),#000 calc(100% - var(--b)));
-            mask: radial-gradient(farthest-side,#0000 calc(99% - var(--b)),#000 calc(100% - var(--b)));
+    -webkit-mask: radial-gradient(
+      farthest-side,
+      #0000 calc(99% - var(--b)),
+      #000 calc(100% - var(--b))
+    );
+    mask: radial-gradient(
+      farthest-side,
+      #0000 calc(99% - var(--b)),
+      #000 calc(100% - var(--b))
+    );
   }
 
   &.blue {
-    --c:#{$blue};
+    --c: #{$blue};
   }
   &.pink {
-    --c:#{$pink};
+    --c: #{$pink};
   }
   &.teal {
-    --c:#{$teal};
+    --c: #{$teal};
   }
   &.tealDark {
-    --c:#{$tealDark};
+    --c: #{$tealDark};
   }
 }
 .pie:before,
@@ -47,27 +54,41 @@
 .pie:before {
   inset: 0;
   background:
-    radial-gradient(farthest-side,var(--c) 98%,#0000) top/var(--b) var(--b) no-repeat,
-    conic-gradient(var(--c) calc(var(--p)*1%),#0000 0);
+    radial-gradient(farthest-side, var(--c) 98%, #0000) top/var(--b) var(--b)
+      no-repeat,
+    conic-gradient(var(--c) calc(var(--p) * 1%), #0000 0);
 }
 .mask.pie:before {
-  -webkit-mask: radial-gradient(farthest-side,#0000 calc(99% - var(--b)),#000 calc(100% - var(--b)));
-          mask: radial-gradient(farthest-side,#0000 calc(99% - var(--b)),#000 calc(100% - var(--b)));
+  -webkit-mask: radial-gradient(
+    farthest-side,
+    #0000 calc(99% - var(--b)),
+    #000 calc(100% - var(--b))
+  );
+  mask: radial-gradient(
+    farthest-side,
+    #0000 calc(99% - var(--b)),
+    #000 calc(100% - var(--b))
+  );
 }
 .pie:after {
-  inset: calc(50% - var(--b)/2);
+  inset: calc(50% - var(--b) / 2);
   background: var(--c);
-  transform: rotate(calc(var(--p)*3.6deg)) translateY(calc(50% - var(--w)/2));
+  transform: rotate(calc(var(--p) * 3.6deg))
+    translateY(calc(50% - var(--w) / 2));
 }
 .pie.animate {
   animation: p 2s 600ms ease-in-out;
 }
 .no-round:before {
-  background-size: 0 0, auto;
+  background-size:
+    0 0,
+    auto;
 }
 .no-round:after {
   content: none;
 }
-@keyframes p{
-  from{--p:0}
+@keyframes p {
+  from {
+    --p: 0;
+  }
 }
