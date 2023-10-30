@@ -61,7 +61,7 @@ export default function init() {
   render();
 
   // Arrgh
-  setInterval(resizeCanvas, 1000);
+  setInterval(resizeCanvas, 500);
 
   window.addEventListener("mousemove", (e) => {
     updateMousePosition(e.pageX, e.pageY);
