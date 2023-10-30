@@ -5,7 +5,7 @@ defmodule PR.MixProject do
     [
       app: :pr,
       version: "0.1.0",
-      elixir: "~> 1.14.0",
+      elixir: "~> 1.15.0",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -30,7 +30,7 @@ defmodule PR.MixProject do
 
   defp deps do
     [
-      {:ecto_sql, "~> 3.4"},
+      {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_pubsub, "~> 2.0"},
       {:jason, "~> 1.0"},

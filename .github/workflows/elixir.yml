@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: elixir:1.14.3-alpine
+      image: elixir:1.15.6-alpine
 
     services:
       postgres:
