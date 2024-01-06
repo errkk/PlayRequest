@@ -9,20 +9,20 @@ defmodule PRWeb.LogoSvg do
     ~H"""
     <svg viewBox="0 0 100 100" class={["logo", variant()]}>
       <g transform="rotate(180 50 50)">
-        <rect y="15" height="69.3246" class="flag-1" x={x(0)} width={width()} rx="5">
+        <rect y="15" height="70" class="flag-1" x={x(0)} width={width()} rx="5">
           <.animate_height :if={@playing} begin="0.2s" />
           <.animate_opacity :if={@buffering} begin="0.8s" />
         </rect>
-        <rect y="15" height="51.9636" class="flag-2" x={x(1)} width={width()} rx="5">
+        <rect y="15" height="38" class="flag-2" x={x(1)} width={width()} rx="5">
           <.animate_height :if={@playing} begin="0.4s" />
           <.animate_opacity :if={@buffering} begin="0.3s" />
         </rect>
-        <rect y="15" height="53.5006" class="flag-3" x={x(2)} width={width()} rx="5">
+        <rect y="15" height="60" class="flag-3" x={x(2)} width={width()} rx="5">
           <.animate_height :if={@playing} begin="0.6s" />
           <.animate_opacity :if={@buffering} begin="0.5s" />
         </rect>
         <%= unless is_nil(x(3)) do %>
-          <rect y="15" height="45.4203" class="flag-1" x={x(3)} width={width()} rx="5">
+          <rect y="15" height="45" class="flag-1" x={x(3)} width={width()} rx="5">
             <.animate_height :if={@playing} begin="0.8s" />
             <.animate_opacity :if={@buffering} begin="0s" />
           </rect>
