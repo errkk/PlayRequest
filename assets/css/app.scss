@@ -74,3 +74,49 @@ progress {
 .canvas-container {
   display: none;
 }
+
+.flag-1 {
+  fill: #FFFFFF;
+}
+.flag-2 {
+  fill: #32FAD7;
+}
+.flag-3 {
+  fill: #FF1D79;
+}
+
+.co {
+  .flag-1 {
+    fill: #EFC944;
+  }
+  .flag-2 {
+    fill: #0F2D7C;
+  }
+  .flag-3 {
+    fill: #B83F47;
+  }
+}
+
+.de {
+  .flag-1 {
+    fill: #000000;
+  }
+  .flag-2 {
+    fill: #DD0000;
+  }
+  .flag-3 {
+    fill: #FFCE00;
+  }
+}
+
+.ie {
+  .flag-1 {
+    fill: #FF883E;
+  }
+  .flag-2 {
+    fill: #FFFFFF;
+  }
+  .flag-3 {
+    fill: #169B62;
+  }
+}
