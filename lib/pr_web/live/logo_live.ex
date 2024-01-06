@@ -10,6 +10,8 @@ defmodule PRWeb.LogoLive do
   alias PR.PlayState
   alias PR.Music.PlaybackState
 
+  import PRWeb.LogoSvg
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -24,34 +26,20 @@ defmodule PRWeb.LogoLive do
 
   def logo(%{play_state: %PlaybackState{state: :playing}} = assigns) do
     ~H"""
-    <img src={~p"/images/logo-playing#{suffix()}"} class="logo" />
+    <.logo_svg playing={true} />
     """
   end
 
   def logo(%{play_state: %PlaybackState{state: :buffering}} = assigns) do
     ~H"""
-    <img src={~p"/images/logo-buffering#{suffix()}"} class="logo" />
+    <.logo_svg buffering={true} />
     """
   end
 
   def logo(%{play_state: _} = assigns) do
     ~H"""
-    <img src={~p"/images/logo-not-playing#{suffix()}"} class="logo" />
+    <.logo_svg />
     """
-  end
-
-  def is_deutsches_freitag?() do
-    Timex.today()
-    |> Timex.weekday()
-    |> Kernel.==(5)
-  end
-
-  def suffix do
-    if is_deutsches_freitag?() do
-      "-de.svg"
-    else
-      ".svg"
-    end
   end
 
   @impl true

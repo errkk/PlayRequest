@@ -21,9 +21,6 @@ defmodule PRWeb.UserHeaderLive do
   alias PR.SonosAPI
   alias PRWeb.Presence
 
-  # TODO: Move this
-  import PRWeb.LogoLive, only: [is_deutsches_freitag?: 0]
-
   import PRWeb.Shared
 
   embed_templates("*")
@@ -163,10 +160,11 @@ defmodule PRWeb.UserHeaderLive do
   end
 
   def max_vol() do
-    if is_deutsches_freitag?() do
-      35
-    else
-      25
+    Timex.today()
+    |> Timex.weekday()
+    |> case do
+      5 -> 35
+      _ -> 25
     end
   end
 
