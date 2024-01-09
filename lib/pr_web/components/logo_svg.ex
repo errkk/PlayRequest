@@ -7,8 +7,8 @@ defmodule PRWeb.LogoSvg do
 
   def logo_svg(assigns) do
     ~H"""
-    <svg viewBox="0 0 100 100" class={["logo", variant()]}>
-      <g transform="rotate(180 50 50)">
+    <svg viewBox="0 0 100 100" class={["logo", variant()]} title={title()}>
+      <g transform={transform()}>
         <rect y="15" height="70" class="flag-1" x={x(0)} width={width()} rx="5">
           <.animate_height :if={@playing} begin="0.2s" />
           <.animate_opacity :if={@buffering} begin="0.8s" />
@@ -69,7 +69,7 @@ defmodule PRWeb.LogoSvg do
         [15, 35, 55, 75] |> Enum.at(i)
 
       _ ->
-        [15.0, 45.5, 75.0] |> Enum.at(i)
+        [15, 45, 75] |> Enum.at(i)
     end
   end
 
@@ -77,6 +77,21 @@ defmodule PRWeb.LogoSvg do
     case variant() do
       :en -> 15
       _ -> 25
+    end
+  end
+
+  defp transform() do
+    case variant() do
+      :en -> "rotate(180 50 50)"
+      _ -> "rotate(90 50 50) translate(0, 0)"
+    end
+  end
+
+  defp title() do
+    case variant() do
+      :de -> "Deutsches Freitag"
+      :co -> "martes colombiano"
+      _ -> nil
     end
   end
 
