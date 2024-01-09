@@ -32,33 +32,6 @@ defmodule PRWeb.LogoSvg do
     """
   end
 
-  defp x(i) do
-    case variant() do
-      :en ->
-        [15, 35, 55, 75] |> Enum.at(i)
-
-      _ ->
-        [15, 45, 75] |> Enum.at(i)
-    end
-  end
-
-  defp width() do
-    case variant() do
-      :en -> 15
-      _ -> 25
-    end
-  end
-
-  defp variant() do
-    Timex.today()
-    |> Timex.weekday()
-    |> case do
-      5 -> :de
-      2 -> :co
-      _ -> :en
-    end
-  end
-
   def animate_height(assigns) do
     ~H"""
     <animate
@@ -88,5 +61,32 @@ defmodule PRWeb.LogoSvg do
       values="1;0.1;0.1;1"
     />
     """
+  end
+
+  defp x(i) do
+    case variant() do
+      :en ->
+        [15, 35, 55, 75] |> Enum.at(i)
+
+      _ ->
+        [15.0, 45.5, 75.0] |> Enum.at(i)
+    end
+  end
+
+  defp width() do
+    case variant() do
+      :en -> 15
+      _ -> 25
+    end
+  end
+
+  defp variant() do
+    Timex.today()
+    |> Timex.weekday()
+    |> case do
+      5 -> :de
+      2 -> :co
+      _ -> :en
+    end
   end
 end
