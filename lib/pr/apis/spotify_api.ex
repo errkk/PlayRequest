@@ -33,9 +33,13 @@ defmodule PR.SpotifyAPI do
   def replace_playlist(uris) do
     with [%Playlist{playlist_id: playlist_id} | _] <- SpotifyData.list_playlists(),
          %{snapshot_id: id} <- put(%{uris: uris}, "/v1/playlists/#{playlist_id}/tracks") do
+      Logger.info("Replace playlist success. Snapshot: #{id}")
       {:ok, id}
     else
-      _ -> {:error, :cant_replace}
+      err ->
+        Logger.error("Error replacing playlist: #{inspect(err)}")
+
+        {:error, :cant_replace}
     end
   end
 
