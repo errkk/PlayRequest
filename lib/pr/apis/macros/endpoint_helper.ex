@@ -66,46 +66,67 @@ defmodule PR.Apis.EndpointHelper do
 
       @spec handle_api_response({:error | :ok, Response.t() | Error.t()}, String.t()) ::
               map() | nil
-      defp handle_api_response({:error, %Response{status_code: 401, body: body}}, _resource) do
-        Logger.error("Unauthorized token: #{__MODULE__}")
+      defp handle_api_response({:error, %Response{status_code: 401}}, _resource) do
+        Logger.error("#{__MODULE__}  Code: 401 Unauthorized token")
         {:unauthorized}
       end
 
-      defp handle_api_response({:ok, %Response{status_code: 200, body: body}}, _resource),
-        do: Jason.decode!(body) |> convert_result()
+      defp handle_api_response(
+             {:ok, %Response{status_code: 200, body: body}},
+             resource
+           ) do
+        Logger.info("#{__MODULE__} Code: 200 Resource: #{resource}")
 
-      defp handle_api_response({:ok, %Response{status_code: 204, body: body}}, _resource),
-        do: {:ok, nil}
+        Jason.decode!(body) |> convert_result()
+      end
 
-      defp handle_api_response({:ok, %Response{status_code: 201, body: body}}, _resource),
-        do: Jason.decode!(body) |> convert_result()
+      defp handle_api_response(
+             {:ok, %Response{status_code: 204, body: body}},
+             resource
+           ) do
+        Logger.info("#{__MODULE__} Code: 204 Resource: #{resource}")
+
+        {:ok, nil}
+      end
+
+      defp handle_api_response(
+             {:ok, %Response{status_code: 201, body: body}},
+             resource
+           ) do
+        Logger.info("#{__MODULE__} Code: 201 Resource: #{resource}")
+        Jason.decode!(body) |> convert_result()
+      end
 
       defp handle_api_response({:error, %Response{status_code: 404}}, resource) do
-        Logger.error("Not found: #{resource}")
+        Logger.error("#{__MODULE__} Code: 404 Resource: #{resource} Not found")
         {:error, :not_found}
       end
 
       defp handle_api_response({:error, %Response{status_code: 415}}, resource) do
-        Logger.error("Unsupported media type: #{resource}")
+        Logger.error("#{__MODULE__} Code: 415 Resource: #{resource} Unsupported media type")
         {:error, :unsupported_media_type}
       end
 
       defp handle_api_response({:error, %Response{status_code: 410}}, resource) do
-        Logger.error("Gone: #{resource}")
+        Logger.error("#{__MODULE__} Code: 410 Resource: #{resource} Gone!")
         {:error, :gone}
       end
 
       defp handle_api_response({:error, %Response{status_code: 499}}, resource) do
+        Logger.error("#{__MODULE__} Code: 499 Resource: #{resource} No content")
         {:error, :no_content}
       end
 
       defp handle_api_response({:error, %Response{status_code: code, body: body}}, resource) do
-        Logger.error("Error: #{code}, #{resource} #{__MODULE__}")
+        Logger.error(
+          "#{__MODULE__} Code: #{code} Resource: #{resource} Response: #{inspect(body)}"
+        )
+
         {:error, body}
       end
 
       defp handle_api_response({:error, %Error{reason: reason}}, resource) do
-        Logger.error("Error: #{inspect(reason)} #{resource} #{__MODULE__}")
+        Logger.error("#{__MODULE__} Resource: #{resource} Error reason: #{reason}")
         {:error, reason}
       end
 

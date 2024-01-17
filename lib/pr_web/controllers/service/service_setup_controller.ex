@@ -131,10 +131,12 @@ defmodule PRWeb.Service.ServiceSetupController do
 
   def sync_playlist(conn, _) do
     case Music.sync_playlist() do
-      {:ok, _} ->
+      {:ok} ->
         conn
         |> put_flash(:info, "Playlist synced")
         |> redirect(to: ~p"/setup")
+
+      # TODO: This doesnt catch an underlying error from the API but it should be logged
 
       _ ->
         conn

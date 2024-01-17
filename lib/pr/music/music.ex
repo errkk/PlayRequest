@@ -64,7 +64,6 @@ defmodule PR.Music do
     Queue.list_track_uris()
     |> Enum.map(fn {id} -> "spotify:track:" <> id end)
     |> SpotifyAPI.replace_playlist()
-    |> tap(fn _ -> Logger.debug("Spotify sync completed") end)
 
     {:ok}
   end
