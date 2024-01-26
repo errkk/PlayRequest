@@ -38,7 +38,7 @@ defmodule PRWeb.LogoSvg do
       attributeName="height"
       begin={@begin}
       calcMode="spline"
-      dur="1.4"
+      dur={duration()}
       keySplines="0.5 0 0.5 1;0.5 0 0.5 1;0.5 0 0.5 1"
       keyTimes="0;0.33;0.66;1"
       repeatCount="indefinite"
@@ -77,6 +77,13 @@ defmodule PRWeb.LogoSvg do
     case variant() do
       :en -> 15
       _ -> 25
+    end
+  end
+
+  defp duration() do
+    case variant() do
+      :de -> 0.5
+      _ -> 1.5
     end
   end
 
