@@ -335,6 +335,13 @@ defmodule PR.Queue do
       on: t.id == p.track_id and p.user_id == ^user_id and p.reason == :super_like,
       as: :given_super_like
     )
+    |> join(
+      :left,
+      [t],
+      p in Point,
+      on: t.id == p.track_id and p.user_id == ^user_id and p.reason == :burn,
+      as: :given_burn
+    )
   end
 
   @spec query_received_points(Ecto.Queryable.t()) :: Ecto.Queryable.t()
@@ -353,6 +360,13 @@ defmodule PR.Queue do
       p in subquery(points_for(:super_like)),
       on: t.id == p.track_id,
       as: :received_super_likes
+    )
+    |> join(
+      :left,
+      [t],
+      p in subquery(points_for(:burn)),
+      on: t.id == p.track_id,
+      as: :received_burns
     )
   end
 
@@ -409,8 +423,10 @@ defmodule PR.Queue do
         t,
         given_point: gp,
         given_super_like: gs,
+        given_burn: gb,
         received_points: rp,
         received_super_likes: rs,
+        received_burns: rb,
         track_novelty: tn,
         artist_novelty: an
       ],
@@ -418,8 +434,10 @@ defmodule PR.Queue do
         t
         | has_pointed: not is_nil(gp.id),
           has_super_liked: not is_nil(gs.id),
+          has_burnt: not is_nil(gb.id),
           points_received: rp.points_received,
           super_likes_received: rs.points_received,
+          burns_received: rb.points_received,
           track_novelty: coalesce(tn.track_novelty, 100),
           artist_novelty: coalesce(an.artist_novelty, 100)
       }

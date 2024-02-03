@@ -41,7 +41,8 @@ defmodule PRWeb.PlaybackLive do
         playlist: Music.get_playlist(%User{id: user_id}),
         page_title: page_title(metadata),
         show_encouraging_message: show_encouraging_message(%User{id: user_id}),
-        can_super_like: can_super_like?(%User{id: user_id})
+        can_super_like: can_super_like?(%User{id: user_id}),
+        can_burn: can_burn?(%User{id: user_id})
       )
       |> assign(feature_flags())
 
@@ -60,6 +61,13 @@ defmodule PRWeb.PlaybackLive do
     |> Scoring.count_likes_sent()
     |> Map.get(:super_likes)
     |> Kernel.<(super_likes_allowed())
+  end
+
+  defp can_burn?(user) do
+    user
+    |> Scoring.count_likes_sent()
+    |> Map.get(:burns)
+    |> Kernel.<(burns_allowed())
   end
 
   #
@@ -120,6 +128,11 @@ defmodule PRWeb.PlaybackLive do
           :like ->
             socket
             |> put_flash(:info, "🙌 You've received a unit of appreciation for \"#{name}\"")
+            |> assign(recently_liked: {track.id, reason})
+
+          :burn ->
+            socket
+            |> put_flash(:info, "🔥 You got fired for \"#{name}\"")
             |> assign(recently_liked: {track.id, reason})
         end
 
@@ -203,7 +216,10 @@ defmodule PRWeb.PlaybackLive do
     end
   end
 
-  def handle_info({:like, track_id}, %{assigns: %{current_user: %User{id: user_id}}} = socket) do
+  def handle_info(
+        {:point, :like, track_id},
+        %{assigns: %{current_user: %User{id: user_id}}} = socket
+      ) do
     Scoring.create_point(%{track_id: track_id, user_id: user_id, reason: :like})
     send(self(), {:get_playlist, nil})
     #  Push event for addEventListener to pick up in JS
@@ -211,10 +227,10 @@ defmodule PRWeb.PlaybackLive do
   end
 
   def handle_info(
-        {:super_like, track_id},
+        {:point, reason, track_id},
         %{assigns: %{current_user: %User{id: user_id}}} = socket
       ) do
-    Scoring.create_point(%{track_id: track_id, user_id: user_id, reason: :super_like})
+    Scoring.create_point(%{track_id: track_id, user_id: user_id, reason: reason})
 
     send(self(), {:get_playlist, nil})
 
@@ -222,7 +238,8 @@ defmodule PRWeb.PlaybackLive do
     socket =
       socket
       |> assign(can_super_like: can_super_like?(%User{id: user_id}))
-      |> push_event("point-given", %{reason: :super_like})
+      |> assign(can_burn: can_burn?(%User{id: user_id}))
+      |> push_event("point-given", %{reason: reason})
 
     {:noreply, socket}
   end
@@ -241,12 +258,18 @@ defmodule PRWeb.PlaybackLive do
   end
 
   def handle_event("like", %{"value" => track_id}, socket) do
-    send(self(), {:like, track_id})
+    send(self(), {:point, :like, track_id})
     {:noreply, socket}
   end
 
   def handle_event("super_like", %{"value" => track_id}, socket) do
-    send(self(), {:super_like, track_id})
+    send(self(), {:point, :super_like, track_id})
+
+    {:noreply, socket}
+  end
+
+  def handle_event("burn", %{"value" => track_id}, socket) do
+    send(self(), {:point, :burn, track_id})
 
     {:noreply, socket}
   end
@@ -273,6 +296,12 @@ defmodule PRWeb.PlaybackLive do
   defp super_likes_allowed() do
     :pr
     |> Application.get_env(:super_likes_allowed)
+    |> String.to_integer()
+  end
+
+  defp burns_allowed() do
+    :pr
+    |> Application.get_env(:burns_allowed)
     |> String.to_integer()
   end
 end
