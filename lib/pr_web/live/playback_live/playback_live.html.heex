@@ -2,11 +2,7 @@
   <div class="col--search">
     <.search_form result={@result} loading={@loading} q={@q} />
 
-    <%= unless @participated do %>
-      <.welcome current_user={@current_user} />
-    <% else %>
-      <.nothing_queued :if={@show_encouraging_message && length(@result) == 0} />
-    <% end %>
+    <.welcome :if={not @participated} current_user={@current_user} />
 
     <.search_results result={@result} scale_play_button={@scale_play_button} />
   </div>
@@ -14,6 +10,7 @@
   <div class="col--playlist">
     <h2>Queue</h2>
     <div class="queue">
+      <.nothing_queued :if={@show_encouraging_message && length(@result) == 0} />
       <.tracks
         playlist={@playlist}
         play_state={@play_state}
@@ -50,6 +47,14 @@
                 class="like super"
               >
                 Super&nbsp;like
+              </button>
+              <button
+                :if={@show_burn and @can_burn}
+                phx-click="burn"
+                value={track.id}
+                class="like super"
+              >
+                Burn
               </button>
             </span>
           <% end %>

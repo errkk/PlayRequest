@@ -16,8 +16,10 @@ defmodule PR.Queue.Track do
 
     field(:has_pointed, :boolean, virtual: true)
     field(:has_super_liked, :boolean, virtual: true)
+    field(:has_burnt, :boolean, virtual: true)
     field(:points_received, :integer, virtual: true)
     field(:super_likes_received, :integer, virtual: true)
+    field(:burns_received, :integer, virtual: true)
 
     # from a joined view
     field(:artist_novelty, :integer, virtual: true)

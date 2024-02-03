@@ -25,9 +25,11 @@ defmodule PRWeb.TrackComponent do
       >
         <div class="track__inner">
           <div class="track__img__container">
-            <%= if false do %>
-              <.particles />
-            <% end %>
+            <.particles :if={
+              burnt?(track) or
+                is_burnt?(track, @recently_liked) or
+                not is_nil(track.burns_received)
+            } />
             <img src={track.img} width="100" class="track__img" />
           </div>
           <div class="track__details">
