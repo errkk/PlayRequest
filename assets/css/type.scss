@@ -27,21 +27,21 @@ $font80s: "BoogieBoys";
 }
 
 @font-face {
-  font-family: "#{$font80s}Regular";
+  font-family: #{$font80s}Regular;
   src:
-    url("/fonts/#{$font80s}Regular.otf") format("otf"); /* Safari, Android, iOS */
+    url("/fonts/#{$font80s}Regular.otf") format("opentype");
   font-weight: normal;
 }
 @font-face {
-  font-family: "#{$font80s}Extrude";
+  font-family: #{$font80s}Extrude;
   src:
-    url("/fonts/#{$font80s}Regular.otf") format("otf"); /* Safari, Android, iOS */
+    url("/fonts/#{$font80s}Extrude.otf") format("opentype");
   font-weight: normal;
 }
 @font-face {
-  font-family: "#{$font80s}Shadow";
+  font-family: #{$font80s}Shadow;
   src:
-    url("/fonts/#{$font80s}Regular.otf") format("otf"); /* Safari, Android, iOS */
+    url("/fonts/#{$font80s}Shadow.otf") format("opentype"); 
   font-weight: normal;
 }
 
@@ -84,22 +84,37 @@ p {
   }
 }
 
-.header-80s {
-  font-family: "#{$font80s}Regular";
+.header--80s {
+  font-family: #{$font80s}Regular;
+  position: relative;
+  font-size: 1.5em;
+  bottom: -0.25em;
+  
+  .size {
+    position: relative;
+    visibility: hidden;
+  }
+
   span {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
+    color: green;
+
+    &.regular {
+      font-family: #{$font80s}Regular;
+      color: $white;
+    }
 
     &.extrude {
-      font-family: "#{$font80s}Regular";
-      color: $teal;
+      font-family: #{$font80s}Extrude;
+      color: $blue;
     }
-    &.extrude {
-      font-family: "#{$font80s}Shadow";
-      color: $white;
+    &.shadow {
+      font-family: #{$font80s}Shadow;
+      color: $teal;
     }
   }
 }
