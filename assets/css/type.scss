@@ -1,7 +1,6 @@
 $headingFont: "Grota";
 $headingFontBlack: "GrotaBlack";
 $fontName: "GrotaSansRd";
-$font80s: "BoogieBoys";
 
 @font-face {
   font-family: $headingFontBlack;
@@ -27,21 +26,9 @@ $font80s: "BoogieBoys";
 }
 
 @font-face {
-  font-family: #{$font80s}Regular;
+  font-family: Neon;
   src:
-    url("/fonts/#{$font80s}Regular.otf") format("opentype");
-  font-weight: normal;
-}
-@font-face {
-  font-family: #{$font80s}Extrude;
-  src:
-    url("/fonts/#{$font80s}Extrude.otf") format("opentype");
-  font-weight: normal;
-}
-@font-face {
-  font-family: #{$font80s}Shadow;
-  src:
-    url("/fonts/#{$font80s}Shadow.otf") format("opentype"); 
+    url("/fonts/Neon.ttf") format("truetype");
   font-weight: normal;
 }
 
@@ -84,40 +71,38 @@ p {
   }
 }
 
-.header--80s {
-  font-family: #{$font80s}Regular;
-  position: relative;
-  font-size: 1.5em;
-  bottom: -0.25em;
-  
-  .size {
-    position: relative;
-    visibility: hidden;
+@keyframes pulsate {
+  100% {
+    /* Larger blur radius */
+    text-shadow:
+      0 0 4px #fff,
+      0 0 11px #fff,
+      0 0 19px #fff,
+      0 0 40px $teal,
+      0 0 80px $teal,
+      0 0 90px $teal,
+      0 0 100px $teal,
+      0 0 150px $teal;
   }
-
-  span {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    color: green;
-
-    &.regular {
-      font-family: #{$font80s}Regular;
-      color: $white;
-    }
-
-    &.extrude {
-      font-family: #{$font80s}Extrude;
-      color: $blue;
-    }
-    &.shadow {
-      font-family: #{$font80s}Shadow;
-      color: $teal;
-    }
+ 0% {
+    /* A slightly smaller blur radius */
+    text-shadow:
+      0 0 3px #fff,
+      0 0 8px #fff,
+      0 0 17px #fff,
+      0 0 35px $teal,
+      0 0 70px $teal,
+      0 0 76px $teal,
+      0 0 90px $teal,
+      0 0 130px $teal;
   }
 }
+
+.header--80s {
+  font-family: Neon;
+  animation: pulsate 0.11s ease-in-out infinite alternate;    
+}
+
 .intro {
   font-size: 1.5em;
   margin-bottom: 1em;
