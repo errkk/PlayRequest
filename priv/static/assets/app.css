@@ -300,20 +300,8 @@
 }
 
 @font-face {
-  font-family: BoogieBoysRegular;
-  src: url("/fonts/BoogieBoysRegular.otf") format("opentype");
-  font-weight: normal;
-}
-
-@font-face {
-  font-family: BoogieBoysExtrude;
-  src: url("/fonts/BoogieBoysExtrude.otf") format("opentype");
-  font-weight: normal;
-}
-
-@font-face {
-  font-family: BoogieBoysShadow;
-  src: url("/fonts/BoogieBoysShadow.otf") format("opentype");
+  font-family: Neon;
+  src: url("/fonts/Neon.ttf") format("truetype");
   font-weight: normal;
 }
 
@@ -359,8 +347,20 @@ h3+p {
   margin-top: 5px;
 }
 
+@keyframes pulsate {
+  100% {
+    /* Larger blur radius */
+    text-shadow: 0 0 4px #fff, 0 0 11px #fff, 0 0 19px #fff, 0 0 40px #32fad7, 0 0 80px #32fad7, 0 0 90px #32fad7, 0 0 100px #32fad7, 0 0 150px #32fad7;
+  }
+
+  0% {
+    /* A slightly smaller blur radius */
+    text-shadow: 0 0 3px #fff, 0 0 8px #fff, 0 0 17px #fff, 0 0 35px #32fad7, 0 0 70px #32fad7, 0 0 76px #32fad7, 0 0 90px #32fad7, 0 0 130px #32fad7;
+  }
+}
+
 .header--80s {
-  font-family: BoogieBoysRegular;
+  <<<<<<< HEAD font-family: BoogieBoysRegular;
   position: relative;
   font-size: 1.5em;
   bottom: -0.25em;
@@ -393,6 +393,9 @@ h3+p {
 .header--80s span.shadow {
   font-family: BoogieBoysShadow;
   color: #32fad7;
+  =======font-family: Neon;
+  animation: pulsate 0.11s ease-in-out infinite alternate;
+  >>>>>>>8a1cf87 (80s title)
 }
 
 .intro {
@@ -1526,7 +1529,7 @@ input[type=text]:focus::placeholder {
 }
 
 .particle:nth-of-type(1) {
-  animation-delay: 0.645199067s;
+  <<<<<<< HEAD animation-delay: 0.645199067s;
   left: calc((100% - 5em) * 0);
 }
 
@@ -1773,251 +1776,252 @@ input[type=text]:focus::placeholder {
 .particle:nth-of-type(50) {
   animation-delay: 0.1801907356s;
   animation-delay: 0.2171608412s;
-  left: calc((100% - 5em) * 0);
+  =======animation-delay: 0.6308356631s;
+  >>>>>>>8a1cf87 (80s title) left: calc((100% - 5em) * 0);
 }
 
 .particle:nth-of-type(2) {
-  animation-delay: 0.7619456606s;
+  animation-delay: 0.3886991581s;
   left: calc((100% - 5em) * 0.02);
 }
 
 .particle:nth-of-type(3) {
-  animation-delay: 0.7916512417s;
+  animation-delay: 0.3049153107s;
   left: calc((100% - 5em) * 0.04);
 }
 
 .particle:nth-of-type(4) {
-  animation-delay: 0.0355682259s;
+  animation-delay: 0.0027967937s;
   left: calc((100% - 5em) * 0.06);
 }
 
 .particle:nth-of-type(5) {
-  animation-delay: 0.8861562975s;
+  animation-delay: 0.9957790893s;
   left: calc((100% - 5em) * 0.08);
 }
 
 .particle:nth-of-type(6) {
-  animation-delay: 0.4909564964s;
+  animation-delay: 0.2726268938s;
   left: calc((100% - 5em) * 0.1);
 }
 
 .particle:nth-of-type(7) {
-  animation-delay: 0.2094142708s;
+  animation-delay: 0.3827337561s;
   left: calc((100% - 5em) * 0.12);
 }
 
 .particle:nth-of-type(8) {
-  animation-delay: 0.4672584717s;
+  animation-delay: 0.669316627s;
   left: calc((100% - 5em) * 0.14);
 }
 
 .particle:nth-of-type(9) {
-  animation-delay: 0.8173627141s;
+  animation-delay: 0.8031461826s;
   left: calc((100% - 5em) * 0.16);
 }
 
 .particle:nth-of-type(10) {
-  animation-delay: 0.6747626648s;
+  animation-delay: 0.8831908991s;
   left: calc((100% - 5em) * 0.18);
 }
 
 .particle:nth-of-type(11) {
-  animation-delay: 0.26947825s;
+  animation-delay: 0.4191250524s;
   left: calc((100% - 5em) * 0.2);
 }
 
 .particle:nth-of-type(12) {
-  animation-delay: 0.8669686815s;
+  animation-delay: 0.9366500035s;
   left: calc((100% - 5em) * 0.22);
 }
 
 .particle:nth-of-type(13) {
-  animation-delay: 0.8183496532s;
+  animation-delay: 0.3131151854s;
   left: calc((100% - 5em) * 0.24);
 }
 
 .particle:nth-of-type(14) {
-  animation-delay: 0.8590062564s;
+  animation-delay: 0.1998527125s;
   left: calc((100% - 5em) * 0.26);
 }
 
 .particle:nth-of-type(15) {
-  animation-delay: 0.7895111016s;
+  animation-delay: 0.1306564857s;
   left: calc((100% - 5em) * 0.28);
 }
 
 .particle:nth-of-type(16) {
-  animation-delay: 0.4971245116s;
+  animation-delay: 0.1693581236s;
   left: calc((100% - 5em) * 0.3);
 }
 
 .particle:nth-of-type(17) {
-  animation-delay: 0.762104762s;
+  animation-delay: 0.3752682608s;
   left: calc((100% - 5em) * 0.32);
 }
 
 .particle:nth-of-type(18) {
-  animation-delay: 0.2431774334s;
+  animation-delay: 0.16972596s;
   left: calc((100% - 5em) * 0.34);
 }
 
 .particle:nth-of-type(19) {
-  animation-delay: 0.0194173947s;
+  animation-delay: 0.4331908648s;
   left: calc((100% - 5em) * 0.36);
 }
 
 .particle:nth-of-type(20) {
-  animation-delay: 0.1604098133s;
+  animation-delay: 0.327901547s;
   left: calc((100% - 5em) * 0.38);
 }
 
 .particle:nth-of-type(21) {
-  animation-delay: 0.7378561378s;
+  animation-delay: 0.8002151681s;
   left: calc((100% - 5em) * 0.4);
 }
 
 .particle:nth-of-type(22) {
-  animation-delay: 0.9282606045s;
+  animation-delay: 0.8916635526s;
   left: calc((100% - 5em) * 0.42);
 }
 
 .particle:nth-of-type(23) {
-  animation-delay: 0.9816722113s;
+  animation-delay: 0.5512257092s;
   left: calc((100% - 5em) * 0.44);
 }
 
 .particle:nth-of-type(24) {
-  animation-delay: 0.7307950597s;
+  animation-delay: 0.5411899247s;
   left: calc((100% - 5em) * 0.46);
 }
 
 .particle:nth-of-type(25) {
-  animation-delay: 0.6964086774s;
+  animation-delay: 0.8969589956s;
   left: calc((100% - 5em) * 0.48);
 }
 
 .particle:nth-of-type(26) {
-  animation-delay: 0.0682551568s;
+  animation-delay: 0.1327576854s;
   left: calc((100% - 5em) * 0.5);
 }
 
 .particle:nth-of-type(27) {
-  animation-delay: 0.9303941164s;
+  animation-delay: 0.6399954938s;
   left: calc((100% - 5em) * 0.52);
 }
 
 .particle:nth-of-type(28) {
-  animation-delay: 0.0684878144s;
+  animation-delay: 0.0247661888s;
   left: calc((100% - 5em) * 0.54);
 }
 
 .particle:nth-of-type(29) {
-  animation-delay: 0.8899902057s;
+  animation-delay: 0.2745960426s;
   left: calc((100% - 5em) * 0.56);
 }
 
 .particle:nth-of-type(30) {
-  animation-delay: 0.8999087388s;
+  animation-delay: 0.8516873669s;
   left: calc((100% - 5em) * 0.58);
 }
 
 .particle:nth-of-type(31) {
-  animation-delay: 0.8752505838s;
+  animation-delay: 0.1707164286s;
   left: calc((100% - 5em) * 0.6);
 }
 
 .particle:nth-of-type(32) {
-  animation-delay: 0.4589276452s;
+  animation-delay: 0.4999234112s;
   left: calc((100% - 5em) * 0.62);
 }
 
 .particle:nth-of-type(33) {
-  animation-delay: 0.323040818s;
+  animation-delay: 0.1439288426s;
   left: calc((100% - 5em) * 0.64);
 }
 
 .particle:nth-of-type(34) {
-  animation-delay: 0.0362285877s;
+  animation-delay: 0.5593976504s;
   left: calc((100% - 5em) * 0.66);
 }
 
 .particle:nth-of-type(35) {
-  animation-delay: 0.3613317739s;
+  animation-delay: 0.2460302425s;
   left: calc((100% - 5em) * 0.68);
 }
 
 .particle:nth-of-type(36) {
-  animation-delay: 0.941710637s;
+  animation-delay: 0.6739917021s;
   left: calc((100% - 5em) * 0.7);
 }
 
 .particle:nth-of-type(37) {
-  animation-delay: 0.7504760943s;
+  animation-delay: 0.2839246055s;
   left: calc((100% - 5em) * 0.72);
 }
 
 .particle:nth-of-type(38) {
-  animation-delay: 0.6513733485s;
+  animation-delay: 0.4819222024s;
   left: calc((100% - 5em) * 0.74);
 }
 
 .particle:nth-of-type(39) {
-  animation-delay: 0.0175983416s;
+  animation-delay: 0.0525255144s;
   left: calc((100% - 5em) * 0.76);
 }
 
 .particle:nth-of-type(40) {
-  animation-delay: 0.1544087627s;
+  animation-delay: 0.9705385115s;
   left: calc((100% - 5em) * 0.78);
 }
 
 .particle:nth-of-type(41) {
-  animation-delay: 0.5539202579s;
+  animation-delay: 0.1259729542s;
   left: calc((100% - 5em) * 0.8);
 }
 
 .particle:nth-of-type(42) {
-  animation-delay: 0.5989134936s;
+  animation-delay: 0.1141745678s;
   left: calc((100% - 5em) * 0.82);
 }
 
 .particle:nth-of-type(43) {
-  animation-delay: 0.1690543906s;
+  animation-delay: 0.7594892565s;
   left: calc((100% - 5em) * 0.84);
 }
 
 .particle:nth-of-type(44) {
-  animation-delay: 0.9575031809s;
+  animation-delay: 0.4772574602s;
   left: calc((100% - 5em) * 0.86);
 }
 
 .particle:nth-of-type(45) {
-  animation-delay: 0.7016566757s;
+  animation-delay: 0.9495687908s;
   left: calc((100% - 5em) * 0.88);
 }
 
 .particle:nth-of-type(46) {
-  animation-delay: 0.2904146452s;
+  animation-delay: 0.0726774091s;
   left: calc((100% - 5em) * 0.9);
 }
 
 .particle:nth-of-type(47) {
-  animation-delay: 0.5467311538s;
+  animation-delay: 0.6217245527s;
   left: calc((100% - 5em) * 0.92);
 }
 
 .particle:nth-of-type(48) {
-  animation-delay: 0.7844491025s;
+  animation-delay: 0.3120535427s;
   left: calc((100% - 5em) * 0.94);
 }
 
 .particle:nth-of-type(49) {
-  animation-delay: 0.2348477426s;
+  animation-delay: 0.6152128756s;
   left: calc((100% - 5em) * 0.96);
 }
 
 .particle:nth-of-type(50) {
-  animation-delay: 0.5410979325s;
+  animation-delay: 0.34306107s;
   left: calc((100% - 5em) * 0.98);
 }
 
@@ -2071,7 +2075,7 @@ body {
   height: 100%;
   margin: 0;
   font-size: 18px;
-  background-image: linear-gradient(160deg, #2353f3, #092ea7);
+  background-image: linear-gradient(-60deg, #2353f3, #062077);
   background-attachment: fixed;
 }
 
@@ -2190,6 +2194,3 @@ body.paddy .flag-3,
 .pride .flag-5 {
   fill: #487de7;
 }
-
-/*# sourceMappingURL=data:application/json;charset=utf-8,%7B%22version%22:3,%22sourceRoot%22:%22%22,%22sources%22:%5B%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/app.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/animations.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/type.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/variables.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/layout.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/track.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/form.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/setup-list.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/alert.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/pie.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/fire.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/ghost.scss%22%5D,%22names%22:%5B%5D,%22mappings%22:%22;AAAA;ACAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAOA;AAAA;AAAA;AAAA;AAAA;AAKA;EACE;IAEE;IACA;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;;AAIJ;AAAA;AAAA;AAAA;AAAA;AAKA;EACE;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;;AAIJ;AAAA;AAAA;AAAA;AAAA;AAKA;EACE;IACE;IACA;IACA;;EAEF;IACE;IACA;IACA;;EAEF;IACE;IACA;;EAEF;IACE;IACA;;EAEF;IACE;IACA;;EAEF;IACE;IACA;;EAEF;IACE;IACA;;EAEF;IACE;IACA;;;AAIJ;AAAA;AAAA;AAAA;AAAA;AAKA;EACE;IACE;IACA;IACA;;EAEF;IACE;IACA;IACA;;;AAIJ;AAAA;AAAA;AAAA;AAAA;AAKA;EACE;IACE;;EAEF;IACE;;EAEF;IACE;;;AAIJ;AAAA;AAAA;AAAA;AAAA;AAKA;EACE;IACE;;EAEF;IACE;;;AAIJ;EACE;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;;AAIJ;EACE;IAGE;;EAEF;IAEE;;;AAIJ;EACE;IAGE;;EAEF;IAEE;;;AAIJ;EACE;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;;ACpOJ;EACE,aAJiB;EAKjB,KACE;AACwD;EAC1D;;AAEF;EACE,aAZY;EAaZ,KACE;AAC4D;EAC9D;;AAGF;EACE,aApBY;EAqBZ,KACE;AACyD;EAC3D;;AAGF;EACE;EACA;EACA;;;AAGF;AAAA;AAAA;AAAA;EAIE;EACA;EACA;EACA;EACA,OCzCM;ED0CN;;;AAEF;EACE;EACA;;AACA;EACE;;;AAGJ;EACE;EACA;EACA;;;AAEF;EACE;EACA;;;AAGA;EACE;;;AAGJ;EACE;EACA;;AACA;EACE;;AAEF;EACE;;;AAGJ;EACE;;;AAEF;EACE;EACA,OChFM;;;ADmFR;AAAA;EAEE;;;AAGF;AAAA;EAEE;;;AAGF;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;AAEA;EACE;;AAEF;EACE,cC9GI;;ADiHN;EACE;;AAGF;EACE;;AAGF;EACE;EACA;EACA;;AAGF;EACE,kBChII;EDiIJ,OC5HG;ED6HH,cClII;EDmIJ;EACA;EACA;;AAEA;EACE;;;AAKN;EACE;EACA;EACA;EACA;EACA;;AAEA;EACE,OCrJI;EDsJJ;;;AAIJ;EACE;IACE;IACA;;EAEA;IACE;;;AAKN;EACE;EACA;EAEA;EACA,YCnKW;;ADqKX;EACE;;AAGF;EACE;;;AAIJ;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;AACA;EACE;;;AAGJ;EACE;EACA;EACA;EACA;EACA;;AAEA;EACE;EACA,YChMK;EDiML;EACA;EACA;EACA;EACA;EACA;EACA;EACA,YACE;;AAIJ;EACE;;AACA;EACE,YC5NE;ED6NF;;;AE7NN;EACE;;;AAEF;EAGE;EACA;EACA;;;AAEF;EACE;EACA;EACA;;;AAGF;EACE;EACA;EACA;EACA;EAEA;EACA;EAEA,qBACE;;AAGF;EAbF;IAcI;IACA;IACA;IACA,qBACE;;;AAIJ;EACE;;;AAIJ;EACE;EACA;EACA;EAEA;EAQA;EACA;;AAPA;EAPF;IAQI;;;AASF;EACE;;;AAIJ;AAAA;EAEE;;;AAEF;AAAA;EAEE;;;AAEF;EACE;;;AAEF;EACE;EACA;EACA;EACA;;AAEA;EANF;IAOI;IACA;;;;AAIJ;EACE;EACA;;;AAGF;EACE;EACA;EACA;EACA;;AAEA;EACE;EACA;EACA;EACA;EACA;EACA;;AAEA;EARF;IASI;IACA;IACA;IACA;;;AAGJ;EACE;EACA;EACA;EACA;EACA;;AAEF;EACE;EACA;EACA;;;AAIJ;EACE;EACA;EACA;EACA;EACA,YDhIK;ECiIL;EACA;;AAEA;EACE;EACA;;AAEA;EACE;;;AAKN;EAUE;EACA;EACA,YDxJW;ECyJX;EACA;;AAbA;EACE;EACA;EACA;EACA;;AAEF;EACE;;AAQF;EACE;EACA;EACA;EACA;EACA,YDtKO;ECuKP;;AACA;EACE;;;AAKN;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;;AAGF;EACE;EACA;EACA;EACA;;;AAGF;EACE;EACA;;;ACpMF;EACE;;;AAGF;EACE;EACA;EACA;EACA;EACA;;;AAEF;EACE;EACA;EACA,YFTK;EEUL;EACA;EACA;EAEA;EACA;EACA;EACA;;AACA;EACE;;AAGF;EAEE;EACA;EACA;EACA;EACA;;AAGF;EACE;;AAEF;EACE,YFlCG;;AEoCL;EACE,YFvCO;;;AE2CX;EACE;EACA;EACA;EACA;EACA,YFpDM;EEqDN;EACA,OF9CK;EE+CL;EACA;;AAEA;EACE;EACA;;AAIF;EACE,OF5DG;;AE+DL;EACE,OFhEG;;AEkEL;EACE;;AAIF;EACE;;AAGF;EACE;;AAGF;EACE;EACA;EACA;EACA;;AAGF;EACE;EACA;EACA,OF9FI;;AE+FJ;EACE;EACA;;AAGF;EACE,OFpGC;;AEuGH;EACE;;AACA;EACE;;AAKN;EACE,OFjHI;EEkHJ,YF3GS;;AE6GT;EACE;;AAIJ;EACE;;AAGF;EACE;;AAGF;EACE;EACA;EACA;EAEA;;AAEA;EACE;EACA;;AAIJ;EACE;EACA;EACA;EAEA;EACA;EACA;EACA;;AAGF;EACE;EACA;EACA;EACA;EACA;;AAEA;EAPF;IAQI;IACA;IACA;;;AAMA;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;AAKF;EACE;EACA;EACA;;AAKF;EACE;EACA;;AAKF;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;AAIN;EACE;EACA;EACA;EACA;;AAGF;EACE;EACA;EACA;EACA,YF3NG;EE4NH;EACA;EACA;EACA;EACA;EACA;;AAEA;EACE;;AAGF;EACE;EACA;;AAIJ;EACE;EACA;EACA;;AAEA;EACE;;AAIJ;EACE;EACA;EACA;EACA;EACA;EACA;;AAGF;EACE;EACA;EACA;EACA;;;AAIJ;EACE;EACA;EACA;EACA;;AAEA;EACE;EACA;EACA;EACA;EACA;EACA;EAEA,YFjRG;EEmRH;;;AAKF;EACE;EACA;EACA;EACA;EACA;EACA;EACA;;AAGF;EACE;EACA;EACA;;AAEF;EACE;EACA;EACA;;AAGF;EACE;EACA;EACA;EACA;EACA,OFxTI;EEyTJ,YFvTO;EEwTP;EACA;EACA;EACA;EACA;EACA;EACA;;AACA;EACE;EACA;EACA;EACA;EACA;;AAEF;EACE,OFnUC;;AEqUH;EACE,OFvUC;;;AE4UP;EACE;EACA;EACA;EACA;EACA;EACA;;AAEA;EACE;;;AAIJ;EACE;EACA;EACA;EACA;EACA;EACA;;AAEA;EACE;;;AAKF;EAEE;EACA;EACA;EACA;EACA;EACA;;AAGF;EACE;EACA;EACA;EACA;EACA;EACA;;AACA;EACE;;AAIJ;EACE;EACA;EACA;EACA;EACA;EACA;;AAGF;EACE;EACA;;AAGF;EACE;EACA;EACA;EACA;EACA;EACA;;AAGF;EACE;;AAEF;EACE;EACA;;;AAIJ;AAAA;EAEE;;;AAGF;AAAA;EAEE;;;AAGF;EACE;;;AAGF;EACE;EACA;EACA;EACA;;;AAEF;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;AAEA;EACE;;AAGF;EACE;EACA;;AACA;EACE;;AAIJ;EACE;;;AC9cJ;EACE;EACA;EACA;;;AAGF;EACE;EACA;EACA;EACA;EACA;EAEA;EACA;EACA;EAEA,OHTK;EGUL;EACA,YACE;;AAGF;EACE;EACA;;AAGF;EACE;EACA,kBH9BI;;AGgCJ;EACE;;AAIJ;EACE;EACA;EACA;;AAGF;EACE,kBH5CI;;;AIAR;EACE;EACA;;AAEA;EACE;EACA;EACA;;;AAIJ;EACE;EACA;EACA;EACA;EACA;;;AAGF;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;;AA7BF;EACE;EACA;;AAEA;EACE;EACA;EACA;;;AAIJ;EACE;EACA;EACA;EACA;EACA;;;AAGF;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;;AC7BF;EACE;;AAEA;EAHF;IAII;IACA;IACA;;;;AAIJ;EACE;EACA;EACA;EACA;EACA;EACA;;AAEA;EACE;EACA;EACA;EACA;;AAEF;EACE;EACA;;AAEF;EACE;EACA;;AAEF;EACE;;;AAIJ;EACE;EACA;EAEA,OLjCK;EKkCL;EACA,YLpCW;EKsCX;;;AAEF;EACE,YL/CK;;;AKkDP;EACE,OLpDM;;;AKuDR;EACE;EACA;;;AAGF;EACE;EACA;EACA;EACA;;;AAGF;EACE;EACA;EACA;EACA;EACA;EACA;EACA;;;AAEF;EACE;EACA;EACA;;;AC/EF;EACE;EACA;EACA;;;AAGF;EACE;EACA;EACA;EAEA;EACA;EACA;EACA;EACA;EACA;;AAEA;EACE;EACA;EAEA;EAKA;;AAOF;EACE;;AAEF;EACE;;AAEF;EACE;;AAEF;EACE;;;AAGJ;AAAA;EAEE;EACA;EACA;;;AAEF;EACE;EACA,YACE;;;AAIJ;EACE;EAKA;;;AAMF;EACE;EACA;EACA;;;AAGF;EACE;;;AAEF;EACE,iBACE;;;AAGJ;EACE;;;AAEF;EACE;IACE;;;ACnFJ;EACE;EACA;EACA;;;AAEF;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA,OAfS;EAgBT,QAhBS;EAiBT;;AAGE;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;;AAIN;EACE;IACE;IACA;;EAEF;IACE;;EAEF;IACE;IACA;;;AC1CJ;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;;AXOF;EACE;IACE;;EAEF;IACE;;EAEF;IACE;;;AAIJ;EACE;EACA;;;AAGF;EACE;EACA;EACA;EAEA;EACA;;AAEA;EACE;EACA;EACA;;AAGF;EACE;;AAUF;EACE;EACA;;;AAKJ;EACE;;;AAGF;EACE;;;AAGF;EACE;EACA;;;AAGF;EACE;;;AAGF;AAAA;EAEE;;;AAEF;EACE;;;AAEF;EACE;;;AAIA;EACE;;AAEF;EACE;;AAEF;EACE;;;AAKF;EACE;;AAEF;EACE;;AAEF;EACE;;;AAMF;AAAA;EACE;;AAEF;AAAA;EACE;;AAEF;AAAA;EACE;;;AAKF;EACE;;AAEF;EACE;;AAEF;EACE;;;AAKF;EACE;;AAEF;EACE;;AAEF;EACE;;AAEF;EACE;;AAEF;EACE%22,%22file%22:%22app.css%22%7D */
-/*# sourceMappingURL=data:application/json;charset=utf-8,%7B%22version%22:3,%22sourceRoot%22:%22%22,%22sources%22:%5B%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/app.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/animations.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/type.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/variables.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/layout.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/track.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/form.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/setup-list.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/alert.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/pie.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/fire.scss%22,%22file:///Users/ericgeorge/Development/PlayRequest/assets/css/ghost.scss%22%5D,%22names%22:%5B%5D,%22mappings%22:%22;AAAA;ACAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAOA;AAAA;AAAA;AAAA;AAAA;AAKA;EACE;IAEE;IACA;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;;AAIJ;AAAA;AAAA;AAAA;AAAA;AAKA;EACE;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;;AAIJ;AAAA;AAAA;AAAA;AAAA;AAKA;EACE;IACE;IACA;IACA;;EAEF;IACE;IACA;IACA;;EAEF;IACE;IACA;;EAEF;IACE;IACA;;EAEF;IACE;IACA;;EAEF;IACE;IACA;;EAEF;IACE;IACA;;EAEF;IACE;IACA;;;AAIJ;AAAA;AAAA;AAAA;AAAA;AAKA;EACE;IACE;IACA;IACA;;EAEF;IACE;IACA;IACA;;;AAIJ;AAAA;AAAA;AAAA;AAAA;AAKA;EACE;IACE;;EAEF;IACE;;EAEF;IACE;;;AAIJ;AAAA;AAAA;AAAA;AAAA;AAKA;EACE;IACE;;EAEF;IACE;;;AAIJ;EACE;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;;AAIJ;EACE;IAGE;;EAEF;IAEE;;;AAIJ;EACE;IAGE;;EAEF;IAEE;;;AAIJ;EACE;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;EAEF;IACE;;;ACnOJ;EACE,aALiB;EAMjB,KACE;AACwD;EAC1D;;AAEF;EACE,aAbY;EAcZ,KACE;AAC4D;EAC9D;;AAGF;EACE,aArBY;EAsBZ,KACE;AACyD;EAC3D;;AAGF;EACE;EACA,KACE;EACF;;AAEF;EACE;EACA,KACE;EACF;;AAEF;EACE;EACA,KACE;EACF;;AAGF;EACE;EACA;EACA;;;AAGF;AAAA;AAAA;AAAA;EAIE;EACA;EACA;EACA;EACA,OC7DM;ED8DN;;;AAEF;EACE;EACA;;AACA;EACE;;;AAGJ;EACE;EACA;EACA;;;AAEF;EACE;EACA;;;AAGA;EACE;;;AAIJ;EACE;EACA;EACA;EACA;;AAEA;EACE;EACA;;AAGF;EACE;EACA;EACA;EACA;EACA;EACA;;AAEA;EACE;EACA,OC3GE;;AD8GJ;EACE;EACA,OC3GC;;AD6GH;EACE;EACA,OCnHC;;;ADuHP;EACE;EACA;;AACA;EACE;;AAEF;EACE;;;AAGJ;EACE;;;AAEF;EACE;EACA,OCvIM;;;AD0IR;AAAA;EAEE;;;AAGF;AAAA;EAEE;;;AAGF;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;AAEA;EACE;;AAEF;EACE,cCrKI;;ADwKN;EACE;;AAGF;EACE;;AAGF;EACE;EACA;EACA;;AAGF;EACE,kBCvLI;EDwLJ,OCnLG;EDoLH,cCzLI;ED0LJ;EACA;EACA;;AAEA;EACE;;;AAKN;EACE;EACA;EACA;EACA;EACA;;AAEA;EACE,OC5MI;ED6MJ;;;AAIJ;EACE;IACE;IACA;;EAEA;IACE;;;AAKN;EACE;EACA;EAEA;EACA,YC1NW;;AD4NX;EACE;;AAGF;EACE;;;AAIJ;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;AACA;EACE;;;AAGJ;EACE;EACA;EACA;EACA;EACA;;AAEA;EACE;EACA,YCvPK;EDwPL;EACA;EACA;EACA;EACA;EACA;EACA;EACA,YACE;;AAIJ;EACE;;AACA;EACE,YCnRE;EDoRF;;;AEpRN;EACE;;;AAEF;EAGE;EACA;EACA;;;AAEF;EACE;EACA;EACA;;;AAGF;EACE;EACA;EACA;EACA;EAEA;EACA;EAEA,qBACE;;AAGF;EAbF;IAcI;IACA;IACA;IACA,qBACE;;;AAIJ;EACE;;;AAIJ;EACE;EACA;EACA;EAEA;EAQA;EACA;;AAPA;EAPF;IAQI;;;AASF;EACE;;;AAIJ;AAAA;EAEE;;;AAEF;AAAA;EAEE;;;AAEF;EACE;;;AAEF;EACE;EACA;EACA;EACA;;AAEA;EANF;IAOI;IACA;;;;AAIJ;EACE;EACA;;;AAGF;EACE;EACA;EACA;EACA;;AAEA;EACE;EACA;EACA;EACA;EACA;EACA;;AAEA;EARF;IASI;IACA;IACA;IACA;;;AAGJ;EACE;EACA;EACA;EACA;EACA;;AAEF;EACE;EACA;EACA;;;AAIJ;EACE;EACA;EACA;EACA;EACA,YDhIK;ECiIL;EACA;;AAEA;EACE;EACA;;AAEA;EACE;;;AAKN;EAUE;EACA;EACA,YDxJW;ECyJX;EACA;;AAbA;EACE;EACA;EACA;EACA;;AAEF;EACE;;AAQF;EACE;EACA;EACA;EACA;EACA,YDtKO;ECuKP;;AACA;EACE;;;AAKN;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;;AAGF;EACE;EACA;EACA;EACA;;;AAGF;EACE;EACA;;;ACpMF;EACE;;;AAGF;EACE;EACA;EACA;EACA;EACA;;;AAEF;EACE;EACA;EACA,YFTK;EEUL;EACA;EACA;EAEA;EACA;EACA;EACA;;AACA;EACE;;AAGF;EAEE;EACA;EACA;EACA;EACA;;AAGF;EACE;;AAEF;EACE,YFlCG;;AEoCL;EACE,YFvCO;;;AE2CX;EACE;EACA;EACA;EACA;EACA,YFpDM;EEqDN;EACA,OF9CK;EE+CL;EACA;;AAEA;EACE;EACA;;AAIF;EACE,OF5DG;;AE+DL;EACE,OFhEG;;AEkEL;EACE;;AAIF;EACE;;AAGF;EACE;;AAGF;EACE;EACA;EACA;EACA;;AAGF;EACE;EACA;EACA,OF9FI;;AE+FJ;EACE;EACA;;AAGF;EACE,OFpGC;;AEuGH;EACE;;AACA;EACE;;AAKN;EACE,OFjHI;EEkHJ,YF3GS;;AE6GT;EACE;;AAIJ;EACE;;AAGF;EACE;;AAGF;EACE;EACA;EACA;EAEA;;AAEA;EACE;EACA;;AAIJ;EACE;EACA;EACA;EAEA;EACA;EACA;EACA;;AAGF;EACE;EACA;EACA;EACA;EACA;;AAEA;EAPF;IAQI;IACA;IACA;;;AAMA;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;AAKF;EACE;EACA;EACA;;AAKF;EACE;EACA;;AAKF;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;AAIN;EACE;EACA;EACA;EACA;;AAGF;EACE;EACA;EACA;EACA,YF3NG;EE4NH;EACA;EACA;EACA;EACA;EACA;;AAEA;EACE;;AAGF;EACE;EACA;;AAIJ;EACE;EACA;EACA;;AAEA;EACE;;AAIJ;EACE;EACA;EACA;EACA;EACA;EACA;;AAGF;EACE;EACA;EACA;EACA;;;AAIJ;EACE;EACA;EACA;EACA;;AAEA;EACE;EACA;EACA;EACA;EACA;EACA;EAEA,YFjRG;EEmRH;;;AAKF;EACE;EACA;EACA;EACA;EACA;EACA;EACA;;AAGF;EACE;EACA;EACA;;AAEF;EACE;EACA;EACA;;AAGF;EACE;EACA;EACA;EACA;EACA,OFxTI;EEyTJ,YFvTO;EEwTP;EACA;EACA;EACA;EACA;EACA;EACA;;AACA;EACE;EACA;EACA;EACA;EACA;;AAEF;EACE,OFnUC;;AEqUH;EACE,OFvUC;;;AE4UP;EACE;EACA;EACA;EACA;EACA;EACA;;AAEA;EACE;;;AAIJ;EACE;EACA;EACA;EACA;EACA;EACA;;AAEA;EACE;;;AAKF;EAEE;EACA;EACA;EACA;EACA;EACA;;AAGF;EACE;EACA;EACA;EACA;EACA;EACA;;AACA;EACE;;AAIJ;EACE;EACA;EACA;EACA;EACA;EACA;;AAGF;EACE;EACA;;AAGF;EACE;EACA;EACA;EACA;EACA;EACA;;AAGF;EACE;;AAEF;EACE;EACA;;;AAIJ;AAAA;EAEE;;;AAGF;AAAA;EAEE;;;AAGF;EACE;;;AAGF;EACE;EACA;EACA;EACA;;;AAEF;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;AAEA;EACE;;AAGF;EACE;EACA;;AACA;EACE;;AAIJ;EACE;;;AC9cJ;EACE;EACA;EACA;;;AAGF;EACE;EACA;EACA;EACA;EACA;EAEA;EACA;EACA;EAEA,OHTK;EGUL;EACA,YACE;;AAGF;EACE;EACA;;AAGF;EACE;EACA,kBH9BI;;AGgCJ;EACE;;AAIJ;EACE;EACA;EACA;;AAGF;EACE,kBH5CI;;;AIAR;EACE;EACA;;AAEA;EACE;EACA;EACA;;;AAIJ;EACE;EACA;EACA;EACA;EACA;;;AAGF;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;;AA7BF;EACE;EACA;;AAEA;EACE;EACA;EACA;;;AAIJ;EACE;EACA;EACA;EACA;EACA;;;AAGF;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;;AC7BF;EACE;;AAEA;EAHF;IAII;IACA;IACA;;;;AAIJ;EACE;EACA;EACA;EACA;EACA;EACA;;AAEA;EACE;EACA;EACA;EACA;;AAEF;EACE;EACA;;AAEF;EACE;EACA;;AAEF;EACE;;;AAIJ;EACE;EACA;EAEA,OLjCK;EKkCL;EACA,YLpCW;EKsCX;;;AAEF;EACE,YL/CK;;;AKkDP;EACE,OLpDM;;;AKuDR;EACE;EACA;;;AAGF;EACE;EACA;EACA;EACA;;;AAGF;EACE;EACA;EACA;EACA;EACA;EACA;EACA;;;AAEF;EACE;EACA;EACA;;;AC/EF;EACE;EACA;EACA;;;AAGF;EACE;EACA;EACA;EAEA;EACA;EACA;EACA;EACA;EACA;;AAEA;EACE;EACA;EAEA;EAKA;;AAOF;EACE;;AAEF;EACE;;AAEF;EACE;;AAEF;EACE;;;AAGJ;AAAA;EAEE;EACA;EACA;;;AAEF;EACE;EACA,YACE;;;AAIJ;EACE;EAKA;;;AAMF;EACE;EACA;EACA;;;AAGF;EACE;;;AAEF;EACE,iBACE;;;AAGJ;EACE;;;AAEF;EACE;IACE;;;ACnFJ;EACE;EACA;EACA;;;AAEF;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA,OAfS;EAgBT,QAhBS;EAiBT;;AAGE;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;AAFF;EACE;EACA;;;AAIN;EACE;IACE;IACA;;EAEF;IACE;;EAEF;IACE;IACA;;;AC1CJ;EACE;EACA;EACA;EACA;EACA;EACA;EACA;EACA;;;AXOF;EACE;IACE;;EAEF;IACE;;EAEF;IACE;;;AAIJ;EACE;EACA;;;AAGF;EACE;EACA;EACA;EAEA;EACA;;AAEA;EACE;EACA;EACA;;AAGF;EACE;;;AAaJ;EACE;;;AAGF;EACE;;;AAGF;EACE;EACA;;;AAGF;EACE;;;AAGF;EACE;;;AAEF;EACE;;;AAEF;EACE;;;AAIA;EACE;;AAEF;EACE;;AAEF;EACE;;;AAKF;EACE;;AAEF;EACE;;AAEF;EACE;;;AAKF;EACE;;AAEF;EACE;;AAEF;EACE%22,%22file%22:%22app.css%22%7D */
