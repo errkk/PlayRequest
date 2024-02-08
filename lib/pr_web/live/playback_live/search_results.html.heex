@@ -6,6 +6,7 @@
     >
       <div class="track__inner">
         <div class="track__img__container">
+          <.particles :if={String.starts_with?(track.artist, "Shania")} />
           <img src={track.img} width="100" class="track__img" />
         </div>
 
