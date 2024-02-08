@@ -27,18 +27,7 @@ defmodule PRWeb.LogoLive do
   def logo_title(assigns) do
     ~H"""
     <span class="header--80s">
-      <span class="size">
-        <%= @name %>
-      </span>
-      <span class="shadow">
-        <%= @name %>
-      </span>
-      <span class="extrude">
-        <%= @name %>
-      </span>
-      <span class="regular">
-        <%= @name %>
-      </span>
+      <%= @name %>
     </span>
     """
   end
