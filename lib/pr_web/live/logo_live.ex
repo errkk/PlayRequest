@@ -18,9 +18,28 @@ defmodule PRWeb.LogoLive do
     <h1 class="logo-heading">
       <.link href={~p"/"} class="logo-link">
         <.logo play_state={@play_state} />
-        <%= installation_name() %>
+        <.logo_title name={installation_name()} />
       </.link>
     </h1>
+    """
+  end
+
+  def logo_title(assigns) do
+    ~H"""
+    <span class="header--80s">
+      <span class="size">
+        <%= @name %>
+      </span>
+      <span class="shadow">
+        <%= @name %>
+      </span>
+      <span class="extrude">
+        <%= @name %>
+      </span>
+      <span class="regular">
+        <%= @name %>
+      </span>
+    </span>
     """
   end
 
