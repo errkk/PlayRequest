@@ -98,6 +98,7 @@ defmodule PRWeb.LogoSvg do
     case variant() do
       :de -> "Deutsches Freitag"
       :co -> "martes colombiano"
+      :we -> "Welsh Wednesday"
       _ -> nil
     end
   end
@@ -108,6 +109,7 @@ defmodule PRWeb.LogoSvg do
     |> case do
       5 -> :de
       2 -> :co
+      3 -> :we
       _ -> :en
     end
   end
