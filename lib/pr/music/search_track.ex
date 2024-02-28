@@ -13,7 +13,7 @@ defmodule PR.Music.SearchTrack do
     %__MODULE__{
       name: name,
       artist: artist,
-      duration: duration,
+      duration: trunc(duration),
       spotify_id: id
     }
     |> Map.merge(get_image(params))
