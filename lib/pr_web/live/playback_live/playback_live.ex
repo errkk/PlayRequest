@@ -204,8 +204,8 @@ defmodule PRWeb.PlaybackLive do
 
         {:noreply, socket}
 
-      _ ->
-        Logger.error("Track not queued for other reason: #{spotify_id}")
+      err ->
+        Logger.error("Track not queued for other reason: #{inspect(err)}")
 
         socket =
           socket
