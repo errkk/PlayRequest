@@ -55,6 +55,10 @@ body {
       rgba(0, 0, 3, 1) 100%
     );
   }
+  &.paddy {
+    background-color: #0b9a00;
+    background-image: linear-gradient(115deg, #086c00 0%, #0db300 100%);
+  }
 }
 
 
@@ -109,15 +113,16 @@ progress {
   }
 }
 
+body.paddy,
 .ie {
   .flag-1 {
-    fill: #FF883E;
+    fill: #ff5a0e;
   }
   .flag-2 {
     fill: #FFFFFF;
   }
   .flag-3 {
-    fill: #169B62;
+    fill: #00ff1a;
   }
 }
 

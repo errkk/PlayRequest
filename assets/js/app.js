@@ -21,6 +21,17 @@ socket.onOpen(() => {
   setTimeout(initGhost, 1000);
 });
 
+const isToday = (month, day) => {
+  const today = new Date()
+  return day == today.getDate() && month == today.getMonth() + 1
+}
+
+const PADDY = [3, 18]
+
+if (isToday(...PADDY)) {
+  document.querySelector("body").classList.add("paddy");
+}
+
 const searchInput = document.getElementById("search");
 
 if (searchInput) {

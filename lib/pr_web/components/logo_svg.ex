@@ -108,8 +108,6 @@ defmodule PRWeb.LogoSvg do
     |> Timex.weekday()
     |> case do
       5 -> :de
-      2 -> :co
-      3 -> :we
       _ -> :en
     end
   end
