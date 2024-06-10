@@ -1,3 +1,4 @@
+# Remmber to bump .github worflow as well
 FROM elixir:1.16-alpine AS build
 RUN apk update \
   && apk add --virtual build-dependencies \
