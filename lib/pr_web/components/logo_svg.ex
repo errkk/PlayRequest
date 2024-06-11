@@ -115,9 +115,12 @@ defmodule PRWeb.LogoSvg do
 
   defp variant() do
     Timex.today()
-    |> Timex.weekday()
+    |> Timex.iso_triplet()
     |> case do
-      5 -> :de
+      {_, _, 5} -> :de
+      {_, 24, _} -> :pride
+      {_, 25, _} -> :pride
+      {_, 26, _} -> :pride
       _ -> :en
     end
   end
