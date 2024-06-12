@@ -15,16 +15,22 @@ defmodule PRWeb.LogoSvg do
         </rect>
         <rect y="15" height="38" class="flag-2" x={x(1)} width={width()} rx="5">
           <.animate_height :if={@playing} begin="0.4s" />
-          <.animate_opacity :if={@buffering} begin="0.3s" />
+          <.animate_opacity :if={@buffering} begin="0.7s" />
         </rect>
         <rect y="15" height="60" class="flag-3" x={x(2)} width={width()} rx="5">
           <.animate_height :if={@playing} begin="0.6s" />
           <.animate_opacity :if={@buffering} begin="0.5s" />
         </rect>
         <%= unless is_nil(x(3)) do %>
-          <rect y="15" height="45" class="flag-1" x={x(3)} width={width()} rx="5">
-            <.animate_height :if={@playing} begin="0.8s" />
+          <rect y="15" height="45" class="flag-4" x={x(3)} width={width()} rx="5">
+            <.animate_height :if={@playing} begin="0.3s" />
             <.animate_opacity :if={@buffering} begin="0s" />
+          </rect>
+        <% end %>
+        <%= unless is_nil(x(4)) do %>
+          <rect y="15" height="45" class="flag-5" x={x(4)} width={width()} rx="5">
+            <.animate_height :if={@playing} begin="0.1s" />
+            <.animate_opacity :if={@buffering} begin="0.1s" />
           </rect>
         <% end %>
       </g>
@@ -65,6 +71,9 @@ defmodule PRWeb.LogoSvg do
 
   defp x(i) do
     case variant() do
+      :pride ->
+        [15, 30, 45, 60, 75] |> Enum.at(i)
+
       :en ->
         [15, 35, 55, 75] |> Enum.at(i)
 
@@ -75,6 +84,7 @@ defmodule PRWeb.LogoSvg do
 
   defp width() do
     case variant() do
+      :pride -> 12
       :en -> 15
       _ -> 25
     end
@@ -105,9 +115,12 @@ defmodule PRWeb.LogoSvg do
 
   defp variant() do
     Timex.today()
-    |> Timex.weekday()
+    |> Timex.iso_triplet()
     |> case do
-      5 -> :de
+      {_, _, 5} -> :de
+      {_, 24, _} -> :pride
+      {_, 25, _} -> :pride
+      {_, 26, _} -> :pride
       _ -> :en
     end
   end

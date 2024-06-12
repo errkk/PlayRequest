@@ -79,6 +79,7 @@ progress {
   display: none;
 }
 
+.flag-4,
 .flag-1 {
   fill: #FFFFFF;
 }
@@ -135,5 +136,23 @@ body.paddy,
   }
   .flag-3 {
     fill: #00AD36;
+  }
+}
+
+.pride {
+  .flag-1 {
+    fill: #e81416; // Red
+  }
+  .flag-2 {
+    fill: #ffa500; // Orange
+  }
+  .flag-3 {
+    fill: #faeb36; // Yellow
+  }
+  .flag-4 {
+    fill: #79c314; // Green
+  }
+  .flag-5 {
+    fill: #487de7; // Blue
   }
 }
