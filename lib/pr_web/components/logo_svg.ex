@@ -106,6 +106,7 @@ defmodule PRWeb.LogoSvg do
 
   defp title() do
     case variant() do
+      :es -> "llegó a casa"
       :de -> "Deutsches Freitag"
       :co -> "martes colombiano"
       :we -> "Welsh Wednesday"
@@ -117,6 +118,7 @@ defmodule PRWeb.LogoSvg do
     Timex.today()
     |> Timex.iso_triplet()
     |> case do
+      {_, 29, 2024} -> :es
       {_, _, 5} -> :de
       {_, 24, _} -> :pride
       {_, 25, _} -> :pride
