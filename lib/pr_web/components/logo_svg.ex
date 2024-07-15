@@ -118,7 +118,7 @@ defmodule PRWeb.LogoSvg do
     Timex.today()
     |> Timex.iso_triplet()
     |> case do
-      {_, 29, 2024} -> :es
+      {2024, 29, _} -> :es
       {_, _, 5} -> :de
       {_, 24, _} -> :pride
       {_, 25, _} -> :pride
