@@ -57,7 +57,7 @@ format_code:
 .PHONY: format_code
 
 proxy_production:
-	fly proxy 5433:5432 --app sonosnow-postgres
+	fly proxy 5433:5432 --app sonosnow-db
 .PHONY: proxy_production
 
 proxy_staging:
