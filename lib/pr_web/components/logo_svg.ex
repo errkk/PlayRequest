@@ -119,7 +119,7 @@ defmodule PRWeb.LogoSvg do
     |> Timex.iso_triplet()
     |> case do
       {2024, 29, _} -> :es
-      {_, _, 5} -> :de
+      {_, _, 4} -> :de
       {_, 24, _} -> :pride
       {_, 25, _} -> :pride
       {_, 26, _} -> :pride
