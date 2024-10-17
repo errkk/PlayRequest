@@ -4,7 +4,7 @@ defmodule PRWeb.Layouts do
   embed_templates("layouts/*")
 
   def ghost(assigns) do
-    if same_week?(Timex.today(), ~D[2024-10-17]) do
+    if same_week?(Timex.today(), ~D[2024-10-31]) do
       ~H"""
       <.ghost_shader />
       """
