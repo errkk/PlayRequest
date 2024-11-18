@@ -99,6 +99,13 @@ defmodule PR.Queue do
     end
   end
 
+  def clear do
+    Track
+    |> query_unplayed()
+    |> from(update: [set: [played_at: fragment("NOW()")]])
+    |> Repo.update_all([])
+  end
+
   def escape_quotes(string) do
     String.replace(string, "'", "''")
   end
