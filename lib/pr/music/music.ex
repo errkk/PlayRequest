@@ -68,6 +68,11 @@ defmodule PR.Music do
     {:ok}
   end
 
+  def clear_playlist do
+    Queue.clear()
+    queue_updated()
+  end
+
   # This take a little while to run, so there can be race conditions if it gets called
   # a few times, before it's had a chance to affect the play state
   def trigger_playlist(force \\ :dont_force) do
