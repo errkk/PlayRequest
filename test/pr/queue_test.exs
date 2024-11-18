@@ -30,6 +30,16 @@ defmodule PR.QueueTest do
     end
   end
 
+  describe "clear" do
+    test "clear/0 clears unplayed tracks" do
+      me = insert(:user)
+      track_1_id = insert(:track).id
+      track_2_id = insert(:track).id
+      Queue.clear()
+      assert [] = Queue.list_unplayed(me)
+    end
+  end
+
   describe "points" do
     test "user sees that they did a point" do
       me = insert(:user)

@@ -1,5 +1,5 @@
 # Remmber to bump .github worflow as well
-FROM elixir:1.16-alpine AS build
+FROM elixir:1.17-alpine AS build
 RUN apk update \
   && apk add --virtual build-dependencies \
   build-base
@@ -97,7 +97,9 @@ RUN touch /home/elixir/.bash_history && \
 COPY --from=build --chown="${USER}":"${USER}"\
   /app/_build/prod/rel/pr ./
 
+# Copy scritps to working directory
 COPY --chown="${USER}":"${USER}"\
-  scripts/start.sh ./start.sh
+  scripts/start.sh ./ \
+  scripts/clear.sh ./
 
 CMD ["./start.sh"]
