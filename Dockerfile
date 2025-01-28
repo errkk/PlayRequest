@@ -1,5 +1,5 @@
 # Remmber to bump .github worflow as well
-FROM elixir:1.17-alpine AS build
+FROM elixir:1.18-alpine AS build
 RUN apk update \
   && apk add --virtual build-dependencies \
   build-base
