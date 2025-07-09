@@ -3,10 +3,10 @@ name: Test and Build image
 on:
   push:
     tags:
-    - '[0-9]+.[0-9]+.[0-9]+'
-    - '[0-9]+.[0-9]+.[0-9]+-rc\.[0-9]+'
+      - "[0-9]+.[0-9]+.[0-9]+"
+      - '[0-9]+.[0-9]+.[0-9]+-rc\.[0-9]+'
     branches:
-    - '*'
+      - "*"
 
 jobs:
   test:
@@ -14,7 +14,8 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: elixir:1.18-alpine
+      # Pinned to just before an error, TODO: upgrade
+      image: elixir:1.18.3-alpine
 
     services:
       postgres:
@@ -32,28 +33,27 @@ jobs:
           --health-retries 5
 
     steps:
+      - name: Install APK packages
+        run: |
+          apk update
+          apk add --virtual build-dependencies build-base
+          apk add bash nodejs npm inotify-tools openssl
 
-    - name: Install APK packages
-      run: |
-        apk update
-        apk add --virtual build-dependencies build-base
-        apk add bash nodejs npm inotify-tools openssl
+      - uses: actions/checkout@v1
 
-    - uses: actions/checkout@v1
+      - name: Install Dependencies
+        run: |
+          mix local.hex --force
+          mix local.rebar --force
+          mix deps.get
 
-    - name: Install Dependencies
-      run: |
-        mix local.hex --force
-        mix local.rebar --force
-        mix deps.get
-
-    - name: Run Tests
-      run: mix test
-      env:
-        # use postgres for the host here because we have specified a container for the job.
-        # If we were running the job on the VM this would be localhost
-        POSTGRES_HOST: postgres
-        POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
+      - name: Run Tests
+        run: mix test
+        env:
+          # use postgres for the host here because we have specified a container for the job.
+          # If we were running the job on the VM this would be localhost
+          POSTGRES_HOST: postgres
+          POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
 
   check_tag:
     name: Check tag
@@ -91,21 +91,20 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
+      - uses: actions/checkout@v1
 
-    - uses: actions/checkout@v1
-
-    - name: Publish to Registry
-      uses: elgohr/Publish-Docker-Github-Action@master
-      env:
-        APP_REVISION: ${{ github.ref_name }}
-      with:
-        name: errkk/playrequest/pr
-        username: _
-        password: ${{ secrets.GITHUB_TOKEN }}
-        registry: ghcr.io
-        dockerfile: Dockerfile
-        buildargs: APP_REVISION
-        tags: ${{ needs.check_tag.outputs.tags }}
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        env:
+          APP_REVISION: ${{ github.ref_name }}
+        with:
+          name: errkk/playrequest/pr
+          username: _
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          dockerfile: Dockerfile
+          buildargs: APP_REVISION
+          tags: ${{ needs.check_tag.outputs.tags }}
 
   deploy_prod:
     name: Deploy production
