@@ -120,6 +120,7 @@ defmodule PRWeb.LogoSvg do
       {_, 24, _} -> :pride
       {_, 25, _} -> :pride
       {_, 26, _} -> :pride
+      {_, 40, _} -> :we
       _ -> :en
     end
   end
