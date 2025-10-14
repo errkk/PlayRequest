@@ -46,6 +46,7 @@ COPY config/releases.exs config/
 COPY rel rel
 
 # assemble release
+RUN mix sentry.package_source_code
 RUN mix release
 
 FROM alpine:3.18 AS app

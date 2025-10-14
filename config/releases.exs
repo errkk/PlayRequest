@@ -67,5 +67,5 @@ config :sentry,
   tags: %{
     env: System.get_env("RELEASE_STAGE") || "dev"
   },
-  environment_name: System.get_env("RELEASE_STAGE") || "dev",
-  included_environments: [:staging, :prod]
+  environment_name: System.get_env("RELEASE_STAGE") || :prod,
+  release: System.get_env("APP_REVISION", "dev")

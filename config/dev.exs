@@ -129,5 +129,4 @@ config :sentry,
   root_source_code_path: File.cwd!(),
   tags: %{
     env: "dev"
-  },
-  included_environments: [:dev]
+  }
