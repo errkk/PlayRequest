@@ -20,7 +20,7 @@ defmodule PR.MixProject do
   def application do
     [
       mod: {PR.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :sentry]
     ]
   end
 
@@ -55,7 +55,7 @@ defmodule PR.MixProject do
       {:mock, "~> 0.3.6", only: :test},
       {:heroicons, "~> 0.5"},
       {:libcluster, "~> 3.3"},
-      {:sentry, "~> 8.0"}
+      {:sentry, "~> 10.1"}
     ]
   end
 
