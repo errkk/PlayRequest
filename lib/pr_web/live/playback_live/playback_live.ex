@@ -20,7 +20,8 @@ defmodule PRWeb.PlaybackLive do
   embed_templates "*"
 
   @impl true
-  def mount(_params, %{"user_id" => user_id}, socket) do
+  def mount(_params, _session, socket) do
+    user_id = socket.assigns.current_user.id
     if connected?(socket), do: PlayState.subscribe()
     if connected?(socket), do: Music.subscribe()
     play_state = PlayState.get(:play_state)
@@ -46,7 +47,7 @@ defmodule PRWeb.PlaybackLive do
       )
       |> assign(feature_flags())
 
-    {:ok, assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)}
+    {:ok, socket}
   end
 
   defp show_encouraging_message(user) do

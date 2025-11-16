@@ -10,7 +10,8 @@ defmodule PR.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      releases: releases()
+      releases: releases(),
+      listeners: [Phoenix.CodeReloader]
     ]
   end
 
@@ -38,8 +39,8 @@ defmodule PR.MixProject do
       {:certifi, "~> 2.2"},
       {:telemetry_poller, "~> 0.4"},
       {:telemetry_metrics, "~> 0.4"},
-      {:phoenix, "~> 1.7.0"},
-      {:phoenix_live_view, "~> 0.20.0"},
+      {:phoenix, "~> 1.8.0"},
+      {:phoenix_live_view, "~> 1.0"},
       {:phoenix_ecto, "~> 4.1"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},

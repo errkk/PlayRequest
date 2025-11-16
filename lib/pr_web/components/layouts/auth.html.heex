@@ -1,0 +1,10 @@
+<div class="content">
+  <header class="container--header">
+    <h1><%= installation_name() %></h1>
+  </header>
+  <div class="alert-container">
+    <.flash class="alert alert-info" kind={:info} title="Success!" flash={@flash} />
+    <.flash class="alert alert-danger" kind={:error} title="Error!" flash={@flash} />
+  </div>
+  <%= @inner_content %>
+</div>
