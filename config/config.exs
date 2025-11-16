@@ -28,7 +28,9 @@ config :pr, PRWeb.Endpoint,
   pubsub_server: PR.PubSub,
   live_view: [
     signing_salt: "SECRET_SALT"
-  ]
+  ],
+  # This is overriden in runtime config
+  force_ssl: false
 
 # Configures Elixir's Logger
 config :logger, :console,
