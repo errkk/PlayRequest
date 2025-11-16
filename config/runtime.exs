@@ -39,7 +39,7 @@ config :ueberauth, Ueberauth.Strategy.Google.OAuth,
   client_secret: System.get_env("GOOGLE_CLIENT_SECRET")
 
 config :pr,
-  allowed_user_domains: System.get_env("ALLOWED_USER_DOMAINS"),
+  allowed_user_domains: System.get_env("ALLOWED_USER_DOMAINS", ""),
   installation_name: System.get_env("INSTALLATION_NAME", "PlayRequest"),
   super_likes_allowed: System.get_env("SUPER_LIKES_ALLOWED", "2"),
   burns_allowed: System.get_env("BURNS_ALLOWED", "2")
