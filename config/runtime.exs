@@ -72,7 +72,6 @@ if config_env() == :prod do
     http: [port: String.to_integer(System.get_env("PORT") || "4000")],
     url: [host: System.get_env("HOSTNAME"), port: 443, scheme: "https"],
     cache_static_manifest: "priv/static/cache_manifest.json",
-    force_ssl: [rewrite_on: [:x_forwarded_proto]],
     server: true
 
   # Production requires these environment variables

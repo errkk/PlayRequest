@@ -29,7 +29,7 @@ config :pr, PRWeb.Endpoint,
   live_view: [
     signing_salt: "SECRET_SALT"
   ],
-  # This is overriden in runtime config
+  # This is overriden in prod config
   force_ssl: false
 
 # Configures Elixir's Logger
