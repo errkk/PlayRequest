@@ -30,7 +30,6 @@ config :pr, :spotify,
   scopes:
     ~w(user-modify-playback-state user-read-currently-playing user-read-playback-state playlist-modify-private playlist-read-private),
   redirect_uri: "#{System.get_env("REDIRECT_URL_BASE")}/spotify/authorized",
-  user_id: System.get_env("SPOTIFY_USER_ID"),
   key: System.get_env("SPOTIFY_CLIENT_ID"),
   secret: System.get_env("SPOTIFY_SECRET")
 
@@ -79,7 +78,6 @@ if config_env() == :prod do
   # Production requires these environment variables
   unless System.get_env("SONOS_KEY"), do: raise("SONOS_KEY not available")
   unless System.get_env("SONOS_SECRET"), do: raise("SONOS_SECRET not available")
-  unless System.get_env("SPOTIFY_USER_ID"), do: raise("SPOTIFY_USER_ID not available")
   unless System.get_env("SPOTIFY_CLIENT_ID"), do: raise("SPOTIFY_CLIENT_ID not available")
   unless System.get_env("SPOTIFY_SECRET"), do: raise("SPOTIFY_SECRET not available")
   unless System.get_env("GOOGLE_CLIENT_ID"), do: raise("GOOGLE_CLIENT_ID not available")
