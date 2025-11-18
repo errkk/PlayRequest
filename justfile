@@ -62,6 +62,4 @@ remote_production:
 	fly ssh console -C "/home/elixir/app/bin/{{binname}} remote"  --app {{appname}}
 
 tunnel:
-	# cloudflared tunnel --token ${CLOUDFLARE_TOKEN} --url http://localhost:4000
-	# Public dynamic tunnel, works for now, but would be good to setup something with the token
-	cloudflared tunnel --url http://localhost:4000
+	cloudflared tunnel run --token ${CLOUDFLARE_TOKEN}

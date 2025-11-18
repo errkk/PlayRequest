@@ -30,7 +30,7 @@ config :oauth2, debug: true
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.
 config :pr, PRWeb.Endpoint,
-  http: [port: System.get_env("PORT")],
+  http: [port: System.get_env("PORT") || 4000, ip: {0, 0, 0, 0}],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
