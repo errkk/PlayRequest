@@ -163,7 +163,8 @@ defmodule PRWeb.UserHeaderLive do
     Timex.today()
     |> Timex.weekday()
     |> case do
-      _ -> 60
+      5 -> 50
+      _ -> 40
     end
   end
 
