@@ -1,7 +1,9 @@
 import Config
 
 config :pr,
-  playlist_name: "PlayRequest"
+  playlist_name: "PlayRequest",
+  session_same_site: "Lax",
+  session_secure: false
 
 # Configure your database
 config :pr, PR.Repo,
@@ -28,7 +30,7 @@ config :oauth2, debug: true
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.
 config :pr, PRWeb.Endpoint,
-  http: [port: System.get_env("PORT")],
+  http: [port: System.get_env("PORT") || 4000, ip: {0, 0, 0, 0}],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
@@ -78,8 +80,8 @@ config :pr, PRWeb.Endpoint,
   ]
 
 # Do not include metadata nor timestamps in development logs
-# config :logger, :console, format: "[$level] $message\n"
-config :logger, level: :info
+config :logger, :console, format: "[$level] $message\n", level: :debug
+# config :logger, level: :info
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
@@ -90,43 +92,4 @@ config :phoenix, :stacktrace_depth, 20
 
 config :phoenix_live_view, :debug_heex_annotations, true
 
-config :pr, :sonos,
-  scopes: "playback-control-all",
-  redirect_uri: "#{System.get_env("REDIRECT_URL_BASE")}/sonos/authorized",
-  key: System.get_env("SONOS_KEY"),
-  secret: System.get_env("SONOS_SECRET")
-
-config :pr, :spotify,
-  scopes:
-    ~w(user-modify-playback-state user-read-currently-playing user-read-playback-state playlist-modify-private playlist-read-private),
-  redirect_uri: "#{System.get_env("REDIRECT_URL_BASE")}/spotify/authorized",
-  user_id: System.get_env("SPOTIFY_USER_ID"),
-  key: System.get_env("SPOTIFY_CLIENT_ID"),
-  secret: System.get_env("SPOTIFY_SECRET")
-
-config :ueberauth, Ueberauth.Strategy.Google.OAuth,
-  client_id: System.get_env("GOOGLE_CLIENT_ID"),
-  client_secret: System.get_env("GOOGLE_CLIENT_SECRET")
-
-config :pr,
-  allowed_user_domains: System.get_env("ALLOWED_USER_DOMAINS"),
-  installation_name: System.get_env("INSTALLATION_NAME", "PlayRequest"),
-  super_likes_allowed: System.get_env("SUPER_LIKES_ALLOWED", "2"),
-  burns_allowed: System.get_env("BURNS_ALLOWED", "2")
-
-config :pr, :feature_flags,
-  show_volume: System.get_env("FF_VOLUME", ""),
-  show_toggle_playback: System.get_env("FF_TOGGLE_PLAYBACK", ""),
-  show_skip: System.get_env("FF_SKIP", ""),
-  scale_play_button: System.get_env("FF_SCALE_PLAY_BUTTON", ""),
-  show_super_like: System.get_env("FF_SUPER_LIKE", ""),
-  show_burn: System.get_env("FF_BURN", "")
-
-config :sentry,
-  dsn: System.get_env("SENTRY_DSN"),
-  environment_name: :dev,
-  enable_source_code_context: true,
-  root_source_code_path: File.cwd!(),
-  tags: %{
-    env: "dev"
-  }
+# Runtime configuration for development environment has been moved to config/runtime.exs

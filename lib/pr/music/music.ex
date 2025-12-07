@@ -119,10 +119,13 @@ defmodule PR.Music do
   def check_current_playstate(%PlaybackState{state: state}, _mode),
     do: {:error, :playstate, state}
 
+  def check_current_playstate(%{}, _mode),
+    do: {:error, :playstate, nil}
+
   def check_unplayed() do
     # Check if there's something in the queue
     # If might still be marked as playing if its a skip
-    # but that's probably ok as this check is only really 
+    # but that's probably ok as this check is only really
     # of interest for knowing what to do when skip is pressed
     cond do
       Queue.num_unplayed() == 0 ->

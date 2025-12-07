@@ -186,10 +186,17 @@ defmodule PR.SonosAPI do
       %Household{household_id: household_id, id: id} ->
         %{playerIds: player_ids}
         |> post("/households/#{household_id}/groups/createGroup")
-        |> Map.get(:group)
-        |> fields_for_group(id)
-        |> Map.put(:is_active, true)
-        |> SonosHouseholds.insert_or_update_group()
+        |> case do
+          %{group: group} ->
+            group
+            |> fields_for_group(id)
+            |> Map.put(:is_active, true)
+            |> SonosHouseholds.insert_or_update_group()
+
+          {:error, error} ->
+            Logger.error(error)
+            {:error, :cant_create_group}
+        end
 
       _ ->
         {:error, :no_household_activated}

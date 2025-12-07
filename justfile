@@ -62,4 +62,4 @@ remote_production:
 	fly ssh console -C "/home/elixir/app/bin/{{binname}} remote"  --app {{appname}}
 
 tunnel:
-	ssh -p 443 -R0:localhost:4000 ${PINGY_TOKEN}@a.pinggy.online
+	cloudflared tunnel run --token ${CLOUDFLARE_TOKEN}

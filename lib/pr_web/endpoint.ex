@@ -6,7 +6,9 @@ defmodule PRWeb.Endpoint do
     store: :cookie,
     key: "_pr_web_key",
     signing_salt: "ZG+jiBR2",
-    same_site: "None"
+    # Different same site polic for local where there is no HTTPS
+    same_site: Application.compile_env(:pr, :session_same_site, "Lax"),
+    secure: Application.compile_env(:pr, :session_secure, false)
   ]
 
   socket("/live", Phoenix.LiveView.Socket,

@@ -51,7 +51,7 @@ defmodule PRWeb do
   def plug do
     quote do
       import Plug.Conn
-      use Phoenix.Controller, namespace: PRWeb
+      import Phoenix.Controller, only: [redirect: 2]
       unquote(verified_routes())
     end
   end

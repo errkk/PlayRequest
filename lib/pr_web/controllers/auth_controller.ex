@@ -1,6 +1,7 @@
 defmodule PRWeb.AuthController do
   use PRWeb, :controller
   plug(Ueberauth)
+  plug(:put_layout, html: {PRWeb.Layouts, :auth})
 
   alias PR.Auth
 
