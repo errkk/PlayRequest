@@ -17,7 +17,7 @@ defmodule PR.SonosHouseholds.GroupManager do
   end
 
   def check_or_recrate_active_group(
-        %Group{group_id: active_group_id, player_ids: player_ids},
+        %Group{group_id: active_group_id} = group,
         retries
       ) do
     with {:ok, groups} <- get_sonos_groups(),
@@ -25,7 +25,7 @@ defmodule PR.SonosHouseholds.GroupManager do
            group_id_present?(groups, active_group_id) do
       Logger.info("Group #{active_group_id} still exists on Sonos")
 
-      # Resubscribes after groupstatus gone, which i thin unsubscribes
+      # Resubscribes after groupstatus gone, which i think unsubscribes
       # TODO it only matches on group name, so might need to update the group id
       # saved here, in case that has changed
       Logger.info("Resubscribing webhooks for group #{active_group_id}")
@@ -38,11 +38,10 @@ defmodule PR.SonosHouseholds.GroupManager do
 
       {:error, :group_id_is_gone} ->
         Logger.warn(
-          "Check groups: Group #{active_group_id} isn't present on Sonos. Recreating with player ids",
-          player_ids: player_ids
+          "Check groups: Group #{active_group_id} isn't present on Sonos. Recreating with all available players"
         )
 
-        recreate_group(player_ids)
+        recreate_group()
         :ok
 
       {:error, :cant_get_groups} ->
@@ -53,13 +52,12 @@ defmodule PR.SonosHouseholds.GroupManager do
         # So if the group can found after getting here and retrying, probs needs a resubscription (above)
         Logger.warn(
           "Couldn't retrieve Sonos groups when trying to check_groups. Scheduling retry",
-          player_ids: player_ids,
           active_group_id: active_group_id,
           retries: retries
         )
 
         # Flag to say its a retry from here, in which case the ok state needs to resubscribe?
-        {:retry, %Group{id: active_group_id, player_ids: player_ids}, retries - 1}
+        {:retry, group, retries - 1}
 
       {:error, reason} ->
         Logger.error("Check groups: #{Atom.to_string(reason)}")
@@ -76,28 +74,42 @@ defmodule PR.SonosHouseholds.GroupManager do
     :ok
   end
 
-  @spec recreate_group(List.t()) :: {:ok, String.t()} | {:error, String.t()}
-  defp recreate_group(player_ids) do
+  @spec recreate_group() :: {:ok, String.t()} | {:error, String.t()}
+  defp recreate_group do
     # Do this before making the new group
     Logger.info("Unsubscribing")
     SonosAPI.unsubscribe_webhooks()
-    Logger.info("Trying to create group with player_ids", player_ids: player_ids)
 
-    # Make a new group with the player ids from the last saved group
-    case SonosAPI.create_group(player_ids) do
-      {:ok, %Group{group_id: id}} ->
-        SonosAPI.subscribe_webhooks()
-        Logger.info("New group created #{id}")
-        {:ok, id}
+    # Get all available players from the household and group them all together
+    with {:ok, groups} <- get_sonos_groups(),
+         player_ids <- get_all_player_ids_from_groups(groups) do
+      Logger.info("Trying to create group with all available player_ids", player_ids: player_ids)
 
-      {:error, :no_household_activated} ->
-        Logger.error("Couldn't re-create group, no household activated")
-        {:error, :no_household_activated}
+      case SonosAPI.create_group(player_ids) do
+        {:ok, %Group{group_id: id}} ->
+          SonosAPI.subscribe_webhooks()
+          Logger.info("New group created #{id}")
+          {:ok, id}
 
-      _ ->
-        Logger.error("Couldn't re-create group")
-        {:error, :couldnt_recreate_group}
+        {:error, :no_household_activated} ->
+          Logger.error("Couldn't re-create group, no household activated")
+          {:error, :no_household_activated}
+
+        _ ->
+          Logger.error("Couldn't re-create group")
+          {:error, :couldnt_recreate_group}
+      end
+    else
+      {:error, reason} ->
+        Logger.error("Couldn't get groups to recreate group: #{inspect(reason)}")
+        {:error, :cant_get_groups}
     end
+  end
+
+  defp get_all_player_ids_from_groups(groups) do
+    groups
+    |> Enum.flat_map(fn group -> Map.get(group, :player_ids, []) end)
+    |> Enum.uniq()
   end
 
   defp group_id_present?(groups, active_group_id) do
