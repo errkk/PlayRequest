@@ -14,6 +14,13 @@ defmodule PR.Music.PlaybackState do
     }
   end
 
+  def new(_) do
+    %__MODULE__{
+      position: 0,
+      state: :idle
+    }
+  end
+
   def label(:paued), do: "Paused"
   def label(:buffering), do: "Buffering"
   def label(:playing), do: "Playing"

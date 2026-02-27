@@ -69,8 +69,8 @@ config :pr, PR.Scheduler,
   run_strategy: {Quantum.RunStrategy.Local, :cluster},
   timezone: "Europe/London",
   jobs: [
-    {"@daily", {PR.Music, :clear_playlist, []}},
-    {"0 8 * * *", {PR.SonosHouseholds.GroupManager, :check_groups, []}}
+    {"30 11 * * *", {PR.Music, :clear_playlist, []}},
+    {"30 11 * * *", {PR.Worker.GroupCheck, :run, []}}
   ]
 
 # Import environment specific config. This must remain at the bottom
