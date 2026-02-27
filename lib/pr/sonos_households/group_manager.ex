@@ -10,8 +10,8 @@ defmodule PR.SonosHouseholds.GroupManager do
 
   def check_groups() do
     # Fetch groups from SonosAPI look for one that has the same name as the one that's stored
-    # If not, the players may have become un-grouped, so create and save a new group with the
-    # player ids that we had before.
+    # If not, the players may have become un-grouped, so create and save a new group
+    # with all players that can be found on the API
     group = SonosHouseholds.get_active_group()
     GroupCheck.start_link([group, @retries])
   end

@@ -69,6 +69,7 @@ defmodule PR.Music do
   end
 
   def clear_playlist do
+    Logger.info("Clearing playlist")
     Queue.clear()
     queue_updated()
   end

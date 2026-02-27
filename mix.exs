@@ -56,7 +56,9 @@ defmodule PR.MixProject do
       {:mock, "~> 0.3.6", only: :test},
       {:heroicons, "~> 0.5"},
       {:libcluster, "~> 3.3"},
-      {:sentry, "~> 10.1"}
+      {:sentry, "~> 10.1"},
+      {:quantum, "~> 3.0"},
+      {:highlander, "~> 0.2"}
     ]
   end
 

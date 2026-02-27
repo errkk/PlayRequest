@@ -65,6 +65,14 @@ config :dart_sass,
     cd: Path.expand("../assets", __DIR__)
   ]
 
+config :pr, PR.Scheduler,
+  run_strategy: {Quantum.RunStrategy.Local, :cluster},
+  timezone: "Europe/London",
+  jobs: [
+    {"@daily", {PR.Music, :clear_playlist, []}},
+    {"0 8 * * *", {PR.SonosHouseholds.GroupManager, :check_groups, []}}
+  ]
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
