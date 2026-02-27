@@ -21,7 +21,8 @@ defmodule PR.Application do
       {Phoenix.PubSub, [name: PR.PubSub, adapter: Phoenix.PubSub.PG2]},
       {PR.Worker.GetInitialState, [nil]},
       PRWeb.Presence,
-      {Cluster.Supervisor, [topologies, [name: PR.ClusterSupervisor]]}
+      {Cluster.Supervisor, [topologies, [name: PR.ClusterSupervisor]]},
+      {Highlander, PR.Scheduler}
     ]
 
     # This will only show up if log level is set <= :debug

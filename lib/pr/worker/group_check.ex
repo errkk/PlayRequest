@@ -2,7 +2,15 @@ defmodule PR.Worker.GroupCheck do
   require Logger
   use GenServer
 
+  alias PR.SonosHouseholds
   alias PR.SonosHouseholds.GroupManager
+
+  @retries 10
+
+  def run do
+    group = SonosHouseholds.get_active_group()
+    start_link([group, @retries])
+  end
 
   def start_link(default) when is_list(default) do
     GenServer.start_link(__MODULE__, default)

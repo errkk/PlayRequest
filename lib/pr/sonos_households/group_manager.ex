@@ -1,20 +1,12 @@
 defmodule PR.SonosHouseholds.GroupManager do
   require Logger
 
-  alias PR.SonosHouseholds
   alias PR.SonosHouseholds.Group
   alias PR.SonosAPI
   alias PR.Worker.GroupCheck
 
-  @retries 10
-
-  def check_groups() do
-    # Fetch groups from SonosAPI look for one that has the same name as the one that's stored
-    # If not, the players may have become un-grouped, so create and save a new group with the
-    # player ids that we had before.
-    group = SonosHouseholds.get_active_group()
-    GroupCheck.start_link([group, @retries])
-  end
+  # Entry point delegated to GroupCheck worker, which handles retries via GenServer
+  defdelegate check_groups(), to: GroupCheck, as: :run
 
   def check_or_recrate_active_group(
         %Group{group_id: active_group_id} = group,
@@ -134,15 +126,4 @@ defmodule PR.SonosHouseholds.GroupManager do
     end
   end
 
-  @spec get_active_group() :: {:ok, String.t(), List.t()} | {:error, atom()}
-  defp get_active_group do
-    # Get Group ID and expected player_ids from the database
-    case SonosHouseholds.get_active_group() do
-      %Group{id: active_group_id, name: name, player_ids: player_ids} ->
-        {:ok, active_group_id, name, player_ids}
-
-      _ ->
-        {:error, :no_active_group}
-    end
-  end
 end
