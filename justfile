@@ -63,3 +63,6 @@ remote_production:
 
 tunnel:
 	cloudflared tunnel run --token ${CLOUDFLARE_TOKEN}
+
+clear:
+	fly ssh console --app {{appname}} --command ./scripts/clear.sh
