@@ -17,7 +17,7 @@ start_pg:
 	brew services start postgresql@14
 
 stop:
-	brew services stop postgresql
+	brew services stop postgresql@14
 
 setup: deps start_pg migrate
 	echo "You'll need to enter a pasword in a min" && \
