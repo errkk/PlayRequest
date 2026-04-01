@@ -71,6 +71,7 @@ defmodule PRWeb.Router do
     post("/create-playlist", ServiceSetupController, :create_spotify_playlist)
     post("/bump", ServiceSetupController, :bump)
     post("/get-state", ServiceSetupController, :get_state)
+    post("/recreate-group", ServiceSetupController, :recreate_group)
   end
 
   scope "/", PRWeb.Service do

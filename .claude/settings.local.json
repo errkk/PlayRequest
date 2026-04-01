@@ -1,7 +1,6 @@
 {
+  "env": { "ENABLE_LSP_TOOL": "1" },
   "permissions": {
-    "allow": [
-      "Bash(mix compile:*)"
-    ]
+    "allow": ["Bash(mix compile:*)"]
   }
 }
