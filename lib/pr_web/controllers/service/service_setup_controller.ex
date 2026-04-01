@@ -7,6 +7,7 @@ defmodule PRWeb.Service.ServiceSetupController do
   alias PR.SonosHouseholds
   alias PR.ExternalAuth
   alias PR.Music
+  alias PR.SonosHouseholds.GroupManager
 
   def index(conn, _params) do
     households = SonosHouseholds.list_houeholds()
@@ -188,5 +189,19 @@ defmodule PRWeb.Service.ServiceSetupController do
   def get_state(conn, _) do
     PR.PlayState.get_initial_state()
     redirect(conn, to: ~p"/setup")
+  end
+
+  def recreate_group(conn, _) do
+    case GroupManager.recreate_group() do
+      {:ok, id} ->
+        conn
+        |> put_flash(:info, "Group recreated (#{id})")
+        |> redirect(to: ~p"/setup")
+
+      {:error, reason} ->
+        conn
+        |> put_flash(:error, "Couldn't recreate group: #{reason}")
+        |> redirect(to: ~p"/setup")
+    end
   end
 end
