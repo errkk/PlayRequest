@@ -67,7 +67,7 @@ defmodule PR.SonosHouseholds.GroupManager do
   end
 
   @spec recreate_group() :: {:ok, String.t()} | {:error, String.t()}
-  defp recreate_group do
+  def recreate_group do
     # Do this before making the new group
     Logger.info("Unsubscribing")
     SonosAPI.unsubscribe_webhooks()
