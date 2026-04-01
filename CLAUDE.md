@@ -34,7 +34,7 @@
 
 ## Deployment
 
-- To deploy to staging look at the git log to see the latest version tag, and for a new feature tag with 0.0.0-rc.0 incrementing the RC number
+- To deploy to staging look at the git log to see the latest version tag, and for a new feature tag with 0.0.0-rc.0 incrementing the RC number. The deployment is triggered by pushing the tag.
 - New features should be committed to new feature branches
 - Pull request to master when complete
 - Don't deploy to production

@@ -32,6 +32,8 @@ defmodule PRWeb.Service.ServiceSetupController do
       groups
       |> Enum.any?(&(&1.is_active and not is_nil(&1.subscribed_at)))
 
+    active_group = SonosHouseholds.get_active_group()
+
     render(
       conn,
       :index,
@@ -46,7 +48,8 @@ defmodule PRWeb.Service.ServiceSetupController do
       has_active_households: has_active_households,
       has_active_groups: has_active_groups,
       active_group_subscribed: active_group_subscribed,
-      spotify_playlist_created: [] != spotify_playlists
+      spotify_playlist_created: [] != spotify_playlists,
+      active_group: active_group
     )
   end
 

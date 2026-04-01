@@ -153,6 +153,9 @@
         <p>
           Recreate the Sonos group with all available players.
         </p>
+        <%= if @active_group do %>
+          <p>Current group: <strong><%= @active_group.name %></strong></p>
+        <% end %>
       </li>
     </ol>
   </div>

@@ -137,6 +137,16 @@ jobs:
         with:
           args: -o errkk -r playrequest -s success -u https://sonosnow.fly.dev -f
 
+      - name: Notify via Pushover
+        if: success()
+        run: |
+          curl -s -X POST https://api.pushover.net/1/messages.json \
+            -d "token=${{ secrets.PUSHOVER_KEY }}" \
+            -d "user=${{ secrets.PUSHOVER_USER }}" \
+            -d "title=SonosNow Production Deployed" \
+            -d "message=Version ${{ github.ref_name }} deployed to production" \
+            -d "url=https://sonosnow.fly.dev"
+
   deploy_staging:
     name: Deploy staging
     runs-on: ubuntu-latest
@@ -167,3 +177,13 @@ jobs:
         uses: niklasmerz/github-deployment-action@master
         with:
           args: -o errkk -r playrequest -s success -u https://sonosnow-staging.fly.dev -f
+
+      - name: Notify via Pushover
+        if: success()
+        run: |
+          curl -s -X POST https://api.pushover.net/1/messages.json \
+            -d "token=${{ secrets.PUSHOVER_KEY }}" \
+            -d "user=${{ secrets.PUSHOVER_USER }}" \
+            -d "title=SonoNow Staging Deployed" \
+            -d "message=Version ${{ github.ref_name }} deployed to production" \
+            -d "url=https://sonosnow-staging.fly.dev"
