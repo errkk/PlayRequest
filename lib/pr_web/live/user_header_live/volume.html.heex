@@ -9,7 +9,7 @@
         do: "Set volume to #{volume}",
         else: "Queue a track to set volume"
       }
-      class="button--vol"
+      class={if @participated, do: "button--vol", else: "button--vol button--vol--disabled"}
       phx-click="volume"
       value={volume}
       disabled={!@participated}
