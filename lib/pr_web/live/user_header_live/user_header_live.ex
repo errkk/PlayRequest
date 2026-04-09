@@ -257,6 +257,12 @@ defmodule PRWeb.UserHeaderLive do
     {:noreply, socket}
   end
 
+  def handle_event("volume", %{"value" => volume}, %{assigns: %{participated: false}} = socket) do
+    %{assigns: %{current_user: %{first_name: name}}} = socket
+    Logger.info("Vol attempted #{volume} – #{name}")
+    {:noreply, socket}
+  end
+
   def handle_event("volume", _, socket) do
     {:noreply, socket}
   end
