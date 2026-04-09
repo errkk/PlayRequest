@@ -215,11 +215,19 @@ a:hover .link {
       transform 200ms ease-in;
   }
 
-  &:hover {
+  &:hover:not(.button--vol--disabled) {
     cursor: pointer;
     .inner {
       background: $white;
       transform: scale(2);
+    }
+  }
+
+  &--disabled {
+    cursor: default;
+    .inner {
+      background: none;
+      border: 1px solid $border;
     }
   }
 }

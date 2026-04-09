@@ -4,10 +4,15 @@
   </span>
   <%= for volume <- 5..@max_vol//5 do %>
     <button
-      title={"Set volume to #{volume}"}
-      class="button--vol"
+      title={
+        if @participated,
+        do: "Set volume to #{volume}",
+        else: "Queue a track to set volume"
+      }
+      class={if @participated, do: "button--vol", else: "button--vol button--vol--disabled"}
       phx-click="volume"
       value={volume}
+      disabled={!@participated}
     >
       <span class="inner">Set to <%= volume %></span>
     </button>

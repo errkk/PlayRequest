@@ -42,7 +42,7 @@ defmodule PRWeb.UserHeaderLive do
           <.play_pause play_state={@play_state} show_skip={@show_skip && @num_unplayed > 1} />
         <% end %>
         <%= if @show_volume or @current_user.is_trusted do %>
-          <.volume max_vol={@max_vol} />
+          <.volume max_vol={@max_vol} participated={@participated} />
         <% end %>
       </div>
       <.online_users users={@users} />
@@ -137,6 +137,7 @@ defmodule PRWeb.UserHeaderLive do
         super_likes: super_likes,
         play_state: play_state,
         num_unplayed: Queue.num_unplayed(),
+        participated: Queue.has_participated?(%User{id: user_id}),
         max_vol: max_vol()
       )
       # Empty map to append on join/leave
@@ -194,8 +195,15 @@ defmodule PRWeb.UserHeaderLive do
     {:noreply, assign(socket, play_state: play_state)}
   end
 
-  def handle_info({Music, num_unplayed, :queue_updated}, socket) do
-    {:noreply, assign(socket, num_unplayed: num_unplayed)}
+  def handle_info(
+        {Music, num_unplayed, :queue_updated},
+        %{assigns: %{current_user: %User{id: user_id}}} = socket
+      ) do
+    {:noreply,
+     assign(socket,
+       num_unplayed: num_unplayed,
+       participated: Queue.has_participated?(%User{id: user_id})
+     )}
   end
 
   def handle_info({Music, _, _}, socket) do
@@ -242,10 +250,14 @@ defmodule PRWeb.UserHeaderLive do
     {:noreply, socket}
   end
 
-  def handle_event("volume", %{"value" => volume}, socket) do
+  def handle_event("volume", %{"value" => volume}, %{assigns: %{participated: true}} = socket) do
     SonosAPI.set_volume(volume)
     %{assigns: %{current_user: %{first_name: name}}} = socket
     Logger.info("Vol #{volume} – #{name}")
+    {:noreply, socket}
+  end
+
+  def handle_event("volume", _, socket) do
     {:noreply, socket}
   end
 
