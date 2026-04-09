@@ -12,7 +12,6 @@
       class={if @participated, do: "button--vol", else: "button--vol button--vol--disabled"}
       phx-click="volume"
       value={volume}
-      disabled={!@participated}
     >
       <span class="inner">Set to <%= volume %></span>
     </button>
