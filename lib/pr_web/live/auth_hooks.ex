@@ -31,7 +31,7 @@ defmodule PRWeb.AuthHooks do
         {:cont,
          socket
          |> assign(current_user: user)
-         |> assign(user_token: Phoenix.Token.sign(socket, "user socket", user.id))}
+         |> assign(user_token: PRWeb.UserSocketToken.sign(socket, user.id))}
     end
   end
 
