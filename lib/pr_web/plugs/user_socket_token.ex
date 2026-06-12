@@ -7,7 +7,7 @@ defmodule PRWeb.Plug.UserSocketToken do
 
   def call(conn, _) do
     if current_user = conn.assigns[:current_user] do
-      token = Phoenix.Token.sign(conn, "user socket", current_user.id)
+      token = PRWeb.UserSocketToken.sign(conn, current_user.id)
       assign(conn, :user_token, token)
     else
       conn

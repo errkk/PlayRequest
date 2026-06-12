@@ -27,7 +27,11 @@ defmodule PRWeb.AuthHooks do
 
       user ->
         Logger.debug("AuthHook: User authenticated: #{inspect(user.id)}")
-        {:cont, assign(socket, current_user: user)}
+
+        {:cont,
+         socket
+         |> assign(current_user: user)
+         |> assign(user_token: PRWeb.UserSocketToken.sign(socket, user.id))}
     end
   end
 
