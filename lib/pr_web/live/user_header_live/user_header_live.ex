@@ -160,15 +160,22 @@ defmodule PRWeb.UserHeaderLive do
     {:ok, socket}
   end
 
-  # def max_vol() do
-  #   Timex.today()
-  #   |> Timex.weekday()
-  #   |> case do
-  #     5 -> 50
-  #     _ -> 40
-  #   end
-  # end
-  def max_vol(), do: 60
+  def max_vol() do
+    case Application.get_env(:pr, :max_vol) do
+      nil -> default_max_vol()
+      "" -> default_max_vol()
+      val -> String.to_integer(val)
+    end
+  end
+
+  defp default_max_vol() do
+    Timex.today()
+    |> Timex.weekday()
+    |> case do
+      5 -> 50
+      _ -> 40
+    end
+  end
 
   #
   # Subscription handlers
