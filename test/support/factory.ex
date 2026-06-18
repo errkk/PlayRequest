@@ -23,6 +23,15 @@ defmodule PR.Factory do
     }
   end
 
+  def auth_factory do
+    %PR.ExternalAuth.Auth{
+      access_token: "access-token",
+      refresh_token: "refresh-token",
+      service: "Elixir.PR.SpotifyAPI",
+      activated_at: DateTime.utc_now() |> DateTime.truncate(:second)
+    }
+  end
+
   def group_factory do
     %PR.SonosHouseholds.Group{
       group_id: sequence(:group, &"RINCON:#{&1}"),

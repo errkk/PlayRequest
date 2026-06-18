@@ -1,4 +1,16 @@
 defmodule PR.Apis.TokenHelper do
+  @doc """
+  True when an OAuth token response body reports an `invalid_grant` error.
+
+  Spotify returns this when a refresh token has expired (six month lifetime
+  from July 20, 2026). The body may be a decoded map or a raw JSON string
+  depending on the configured serializer.
+  """
+  @spec invalid_grant?(any()) :: boolean()
+  def invalid_grant?(%{"error" => "invalid_grant"}), do: true
+  def invalid_grant?(body) when is_binary(body), do: String.contains?(body, "invalid_grant")
+  def invalid_grant?(_), do: false
+
   defmacro __using__(_) do
     quote do
       require Logger
@@ -121,7 +133,30 @@ defmodule PR.Apis.TokenHelper do
         |> Client.put_param(:refresh_token, refresh_token)
         |> Client.put_header("accept", "application/json")
         |> Client.get_token()
-        |> handle_token_response()
+        |> handle_refresh_response()
+      end
+
+      @spec handle_refresh_response({:error, any()} | {:ok, Client.t()}) ::
+              {:error, atom()} | {:ok}
+      defp handle_refresh_response({:error, %Response{body: body}} = response) do
+        if PR.Apis.TokenHelper.invalid_grant?(body) do
+          Logger.warning("Refresh token expired for #{__MODULE__}, discarding. Reauth required.")
+          discard_token()
+          {:error, :invalid_grant}
+        else
+          handle_token_response(response)
+        end
+      end
+
+      defp handle_refresh_response(response) do
+        handle_token_response(response)
+      end
+
+      @spec discard_token() :: :ok
+      defp discard_token do
+        ExternalAuth.discard_auth(__MODULE__)
+        Agent.update(__MODULE__, fn _state -> nil end)
+        :ok
       end
 
       @spec scopes() :: String.t()
