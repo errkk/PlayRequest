@@ -22,3 +22,5 @@ erl_crash.dump
 .DS_Store
 tmp
 assets/node_modules/
+priv/static/assets/app.css
+priv/static/assets/app.js
