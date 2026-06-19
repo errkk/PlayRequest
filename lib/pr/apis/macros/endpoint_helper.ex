@@ -36,8 +36,10 @@ defmodule PR.Apis.EndpointHelper do
              |> client_request(resource, method)
              |> handle_api_response(resource) do
           {:unauthorized} ->
-            get_refresh_token()
-            request(resource, method)
+            case get_refresh_token() do
+              {:ok} -> request(resource, method)
+              err -> err
+            end
 
           res ->
             res
@@ -53,8 +55,10 @@ defmodule PR.Apis.EndpointHelper do
              |> client_request(resource, method, params)
              |> handle_api_response(resource) do
           {:unauthorized} ->
-            get_refresh_token()
-            request(resource, method, params)
+            case get_refresh_token() do
+              {:ok} -> request(resource, method, params)
+              err -> err
+            end
 
           res ->
             res

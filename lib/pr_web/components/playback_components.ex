@@ -16,7 +16,7 @@ defmodule PRWeb.PlaybackComponents do
   def heart(assigns) do
     ~H"""
     <%= unless is_nil(@points) do %>
-      <%= for _p <- 1..@points do %>
+      <%= for _p <- 1..@points//1 do %>
         <img src={~p"/images/heart_pink.svg"} class="heart" />
       <% end %>
     <% end %>
@@ -26,7 +26,7 @@ defmodule PRWeb.PlaybackComponents do
   def fire(assigns) do
     ~H"""
     <%= unless is_nil(@super_likes) do %>
-      <%= for _p <- 1..@super_likes do %>
+      <%= for _p <- 1..@super_likes//1 do %>
         <img src={~p"/images/fire.svg"} class="fire" />
       <% end %>
     <% end %>

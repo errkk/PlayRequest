@@ -47,6 +47,19 @@ defmodule PR.ExternalAuth do
     Repo.delete(auth)
   end
 
+  def discard_auth(service) when is_atom(service) do
+    service
+    |> Atom.to_string()
+    |> discard_auth()
+  end
+
+  def discard_auth(service) do
+    case get_auth(service) do
+      %Auth{} = auth -> delete_auth(auth)
+      _ -> {:ok, nil}
+    end
+  end
+
   def change_auth(%Auth{} = auth) do
     Auth.changeset(auth, %{})
   end
