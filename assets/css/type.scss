@@ -25,6 +25,13 @@ $fontName: "GrotaSansRd";
   font-weight: normal;
 }
 
+@font-face {
+  font-family: Neon;
+  src:
+    url("/fonts/Neon.ttf") format("truetype");
+  font-weight: normal;
+}
+
 body {
   line-height: 1.4;
   color: transparentize($white, 0.2);
@@ -63,6 +70,39 @@ p {
     margin-top: 5px;
   }
 }
+
+@keyframes pulsate {
+  100% {
+    /* Larger blur radius */
+    text-shadow:
+      0 0 4px #fff,
+      0 0 11px #fff,
+      0 0 19px #fff,
+      0 0 40px $teal,
+      0 0 80px $teal,
+      0 0 90px $teal,
+      0 0 100px $teal,
+      0 0 150px $teal;
+  }
+ 0% {
+    /* A slightly smaller blur radius */
+    text-shadow:
+      0 0 3px #fff,
+      0 0 8px #fff,
+      0 0 17px #fff,
+      0 0 35px $teal,
+      0 0 70px $teal,
+      0 0 76px $teal,
+      0 0 90px $teal,
+      0 0 130px $teal;
+  }
+}
+
+.header--80s {
+  font-family: Neon;
+  animation: pulsate 0.11s ease-in-out infinite alternate;    
+}
+
 .intro {
   font-size: 1.5em;
   margin-bottom: 1em;
