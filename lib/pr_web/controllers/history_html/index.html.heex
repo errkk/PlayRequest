@@ -15,7 +15,7 @@
 
             <div class="track__details">
               <h3 class="track__name">
-                <.link href={{:"spotify:track", track.spotify_id}} title="Open in Spotify">
+                <.link href={{:"spotify:track", track.external_id}} title="Open in Spotify">
                   <img src={~p"/images/spotify.svg"} class="spotify" />
                   <span class="link"><%= track.name %></span>
                 </.link>

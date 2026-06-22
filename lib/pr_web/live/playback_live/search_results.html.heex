@@ -30,7 +30,7 @@
           title="Add to queue"
           class="track__queue"
           phx-click="queue"
-          value={track.spotify_id}
+          value={track.external_id}
           style={
              "transform: scale(#{max(get_track_novelty(track) / 100, 0.2)})"
           }
@@ -41,7 +41,7 @@
           title="Add to queue"
           class="track__queue"
           phx-click="queue"
-          value={track.spotify_id}
+          value={track.external_id}
         >
         </button>
       </div>

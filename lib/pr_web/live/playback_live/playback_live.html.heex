@@ -23,7 +23,7 @@
             <%= if is_playing?(track, @play_state) do %>
               <img src={~p"/images/playing-icon.svg"} class="track__playing" />
             <% end %>
-            <.link href={{:"spotify:track", track.spotify_id}} title="Open in Spotify">
+            <.link href={{:"spotify:track", track.external_id}} title="Open in Spotify">
               <span class="link"><%= track.name %></span>
             </.link>
             <%= if track.track_novelty < 20 do %>

@@ -74,7 +74,7 @@ defmodule PR.Queue do
     |> query_unplayed()
     |> order()
     |> limit(100)
-    |> select([t], {t.spotify_id})
+    |> select([t], {t.external_id})
     |> Repo.all()
   end
 
@@ -114,7 +114,7 @@ defmodule PR.Queue do
   def get_novelty_for_search_results(tracks) do
     search_results =
       tracks
-      |> Enum.map(fn %{spotify_id: spotify_id, artist: artist} -> [spotify_id, artist] end)
+      |> Enum.map(fn %{external_id: external_id, artist: artist} -> [external_id, artist] end)
       |> Enum.map(fn values -> values |> Enum.map(&escape_quotes/1) end)
       |> Enum.map(fn values -> values |> Enum.map(&"'#{&1}'") end)
       |> Enum.map(fn values ->
@@ -124,7 +124,7 @@ defmodule PR.Queue do
 
     query = """
     WITH
-      search_results(spotify_id, artist) AS (
+      search_results(external_id, artist) AS (
         VALUES #{search_results}
       )
     select
@@ -132,7 +132,7 @@ defmodule PR.Queue do
       coalesce(artist_novelty, 100) as artist_novelty
     from
       search_results
-      left join track_novelty on search_results.spotify_id = track_novelty.spotify_id
+      left join track_novelty on search_results.external_id = track_novelty.external_id
       left join artist_novelty on search_results.artist = artist_novelty.artist
     """
 
@@ -192,11 +192,11 @@ defmodule PR.Queue do
   end
 
   @spec set_current(SonosItem.t()) :: {:started | :already_started, DateTime.t()} | {:ok}
-  def set_current(%SonosItem{spotify_id: spotify_id, name: name}) do
+  def set_current(%SonosItem{provider: provider, external_id: external_id, name: name}) do
     Logger.info("Set current: #{name}")
     now = DateTime.utc_now()
 
-    set_current_transaction(spotify_id, now)
+    set_current_transaction(provider, external_id, now)
   end
 
   def set_current(_) do
@@ -247,15 +247,15 @@ defmodule PR.Queue do
     end
   end
 
-  @spec set_current_transaction(String.t(), DateTime.t()) ::
+  @spec set_current_transaction(String.t(), String.t(), DateTime.t()) ::
           {:ok, [played: integer, playing: integer]}
-  defp set_current_transaction(spotify_id, now) do
+  defp set_current_transaction(provider, external_id, now) do
     Repo.transaction(fn ->
       # Anything else that was playing now isn't, cos this new track is
       played =
         Track
         |> query_is_playing()
-        |> where([t], t.spotify_id != ^spotify_id)
+        |> where([t], t.external_id != ^external_id or t.provider != ^provider)
         |> Repo.update_all(set: [playing_since: nil, played_at: now])
         |> case do
           {0, nil} ->
@@ -271,7 +271,8 @@ defmodule PR.Queue do
       # If its not already played or already marked as playing
       playing =
         Track
-        |> where([t], t.spotify_id == ^spotify_id)
+        |> where([t], t.provider == ^provider)
+        |> where([t], t.external_id == ^external_id)
         |> where([t], is_nil(t.played_at))
         |> where([t], is_nil(t.playing_since))
         |> Repo.update_all(set: [playing_since: now])
@@ -384,7 +385,7 @@ defmodule PR.Queue do
       :left,
       [t],
       tn in TrackNovelty,
-      on: tn.spotify_id == t.spotify_id,
+      on: tn.external_id == t.external_id,
       as: :track_novelty
     )
     |> join(

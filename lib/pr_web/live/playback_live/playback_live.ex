@@ -183,8 +183,8 @@ defmodule PRWeb.PlaybackLive do
     {:noreply, assign(socket, playlist: items)}
   end
 
-  def handle_info({:queue, spotify_id}, %{assigns: %{current_user: user}} = socket) do
-    case Music.queue(user, spotify_id) do
+  def handle_info({:queue, external_id}, %{assigns: %{current_user: user}} = socket) do
+    case Music.queue(user, external_id) do
       {:ok, _track} ->
         socket =
           socket
@@ -193,10 +193,10 @@ defmodule PRWeb.PlaybackLive do
 
         {:noreply, socket}
 
-      #  Only pass error message for spotify_id field, as there are some other changeset
+      #  Only pass error message for external_id field, as there are some other changeset
       # errors that we don't want to tell people about
-      {:error, %{errors: [{:spotify_id, {message, _}} | _tail]}} ->
-        Logger.warn("Double unplayed queue prevented: #{spotify_id}")
+      {:error, %{errors: [{:external_id, {message, _}} | _tail]}} ->
+        Logger.warn("Double unplayed queue prevented: #{external_id}")
 
         socket =
           socket
@@ -248,8 +248,8 @@ defmodule PRWeb.PlaybackLive do
   ## User events
 
   @impl true
-  def handle_event("queue", %{"value" => spotify_id}, socket) do
-    send(self(), {:queue, spotify_id})
+  def handle_event("queue", %{"value" => external_id}, socket) do
+    send(self(), {:queue, external_id})
     {:noreply, assign(socket, participated: true)}
   end
 
