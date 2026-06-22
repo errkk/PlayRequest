@@ -9,7 +9,8 @@ defmodule PR.Queue.Track do
     field(:artist, :string)
     field(:duration, :integer)
     field(:img, :string)
-    field(:spotify_id, :string)
+    field(:provider, :string)
+    field(:external_id, :string)
     field(:name, :string)
     field(:played_at, :utc_datetime)
     field(:playing_since, :utc_datetime)
@@ -38,14 +39,15 @@ defmodule PR.Queue.Track do
       :name,
       :artist,
       :img,
-      :spotify_id,
+      :provider,
+      :external_id,
       :duration,
       :played_at,
       :playing_since,
       :user_id
     ])
-    |> validate_required([:name, :artist, :img, :spotify_id, :duration, :user_id])
+    |> validate_required([:name, :artist, :img, :provider, :external_id, :duration, :user_id])
     |> validate_exclusion(:name, ["World in Motion"])
-    |> unique_constraint(:spotify_id, name: :already_queued, message: "Already queued")
+    |> unique_constraint(:external_id, name: :already_queued, message: "Already queued")
   end
 end

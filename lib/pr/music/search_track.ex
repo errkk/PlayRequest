@@ -1,20 +1,22 @@
 defmodule PR.Music.SearchTrack do
-  defstruct [:name, :artist, :duration, :img, :spotify_id, :track_novelty, :artist_novelty]
+  defstruct [:name, :artist, :duration, :img, :provider, :external_id, :track_novelty, :artist_novelty]
 
-  @spec new(map()) :: SearchTrack.t()
+  @spec new(map(), String.t()) :: SearchTrack.t()
   def new(
         %{
           id: id,
           name: name,
           duration_ms: duration,
           artists: [%{name: artist} | _]
-        } = params
+        } = params,
+        provider
       ) do
     %__MODULE__{
       name: name,
       artist: artist,
       duration: trunc(duration),
-      spotify_id: id
+      provider: provider,
+      external_id: id
     }
     |> Map.merge(get_image(params))
   end
