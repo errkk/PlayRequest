@@ -18,7 +18,8 @@ defmodule PR.Factory do
       img: "img",
       played_at: nil,
       playing_since: nil,
-      spotify_id: sequence(:spotify_id, &"spotify:track:#{&1}"),
+      provider: "spotify",
+      external_id: sequence(:external_id, &"track-#{&1}"),
       user: insert(:user)
     }
   end

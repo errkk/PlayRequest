@@ -59,30 +59,30 @@ defmodule PR.QueueTest do
   describe "queuing" do
     test "can't queue something twice if its unplayed" do
       me = insert(:user)
-      insert(:track, spotify_id: "derp", played_at: nil, playing_since: nil)
-      params = params_for(:track, spotify_id: "derp", user_id: me.id)
+      insert(:track, external_id: "derp", played_at: nil, playing_since: nil)
+      params = params_for(:track, external_id: "derp", user_id: me.id)
 
       assert {:error, %{errors: errors}} = Queue.create_track(params)
-      assert {:spotify_id, {"Already queued", _}} = errors |> Enum.at(0)
+      assert {:external_id, {"Already queued", _}} = errors |> Enum.at(0)
     end
 
     test "can't queue something twice if its playing and marked unplayed" do
       me = insert(:user)
 
-      insert(:track, spotify_id: "derp", played_at: nil, playing_since: DateTime.utc_now())
+      insert(:track, external_id: "derp", played_at: nil, playing_since: DateTime.utc_now())
 
-      params = params_for(:track, spotify_id: "derp", user_id: me.id)
+      params = params_for(:track, external_id: "derp", user_id: me.id)
 
       assert {:error, %{errors: errors}} = Queue.create_track(params)
-      assert {:spotify_id, {"Already queued", _}} = errors |> Enum.at(0)
+      assert {:external_id, {"Already queued", _}} = errors |> Enum.at(0)
     end
 
     test "can queue same track if it's been played" do
       me = insert(:user)
 
-      insert(:track, spotify_id: "derp", played_at: DateTime.utc_now())
+      insert(:track, external_id: "derp", played_at: DateTime.utc_now())
 
-      params = params_for(:track, spotify_id: "derp", user_id: me.id)
+      params = params_for(:track, external_id: "derp", user_id: me.id)
 
       assert {:ok, track} = Queue.create_track(params)
     end
@@ -90,16 +90,22 @@ defmodule PR.QueueTest do
 
   describe "playing" do
     test "set playing since" do
-      current_track = insert(:track, spotify_id: "derp")
-      assert {:ok, [played: nil, playing: 1]} = Queue.set_current(%SonosItem{spotify_id: "derp"})
+      current_track = insert(:track, external_id: "derp")
+
+      assert {:ok, [played: nil, playing: 1]} =
+               Queue.set_current(%SonosItem{provider: "spotify", external_id: "derp"})
+
       refute Track |> Repo.get(current_track.id) |> Map.get(:playing_since) |> is_nil()
     end
 
     test "set playing since and played at" do
-      previous_track = insert(:track, spotify_id: "herp", playing_since: ~N[2019-01-01 00:00:00])
-      current_track = insert(:track, spotify_id: "derp")
-      assert {:ok, [played: 1, playing: 1]} = Queue.set_current(%SonosItem{spotify_id: "derp"})
-      assert %{spotify_id: "derp"} = Queue.get_playing()
+      previous_track = insert(:track, external_id: "herp", playing_since: ~N[2019-01-01 00:00:00])
+      current_track = insert(:track, external_id: "derp")
+
+      assert {:ok, [played: 1, playing: 1]} =
+               Queue.set_current(%SonosItem{provider: "spotify", external_id: "derp"})
+
+      assert %{external_id: "derp"} = Queue.get_playing()
       refute Track |> Repo.get(previous_track.id) |> Map.get(:played_at) |> is_nil()
       assert Track |> Repo.get(previous_track.id) |> Map.get(:playing_since) |> is_nil()
       refute Track |> Repo.get(current_track.id) |> Map.get(:playing_since) |> is_nil()
@@ -108,7 +114,7 @@ defmodule PR.QueueTest do
     test "nothing is playing" do
       previous_track =
         insert(:track,
-          spotify_id: "herp",
+          external_id: "herp",
           playing_since: ~N[2019-01-01 00:10:00],
           duration: 10_000
         )
@@ -126,22 +132,22 @@ defmodule PR.QueueTest do
     end
 
     # test "nothing is playing but it might be lets give it 10 seconds" do
-    #   track = insert(:recently_playing_track, spotify_id: "herp", duration: 10_000)
+    #   track = insert(:recently_playing_track, external_id: "herp", duration: 10_000)
     #   assert {:ok, [played: 1, playing: nil]} = Queue.set_current(%{})
     #   assert %{played_at: nil, playing_since: nil} = Queue.get_track!(track.id)
     # end
 
     # test "nothing is playing but it might be lets give it 10 seconds its had 10 seconds" do
-    #   previous_track = insert(:playing_track, spotify_id: "herp", duration: 10_000)
+    #   previous_track = insert(:playing_track, external_id: "herp", duration: 10_000)
     #   assert {:ok, [played: nil, playing: nil]} = Queue.set_current(%{})
     #   assert Queue.get_playing() |> is_nil()
     # end
 
     test "already played" do
-      played_track = insert(:track, spotify_id: "herp", played_at: ~N[2019-01-01 00:00:00])
+      played_track = insert(:track, external_id: "herp", played_at: ~N[2019-01-01 00:00:00])
 
       assert {:ok, [played: nil, playing: nil]} =
-               Queue.set_current(%SonosItem{spotify_id: "herp"})
+               Queue.set_current(%SonosItem{provider: "spotify", external_id: "herp"})
 
       assert Queue.get_playing() |> is_nil()
       refute Track |> Repo.get(played_track.id) |> Map.get(:played_at) |> is_nil()
@@ -150,13 +156,13 @@ defmodule PR.QueueTest do
 
     test "same thing already playing" do
       {:ok, playing_since} = ~N[2019-01-01 00:00:00] |> DateTime.from_naive("Etc/UTC")
-      insert(:track, spotify_id: "herple", played_at: ~N[2018-01-01 00:00:00])
-      current_track = insert(:track, spotify_id: "herp", playing_since: playing_since)
+      insert(:track, external_id: "herple", played_at: ~N[2018-01-01 00:00:00])
+      current_track = insert(:track, external_id: "herp", playing_since: playing_since)
 
       assert {:ok, [played: nil, playing: nil]} =
-               Queue.set_current(%SonosItem{spotify_id: "herp"})
+               Queue.set_current(%SonosItem{provider: "spotify", external_id: "herp"})
 
-      assert %{spotify_id: "herp"} = Queue.get_playing()
+      assert %{external_id: "herp"} = Queue.get_playing()
       track = Track |> Repo.get(current_track.id)
       assert track |> Map.get(:played_at) |> is_nil()
       assert DateTime.compare(track.playing_since, playing_since) === :eq

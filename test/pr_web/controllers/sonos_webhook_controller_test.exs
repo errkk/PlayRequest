@@ -11,7 +11,7 @@ defmodule PRWeb.SonosWebhookControllerTest do
 
   describe "headers" do
     test "Check group id from header", %{conn: conn} do
-      insert(:track, spotify_id: "0XhXnY0lBzbdEWktDHknsl")
+      insert(:track, external_id: "0XhXnY0lBzbdEWktDHknsl")
       insert(:group, group_id: "RINCON:GROUPID", is_active: true)
 
       capture_log(fn ->
@@ -28,7 +28,7 @@ defmodule PRWeb.SonosWebhookControllerTest do
 
   describe "metadata" do
     test "set current track when there is a next", %{conn: conn} do
-      insert(:track, spotify_id: "0XhXnY0lBzbdEWktDHknsl")
+      insert(:track, external_id: "0XhXnY0lBzbdEWktDHknsl")
       insert(:group, group_id: "RINCON:GROUPID", is_active: true)
 
       conn =
@@ -38,11 +38,11 @@ defmodule PRWeb.SonosWebhookControllerTest do
         |> post(~p"/sonos/callback", CurrentAndNext.json())
 
       assert response(conn, 202)
-      assert %{spotify_id: "0XhXnY0lBzbdEWktDHknsl"} = Queue.get_playing()
+      assert %{external_id: "0XhXnY0lBzbdEWktDHknsl"} = Queue.get_playing()
     end
 
     test "dont handle if group id is different", %{conn: conn} do
-      insert(:track, playing_since: nil, spotify_id: "0XhXnY0lBzbdEWktDHknsl")
+      insert(:track, playing_since: nil, external_id: "0XhXnY0lBzbdEWktDHknsl")
 
       assert capture_log(fn ->
                conn =
@@ -57,7 +57,7 @@ defmodule PRWeb.SonosWebhookControllerTest do
     end
 
     test "set current track when current is already playing", %{conn: conn} do
-      insert(:track, playing_since: DateTime.utc_now(), spotify_id: "0XhXnY0lBzbdEWktDHknsl")
+      insert(:track, playing_since: DateTime.utc_now(), external_id: "0XhXnY0lBzbdEWktDHknsl")
       insert(:group, group_id: "RINCON:GROUPID", is_active: true)
 
       conn =
@@ -67,12 +67,12 @@ defmodule PRWeb.SonosWebhookControllerTest do
         |> post(~p"/sonos/callback", CurrentAndNext.json())
 
       assert response(conn, 202)
-      assert %{spotify_id: "0XhXnY0lBzbdEWktDHknsl"} = Queue.get_playing()
+      assert %{external_id: "0XhXnY0lBzbdEWktDHknsl"} = Queue.get_playing()
     end
 
     test "old track set played", %{conn: conn} do
       insert(:group, group_id: "RINCON:GROUPID", is_active: true)
-      old = insert(:playing_track, spotify_id: "something else")
+      old = insert(:playing_track, external_id: "something else")
 
       conn =
         conn
@@ -87,8 +87,8 @@ defmodule PRWeb.SonosWebhookControllerTest do
 
     test "old track set played update current", %{conn: conn} do
       insert(:group, group_id: "RINCON:GROUPID", is_active: true)
-      old = insert(:playing_track, spotify_id: "something else")
-      new = insert(:track, spotify_id: "0XhXnY0lBzbdEWktDHknsl")
+      old = insert(:playing_track, external_id: "something else")
+      new = insert(:track, external_id: "0XhXnY0lBzbdEWktDHknsl")
 
       conn =
         conn
@@ -97,7 +97,7 @@ defmodule PRWeb.SonosWebhookControllerTest do
         |> post(~p"/sonos/callback", CurrentAndNext.json())
 
       assert response(conn, 202)
-      assert %{spotify_id: "0XhXnY0lBzbdEWktDHknsl"} = Queue.get_playing()
+      assert %{external_id: "0XhXnY0lBzbdEWktDHknsl"} = Queue.get_playing()
       assert %{played_at: %DateTime{}} = Repo.get(Track, old.id)
     end
   end
