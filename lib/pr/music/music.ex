@@ -2,9 +2,8 @@ defmodule PR.Music do
   require Logger
 
   alias PR.SonosAPI
-  alias PR.SpotifyAPI
   alias PR.PlayState
-  alias PR.Music.{SearchTrack, PlaybackState}
+  alias PR.Music.{SearchTrack, PlaybackState, Provider}
   alias PR.Queue
   alias PR.Queue.Track
   alias PR.SonosHouseholds
@@ -21,26 +20,21 @@ defmodule PR.Music do
   end
 
   @spec search(String.t()) :: {:ok, [SearchTrack.t()]} | {:error}
-  def search(q) do
-    case SpotifyAPI.search(q) do
+  def search(q, provider \\ Provider.default()) do
+    case Provider.for(provider).search(q) do
       {:ok, tracks} ->
-        tracks =
-          tracks
-          |> Enum.map(&SearchTrack.new/1)
-          |> Queue.get_novelty_for_search_results()
-
-        {:ok, tracks}
+        {:ok, Queue.get_novelty_for_search_results(tracks)}
 
       err ->
         err
     end
   end
 
-  @spec queue(User.t(), String.t()) :: {:ok, Track.t()}
-  def queue(%User{id: user_id}, id) do
-    Logger.info("Queuing: spotify:track:#{id}")
+  @spec queue(User.t(), String.t(), String.t()) :: {:ok, Track.t()}
+  def queue(%User{id: user_id}, external_id, provider \\ Provider.default()) do
+    Logger.info("Queuing: #{provider}:#{external_id}")
 
-    with {:ok, search_track} <- get_track(id),
+    with {:ok, search_track} <- Provider.for(provider).get_track(external_id),
          search_track <- Map.put(search_track, :user_id, user_id),
          {:ok, queued_track} <- create_track(search_track) do
       queue_updated()
@@ -59,11 +53,11 @@ defmodule PR.Music do
   end
 
   def sync_playlist do
-    Logger.info("Syncing tracks to Spotify playlist")
+    Logger.info("Syncing tracks to provider playlist")
 
     Queue.list_track_uris()
-    |> Enum.map(fn {id} -> "spotify:track:" <> id end)
-    |> SpotifyAPI.replace_playlist()
+    |> Enum.map(fn {id} -> id end)
+    |> default_provider().replace_playlist()
 
     {:ok}
   end
@@ -97,7 +91,7 @@ defmodule PR.Music do
 
       {:error, :playlist_not_created} ->
         Logger.error("Trigger playlist: Playlist not created")
-        {:error, "Couldn't find #{get_playlist_name()} in Sonos favorites"}
+        {:error, "Couldn't find #{default_provider().favourite_name()} in Sonos favorites"}
 
       {:error, :gone} ->
         Logger.error("Trigger playlist: Fav gone, try re-saving groups")
@@ -105,7 +99,7 @@ defmodule PR.Music do
 
       _ ->
         Logger.error("Trigger playlist: Unknown error")
-        {:error, "Could not load playlist #{get_playlist_name()}"}
+        {:error, "Could not load playlist #{default_provider().favourite_name()}"}
     end
   end
 
@@ -196,7 +190,7 @@ defmodule PR.Music do
 
   @spec find_playlist([map()]) :: {:ok, String.t()} | {:error, atom()}
   defp find_playlist(sonos_favorites) do
-    case Enum.find(sonos_favorites, &(&1.name == get_playlist_name())) do
+    case Enum.find(sonos_favorites, &(&1.name == default_provider().favourite_name())) do
       %{id: id} ->
         {:ok, id}
 
@@ -212,17 +206,5 @@ defmodule PR.Music do
     |> Queue.create_track()
   end
 
-  @spec get_track(String.t()) :: {:ok, SearchTrack.t()} | {:error}
-  defp get_track(id) do
-    with track_data <- SpotifyAPI.get_track(id),
-         %SearchTrack{} = track <- SearchTrack.new(track_data) do
-      {:ok, track}
-    else
-      err -> err
-    end
-  end
-
-  defp get_playlist_name do
-    Application.get_env(:pr, :playlist_name)
-  end
+  defp default_provider, do: Provider.for(Provider.default())
 end
