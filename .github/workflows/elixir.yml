@@ -185,5 +185,5 @@ jobs:
             -d "token=${{ secrets.PUSHOVER_KEY }}" \
             -d "user=${{ secrets.PUSHOVER_USER }}" \
             -d "title=SonoNow Staging Deployed" \
-            -d "message=Version ${{ github.ref_name }} deployed to production" \
+            -d "message=Version ${{ github.ref_name }} deployed to staging" \
             -d "url=https://sonosnow-staging.fly.dev"
