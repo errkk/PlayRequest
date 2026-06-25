@@ -38,6 +38,7 @@
             <% end %>
           </h3>
           <p class="track__artist">
+            <.provider_icon provider={track.provider} />
             <%= track.artist %>
             <%= if track.artist_novelty < 20 do %>
               <span title={"Artist novelty: #{track.artist_novelty}"}>😴</span>

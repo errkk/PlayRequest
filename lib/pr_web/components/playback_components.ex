@@ -4,6 +4,18 @@ defmodule PRWeb.PlaybackComponents do
   alias PR.Queue.Track
   alias PR.Music.PlaybackState
 
+  def provider_icon(%{provider: "soundcloud"} = assigns) do
+    ~H"""
+    <img src={~p"/images/soundcloud.svg"} class="provider-icon" title="SoundCloud" />
+    """
+  end
+
+  def provider_icon(assigns) do
+    ~H"""
+    <img src={~p"/images/spotify.svg"} class="provider-icon" title="Spotify" />
+    """
+  end
+
   def chip(assigns) do
     ~H"""
     <div class="chip">
