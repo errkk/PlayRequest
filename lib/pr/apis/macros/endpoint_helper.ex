@@ -152,7 +152,10 @@ defmodule PR.Apis.EndpointHelper do
           |> Client.post(resource, params)
 
       defp client_request(client, resource, :put, params),
-        do: Client.put(client, resource, params)
+        do:
+          client
+          |> Client.put_header("Content-Type", "application/json")
+          |> Client.put(resource, params)
 
       @spec authenticated_client(Client.t()) :: Client.t() | {:error, atom()}
       defp authenticated_client(client) do
