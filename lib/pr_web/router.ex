@@ -67,6 +67,7 @@ defmodule PRWeb.Router do
     put("/group/:id", ServiceSetupController, :toggle_group)
     post("/subscribe", ServiceSetupController, :subscribe_sonos_webhooks)
     post("/sync-playlist", ServiceSetupController, :sync_playlist)
+    post("/sync-soundcloud-playlist", ServiceSetupController, :sync_soundcloud_playlist)
     post("/trigger-playlist", ServiceSetupController, :trigger_playlist)
     post("/create-playlist", ServiceSetupController, :create_spotify_playlist)
     post("/bump", ServiceSetupController, :bump)

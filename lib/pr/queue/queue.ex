@@ -78,6 +78,17 @@ defmodule PR.Queue do
     |> Repo.all()
   end
 
+  @spec list_track_uris(String.t()) :: [String.t()]
+  def list_track_uris(provider) do
+    Track
+    |> query_unplayed()
+    |> where([t], t.provider == ^provider)
+    |> order()
+    |> limit(100)
+    |> select([t], {t.external_id})
+    |> Repo.all()
+  end
+
   @spec has_participated?(User.t()) :: boolean()
   def has_participated?(%User{} = user) do
     case Track

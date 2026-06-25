@@ -8,6 +8,7 @@ defmodule PRWeb.Service.ServiceSetupController do
   alias PR.SonosHouseholds
   alias PR.ExternalAuth
   alias PR.Music
+  alias PR.Queue
   alias PR.SonosHouseholds.GroupManager
 
   def index(conn, _params) do
@@ -137,6 +138,22 @@ defmodule PRWeb.Service.ServiceSetupController do
       {:error, msg} ->
         conn
         |> put_flash(:error, msg)
+        |> redirect(to: ~p"/setup")
+    end
+  end
+
+  def sync_soundcloud_playlist(conn, _) do
+    ids = Queue.list_track_uris("soundcloud") |> Enum.map(fn {id} -> id end)
+
+    case SoundCloudAPI.replace_playlist(ids) do
+      {:ok, _} ->
+        conn
+        |> put_flash(:info, "Synced #{length(ids)} SoundCloud track(s) to the playlist")
+        |> redirect(to: ~p"/setup")
+
+      {:error, reason} ->
+        conn
+        |> put_flash(:error, "SoundCloud sync failed: #{inspect(reason)}")
         |> redirect(to: ~p"/setup")
     end
   end
