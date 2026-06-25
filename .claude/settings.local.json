@@ -11,7 +11,10 @@
       "Bash(fly machines *)",
       "Bash(fly secrets *)",
       "Bash(fly ssh *)",
-      "Bash(fly machine *)"
+      "Bash(fly machine *)",
+      "WebFetch(domain:developers.soundcloud.com)",
+      "Bash(git stash *)",
+      "Bash(gh run *)"
     ]
   }
 }
