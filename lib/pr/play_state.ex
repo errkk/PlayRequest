@@ -298,8 +298,10 @@ defmodule PR.PlayState do
 
       {:ok, data}
     rescue
-      _ ->
-        Logger.warn("Current item isn't a SonosItem with Spotify ID. Setting current to %{}")
+      e ->
+        Logger.warning(
+          "SonosItem.new failed (#{inspect(e)}). Raw current_item: #{inspect(current_item)}"
+        )
 
         {:ok, %{current_item: %{}}}
     end
