@@ -4,15 +4,18 @@
     <ol class="setup-list">
       <li>
         <h3>
-          <.check checked={@has_token_sonos and @has_token_spotify} /> Authenticate accounts
+          <.check checked={@has_token_sonos and @has_token_spotify and @has_token_soundcloud} /> Authenticate accounts
         </h3>
-        <%= unless @has_token_sonos and @has_token_spotify do %>
+        <%= unless @has_token_sonos and @has_token_spotify and @has_token_soundcloud do %>
           <p>
             <%= unless @has_token_sonos do %>
               <.link href={@sonos_auth_link} class="button">Authorise Sonos</.link>
             <% end %>
             <%= unless @has_token_spotify do %>
               <.link href={@spotify_auth_link} class="button">Authorise Spotify</.link>
+            <% end %>
+            <%= unless @has_token_soundcloud do %>
+              <.link href={@soundcloud_auth_link} class="button">Authorise SoundCloud</.link>
             <% end %>
           </p>
         <% end %>

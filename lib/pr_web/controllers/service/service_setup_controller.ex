@@ -3,6 +3,7 @@ defmodule PRWeb.Service.ServiceSetupController do
 
   alias PR.SonosAPI
   alias PR.SpotifyAPI
+  alias PR.SoundCloudAPI
   alias PR.SpotifyData
   alias PR.SonosHouseholds
   alias PR.ExternalAuth
@@ -17,8 +18,13 @@ defmodule PRWeb.Service.ServiceSetupController do
     sonos_auth_link = SonosAPI.get_auth_link!()
     spotify_auth_link = SpotifyAPI.get_auth_link!()
 
+    soundcloud_verifier = SoundCloudAPI.gen_code_verifier()
+    soundcloud_auth_link = SoundCloudAPI.get_auth_link!(SoundCloudAPI.code_challenge(soundcloud_verifier))
+    conn = put_session(conn, :soundcloud_code_verifier, soundcloud_verifier)
+
     sonos_token = ExternalAuth.get_auth(SonosAPI)
     spotify_token = ExternalAuth.get_auth(SpotifyAPI)
+    soundcloud_token = ExternalAuth.get_auth(SoundCloudAPI)
 
     has_active_households =
       households
@@ -41,8 +47,10 @@ defmodule PRWeb.Service.ServiceSetupController do
       groups: groups,
       sonos_auth_link: sonos_auth_link,
       spotify_auth_link: spotify_auth_link,
+      soundcloud_auth_link: soundcloud_auth_link,
       has_token_sonos: not is_nil(sonos_token),
       has_token_spotify: not is_nil(spotify_token),
+      has_token_soundcloud: not is_nil(soundcloud_token),
       has_households: [] != households,
       has_groups: [] != groups,
       has_active_households: has_active_households,

@@ -16,6 +16,7 @@ defmodule PR.Application do
       PR.Ticker,
       PR.SonosAPI,
       PR.SpotifyAPI,
+      PR.SoundCloudAPI,
       PR.Telemetry,
       PRWeb.Endpoint,
       {Phoenix.PubSub, [name: PR.PubSub, adapter: Phoenix.PubSub.PG2]},

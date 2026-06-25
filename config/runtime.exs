@@ -33,6 +33,11 @@ config :pr, :spotify,
   key: System.get_env("SPOTIFY_CLIENT_ID"),
   secret: System.get_env("SPOTIFY_SECRET")
 
+config :pr, :soundcloud,
+  redirect_uri: "#{System.get_env("REDIRECT_URL_BASE")}/soundcloud/authorized",
+  key: System.get_env("SOUNDCLOUD_CLIENT_ID"),
+  secret: System.get_env("SOUNDCLOUD_SECRET")
+
 config :ueberauth, Ueberauth.Strategy.Google.OAuth,
   client_id: System.get_env("GOOGLE_CLIENT_ID"),
   client_secret: System.get_env("GOOGLE_CLIENT_SECRET")
@@ -80,6 +85,8 @@ if config_env() == :prod do
   unless System.get_env("SONOS_SECRET"), do: raise("SONOS_SECRET not available")
   unless System.get_env("SPOTIFY_CLIENT_ID"), do: raise("SPOTIFY_CLIENT_ID not available")
   unless System.get_env("SPOTIFY_SECRET"), do: raise("SPOTIFY_SECRET not available")
+  unless System.get_env("SOUNDCLOUD_CLIENT_ID"), do: raise("SOUNDCLOUD_CLIENT_ID not available")
+  unless System.get_env("SOUNDCLOUD_SECRET"), do: raise("SOUNDCLOUD_SECRET not available")
   unless System.get_env("GOOGLE_CLIENT_ID"), do: raise("GOOGLE_CLIENT_ID not available")
   unless System.get_env("GOOGLE_CLIENT_SECRET"), do: raise("GOOGLE_CLIENT_SECRET not available")
 
