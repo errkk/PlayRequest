@@ -103,6 +103,28 @@ defmodule PR.Music do
     end
   end
 
+  # Spike helper: load a specific provider's Sonos favourite and play it,
+  # bypassing the run-aware sync/trigger pipeline (step 5). Assumes the
+  # provider's playlist has already been synced.
+  def trigger_provider_playlist(provider) do
+    provider_mod = Provider.for(provider)
+
+    with %Group{group_id: group_id} <- SonosHouseholds.get_active_group!(),
+         {:ok, %{items: sonos_favorites}, _} <- SonosAPI.get_favorites(),
+         {:ok, fav_id} <- find_playlist(sonos_favorites, provider_mod),
+         %{} <- SonosAPI.set_favorite(fav_id, group_id) do
+      Logger.info("Trigger #{provider} playlist: OK")
+      {:ok}
+    else
+      {:error, :playlist_not_created} ->
+        {:error, "Couldn't find #{provider_mod.favourite_name()} in Sonos favorites"}
+
+      err ->
+        Logger.error("Trigger #{provider} playlist error: #{inspect(err)}")
+        {:error, "Could not load playlist #{provider_mod.favourite_name()}"}
+    end
+  end
+
   def check_current_playstate(%PlaybackState{state: state}, :dont_force)
       when state in [:idle, :paused],
       do: {:ok}
@@ -189,8 +211,11 @@ defmodule PR.Music do
   end
 
   @spec find_playlist([map()]) :: {:ok, String.t()} | {:error, atom()}
-  defp find_playlist(sonos_favorites) do
-    case Enum.find(sonos_favorites, &(&1.name == default_provider().favourite_name())) do
+  defp find_playlist(sonos_favorites), do: find_playlist(sonos_favorites, default_provider())
+
+  @spec find_playlist([map()], module()) :: {:ok, String.t()} | {:error, atom()}
+  defp find_playlist(sonos_favorites, provider_mod) do
+    case Enum.find(sonos_favorites, &(&1.name == provider_mod.favourite_name())) do
       %{id: id} ->
         {:ok, id}
 

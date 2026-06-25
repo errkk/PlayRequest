@@ -158,6 +158,20 @@ defmodule PRWeb.Service.ServiceSetupController do
     end
   end
 
+  def trigger_soundcloud_playlist(conn, _) do
+    case Music.trigger_provider_playlist("soundcloud") do
+      {:ok} ->
+        conn
+        |> put_flash(:info, "Triggered SoundCloud playlist on Sonos")
+        |> redirect(to: ~p"/setup")
+
+      {:error, msg} ->
+        conn
+        |> put_flash(:error, msg)
+        |> redirect(to: ~p"/setup")
+    end
+  end
+
   def sync_playlist(conn, _) do
     case Music.sync_playlist() do
       {:ok} ->
