@@ -298,10 +298,8 @@ defmodule PR.PlayState do
 
       {:ok, data}
     rescue
-      e ->
-        Logger.warning(
-          "SonosItem.new failed (#{inspect(e)}). Raw current_item: #{inspect(current_item)}"
-        )
+      _ ->
+        Logger.warning("Current item not recognised as a queued track, setting current to %{}")
 
         {:ok, %{current_item: %{}}}
     end

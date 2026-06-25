@@ -30,10 +30,11 @@ defmodule PR.Music.Provider.SoundCloud do
   @impl true
   def favourite_name, do: Application.get_env(:pr, :soundcloud_playlist_name)
 
-  # Sonos metadata object_id for a SoundCloud track. Shape taken from the API's
-  # track `urn` (soundcloud:tracks:{id}); not yet verified against a live Sonos
-  # metadata webhook - confirm before relying on playback feedback.
+  # Sonos metadata object_id for a SoundCloud track. Confirmed from a live
+  # metadata webhook: Sonos wraps the track urn in its universalMusicObjectId
+  # format, e.g. "track->soundcloud:tracks:59547812".
   @impl true
+  def parse_object_id("track->soundcloud:tracks:" <> external_id), do: {:ok, external_id}
   def parse_object_id("soundcloud:tracks:" <> external_id), do: {:ok, external_id}
   def parse_object_id(_), do: :no_match
 end
