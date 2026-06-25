@@ -60,7 +60,7 @@ defmodule PR.SoundCloudAPI do
         {:error, :no_playlist}
 
       playlist_id ->
-        tracks = Enum.map(ids, &%{id: String.to_integer(&1)})
+        tracks = Enum.map(ids, &%{urn: "soundcloud:tracks:" <> &1})
 
         case put(%{playlist: %{tracks: tracks}}, "/playlists/#{playlist_id}") do
           %{id: id} ->
