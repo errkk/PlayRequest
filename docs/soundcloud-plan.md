@@ -1,6 +1,40 @@
 # Plan: Mixed-provider queue (Spotify + SoundCloud)
 
-Status: proposal. Not started.
+Status: in progress (updated 2026-06-25).
+
+## Progress
+
+Legend: [deployed] in prod, [merged] on master, [wip] open PR / branch, [todo] not started.
+
+- [deployed] Data model (`provider` + `external_id`) + provider abstraction (#112).
+- [deployed] SoundCloud OAuth 2.1 with PKCE (#113). Token exchange verified end to end.
+- [deployed] Read path: `Provider.SoundCloud` search + get_track, provider registry,
+  token refresh, `SearchTrack` mapping.
+- [deployed] Provider toggle in the search UI, behind `FF_PROVIDER_SWITCHER` and
+  shown to trusted users.
+- [wip] Playlist editing + Sonos favourite trigger + metadata matching (PR #115).
+  Verified on prod during the spike (see gates below).
+- [wip] Run-slicing: `Queue.current_run/0`, run-aware `sync_playlist`,
+  provider-aware `find_playlist` (`soundcloud-runs` branch). Pending staging verify.
+
+### Section 0 gates - RESOLVED
+
+- Paid API access + playlist editing: yes. `PUT /playlists/{id}` works (verified,
+  track added to a real playlist).
+- Sonos metadata id shape: confirmed `track->soundcloud:tracks:{id}` (Sonos wraps
+  the SoundCloud urn in its `universalMusicObjectId` format). `parse_object_id`
+  handles it; the feedback loop resolves SoundCloud tracks.
+
+### SoundCloud API quirks discovered (already handled in code)
+
+- authorization_code token exchange: `client_secret` must be in the request
+  BODY; SoundCloud ignores the HTTP Basic header the oauth2 lib sends.
+- Token refresh: same - `client_id` + `client_secret` go in the body.
+- PUT requests need `Content-Type: application/json` or SoundCloud returns 422.
+- Playlist track items must be `{"urn": "soundcloud:tracks:<id>"}`, not `{"id": ...}`.
+- API auth header: both `OAuth <token>` and `Bearer <token>` work (we send Bearer).
+- `replace_playlist` currently targets a hardcoded `SOUNDCLOUD_PLAYLIST_ID` env -
+  temporary until the setup work below.
 
 Goal: let users queue both Spotify and SoundCloud tracks into the same live
 session, played out of the same Sonos speakers. The DB queue stays the single
@@ -16,6 +50,10 @@ Sonos webhooks.
 ---
 
 ## 0. Open question / TODO (gating, not yet decided)
+
+> RESOLVED (2026-06-25): both gates passed - see the Progress section above. API
+> playlist editing works and the Sonos metadata id is `track->soundcloud:tracks:{id}`.
+> Original notes kept below for context.
 
 **SoundCloud API access requires a paid account.** Whether this feature is worth
 building at all depends on:
@@ -276,21 +314,51 @@ and Sonos (`how-it-works.md` section 6). Reuse `PR.Apis.TokenHelper` and the
 
 ## 11. Suggested order of work
 
-1. (Gate) Research SoundCloud paid API access + playlist edit support. Go/no-go.
-2. (Spike) Save a SoundCloud playlist as a Sonos favourite, play it, capture the
-   metadata webhook. Confirm a matchable id. Go/no-go.
-3. Data model: `provider` + `external_id` migration, constraint, novelty views,
-   structs.
-4. Provider behaviour + extract `Provider.Spotify` from current code. No behaviour
-   change yet (Spotify-only, still works end to end).
-5. Run slicing: `Queue.current_run/0`, run-aware `sync_playlist`, provider-aware
-   `find_playlist`. Still Spotify-only - verify the boundary loop works with an
-   all-Spotify queue split into artificial runs.
-6. `Provider.SoundCloud`: auth, search, get track, replace playlist, object-id.
-7. Metadata: generalise `SonosItem` / `cast_metadata`.
-8. UI: provider toggle in search; setup screen for SoundCloud auth + playlist.
-9. Integration testing focused on boundary transitions and skips across providers.
+1. [done] (Gate) SoundCloud paid API access + playlist edit support. Verified.
+2. [done] (Spike) Save a SoundCloud playlist as a Sonos favourite, play it,
+   capture the metadata webhook. Confirmed `track->soundcloud:tracks:{id}`.
+3. [done] Data model: `provider` + `external_id` migration, constraint, novelty
+   views, structs.
+4. [done] Provider behaviour + extract `Provider.Spotify`.
+5. [wip] Run slicing: `Queue.current_run/0`, run-aware `sync_playlist`,
+   provider-aware `find_playlist` (`soundcloud-runs` branch). Tested with unit
+   tests; pending staging verification of the boundary loop.
+6. [done] `Provider.SoundCloud`: auth, search, get track, replace playlist,
+   object-id. (replace_playlist still uses the hardcoded playlist env - see 10.)
+7. [done] Metadata: `SonosItem` / `cast_metadata` are provider-generic via
+   `Provider.match_object_id`.
+8. [partial] UI: provider toggle in search is done. Setup screen for SoundCloud
+   playlist selection is step 10.
+9. [todo] Integration testing focused on boundary transitions and skips across
+   providers.
+10. [todo] Setup parity (see section 12).
 
 Steps 4 and 5 are valuable on their own: they make the system provider-agnostic
 and exercise the run-boundary loop using only Spotify, so the riskiest mechanics
 are proven before SoundCloud is added.
+
+---
+
+## 12. Setup parity: SoundCloud playlist selection
+
+Goal: make SoundCloud setup mirror Spotify and keep both as simple as possible.
+Today SoundCloud's target playlist is a hardcoded `SOUNDCLOUD_PLAYLIST_ID` env var
+(spike shortcut); Spotify creates its playlist from the setup screen
+(`SpotifyAPI.create_playlist`, stored in `spotify_playlists`).
+
+Bring SoundCloud to the same shape, and improve on it:
+
+- Replace the env var with a stored SoundCloud playlist id (mirror
+  `SpotifyData.Playlist` / `spotify_playlists` with a `soundcloud_playlists`
+  table, or a generic playlists store).
+- On the setup screen, instead of (or in addition to) "create playlist", **fetch
+  the user's existing playlists from the API** (`GET /me/playlists`) and let the
+  operator **pick which one** PlayRequest should write to. Selecting it stores the
+  id. This avoids creating yet another playlist and lets them point at an existing
+  one (e.g. the `sonosnow` playlist already favourited in Sonos).
+- Consider applying the same picker to Spotify so both setups are identical.
+- `Provider.SoundCloud.replace_playlist` then reads the stored id instead of the
+  env var; drop `SOUNDCLOUD_PLAYLIST_ID`.
+
+Keep the setup flow minimal: authorise -> pick (or create) playlist -> favourite
+it in Sonos. Same three steps for both providers.
