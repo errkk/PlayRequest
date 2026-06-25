@@ -1,6 +1,17 @@
 {
-  "env": { "ENABLE_LSP_TOOL": "1" },
+  "env": {
+    "ENABLE_LSP_TOOL": "1"
+  },
   "permissions": {
-    "allow": ["Bash(mix compile:*)"]
+    "allow": [
+      "Bash(mix compile:*)",
+      "Bash(mix test *)",
+      "Bash(fly status *)",
+      "Bash(fly volumes *)",
+      "Bash(fly machines *)",
+      "Bash(fly secrets *)",
+      "Bash(fly ssh *)",
+      "Bash(fly machine *)"
+    ]
   }
 }

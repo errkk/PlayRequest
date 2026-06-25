@@ -20,7 +20,7 @@ defmodule PR.PlayStateTest do
     test "updates playing track from metadata", %{mocked_now: now} do
       spotify_track_id = "123"
       spotify_id = "spotify:track:#{spotify_track_id}"
-      queue_track = insert(:track, spotify_id: spotify_track_id)
+      queue_track = insert(:track, external_id: spotify_track_id)
       metadata = build(:metadata, current_item: build(:metadata_track, id: spotify_id))
 
       # Act
@@ -32,7 +32,7 @@ defmodule PR.PlayStateTest do
       refute is_nil(playing_since)
 
       # Check agent state
-      assert %{current_item: %SonosItem{spotify_id: ^spotify_track_id}} = PlayState.get(:metadata)
+      assert %{current_item: %SonosItem{external_id: ^spotify_track_id}} = PlayState.get(:metadata)
     end
 
     test "updates playing track, marks last track played from metadata", %{mocked_now: now} do
@@ -40,7 +40,7 @@ defmodule PR.PlayStateTest do
       spotify_id = "spotify:track:#{spotify_track_id}"
 
       previous_track = insert(:playing_track)
-      queue_track = insert(:track, spotify_id: spotify_track_id)
+      queue_track = insert(:track, external_id: spotify_track_id)
       metadata = build(:metadata, current_item: build(:metadata_track, id: spotify_id))
 
       # Act
@@ -58,7 +58,7 @@ defmodule PR.PlayStateTest do
       assert played_at == now
 
       # Check agent state
-      assert %{current_item: %SonosItem{spotify_id: ^spotify_track_id}} = PlayState.get(:metadata)
+      assert %{current_item: %SonosItem{external_id: ^spotify_track_id}} = PlayState.get(:metadata)
     end
 
     test "error mode, dont update track when it says playing nothing", %{mocked_now: now} do
@@ -110,7 +110,7 @@ defmodule PR.PlayStateTest do
       spotify_id = "spotify:track:#{spotify_track_id}"
 
       previous_track = insert(:playing_track)
-      queue_track = insert(:track, spotify_id: spotify_track_id)
+      queue_track = insert(:track, external_id: spotify_track_id)
       metadata = build(:metadata, current_item: %{}, next_item: %{})
 
       # Act
@@ -136,7 +136,7 @@ defmodule PR.PlayStateTest do
     #   spotify_id = "spotify:track:#{spotify_track_id}"
 
     #   previous_track = insert(:recently_playing_track)
-    #   queue_track = insert(:track, spotify_id: spotify_track_id)
+    #   queue_track = insert(:track, external_id: spotify_track_id)
     #   metadata = build(:metadata, current_item: %{}, next_item: %{})
 
     #   # Act
@@ -163,7 +163,7 @@ defmodule PR.PlayStateTest do
       spotify_track_id = "123"
       spotify_id = "spotify:track:#{spotify_track_id}"
 
-      queue_track = insert(:track, spotify_id: spotify_track_id)
+      queue_track = insert(:track, external_id: spotify_track_id)
       current_item_from_ages_ago = build(:metadata_track)
       metadata = build(:metadata, current_item: current_item_from_ages_ago, next_item: %{})
 
@@ -183,7 +183,7 @@ defmodule PR.PlayStateTest do
       spotify_track_id = "123"
       spotify_id = "spotify:track:#{spotify_track_id}"
 
-      queue_track = insert(:playing_track, spotify_id: spotify_track_id)
+      queue_track = insert(:playing_track, external_id: spotify_track_id)
       current_item_from_ages_ago = build(:metadata_track)
       metadata = build(:metadata, current_item: current_item_from_ages_ago, next_item: %{})
 
