@@ -16,13 +16,19 @@ defmodule PR.Music.Provider do
   @callback parse_object_id(object_id :: String.t()) ::
               {:ok, external_id :: String.t()} | :no_match
 
-  @providers %{"spotify" => PR.Music.Provider.Spotify}
+  @providers %{
+    "spotify" => PR.Music.Provider.Spotify,
+    "soundcloud" => PR.Music.Provider.SoundCloud
+  }
 
   @spec for(String.t()) :: module()
   def for(provider), do: Map.fetch!(@providers, provider)
 
   @spec default() :: String.t()
   def default, do: Application.get_env(:pr, :default_provider)
+
+  @spec all() :: [String.t()]
+  def all, do: Map.keys(@providers)
 
   @doc "Find the provider that recognises a Sonos object_id."
   @spec match_object_id(String.t()) :: {:ok, provider :: String.t(), external_id :: String.t()} | :no_match
