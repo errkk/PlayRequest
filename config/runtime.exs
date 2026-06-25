@@ -36,7 +36,10 @@ config :pr, :spotify,
 config :pr, :soundcloud,
   redirect_uri: "#{System.get_env("REDIRECT_URL_BASE")}/soundcloud/authorized",
   key: System.get_env("SOUNDCLOUD_CLIENT_ID"),
-  secret: System.get_env("SOUNDCLOUD_SECRET")
+  secret: System.get_env("SOUNDCLOUD_SECRET"),
+  # Temporary: until playlist storage + setup UI land (step 8), replace_playlist
+  # targets a playlist created by hand and set here.
+  playlist_id: System.get_env("SOUNDCLOUD_PLAYLIST_ID")
 
 config :ueberauth, Ueberauth.Strategy.Google.OAuth,
   client_id: System.get_env("GOOGLE_CLIENT_ID"),

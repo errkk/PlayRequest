@@ -16,7 +16,10 @@ defmodule PR.Music.Provider do
   @callback parse_object_id(object_id :: String.t()) ::
               {:ok, external_id :: String.t()} | :no_match
 
-  @providers %{"spotify" => PR.Music.Provider.Spotify}
+  @providers %{
+    "spotify" => PR.Music.Provider.Spotify,
+    "soundcloud" => PR.Music.Provider.SoundCloud
+  }
 
   @spec for(String.t()) :: module()
   def for(provider), do: Map.fetch!(@providers, provider)

@@ -176,6 +176,10 @@ defmodule PR.Apis.TokenHelper do
         |> Map.Helpers.underscore_keys()
         |> Map.Helpers.atomize_keys()
       end
+
+      # SoundCloud needs client credentials in the refresh body, not just the
+      # Basic header the Refresh strategy sends, so it overrides this.
+      defoverridable get_refresh_token: 0
     end
   end
 end

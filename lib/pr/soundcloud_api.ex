@@ -37,6 +37,64 @@ defmodule PR.SoundCloudAPI do
     |> handle_token_response()
   end
 
+  @spec search(String.t()) :: {:ok, [map()]} | {:error}
+  def search(q) do
+    query = URI.encode_query(%{q: q, limit: 10, access: "playable"})
+
+    case get("/tracks?#{query}") do
+      tracks when is_list(tracks) -> {:ok, tracks}
+      _ -> {:error}
+    end
+  end
+
+  @spec get_track(String.t()) :: map() | {:error, term()}
+  def get_track(id) do
+    get("/tracks/#{id}")
+  end
+
+  @spec replace_playlist([String.t()]) :: {:ok, term()} | {:error, term()}
+  def replace_playlist(ids) do
+    case get_config(:playlist_id) do
+      nil ->
+        Logger.error("SoundCloud playlist_id not configured")
+        {:error, :no_playlist}
+
+      playlist_id ->
+        tracks = Enum.map(ids, &%{id: String.to_integer(&1)})
+
+        case put(%{playlist: %{tracks: tracks}}, "/playlists/#{playlist_id}") do
+          %{id: id} ->
+            Logger.info("SoundCloud replace playlist success: #{id}")
+            {:ok, id}
+
+          err ->
+            Logger.error("SoundCloud replace playlist error: #{inspect(err)}")
+            {:error, :cant_replace}
+        end
+    end
+  end
+
+  # SoundCloud authenticates the client from client_id + client_secret in the
+  # body; the Refresh strategy only sends the Basic header, so add them here.
+  def get_refresh_token do
+    Logger.info("Refreshing token for #{__MODULE__}")
+
+    refresh_token =
+      client()
+      |> authenticated_client()
+      |> Map.get(:token)
+      |> Map.get(:refresh_token)
+
+    client()
+    |> Map.put(:strategy, Strategy.Refresh)
+    |> Client.put_param(:refresh_token, refresh_token)
+    |> Client.put_param(:client_id, get_config(:key))
+    |> Client.put_param(:client_secret, get_config(:secret))
+    |> Client.put_header("accept", "application/json")
+    |> Client.get_token()
+    |> handle_refresh_response()
+  end
+
   @spec gen_code_verifier() :: String.t()
   def gen_code_verifier do
     :crypto.strong_rand_bytes(64) |> Base.url_encode64(padding: false)

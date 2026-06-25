@@ -13,6 +13,7 @@ import Config
 config :pr,
   ecto_repos: [PR.Repo],
   playlist_name: "PlayRequest",
+  soundcloud_playlist_name: "PlayRequest SC",
   default_provider: "spotify",
   timezone: "Europe/London",
   env: config_env(),
