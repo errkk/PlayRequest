@@ -5,7 +5,7 @@ defmodule PRWeb.PlaybackLive do
   use PRWeb, :helpers
 
   alias PR.{Music, PlayState}
-  alias PR.Music.{SonosItem, PlaybackState}
+  alias PR.Music.{SonosItem, PlaybackState, Provider}
   alias PR.Auth
   alias PR.Auth.User
   alias PR.Scoring
@@ -36,6 +36,8 @@ defmodule PRWeb.PlaybackLive do
         progress: progress,
         result: [],
         q: nil,
+        provider: Provider.default(),
+        providers: Provider.all(),
         loading: nil,
         recently_liked: nil,
         participated: Queue.has_participated?(%User{id: user_id}),
@@ -169,7 +171,7 @@ defmodule PRWeb.PlaybackLive do
   end
 
   def handle_info({:search, q}, socket) do
-    case Music.search(q) do
+    case Music.search(q, socket.assigns.provider) do
       {:ok, tracks} ->
         {:noreply, assign(socket, loading: false, result: tracks)}
 
@@ -183,8 +185,8 @@ defmodule PRWeb.PlaybackLive do
     {:noreply, assign(socket, playlist: items)}
   end
 
-  def handle_info({:queue, external_id}, %{assigns: %{current_user: user}} = socket) do
-    case Music.queue(user, external_id) do
+  def handle_info({:queue, external_id, provider}, %{assigns: %{current_user: user}} = socket) do
+    case Music.queue(user, external_id, provider) do
       {:ok, _track} ->
         socket =
           socket
@@ -248,14 +250,22 @@ defmodule PRWeb.PlaybackLive do
   ## User events
 
   @impl true
-  def handle_event("queue", %{"value" => external_id}, socket) do
-    send(self(), {:queue, external_id})
+  def handle_event("queue", %{"value" => external_id} = params, socket) do
+    provider = Map.get(params, "provider", socket.assigns.provider)
+    send(self(), {:queue, external_id, provider})
     {:noreply, assign(socket, participated: true)}
   end
 
   def handle_event("search", %{"q" => q}, socket) when byte_size(q) <= 100 do
     send(self(), {:search, q})
     {:noreply, assign(socket, q: q, result: [], loading: true)}
+  end
+
+  def handle_event("set_provider", %{"provider" => provider}, socket) do
+    q = socket.assigns.q
+    searching = is_binary(q) and q != ""
+    if searching, do: send(self(), {:search, q})
+    {:noreply, assign(socket, provider: provider, result: [], loading: searching)}
   end
 
   def handle_event("like", %{"value" => track_id}, socket) do

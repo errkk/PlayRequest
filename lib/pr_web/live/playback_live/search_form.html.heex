@@ -1,5 +1,17 @@
 <div class={"search #{unless length(@result) > 0, do: " search--sticky"}"}>
   <h2>Search</h2>
+  <div class="provider-toggle">
+    <%= for provider <- @providers do %>
+      <button
+        type="button"
+        phx-click="set_provider"
+        phx-value-provider={provider}
+        class={"provider-toggle__option #{if provider == @provider, do: "active"}"}
+      >
+        <%= String.capitalize(provider) %>
+      </button>
+    <% end %>
+  </div>
   <form
     phx-submit="search"
     class={"#{if @loading, do: "loading"} #{if length(@result) > 0, do: "active"}"}

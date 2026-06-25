@@ -1,6 +1,12 @@
 <div class="container">
   <div class="col--search">
-    <.search_form result={@result} loading={@loading} q={@q} />
+    <.search_form
+      result={@result}
+      loading={@loading}
+      q={@q}
+      provider={@provider}
+      providers={@providers}
+    />
 
     <.welcome :if={not @participated} current_user={@current_user} />
 

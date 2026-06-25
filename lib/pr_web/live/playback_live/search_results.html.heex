@@ -31,6 +31,7 @@
           class="track__queue"
           phx-click="queue"
           value={track.external_id}
+          phx-value-provider={track.provider}
           style={
              "transform: scale(#{max(get_track_novelty(track) / 100, 0.2)})"
           }
@@ -42,6 +43,7 @@
           class="track__queue"
           phx-click="queue"
           value={track.external_id}
+          phx-value-provider={track.provider}
         >
         </button>
       </div>
