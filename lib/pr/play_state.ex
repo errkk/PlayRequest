@@ -161,6 +161,11 @@ defmodule PR.PlayState do
       num when num > 0 ->
         Logger.info("Player IDLE. But, queue has more tracks. Loading them in 1000ms")
         Process.sleep(1000)
+        # The run that just finished left its last track marked playing, not
+        # played. Mark it played before re-triggering, otherwise current_run
+        # returns the same run again and the provider never switches. (Same as
+        # what skip does.)
+        Queue.bump()
         trigger_on_sonos_system()
         state
 
