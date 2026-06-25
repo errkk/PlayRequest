@@ -22,15 +22,10 @@ defmodule PR.SoundCloudAPI do
 
   @spec handle_auth_callback(map(), String.t()) :: {:error, atom()} | {:ok}
   def handle_auth_callback(%{"code" => code}, code_verifier) do
-    Logger.info("SoundCloud callback: verifier present? #{not is_nil(code_verifier)}")
-
-    result =
-      client()
-      |> Client.put_header("accept", "application/json")
-      |> Client.get_token(code: code, code_verifier: code_verifier)
-
-    Logger.info("SoundCloud token exchange result: #{inspect(result)}")
-    handle_token_response(result)
+    client()
+    |> Client.put_header("accept", "application/json")
+    |> Client.get_token(code: code, code_verifier: code_verifier)
+    |> handle_token_response()
   end
 
   @spec gen_code_verifier() :: String.t()
