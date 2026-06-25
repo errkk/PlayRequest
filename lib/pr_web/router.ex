@@ -79,6 +79,10 @@ defmodule PRWeb.Router do
     pipe_through([:browser])
     get("/sonos/authorized", ServiceAuthController, :authorized_sonos, as: :sonos_auth)
     get("/spotify/authorized", ServiceAuthController, :authorized_spotify, as: :spotify_auth)
+
+    get("/soundcloud/authorized", ServiceAuthController, :authorized_soundcloud,
+      as: :soundcloud_auth
+    )
   end
 
   scope "/sonos", PRWeb.Service do
