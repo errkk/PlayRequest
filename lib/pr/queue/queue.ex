@@ -78,6 +78,36 @@ defmodule PR.Queue do
     |> Repo.all()
   end
 
+  @doc """
+  The current "run": the contiguous block of same-provider tracks at the head of
+  the unplayed queue (in play order). Returns `{provider, [external_id]}`, or
+  `{nil, []}` when the queue is empty. Only this block is loaded into a provider
+  playlist at a time, so Sonos goes idle at each provider boundary.
+  """
+  @spec current_run() :: {String.t() | nil, [String.t()]}
+  def current_run do
+    rows =
+      Track
+      |> query_unplayed()
+      |> order()
+      |> limit(100)
+      |> select([t], {t.provider, t.external_id})
+      |> Repo.all()
+
+    case rows do
+      [] ->
+        {nil, []}
+
+      [{provider, _} | _] ->
+        ids =
+          rows
+          |> Enum.take_while(fn {p, _} -> p == provider end)
+          |> Enum.map(fn {_, id} -> id end)
+
+        {provider, ids}
+    end
+  end
+
   @spec list_track_uris(String.t()) :: [String.t()]
   def list_track_uris(provider) do
     Track

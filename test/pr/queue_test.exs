@@ -40,6 +40,42 @@ defmodule PR.QueueTest do
     end
   end
 
+  describe "current_run" do
+    test "empty queue returns {nil, []}" do
+      assert {nil, []} = Queue.current_run()
+    end
+
+    test "all same provider returns the whole queue" do
+      t0 = DateTime.add(DateTime.utc_now(), -3, :second)
+      insert(:track, provider: "spotify", external_id: "s1", inserted_at: t0)
+      insert(:track, provider: "spotify", external_id: "s2", inserted_at: DateTime.add(t0, 1))
+      assert {"spotify", ["s1", "s2"]} = Queue.current_run()
+    end
+
+    test "returns only the leading same-provider block of a mixed queue" do
+      t0 = DateTime.add(DateTime.utc_now(), -5, :second)
+      insert(:track, provider: "spotify", external_id: "s1", inserted_at: t0)
+      insert(:track, provider: "spotify", external_id: "s2", inserted_at: DateTime.add(t0, 1))
+      insert(:track, provider: "soundcloud", external_id: "c1", inserted_at: DateTime.add(t0, 2))
+      insert(:track, provider: "spotify", external_id: "s3", inserted_at: DateTime.add(t0, 3))
+      assert {"spotify", ["s1", "s2"]} = Queue.current_run()
+    end
+
+    test "leading run can be the second provider" do
+      t0 = DateTime.add(DateTime.utc_now(), -3, :second)
+      insert(:track, provider: "soundcloud", external_id: "c1", inserted_at: t0)
+      insert(:track, provider: "spotify", external_id: "s1", inserted_at: DateTime.add(t0, 1))
+      assert {"soundcloud", ["c1"]} = Queue.current_run()
+    end
+
+    test "ignores played tracks when finding the run head" do
+      t0 = DateTime.add(DateTime.utc_now(), -3, :second)
+      insert(:played_track, provider: "spotify", external_id: "old", inserted_at: t0)
+      insert(:track, provider: "soundcloud", external_id: "c1", inserted_at: DateTime.add(t0, 1))
+      assert {"soundcloud", ["c1"]} = Queue.current_run()
+    end
+  end
+
   describe "points" do
     test "user sees that they did a point" do
       me = insert(:user)
