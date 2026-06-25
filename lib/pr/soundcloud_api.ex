@@ -22,9 +22,18 @@ defmodule PR.SoundCloudAPI do
 
   @spec handle_auth_callback(map(), String.t()) :: {:error, atom()} | {:ok}
   def handle_auth_callback(%{"code" => code}, code_verifier) do
+    # SoundCloud's authorization_code endpoint authenticates the client from
+    # client_id + client_secret in the request body and ignores the HTTP Basic
+    # header the oauth2 AuthCode strategy sends. It only puts client_id in the
+    # body, so client_secret has to be added explicitly or it returns
+    # invalid_client.
     client()
     |> Client.put_header("accept", "application/json")
-    |> Client.get_token(code: code, code_verifier: code_verifier)
+    |> Client.get_token(
+      code: code,
+      code_verifier: code_verifier,
+      client_secret: get_config(:secret)
+    )
     |> handle_token_response()
   end
 
