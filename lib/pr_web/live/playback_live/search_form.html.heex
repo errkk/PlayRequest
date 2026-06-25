@@ -1,6 +1,6 @@
 <div class={"search #{unless length(@result) > 0, do: " search--sticky"}"}>
   <h2>Search</h2>
-  <div class="provider-toggle">
+  <div :if={@show_provider_switcher} class="provider-toggle">
     <%= for provider <- @providers do %>
       <button
         type="button"
