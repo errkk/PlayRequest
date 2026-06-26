@@ -336,6 +336,22 @@ defmodule PR.Queue do
     set_current(%{})
   end
 
+  @spec bump(String.t()) :: {integer, nil}
+  def bump(provider) do
+    # Mark only the finishing run's currently-playing track as played. Scoping
+    # to the provider that just finished avoids marking the next run's track
+    # played if it has already started playing by the time this runs.
+    Track
+    |> query_is_playing()
+    |> where([t], t.provider == ^provider)
+    |> Repo.update_all(
+      set: [
+        playing_since: nil,
+        played_at: dynamic([i], datetime_add(i.playing_since, i.duration, "millisecond"))
+      ]
+    )
+  end
+
   @spec query_is_playing(Ecto.Queryable.t()) :: Ecto.Queryable.t()
   defp query_is_playing(query) do
     query

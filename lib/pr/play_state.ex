@@ -172,9 +172,10 @@ defmodule PR.PlayState do
         Process.sleep(1000)
         # The run that just finished left its last track marked playing, not
         # played. Mark it played before re-triggering, otherwise current_run
-        # returns the same run again and the provider never switches. (Same as
-        # what skip does.)
-        Queue.bump()
+        # returns the same run again and the provider never switches. Scope it
+        # to the finishing provider so a next-run track that has already started
+        # playing isn't wrongly marked played.
+        Queue.bump(finishing_provider)
 
         {next_provider, next_ids} = Queue.current_run()
 

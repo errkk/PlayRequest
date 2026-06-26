@@ -98,6 +98,11 @@ defmodule PRWeb.PlaybackLive do
      )}
   end
 
+  # Playing provider changed. No UI consumes this yet, so just don't crash.
+  def handle_info({PlayState, provider, :provider}, socket) when is_binary(provider) do
+    {:noreply, socket}
+  end
+
   # Clear errormode
   def handle_info({PlayState, nil, :sonos_error}, socket) do
     {:noreply, clear_flash(socket, :error)}
