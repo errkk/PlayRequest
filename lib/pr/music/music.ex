@@ -86,7 +86,11 @@ defmodule PR.Music do
          {:ok, fav_id} <- find_playlist(sonos_favorites, Provider.for(provider)),
          {:ok} <- check_current_playstate(PlayState.get(:play_state), force),
          %{} <- SonosAPI.set_favorite(fav_id, group_id) do
-      Logger.info("Trigger playlist: OK")
+      Logger.info(
+        "Trigger playlist OK: provider=#{provider}, " <>
+          "favourite=#{Provider.for(provider).favourite_name()} (#{fav_id})"
+      )
+
       {:ok}
     else
       {:error, :nothing_in_local_queue} ->

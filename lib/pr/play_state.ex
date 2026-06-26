@@ -13,7 +13,10 @@ defmodule PR.PlayState do
   @topic inspect(__MODULE__)
 
   def start_link(_) do
-    Agent.start_link(fn -> %{play_state: %{}, metadata: %{}, progress: nil, error_mode: nil} end,
+    Agent.start_link(
+      fn ->
+        %{play_state: %{}, metadata: %{}, progress: nil, error_mode: nil, current_provider: nil}
+      end,
       name: __MODULE__
     )
   end
@@ -159,13 +162,27 @@ defmodule PR.PlayState do
     # TODO might be worth checking metadata here
     case Queue.has_unplayed() do
       num when num > 0 ->
-        Logger.info("Player IDLE. But, queue has more tracks. Loading them in 1000ms")
+        {finishing_provider, _} = Queue.current_run()
+
+        Logger.info(
+          "Player IDLE with #{num} unplayed. Finishing #{finishing_provider} run, " <>
+            "bumping last track and re-triggering in 1000ms"
+        )
+
         Process.sleep(1000)
         # The run that just finished left its last track marked playing, not
         # played. Mark it played before re-triggering, otherwise current_run
         # returns the same run again and the provider never switches. (Same as
         # what skip does.)
         Queue.bump()
+
+        {next_provider, next_ids} = Queue.current_run()
+
+        Logger.info(
+          "Re-triggering: next run is #{next_provider} (#{length(next_ids)} tracks)" <>
+            if(next_provider != finishing_provider, do: " - PROVIDER SWITCH", else: "")
+        )
+
         trigger_on_sonos_system()
         state
 
@@ -246,6 +263,7 @@ defmodule PR.PlayState do
 
   defp update_playing(%{current_item: %{name: name} = current} = state) do
     Logger.metadata(playback_state: Map.get(get(:play_state), :state))
+    track_provider_change(current)
 
     if get(:error_mode) do
       Logger.warn("Update playing: Cancelled, cos error mode")
@@ -277,6 +295,28 @@ defmodule PR.PlayState do
       state
     end
   end
+
+  # Detect when the actually-playing provider changes, log it loudly and push
+  # it to the header indicator. Only fires on a real change, so it's quiet
+  # while a single provider's run plays out.
+  defp track_provider_change(%{provider: provider, name: name, artist: artist})
+       when is_binary(provider) do
+    case get(:current_provider) do
+      ^provider ->
+        :ok
+
+      previous ->
+        Logger.info(
+          "🔀 Now playing from #{provider}: #{name} - #{artist}" <>
+            if(previous, do: " (switched from #{previous})", else: "")
+        )
+
+        update_state(provider, :current_provider)
+        broadcast(provider, :provider)
+    end
+  end
+
+  defp track_provider_change(_), do: :ok
 
   # Called on an interval by supervisor
   def tick do
