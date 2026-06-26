@@ -31,18 +31,24 @@ defmodule PR.Apis.EndpointHelper do
 
       @spec request(String.t(), atom()) :: any() | nil
       defp request(resource, method) do
-        case client()
-             |> authenticated_client()
-             |> client_request(resource, method)
-             |> handle_api_response(resource) do
-          {:unauthorized} ->
-            case get_refresh_token() do
-              {:ok} -> request(resource, method)
-              err -> err
-            end
+        case authenticated_client(client()) do
+          {:error, _} = err ->
+            Logger.warning("#{__MODULE__} no token, can't request #{resource}")
+            err
 
-          res ->
-            res
+          auth_client ->
+            case auth_client
+                 |> client_request(resource, method)
+                 |> handle_api_response(resource) do
+              {:unauthorized} ->
+                case get_refresh_token() do
+                  {:ok} -> request(resource, method)
+                  err -> err
+                end
+
+              res ->
+                res
+            end
         end
       end
 
@@ -50,18 +56,24 @@ defmodule PR.Apis.EndpointHelper do
       defp request(resource, method, params) do
         params = encode_params(params)
 
-        case client()
-             |> authenticated_client()
-             |> client_request(resource, method, params)
-             |> handle_api_response(resource) do
-          {:unauthorized} ->
-            case get_refresh_token() do
-              {:ok} -> request(resource, method, params)
-              err -> err
-            end
+        case authenticated_client(client()) do
+          {:error, _} = err ->
+            Logger.warning("#{__MODULE__} no token, can't request #{resource}")
+            err
 
-          res ->
-            res
+          auth_client ->
+            case auth_client
+                 |> client_request(resource, method, params)
+                 |> handle_api_response(resource) do
+              {:unauthorized} ->
+                case get_refresh_token() do
+                  {:ok} -> request(resource, method, params)
+                  err -> err
+                end
+
+              res ->
+                res
+            end
         end
       end
 

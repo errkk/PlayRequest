@@ -92,7 +92,7 @@ defmodule PR.SoundCloudAPI do
     |> Client.put_param(:client_secret, get_config(:secret))
     |> Client.put_header("accept", "application/json")
     |> Client.get_token()
-    |> handle_refresh_response()
+    |> handle_refresh_response(refresh_token)
   end
 
   @spec gen_code_verifier() :: String.t()

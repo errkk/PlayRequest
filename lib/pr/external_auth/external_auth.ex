@@ -29,6 +29,13 @@ defmodule PR.ExternalAuth do
     end
     |> Auth.changeset(changes)
     |> Repo.insert_or_update()
+  rescue
+    Ecto.StaleEntryError ->
+      # A concurrent token refresh discarded the row between our read and
+      # update. The token we have is fresh, so re-insert it.
+      %Auth{service: service}
+      |> Auth.changeset(changes)
+      |> Repo.insert()
   end
 
   def create_auth(attrs \\ %{}) do

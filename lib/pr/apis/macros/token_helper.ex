@@ -133,23 +133,40 @@ defmodule PR.Apis.TokenHelper do
         |> Client.put_param(:refresh_token, refresh_token)
         |> Client.put_header("accept", "application/json")
         |> Client.get_token()
-        |> handle_refresh_response()
+        |> handle_refresh_response(refresh_token)
       end
 
-      @spec handle_refresh_response({:error, any()} | {:ok, Client.t()}) ::
+      @spec handle_refresh_response({:error, any()} | {:ok, Client.t()}, String.t()) ::
               {:error, atom()} | {:ok}
-      defp handle_refresh_response({:error, %Response{body: body}} = response) do
-        if PR.Apis.TokenHelper.invalid_grant?(body) do
-          Logger.warning("Refresh token expired for #{__MODULE__}, discarding. Reauth required.")
-          discard_token()
-          {:error, :invalid_grant}
-        else
-          handle_token_response(response)
+      defp handle_refresh_response({:error, %Response{body: body}} = response, used_refresh_token) do
+        cond do
+          not PR.Apis.TokenHelper.invalid_grant?(body) ->
+            handle_token_response(response)
+
+          refresh_token_rotated?(used_refresh_token) ->
+            # Another process refreshed concurrently and rotated the token, so
+            # our invalid_grant is just losing that race, not a dead token.
+            Logger.info("invalid_grant for #{__MODULE__}, but token was rotated concurrently. Reusing it.")
+            cache_stored_credential()
+            {:ok}
+
+          true ->
+            Logger.warning("Refresh token expired for #{__MODULE__}, discarding. Reauth required.")
+            discard_token()
+            {:error, :invalid_grant}
         end
       end
 
-      defp handle_refresh_response(response) do
+      defp handle_refresh_response(response, _used_refresh_token) do
         handle_token_response(response)
+      end
+
+      @spec refresh_token_rotated?(String.t()) :: boolean()
+      defp refresh_token_rotated?(used_refresh_token) do
+        case ExternalAuth.get_auth(__MODULE__) do
+          %Auth{refresh_token: current} -> current != used_refresh_token
+          _ -> false
+        end
       end
 
       @spec discard_token() :: :ok
