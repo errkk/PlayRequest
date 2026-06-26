@@ -52,14 +52,22 @@ defmodule PR.Music do
     end
   end
 
+  @doc """
+  Load the current run (the head same-provider block of the unplayed queue) into
+  that provider's playlist. Returns `{:ok, provider}` so the trigger knows which
+  favourite to play, or `{:ok, nil}` when the queue is empty.
+  """
   def sync_playlist do
-    Logger.info("Syncing tracks to provider playlist")
+    case Queue.current_run() do
+      {nil, _} ->
+        Logger.info("Sync playlist: queue empty, nothing to sync")
+        {:ok, nil}
 
-    Queue.list_track_uris()
-    |> Enum.map(fn {id} -> id end)
-    |> default_provider().replace_playlist()
-
-    {:ok}
+      {provider, ids} ->
+        Logger.info("Syncing #{length(ids)} #{provider} track(s) to provider playlist")
+        Provider.for(provider).replace_playlist(ids)
+        {:ok, provider}
+    end
   end
 
   def clear_playlist do
@@ -71,14 +79,18 @@ defmodule PR.Music do
   # This take a little while to run, so there can be race conditions if it gets called
   # a few times, before it's had a chance to affect the play state
   def trigger_playlist(force \\ :dont_force) do
-    with {:ok} <- sync_playlist(),
+    with {:ok, provider} <- sync_playlist(),
          {:ok} <- check_unplayed(),
          %Group{group_id: group_id} <- SonosHouseholds.get_active_group!(),
          {:ok, %{items: sonos_favorites}, _} <- SonosAPI.get_favorites(),
-         {:ok, fav_id} <- find_playlist(sonos_favorites),
+         {:ok, fav_id} <- find_playlist(sonos_favorites, Provider.for(provider)),
          {:ok} <- check_current_playstate(PlayState.get(:play_state), force),
          %{} <- SonosAPI.set_favorite(fav_id, group_id) do
-      Logger.info("Trigger playlist: OK")
+      Logger.info(
+        "Trigger playlist OK: provider=#{provider}, " <>
+          "favourite=#{Provider.for(provider).favourite_name()} (#{fav_id})"
+      )
+
       {:ok}
     else
       {:error, :nothing_in_local_queue} ->
@@ -209,9 +221,6 @@ defmodule PR.Music do
   def broadcast(data, key) do
     Phoenix.PubSub.broadcast(PR.PubSub, @topic, {__MODULE__, data, key})
   end
-
-  @spec find_playlist([map()]) :: {:ok, String.t()} | {:error, atom()}
-  defp find_playlist(sonos_favorites), do: find_playlist(sonos_favorites, default_provider())
 
   @spec find_playlist([map()], module()) :: {:ok, String.t()} | {:error, atom()}
   defp find_playlist(sonos_favorites, provider_mod) do

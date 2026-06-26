@@ -174,7 +174,7 @@ defmodule PRWeb.Service.ServiceSetupController do
 
   def sync_playlist(conn, _) do
     case Music.sync_playlist() do
-      {:ok} ->
+      {:ok, _} ->
         conn
         |> put_flash(:info, "Playlist synced")
         |> redirect(to: ~p"/setup")

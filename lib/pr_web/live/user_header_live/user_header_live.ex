@@ -38,6 +38,13 @@ defmodule PRWeb.UserHeaderLive do
         show_super_like={@show_super_like}
       />
       <div class="playback-controls">
+        <div
+          :if={@current_provider && (@show_provider_switcher or @current_user.is_trusted == true)}
+          class={"provider-indicator provider-indicator--#{@current_provider}"}
+          title={"Playing from #{@current_provider}"}
+        >
+          <img src={provider_img(@current_provider)} class="provider-icon" />
+        </div>
         <%= if (@show_toggle_playback or @current_user.is_trusted == true) and @num_unplayed > 0 do %>
           <.play_pause play_state={@play_state} show_skip={@show_skip && @num_unplayed > 1} />
         <% end %>
@@ -136,6 +143,7 @@ defmodule PRWeb.UserHeaderLive do
         points: likes,
         super_likes: super_likes,
         play_state: play_state,
+        current_provider: current_provider(),
         num_unplayed: Queue.num_unplayed(),
         participated: Queue.has_participated?(%User{id: user_id}),
         max_vol: max_vol()
@@ -159,6 +167,11 @@ defmodule PRWeb.UserHeaderLive do
 
     {:ok, socket}
   end
+
+  defp current_provider, do: PlayState.get(:current_provider)
+
+  defp provider_img("soundcloud"), do: ~p"/images/soundcloud.svg"
+  defp provider_img(_), do: ~p"/images/spotify.svg"
 
   def max_vol() do
     case Application.get_env(:pr, :max_vol) do
@@ -201,6 +214,10 @@ defmodule PRWeb.UserHeaderLive do
 
   def handle_info({PlayState, %{} = play_state, :play_state}, socket) do
     {:noreply, assign(socket, play_state: play_state)}
+  end
+
+  def handle_info({PlayState, provider, :provider}, socket) when is_binary(provider) do
+    {:noreply, assign(socket, current_provider: provider)}
   end
 
   def handle_info(
