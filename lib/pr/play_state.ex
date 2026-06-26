@@ -160,8 +160,12 @@ defmodule PR.PlayState do
     # with the new tracks.
 
     # TODO might be worth checking metadata here
-    case Queue.has_unplayed() do
-      num when num > 0 ->
+    cond do
+      premature_idle?() ->
+        Logger.warn("Player IDLE but current track only just started (buffering?). Not bumping")
+        state
+
+      (num = Queue.has_unplayed()) > 0 ->
         {finishing_provider, _} = Queue.current_run()
 
         Logger.info(
@@ -187,7 +191,7 @@ defmodule PR.PlayState do
         trigger_on_sonos_system()
         state
 
-      _ ->
+      true ->
         Logger.info("Player idle, Queue empty.")
         state
     end
@@ -215,6 +219,23 @@ defmodule PR.PlayState do
   end
 
   defp watch_play_state(d), do: d
+
+  # A genuine end-of-run IDLE arrives once the current track has played out, so
+  # its elapsed time is roughly its duration. A transient IDLE during buffering
+  # or a track transition arrives seconds after the track started, far short of
+  # its duration. Treat that as spurious, or we bump a track that's only just
+  # begun and skip it.
+  @premature_idle_buffer_ms 10_000
+  defp premature_idle? do
+    case Queue.get_playing() do
+      %{playing_since: %DateTime{} = playing_since, duration: duration} ->
+        elapsed = DateTime.diff(DateTime.utc_now(), playing_since, :millisecond)
+        elapsed < duration - @premature_idle_buffer_ms
+
+      _ ->
+        false
+    end
+  end
 
   defp trigger_on_sonos_system do
     case get(:play_state) do
