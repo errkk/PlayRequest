@@ -4,17 +4,21 @@
   },
   "permissions": {
     "allow": [
-      "Bash(mix compile:*)",
-      "Bash(mix test *)",
-      "Bash(fly status *)",
-      "Bash(fly volumes *)",
+      "Bash(MIX_ENV=test mix test *)",
+      "Bash(fly machine *)",
       "Bash(fly machines *)",
       "Bash(fly secrets *)",
       "Bash(fly ssh *)",
-      "Bash(fly machine *)",
-      "WebFetch(domain:developers.soundcloud.com)",
+      "Bash(fly status *)",
+      "Bash(fly volumes *)",
+      "Bash(gh run *)",
       "Bash(git stash *)",
-      "Bash(gh run *)"
+      "Bash(mix compile:*)",
+      "Bash(mix run -e ' *)",
+      "Bash(mix sass *)",
+      "Bash(mix test *)",
+      "WebFetch(domain:developers.soundcloud.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   }
 }
