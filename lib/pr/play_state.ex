@@ -169,27 +169,49 @@ defmodule PR.PlayState do
         {finishing_provider, _} = Queue.current_run()
 
         Logger.info(
-          "Player IDLE with #{num} unplayed. Finishing #{finishing_provider} run, " <>
-            "bumping last track and re-triggering in 1000ms"
+          "Player IDLE with #{num} unplayed. Letting state settle for 1000ms before " <>
+            "finishing #{finishing_provider} run"
         )
 
         Process.sleep(1000)
-        # The run that just finished left its last track marked playing, not
-        # played. Mark it played before re-triggering, otherwise current_run
-        # returns the same run again and the provider never switches. Scope it
-        # to the finishing provider so a next-run track that has already started
-        # playing isn't wrongly marked played.
-        Queue.bump(finishing_provider)
 
-        {next_provider, next_ids} = Queue.current_run()
+        # This IDLE webhook can race the metadata webhook for a freshly-started
+        # track: the metadata that marks the new track playing may not have
+        # committed when the cond above evaluated premature_idle?. Re-check after
+        # the settle window, against current state, before doing anything
+        # destructive. If a track is now playing, this IDLE was spurious - the
+        # bump would wrongly mark the new track played and re-triggering is
+        # pointless.
+        cond do
+          not is_idle?() ->
+            Logger.info("Settled to playing, IDLE was spurious. Not bumping #{finishing_provider}")
+            state
 
-        Logger.info(
-          "Re-triggering: next run is #{next_provider} (#{length(next_ids)} tracks)" <>
-            if(next_provider != finishing_provider, do: " - PROVIDER SWITCH", else: "")
-        )
+          premature_idle?() ->
+            Logger.warn(
+              "Track started playing during settle window. Not bumping #{finishing_provider}"
+            )
 
-        trigger_on_sonos_system()
-        state
+            state
+
+          true ->
+            # The run that just finished left its last track marked playing, not
+            # played. Mark it played before re-triggering, otherwise current_run
+            # returns the same run again and the provider never switches. Scope
+            # it to the finishing provider so a next-run track that has already
+            # started playing isn't wrongly marked played.
+            Queue.bump(finishing_provider)
+
+            {next_provider, next_ids} = Queue.current_run()
+
+            Logger.info(
+              "Re-triggering: next run is #{next_provider} (#{length(next_ids)} tracks)" <>
+                if(next_provider != finishing_provider, do: " - PROVIDER SWITCH", else: "")
+            )
+
+            trigger_on_sonos_system()
+            state
+        end
 
       true ->
         Logger.info("Player idle, Queue empty.")
