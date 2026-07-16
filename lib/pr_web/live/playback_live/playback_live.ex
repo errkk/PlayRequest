@@ -266,6 +266,10 @@ defmodule PRWeb.PlaybackLive do
     {:noreply, assign(socket, q: q, result: [], loading: true)}
   end
 
+  def handle_event("search", %{"q" => q}, socket) do
+    {:noreply, assign(socket, q: q, result: [], loading: false)}
+  end
+
   def handle_event("set_provider", %{"provider" => provider}, socket) do
     q = socket.assigns.q
     searching = is_binary(q) and q != ""
