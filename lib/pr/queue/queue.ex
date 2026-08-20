@@ -13,6 +13,9 @@ defmodule PR.Queue do
   alias PR.Auth.User
   alias PR.Scoring.Point
 
+  # Nothing played in the recent_plays window means maximum novelty
+  @default_novelty 100
+
   def list_tracks do
     Repo.all(Track)
   end
@@ -147,48 +150,28 @@ defmodule PR.Queue do
     |> Repo.update_all([])
   end
 
-  def escape_quotes(string) do
-    String.replace(string, "'", "''")
-  end
-
-  @spec get_novelty_for_search_results([SearchTrack.t()]) :: []
+  @spec get_novelty_for_search_results([SearchTrack.t()]) :: [SearchTrack.t()]
   def get_novelty_for_search_results(tracks) do
-    search_results =
-      tracks
-      |> Enum.map(fn %{external_id: external_id, artist: artist} -> [external_id, artist] end)
-      |> Enum.map(fn values -> values |> Enum.map(&escape_quotes/1) end)
-      |> Enum.map(fn values -> values |> Enum.map(&"'#{&1}'") end)
-      |> Enum.map(fn values ->
-        "(#{Enum.join(values, ", ")})"
-      end)
-      |> Enum.join(", ")
+    track_novelty =
+      TrackNovelty
+      |> where([tn], tn.external_id in ^Enum.map(tracks, & &1.external_id))
+      |> select([tn], {tn.provider, tn.external_id, tn.track_novelty})
+      |> Repo.all()
+      |> Map.new(fn {provider, external_id, novelty} -> {{provider, external_id}, novelty} end)
 
-    query = """
-    WITH
-      search_results(external_id, artist) AS (
-        VALUES #{search_results}
-      )
-    select
-      coalesce(track_novelty, 100) as track_novelty,
-      coalesce(artist_novelty, 100) as artist_novelty
-    from
-      search_results
-      left join track_novelty on search_results.external_id = track_novelty.external_id
-      left join artist_novelty on search_results.artist = artist_novelty.artist
-    """
+    artist_novelty =
+      ArtistNovelty
+      |> where([an], an.artist in ^Enum.map(tracks, & &1.artist))
+      |> select([an], {an.artist, an.artist_novelty})
+      |> Repo.all()
+      |> Map.new()
 
-    types = %{
-      track_novelty: :integer,
-      artist_novelty: :integer
-    }
-
-    result = Ecto.Adapters.SQL.query!(Repo, query, [])
-    novelty = Enum.map(result.rows, &Repo.load(types, {result.columns, &1}))
-
-    tracks
-    |> Enum.with_index()
-    |> Enum.map(fn {track, index} ->
-      Map.merge(track, Enum.at(novelty, index))
+    Enum.map(tracks, fn %{provider: provider, external_id: external_id, artist: artist} = track ->
+      %{
+        track
+        | track_novelty: Map.get(track_novelty, {provider, external_id}, @default_novelty),
+          artist_novelty: Map.get(artist_novelty, artist, @default_novelty)
+      }
     end)
   end
 
@@ -442,7 +425,7 @@ defmodule PR.Queue do
       :left,
       [t],
       tn in TrackNovelty,
-      on: tn.external_id == t.external_id,
+      on: tn.external_id == t.external_id and tn.provider == t.provider,
       as: :track_novelty
     )
     |> join(
