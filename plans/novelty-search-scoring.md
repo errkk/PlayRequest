@@ -1,6 +1,6 @@
 # Fix: novelty scores attached to the wrong search results
 
-Status: ready to implement.
+Status: implemented, including the provider-aware follow-up.
 
 ## Symptom
 
@@ -126,7 +126,7 @@ existing `played_track` factory:
 - `get_novelty_for_search_results([])` returns `[]`.
 - A result with `artist: nil` returns 100 rather than raising.
 
-## Optional follow-up: make novelty provider-aware
+## Follow-up, also implemented: make novelty provider-aware
 
 `track_novelty` groups by `external_id` alone, ignoring the `provider` column
 that `recent_plays` already selects
@@ -138,4 +138,4 @@ SoundCloud numeric ids, so this is not currently reachable.
 Fixing it means a migration to recreate `track_novelty` grouped by
 `(external_id, provider)`, adding `provider` to the `TrackNovelty` schema, and
 adding `provider` to the join in `query_novelty/1` and to the map key above.
-Separate commit, not needed for the scoring bug.
+Done in migration 20260820120000_provider_scoped_track_novelty.exs.

@@ -4,6 +4,7 @@ defmodule PR.QueueTest do
   alias PR.Queue
   alias PR.Queue.Track
   alias PR.Music.SonosItem
+  alias PR.Music.SearchTrack
 
   describe "list" do
     test "list_unplayed/1 lists in correct order" do
@@ -216,5 +217,94 @@ defmodule PR.QueueTest do
       user = insert(:user)
       refute Queue.has_participated?(user)
     end
+  end
+
+  describe "novelty" do
+    test "get_novelty_for_search_results/1 scores each result by its own id" do
+      insert(:played_track, external_id: "played-id", artist: "Played Artist")
+
+      results = [
+        search_track(external_id: "brand-new-id", artist: "Brand New Artist"),
+        search_track(external_id: "played-id", artist: "Played Artist")
+      ]
+
+      assert [
+               %{external_id: "brand-new-id", track_novelty: 100, artist_novelty: 100},
+               %{external_id: "played-id", track_novelty: 0, artist_novelty: 0}
+             ] = Queue.get_novelty_for_search_results(results)
+    end
+
+    test "get_novelty_for_search_results/1 matches artist novelty when the track is new" do
+      insert(:played_track, external_id: "played-id", artist: "Known Artist")
+
+      results = [search_track(external_id: "different-id", artist: "Known Artist")]
+
+      assert [%{track_novelty: 100, artist_novelty: 0}] =
+               Queue.get_novelty_for_search_results(results)
+    end
+
+    test "get_novelty_for_search_results/1 scopes track novelty by provider" do
+      insert(:played_track,
+        external_id: "shared-id",
+        provider: "spotify",
+        artist: "Spotify Artist"
+      )
+
+      results = [
+        search_track(
+          external_id: "shared-id",
+          provider: "soundcloud",
+          artist: "SoundCloud Artist"
+        )
+      ]
+
+      assert [%{track_novelty: 100, artist_novelty: 100}] =
+               Queue.get_novelty_for_search_results(results)
+    end
+
+    test "get_novelty_for_search_results/1 handles no search results" do
+      assert [] = Queue.get_novelty_for_search_results([])
+    end
+
+    test "get_novelty_for_search_results/1 handles a result with no artist" do
+      results = [search_track(external_id: "no-artist-id", artist: nil)]
+
+      assert [%{track_novelty: 100, artist_novelty: 100}] =
+               Queue.get_novelty_for_search_results(results)
+    end
+
+    test "list_unplayed/1 scopes track novelty by provider" do
+      me = insert(:user)
+
+      insert(:played_track,
+        external_id: "shared-id",
+        provider: "spotify",
+        artist: "Spotify Artist"
+      )
+
+      unplayed =
+        insert(:track,
+          external_id: "shared-id",
+          provider: "soundcloud",
+          artist: "SoundCloud Artist"
+        )
+
+      unplayed_id = unplayed.id
+      assert [%{id: ^unplayed_id, track_novelty: 100}] = Queue.list_unplayed(me)
+    end
+  end
+
+  defp search_track(attrs) do
+    struct!(
+      %SearchTrack{
+        name: "Jane's song",
+        artist: "Jane",
+        duration: 30_000,
+        img: "img",
+        provider: "spotify",
+        external_id: "track-x"
+      },
+      attrs
+    )
   end
 end
