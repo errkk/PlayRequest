@@ -118,6 +118,8 @@ jobs:
       FLYCTL_INSTALL: /home/runner/.fly
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Install Fly
         run: curl -L https://fly.io/install.sh | sh
 
@@ -159,6 +161,8 @@ jobs:
       FLYCTL_INSTALL: /home/runner/.fly
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Install Fly
         run: curl -L https://fly.io/install.sh | sh
 
