@@ -14,6 +14,7 @@ defmodule PR.Queue.Track do
     field(:name, :string)
     field(:played_at, :utc_datetime)
     field(:playing_since, :utc_datetime)
+    field(:error_count, :integer, default: 0)
 
     field(:has_pointed, :boolean, virtual: true)
     field(:has_super_liked, :boolean, virtual: true)

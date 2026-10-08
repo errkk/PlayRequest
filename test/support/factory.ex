@@ -93,7 +93,11 @@ defmodule PR.Factory do
   end
 
   def sonos_error_factory do
-    %{errorCode: "Shit's fucked", errorReason: "oh dear"}
+    %{
+      error_code: "ERROR_PLAYBACK_FAILED",
+      reason: "ERROR_NO_RESOURCE",
+      track_name: "Jane's song"
+    }
   end
 
   def sonos_play_state_factory do

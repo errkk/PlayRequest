@@ -148,7 +148,7 @@ defmodule PR.QueueTest do
       refute Track |> Repo.get(current_track.id) |> Map.get(:playing_since) |> is_nil()
     end
 
-    test "nothing is playing" do
+    test "nothing is playing, track that ran its course is marked played" do
       previous_track =
         insert(:track,
           external_id: "herp",
@@ -156,29 +156,34 @@ defmodule PR.QueueTest do
           duration: 10_000
         )
 
-      assert {:ok, [played: nil, playing: nil]} = Queue.set_current(%{})
+      assert {:ok, [played: 1, playing: nil]} = Queue.set_current(%{})
       assert Queue.get_playing() |> is_nil()
       refute Track |> Repo.get(previous_track.id) |> Map.get(:played_at) |> is_nil()
-
-      assert Track
-             |> Repo.get(previous_track.id)
-             |> Map.get(:played_at)
-             |> DateTime.compare(~U[2019-01-01 00:10:10Z]) == :eq
-
       assert Track |> Repo.get(previous_track.id) |> Map.get(:playing_since) |> is_nil()
     end
 
-    # test "nothing is playing but it might be lets give it 10 seconds" do
-    #   track = insert(:recently_playing_track, external_id: "herp", duration: 10_000)
-    #   assert {:ok, [played: 1, playing: nil]} = Queue.set_current(%{})
-    #   assert %{played_at: nil, playing_since: nil} = Queue.get_track!(track.id)
-    # end
+    test "nothing is playing, track that barely started goes back in the queue" do
+      track = insert(:recently_playing_track, external_id: "herp", duration: 30_000)
+      assert {:ok, [played: nil, playing: nil]} = Queue.set_current(%{})
+      assert %{played_at: nil, playing_since: nil} = Queue.get_track!(track.id)
+    end
 
-    # test "nothing is playing but it might be lets give it 10 seconds its had 10 seconds" do
-    #   previous_track = insert(:playing_track, external_id: "herp", duration: 10_000)
-    #   assert {:ok, [played: nil, playing: nil]} = Queue.set_current(%{})
-    #   assert Queue.get_playing() |> is_nil()
-    # end
+    test "new track, previous track that barely started goes back in the queue" do
+      previous_track = insert(:recently_playing_track, external_id: "herp", duration: 30_000)
+      insert(:track, external_id: "derp")
+
+      assert {:ok, [played: nil, playing: 1]} =
+               Queue.set_current(%SonosItem{provider: "spotify", external_id: "derp"})
+
+      assert %{external_id: "derp"} = Queue.get_playing()
+      assert %{played_at: nil, playing_since: nil} = Queue.get_track!(previous_track.id)
+    end
+
+    test "bump marks a track that barely started as played" do
+      track = insert(:recently_playing_track, external_id: "herp", duration: 30_000)
+      assert {1, nil} = Queue.bump()
+      assert %{playing_since: nil, played_at: %DateTime{}} = Queue.get_track!(track.id)
+    end
 
     test "already played" do
       played_track = insert(:track, external_id: "herp", played_at: ~N[2019-01-01 00:00:00])
@@ -203,6 +208,34 @@ defmodule PR.QueueTest do
       track = Track |> Repo.get(current_track.id)
       assert track |> Map.get(:played_at) |> is_nil()
       assert DateTime.compare(track.playing_since, playing_since) === :eq
+    end
+  end
+
+  describe "requeue_errored" do
+    test "errored track goes back in the queue with its error counted" do
+      track = insert(:recently_playing_track, name: "Flaky")
+      assert :requeued = Queue.requeue_errored("Flaky")
+      assert %{playing_since: nil, played_at: nil, error_count: 1} = Queue.get_track!(track.id)
+    end
+
+    test "track that keeps erroring is dropped" do
+      track = insert(:recently_playing_track, name: "Flaky", error_count: 2)
+      assert :dropped = Queue.requeue_errored("Flaky")
+
+      assert %{playing_since: nil, played_at: %DateTime{}, error_count: 3} =
+               Queue.get_track!(track.id)
+    end
+
+    test "leaves the playing track alone if the error is for a different track" do
+      track = insert(:recently_playing_track, name: "Fine")
+      assert :not_playing = Queue.requeue_errored("Flaky")
+
+      assert %{playing_since: %DateTime{}, played_at: nil, error_count: 0} =
+               Queue.get_track!(track.id)
+    end
+
+    test "nothing playing" do
+      assert :not_playing = Queue.requeue_errored("Flaky")
     end
   end
 

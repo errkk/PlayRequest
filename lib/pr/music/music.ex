@@ -166,21 +166,18 @@ defmodule PR.Music do
   end
 
   def skip(user_id) do
-    # Tell sonos to skip to next track
-    # If there is nothing else yet in the Sonos Queue then Sonos returns :no_content
-    # There might be something in the  local queue, so we need to bump the current track out
-    # and sync the revised playlist as the next update to sonos.
-    # The trigger_playlist function returns an error tuple for any reason why that hasn't happened
-    # Including if there are no more songs in the queue.
-    # In this case, we need to rollback the bump that just happened.
+    # Mark the current track played before asking Sonos to skip, and hold the
+    # row until Sonos has answered: the next track's metadata webhook would
+    # otherwise race us and put the skipped track back in the queue as "not
+    # played enough".
+    # If there is nothing else in the Sonos queue it returns :no_content, so
+    # re-trigger from the local queue, rolling back the bump if that fails.
+    PR.Repo.transaction(fn ->
+      Queue.bump()
 
-    case SonosAPI.skip() do
-      {:error, :no_content} ->
-        Logger.info("Skip – Nothing in Sonos queue, re-triggering")
-        # Bump out current song from local playlist and re-trigger
-        # Rollback the bump if trigger can't be performed
-        PR.Repo.transaction(fn ->
-          Queue.bump()
+      case SonosAPI.skip() do
+        {:error, :no_content} ->
+          Logger.info("Skip – Nothing in Sonos queue, re-triggering")
 
           case trigger_playlist(:force) do
             {:error, message} ->
@@ -190,15 +187,14 @@ defmodule PR.Music do
 
             _ ->
               Logger.info("Skip – Trigger succeeded")
+              :bump_and_triggered
           end
-        end)
 
-        {:ok, :bump_and_triggered}
-
-      _ ->
-        Logger.info("Skip – Skipped")
-        {:ok, :skipped}
-    end
+        _ ->
+          Logger.info("Skip – Skipped")
+          :skipped
+      end
+    end)
   end
 
   @spec get_playlist(User.t()) :: [Track.t()]

@@ -32,7 +32,8 @@ defmodule PR.PlayStateTest do
       refute is_nil(playing_since)
 
       # Check agent state
-      assert %{current_item: %SonosItem{external_id: ^spotify_track_id}} = PlayState.get(:metadata)
+      assert %{current_item: %SonosItem{external_id: ^spotify_track_id}} =
+               PlayState.get(:metadata)
     end
 
     test "updates playing track, marks last track played from metadata", %{mocked_now: now} do
@@ -58,16 +59,17 @@ defmodule PR.PlayStateTest do
       assert played_at == now
 
       # Check agent state
-      assert %{current_item: %SonosItem{external_id: ^spotify_track_id}} = PlayState.get(:metadata)
+      assert %{current_item: %SonosItem{external_id: ^spotify_track_id}} =
+               PlayState.get(:metadata)
     end
 
-    test "error mode, dont update track when it says playing nothing", %{mocked_now: now} do
+    test "error mode, errored track goes back in the queue, not marked played", %{mocked_now: now} do
       spotify_track_id = "123"
       spotify_id = "spotify:track:#{spotify_track_id}"
-      previous_track = insert(:playing_track)
+      errored_track = insert(:recently_playing_track, name: "Flaky")
       # Metadata says playing nothing
       metadata = build(:metadata, current_item: %{})
-      sonos_error = build(:sonos_error)
+      sonos_error = build(:sonos_error, track_name: "Flaky")
 
       # Act
       # This updates the error mode on the agent
@@ -75,10 +77,9 @@ defmodule PR.PlayStateTest do
       PlayState.process_metadata(metadata)
 
       # Assert
-      %{playing_since: playing_since, played_at: played_at} = Queue.get_track!(previous_track.id)
-      # The playing track should not be set to played
-      assert is_nil(played_at)
-      refute is_nil(playing_since)
+      # The errored track is back in the queue, not played, not playing
+      assert %{playing_since: nil, played_at: nil, error_count: 1} =
+               Queue.get_track!(errored_track.id)
 
       # Check agent state
       assert PlayState.get(:error_mode)
@@ -94,12 +95,42 @@ defmodule PR.PlayStateTest do
         PlayState.process_play_state(playing_play_state)
       end
 
-      %{playing_since: playing_since, played_at: played_at} = Queue.get_track!(previous_track.id)
-      # Ok, now it's playing somethiing else (fetched metadata response)
-      refute is_nil(played_at)
-      assert is_nil(playing_since)
+      # Still in the queue for the next run
+      assert %{playing_since: nil, played_at: nil} = Queue.get_track!(errored_track.id)
 
       # Check agent state
+      refute PlayState.get(:error_mode)
+    end
+
+    test "error while idle re-triggers the queue without the errored track playing", %{
+      mocked_now: now
+    } do
+      spotify_track_id = "123"
+      spotify_id = "spotify:track:#{spotify_track_id}"
+      # Go idle with an empty queue so nothing is triggered yet
+      PlayState.process_play_state(%{position_millis: 0, playback_state: "PLAYBACK_STATE_IDLE"})
+      errored_track = insert(:recently_playing_track, name: "Flaky")
+      insert(:track, name: "Next")
+      sonos_error = build(:sonos_error, track_name: "Flaky")
+
+      with_mock(PR.Music, [:passthrough], trigger_playlist: fn -> {:ok} end) do
+        PlayState.process_sonos_error(sonos_error)
+        assert_called_exactly(PR.Music.trigger_playlist(), 1)
+      end
+
+      assert %{playing_since: nil, played_at: nil, error_count: 1} =
+               Queue.get_track!(errored_track.id)
+
+      assert PlayState.get(:error_mode)
+
+      # Reset agent: playing again clears error mode
+      mocked_metadata_response =
+        build(:metadata, current_item: build(:metadata_track, id: spotify_id))
+
+      with_mock(PR.SonosAPI, get_metadata: fn -> mocked_metadata_response end) do
+        PlayState.process_play_state(build(:sonos_play_state))
+      end
+
       refute PlayState.get(:error_mode)
     end
 

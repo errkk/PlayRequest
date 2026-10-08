@@ -225,50 +225,8 @@ defmodule PR.Queue do
 
   def set_current(_) do
     # Set current to none of whats in the queue
-    # if there is something playing since > 20 sec ago, mark it as played
-    # if it's only jsut started, then mark it as not playing
     Logger.info("Set current: To no track")
-
-    Track
-    |> query_is_playing()
-    # Trying without this for a bit
-    # |> query_has_been_playing()
-    |> Repo.update_all(
-      set: [
-        playing_since: nil,
-        played_at: dynamic([i], datetime_add(i.playing_since, i.duration, "millisecond"))
-      ]
-    )
-    |> case do
-      {0, nil} ->
-        Logger.info("Set current: not recently started: Nothing updated.")
-        {:ok, [{:played, nil}, {:playing, nil}]}
-
-      {rows, nil} ->
-        Logger.info("Set current: Something was playing, so updated to played.")
-        {:ok, [{:played, rows}, {:playing, nil}]}
-    end
-
-    Track
-    |> query_is_playing()
-    |> Repo.update_all(
-      set: [
-        playing_since: nil,
-        played_at: nil
-      ]
-    )
-    |> case do
-      {0, nil} ->
-        Logger.info("Set current: recently started: Nothing updated.")
-        {:ok, [{:played, nil}, {:playing, nil}]}
-
-      {rows, nil} ->
-        Logger.warn(
-          "Set current: Something was playing but not for long, so updated to un_played."
-        )
-
-        {:ok, [{:played, rows}, {:playing, nil}]}
-    end
+    {:ok, [finish_playing(DateTime.utc_now()), {:playing, nil}]}
   end
 
   @spec set_current_transaction(String.t(), String.t(), DateTime.t()) ::
@@ -276,20 +234,7 @@ defmodule PR.Queue do
   defp set_current_transaction(provider, external_id, now) do
     Repo.transaction(fn ->
       # Anything else that was playing now isn't, cos this new track is
-      played =
-        Track
-        |> query_is_playing()
-        |> where([t], t.external_id != ^external_id or t.provider != ^provider)
-        |> Repo.update_all(set: [playing_since: nil, played_at: now])
-        |> case do
-          {0, nil} ->
-            Logger.info("Set current: transaction, nothing marked as played")
-            {:played, nil}
-
-          {rows, nil} ->
-            Logger.info("Set current: transaction, #{rows} marked as played")
-            {:played, rows}
-        end
+      played = finish_playing(now, {provider, external_id})
 
       # Update the track that's playing by spotify id
       # If its not already played or already marked as playing
@@ -314,9 +259,107 @@ defmodule PR.Queue do
     end)
   end
 
-  @spec bump() :: {:ok}
+  # Whatever was playing has stopped. A track that ran for at least half its
+  # duration counts as played. One cut short (a playback error, or Sonos
+  # skipping it) goes back in the queue so it gets another go.
+  @played_fraction 0.5
+
+  @spec finish_playing(DateTime.t(), {String.t(), String.t()} | nil) :: {:played, integer | nil}
+  defp finish_playing(now, except \\ nil) do
+    Track
+    |> query_is_playing()
+    |> query_except(except)
+    |> Repo.all()
+    |> Enum.count(fn %Track{id: id, name: name, duration: duration, playing_since: since} ->
+      elapsed = DateTime.diff(now, since, :millisecond)
+
+      if elapsed >= duration * @played_fraction do
+        Logger.info("Finished: #{name} played #{elapsed}ms of #{duration}ms, marking played")
+
+        Track
+        |> where([t], t.id == ^id)
+        |> Repo.update_all(set: [playing_since: nil, played_at: now])
+
+        true
+      else
+        Logger.warn(
+          "Finished: #{name} only played #{elapsed}ms of #{duration}ms, back in the queue"
+        )
+
+        Track
+        |> where([t], t.id == ^id)
+        |> Repo.update_all(set: [playing_since: nil])
+
+        false
+      end
+    end)
+    |> case do
+      0 ->
+        Logger.info("Set current: transaction, nothing marked as played")
+        {:played, nil}
+
+      rows ->
+        Logger.info("Set current: transaction, #{rows} marked as played")
+        {:played, rows}
+    end
+  end
+
+  defp query_except(query, nil), do: query
+
+  defp query_except(query, {provider, external_id}) do
+    query
+    |> where([t], t.external_id != ^external_id or t.provider != ^provider)
+  end
+
+  # Sonos couldn't play the current track. Put it back in the queue to be
+  # retried on the next run, unless it keeps failing, in which case give up on
+  # it so it can't block the queue forever.
+  @max_errors 3
+
+  @spec requeue_errored(String.t() | nil) :: :requeued | :dropped | :not_playing
+  def requeue_errored(track_name) do
+    case get_playing() do
+      %Track{name: ^track_name, id: id, error_count: count} when count + 1 >= @max_errors ->
+        Logger.error("Errored: #{track_name} failed #{count + 1} times, giving up on it")
+
+        Track
+        |> where([t], t.id == ^id)
+        |> Repo.update_all(
+          set: [playing_since: nil, played_at: DateTime.utc_now(), error_count: count + 1]
+        )
+
+        :dropped
+
+      %Track{name: ^track_name, id: id, error_count: count} ->
+        Logger.warn("Errored: #{track_name} failed to play (#{count + 1}), back in the queue")
+
+        Track
+        |> where([t], t.id == ^id)
+        |> Repo.update_all(set: [playing_since: nil, error_count: count + 1])
+
+        :requeued
+
+      %Track{name: other} ->
+        Logger.warn("Errored: #{track_name} but #{other} is marked playing, leaving it")
+        :not_playing
+
+      nil ->
+        Logger.warn("Errored: #{track_name} but nothing is marked playing")
+        :not_playing
+    end
+  end
+
+  @doc "Mark whatever is playing as played, regardless of how long it ran (skip, admin bump)"
+  @spec bump() :: {integer, nil}
   def bump do
-    set_current(%{})
+    Track
+    |> query_is_playing()
+    |> Repo.update_all(
+      set: [
+        playing_since: nil,
+        played_at: dynamic([i], datetime_add(i.playing_since, i.duration, "millisecond"))
+      ]
+    )
   end
 
   @spec bump(String.t()) :: {integer, nil}

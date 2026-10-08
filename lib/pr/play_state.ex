@@ -184,7 +184,10 @@ defmodule PR.PlayState do
         # pointless.
         cond do
           not is_idle?() ->
-            Logger.info("Settled to playing, IDLE was spurious. Not bumping #{finishing_provider}")
+            Logger.info(
+              "Settled to playing, IDLE was spurious. Not bumping #{finishing_provider}"
+            )
+
             state
 
           premature_idle?() ->
@@ -302,6 +305,20 @@ defmodule PR.PlayState do
 
     # Set a flag on the agent, un set it when play state gets back to playing
     update_state(true, :error_mode)
+
+    # The track Sonos couldn't play goes back in the queue, not out of it
+    Queue.requeue_errored(Map.get(data, :track_name))
+
+    # Sonos usually moves on to the next track by itself. If it has given up
+    # and gone idle (last track of the run, or the IDLE arrived just before this
+    # error) nothing else will wake us up, so run the idle handling now. It
+    # settles for a second first, so an auto-advance that's already under way
+    # cancels it.
+    if is_idle?() do
+      Logger.warn("Error while idle, checking whether to re-trigger")
+      watch_play_state(get(:play_state))
+    end
+
     :ok
   end
 
@@ -309,35 +326,25 @@ defmodule PR.PlayState do
     Logger.metadata(playback_state: Map.get(get(:play_state), :state))
     track_provider_change(current)
 
-    if get(:error_mode) do
-      Logger.warn("Update playing: Cancelled, cos error mode")
-      state
-    else
-      case Queue.set_current(current) do
-        {:ok, [playing: 1]} ->
-          Logger.info("Started playing queued track: #{name}")
-          state
+    case Queue.set_current(current) do
+      {:ok, [playing: 1]} ->
+        Logger.info("Started playing queued track: #{name}")
+        state
 
-        {:ok, [playing: nil]} ->
-          Logger.debug("Already playing: #{name} (or is it nothing?)")
-          state
+      {:ok, [playing: nil]} ->
+        Logger.debug("Already playing: #{name} (or is it nothing?)")
+        state
 
-        _ ->
-          Logger.debug("Not in the queue: #{name}. Ignoring")
-          state
-      end
+      _ ->
+        Logger.debug("Not in the queue: #{name}. Ignoring")
+        state
     end
   end
 
   defp update_playing(%{current_item: %{}} = state) do
-    if get(:error_mode) do
-      Logger.warn("Update playing: Cancelled, cos error mode")
-      state
-    else
-      Queue.set_current(%{})
-      Logger.info("Nothing playing on the Sonos")
-      state
-    end
+    Queue.set_current(%{})
+    Logger.info("Nothing playing on the Sonos")
+    state
   end
 
   # Detect when the actually-playing provider changes, log it loudly and push
