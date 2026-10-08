@@ -115,6 +115,8 @@ defmodule PR.PlayStateTest do
 
       with_mock(PR.Music, [:passthrough], trigger_playlist: fn -> {:ok} end) do
         PlayState.process_sonos_error(sonos_error)
+        # The settle and re-trigger run in their own process
+        wait_until(fn -> called(PR.Music.trigger_playlist()) end)
         assert_called_exactly(PR.Music.trigger_playlist(), 1)
       end
 
@@ -228,6 +230,20 @@ defmodule PR.PlayStateTest do
 
       # Check agent state
       assert %{current_item: %{}} = PlayState.get(:metadata)
+    end
+  end
+
+  defp wait_until(fun, tries \\ 30) do
+    cond do
+      fun.() ->
+        :ok
+
+      tries == 0 ->
+        flunk("timed out waiting")
+
+      true ->
+        Process.sleep(100)
+        wait_until(fun, tries - 1)
     end
   end
 
