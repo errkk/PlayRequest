@@ -64,11 +64,56 @@ function showNotification({
   }
 }
 
-function requestNotificationPermission() {
-  if (!("Notification" in window)) {
-    return;
+const DISMISSED_KEY = "notificationPromptDismissed";
+
+function isDismissed() {
+  try {
+    return localStorage.getItem(DISMISSED_KEY) === "1";
+  } catch (e) {
+    return false;
   }
-  Notification.requestPermission();
+}
+
+function setDismissed() {
+  try {
+    localStorage.setItem(DISMISSED_KEY, "1");
+  } catch (e) {}
+}
+
+function showPermissionPrompt() {
+  if (!("Notification" in window)) return;
+  if (Notification.permission !== "default") return;
+  if (isDismissed()) return;
+
+  const el = document.createElement("div");
+  el.className = "notify-prompt";
+  el.setAttribute("role", "dialog");
+  el.innerHTML = `
+    <p class="notify-prompt__text">Get notified when people like your tracks?</p>
+    <div class="notify-prompt__actions">
+      <button type="button" class="button" data-action="enable">Enable</button>
+      <button type="button" class="button" data-action="dismiss">Not now</button>
+    </div>
+  `;
+
+  const close = () => el.remove();
+
+  el.querySelector('[data-action="dismiss"]').addEventListener("click", () => {
+    setDismissed();
+    close();
+  });
+
+  el.querySelector('[data-action="enable"]').addEventListener("click", () => {
+    // Older Safari only supports the callback form
+    const done = (permission) => {
+      if (permission === "default") setDismissed();
+      close();
+    };
+    const result = Notification.requestPermission(done);
+    if (result && result.then) result.then(done);
+  });
+
+  document.body.appendChild(el);
 }
 
 function updateError({ error_code }) {
@@ -86,7 +131,7 @@ function updatePlaystate({ state }) {
 }
 
 export default function () {
-  requestNotificationPermission();
+  if (window.userToken.length) showPermissionPrompt();
   connect();
 }
 

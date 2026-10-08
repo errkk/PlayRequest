@@ -79,3 +79,26 @@
   height: 100%;
   display: block;
 }
+
+.notify-prompt {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1000;
+  max-width: calc(100vw - 32px);
+  width: 300px;
+  padding: 16px 20px;
+  color: $white;
+  background: $darkerBlue;
+  border-radius: 15px;
+  box-shadow: 1px 0 20px $strongShad;
+  animation: bounce-in-top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+.notify-prompt__text {
+  margin: 0 0 12px;
+}
+
+.notify-prompt__actions {
+  display: flex;
+}
