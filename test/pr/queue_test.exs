@@ -218,15 +218,6 @@ defmodule PR.QueueTest do
       assert %{playing_since: nil, played_at: nil, error_count: 1} = Queue.get_track!(track.id)
     end
 
-    test "error naming a track that already ran its course marks it played" do
-      # Sonos blames the transition error on the track that just finished
-      track = insert(:playing_track, name: "Done", duration: 30_000)
-      assert :played = Queue.requeue_errored("Done")
-
-      assert %{playing_since: nil, played_at: %DateTime{}, error_count: 0} =
-               Queue.get_track!(track.id)
-    end
-
     test "track that keeps erroring is dropped" do
       track = insert(:recently_playing_track, name: "Flaky", error_count: 2)
       assert :dropped = Queue.requeue_errored("Flaky")

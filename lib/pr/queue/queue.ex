@@ -270,10 +270,10 @@ defmodule PR.Queue do
     |> query_is_playing()
     |> query_except(except)
     |> Repo.all()
-    |> Enum.count(fn %Track{id: id, name: name, duration: duration} = track ->
-      elapsed = elapsed(track, now)
+    |> Enum.count(fn %Track{id: id, name: name, duration: duration, playing_since: since} ->
+      elapsed = DateTime.diff(now, since, :millisecond)
 
-      if played_enough?(track, now) do
+      if elapsed >= duration * @played_fraction do
         Logger.info("Finished: #{name} played #{elapsed}ms of #{duration}ms, marking played")
 
         Track
@@ -304,12 +304,6 @@ defmodule PR.Queue do
     end
   end
 
-  defp elapsed(%Track{playing_since: since}, now), do: DateTime.diff(now, since, :millisecond)
-
-  defp played_enough?(%Track{duration: duration} = track, now) do
-    elapsed(track, now) >= duration * @played_fraction
-  end
-
   defp query_except(query, nil), do: query
 
   defp query_except(query, {provider, external_id}) do
@@ -320,45 +314,30 @@ defmodule PR.Queue do
   # Sonos couldn't play the current track. Put it back in the queue to be
   # retried on the next run, unless it keeps failing, in which case give up on
   # it so it can't block the queue forever.
-  # Sonos names the track that was current when the error happened. When the
-  # error is in the transition to the next track, that's the one that just
-  # finished, so if it already ran its course it's played, not errored.
   @max_errors 3
 
-  @spec requeue_errored(String.t() | nil) :: :requeued | :dropped | :played | :not_playing
+  @spec requeue_errored(String.t() | nil) :: :requeued | :dropped | :not_playing
   def requeue_errored(track_name) do
-    now = DateTime.utc_now()
-
     case get_playing() do
-      %Track{name: ^track_name, id: id, error_count: count} = track ->
-        cond do
-          played_enough?(track, now) ->
-            Logger.info("Errored: #{track_name} but it had already played, marking played")
+      %Track{name: ^track_name, id: id, error_count: count} when count + 1 >= @max_errors ->
+        Logger.error("Errored: #{track_name} failed #{count + 1} times, giving up on it")
 
-            Track
-            |> where([t], t.id == ^id)
-            |> Repo.update_all(set: [playing_since: nil, played_at: now])
+        Track
+        |> where([t], t.id == ^id)
+        |> Repo.update_all(
+          set: [playing_since: nil, played_at: DateTime.utc_now(), error_count: count + 1]
+        )
 
-            :played
+        :dropped
 
-          count + 1 >= @max_errors ->
-            Logger.error("Errored: #{track_name} failed #{count + 1} times, giving up on it")
+      %Track{name: ^track_name, id: id, error_count: count} ->
+        Logger.warn("Errored: #{track_name} failed to play (#{count + 1}), back in the queue")
 
-            Track
-            |> where([t], t.id == ^id)
-            |> Repo.update_all(set: [playing_since: nil, played_at: now, error_count: count + 1])
+        Track
+        |> where([t], t.id == ^id)
+        |> Repo.update_all(set: [playing_since: nil, error_count: count + 1])
 
-            :dropped
-
-          true ->
-            Logger.warn("Errored: #{track_name} failed to play (#{count + 1}), back in the queue")
-
-            Track
-            |> where([t], t.id == ^id)
-            |> Repo.update_all(set: [playing_since: nil, error_count: count + 1])
-
-            :requeued
-        end
+        :requeued
 
       %Track{name: other} ->
         Logger.warn("Errored: #{track_name} but #{other} is marked playing, leaving it")
