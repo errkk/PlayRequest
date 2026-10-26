@@ -32,46 +32,53 @@ defmodule PR.Wrapped do
   def all(year, user_id) do
     this = range(year)
     ever = {~N[2000-01-01 00:00:00], elem(this, 1)}
-    people = person_stats(this)
-    pairs = pairs(this)
-    twins = twins(this)
-    active = MapSet.new(people, & &1.id)
 
-    %{
+    # Independent queries, the all time ones take a few hundred ms each
+    r =
+      [
+        totals: fn -> totals(this) end,
+        last_year: fn -> totals(range(year - 1)) end,
+        ever: fn -> totals(ever) end,
+        heatmap: fn -> heatmap(this) end,
+        busiest_day: fn -> busiest_day(this) end,
+        people: fn -> person_stats(this) end,
+        pairs: fn -> pairs(this) end,
+        twins: fn -> twins(this) end,
+        ever_pairs: fn -> pairs(ever) end,
+        ever_twins: fn -> twins(ever) end,
+        songs: fn -> songs(this) end,
+        anthems: fn -> songs(ever) end,
+        loved_plays: fn -> loved_plays(this) end,
+        artists: fn -> artists(this) end,
+        owned_artists: fn -> owned_artists(this) end,
+        top_artists: fn -> top_artists(this) end,
+        novelty_love: fn -> novelty_love(this) end,
+        quiet_days: fn -> quiet_days(this) end,
+        solo_regulars: fn -> solo_regulars(this) end,
+        heavy_rotation: fn -> heavy_rotation(this) end,
+        longest: fn -> longest(this) end
+      ]
+      |> Task.async_stream(fn {k, f} -> {k, f.()} end, max_concurrency: 4, timeout: 30_000)
+      |> Map.new(fn {:ok, kv} -> kv end)
+
+    active = MapSet.new(r.people, & &1.id)
+
+    Map.merge(r, %{
       year: year,
-      totals: totals(this),
-      last_year: totals(range(year - 1)),
-      ever: totals(ever),
-      heatmap: heatmap(this),
-      busiest_day: busiest_day(this),
-      people: people,
-      pair: pair_of_the_year(pairs),
-      biggest_fans: pairs |> Enum.sort_by(& &1.likes, :desc) |> Enum.take(3),
-      unreturned: pairs |> Enum.sort_by(&(&1.returned - &1.likes)) |> Enum.take(3),
-      twins: Enum.take(twins, 3),
+      pair: pair_of_the_year(r.pairs),
+      biggest_fans: r.pairs |> Enum.sort_by(& &1.likes, :desc) |> Enum.take(3),
+      unreturned: r.pairs |> Enum.sort_by(&(&1.returned - &1.likes)) |> Enum.take(3),
+      twins: Enum.take(r.twins, 3),
       old_twins:
-        ever
-        |> twins()
+        r.ever_twins
         |> Enum.reject(&(&1.a_id in active and &1.b_id in active))
         |> Enum.take(3),
       old_pair:
-        ever
-        |> pairs()
+        r.ever_pairs
         |> Enum.reject(&(&1.giver_id in active and &1.receiver_id in active))
         |> pair_of_the_year(),
-      songs: songs(this),
-      anthems: songs(ever),
-      loved_plays: loved_plays(this),
-      artists: artists(this),
-      owned_artists: owned_artists(this),
-      top_artists: top_artists(this),
-      novelty_love: novelty_love(this),
-      quiet_days: quiet_days(this),
-      solo_regulars: solo_regulars(this),
-      heavy_rotation: heavy_rotation(this),
-      longest: longest(this),
-      you: you(user_id, people, pairs, twins)
-    }
+      you: you(user_id, r.people, r.pairs, r.twins)
+    })
   end
 
   def range(year) do
