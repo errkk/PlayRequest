@@ -5,7 +5,7 @@ defmodule PR.MixProject do
     [
       app: :pr,
       version: "0.1.0",
-      elixir: "~> 1.18.0",
+      elixir: "~> 1.20",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -54,6 +54,8 @@ defmodule PR.MixProject do
       {:dart_sass, "~> 0.4", runtime: Mix.env() == :dev},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:mock, "~> 0.3.6", only: :test},
+      # mock pins meck 0.9, which does not compile on OTP 29
+      {:meck, "~> 1.2", only: :test, override: true},
       {:heroicons, "~> 0.5"},
       {:libcluster, "~> 3.3"},
       {:sentry, "~> 10.1"},
