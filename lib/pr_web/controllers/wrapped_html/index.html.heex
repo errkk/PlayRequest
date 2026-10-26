@@ -1,3 +1,7 @@
+<link
+  href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap"
+  rel="stylesheet"
+/>
 <div class="wrapped">
   <section class="wrapped__card wrapped__card--intro">
     <p class="wrapped__kicker">PlayRequest Wrapped</p>
@@ -105,50 +109,42 @@
     <p class="wrapped__kicker">Music friends</p>
     <div :if={@wrapped.pair}>
       <h3>Pair of the year</h3>
-      <div class="wrapped__row">
-        <.avatar src={@wrapped.pair.giver_image} />
-        <.avatar src={@wrapped.pair.receiver_image} />
-        <p>
-          <strong>{@wrapped.pair.giver}</strong>
-          and <strong><%= @wrapped.pair.receiver %></strong>: {@wrapped.pair.likes} and {@wrapped.pair.returned} hearts for each other.
-        </p>
-      </div>
+      <.flow pair={@wrapped.pair} max={max(@wrapped.pair.likes, @wrapped.pair.returned)} both />
     </div>
     <h3>Biggest fans</h3>
-    <ul class="wrapped__facts">
-      <li :for={f <- @wrapped.biggest_fans}>
-        <strong>{f.giver}</strong> gave <strong>{f.receiver}</strong> {f.likes} hearts
-      </li>
-    </ul>
-    <%= if @spicy do %>
-      <h3>Unrequited</h3>
-      <ul class="wrapped__facts">
-        <li :for={f <- @wrapped.unreturned}>
-          <strong>{f.giver}</strong>
-          gave <strong>{f.receiver}</strong> {f.likes} hearts and got {f.returned} back
-        </li>
-      </ul>
-    <% end %>
+    <.flow
+      :for={f <- @wrapped.biggest_fans}
+      pair={f}
+      max={@wrapped.biggest_fans |> Enum.map(& &1.likes) |> Enum.max()}
+    />
+    <details :if={@spicy && @wrapped.unreturned != []} class="wrapped__spicy">
+      <summary>Unrequited love <span>tap to reveal</span></summary>
+      <.flow
+        :for={f <- @wrapped.unreturned}
+        pair={f}
+        max={@wrapped.unreturned |> Enum.map(& &1.likes) |> Enum.max()}
+        both
+      />
+    </details>
     <h3>Taste twins</h3>
-    <ul class="wrapped__facts">
-      <li :for={t <- @wrapped.twins}>
-        <strong>{t.a}</strong> and <strong><%= t.b %></strong>: {t.shared} artists in common
-      </li>
-    </ul>
+    <.twins :for={t <- @wrapped.twins} twins={t} />
   </section>
 
-  <section :if={@wrapped.old_pair || @wrapped.old_twins != []} class="wrapped__card">
+  <section
+    :if={@wrapped.old_pair || @wrapped.old_twins != []}
+    class="wrapped__card wrapped__card--memories"
+  >
     <p class="wrapped__kicker">Gone but not forgotten</p>
-    <p :if={@wrapped.old_pair}>
-      The all-time pair: <strong>{@wrapped.old_pair.giver}</strong>
-      and <strong><%= @wrapped.old_pair.receiver %></strong>, {@wrapped.old_pair.likes} and {@wrapped.old_pair.returned} hearts for each other.
-    </p>
+    <div :if={@wrapped.old_pair}>
+      <h3>The all-time pair</h3>
+      <.flow
+        pair={@wrapped.old_pair}
+        max={max(@wrapped.old_pair.likes, @wrapped.old_pair.returned)}
+        both
+      />
+    </div>
     <h3 :if={@wrapped.old_twins != []}>All-time taste twins</h3>
-    <ul class="wrapped__facts">
-      <li :for={t <- @wrapped.old_twins}>
-        <strong>{t.a}</strong> and <strong><%= t.b %></strong>: {t.shared} artists in common
-      </li>
-    </ul>
+    <.twins :for={t <- @wrapped.old_twins} twins={t} />
   </section>
 
   <section class="wrapped__card">
@@ -178,13 +174,21 @@
         </div>
       </li>
     </ol>
-    <%= if anthem = List.first(@wrapped.anthems) do %>
-      <p class="wrapped__muted">
-        All-time anthem: <strong>{anthem.name}</strong>
-        by {anthem.artist}, queued by {anthem.queuers} different people.
-      </p>
-    <% end %>
   </section>
+
+  <%= if anthem = List.first(@wrapped.anthems) do %>
+    <section class="wrapped__card wrapped__card--anthem">
+      <p class="wrapped__kicker">The all-time anthem</p>
+      <img src={anthem.img} class="wrapped__anthem-art" />
+      <h2 class="wrapped__anthem-name">{anthem.name}</h2>
+      <p class="wrapped__anthem-artist">{anthem.artist}</p>
+      <p>
+        Queued <strong>{anthem.plays} times</strong>
+        by <strong>{anthem.queuers} different people</strong>
+        since it all began.
+      </p>
+    </section>
+  <% end %>
 
   <section class="wrapped__card wrapped__card--blue">
     <p class="wrapped__kicker">Artists</p>

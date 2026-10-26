@@ -73,4 +73,76 @@ defmodule PRWeb.WrappedHTML do
     <img src={@src} class="wrapped__avatar" referrerpolicy="no-referrer" />
     """
   end
+
+  # 0.15..1 so the smallest arrow is still visible
+  def weight(_, 0), do: 0.15
+  def weight(n, max), do: Float.round(0.15 + 0.85 * n / max, 2)
+
+  attr :name, :string, required: true
+  attr :image, :string, required: true
+
+  def person(assigns) do
+    ~H"""
+    <div class="wrapped__person">
+      <.avatar src={@image} />
+      <span>{@name}</span>
+    </div>
+    """
+  end
+
+  attr :count, :integer, required: true
+  attr :max, :integer, required: true
+  attr :back, :boolean, default: false
+
+  def arrow(assigns) do
+    ~H"""
+    <div
+      class={["wrapped__arrow", @back && "wrapped__arrow--back"]}
+      style={"--w: #{weight(@count, @max)}"}
+    >
+      <span class="wrapped__arrow-count">
+        <img src={~p"/images/heart_pink.svg"} />
+        {@count}
+      </span>
+      <span class="wrapped__arrow-line"></span>
+    </div>
+    """
+  end
+
+  @doc "Giver -> receiver, arrow and heart sized by likes. both: also draw likes returned"
+  attr :pair, :map, required: true
+  attr :max, :integer, required: true
+  attr :both, :boolean, default: false
+
+  def flow(assigns) do
+    ~H"""
+    <div class="wrapped__flow">
+      <.person name={@pair.giver} image={@pair.giver_image} />
+      <div class="wrapped__arrows">
+        <.arrow count={@pair.likes} max={@max} />
+        <.arrow :if={@both} count={@pair.returned} max={@max} back />
+      </div>
+      <.person name={@pair.receiver} image={@pair.receiver_image} />
+    </div>
+    """
+  end
+
+  attr :twins, :map, required: true
+
+  def twins(assigns) do
+    ~H"""
+    <div class="wrapped__flow">
+      <.person name={@twins.a} image={@twins.a_image} />
+      <div class="wrapped__venn">
+        <div class="wrapped__venn-circles">
+          <span></span>
+          <span></span>
+          <strong>{@twins.shared}</strong>
+        </div>
+        <small>artists in common</small>
+      </div>
+      <.person name={@twins.b} image={@twins.b_image} />
+    </div>
+    """
+  end
 end
