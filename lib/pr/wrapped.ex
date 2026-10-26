@@ -58,7 +58,10 @@ defmodule PR.Wrapped do
         heavy_rotation: fn -> heavy_rotation(this) end,
         longest: fn -> longest(this) end
       ]
-      |> Task.async_stream(fn {k, f} -> {k, f.()} end, max_concurrency: 4, timeout: 30_000)
+      |> Task.async_stream(fn {k, f} -> {k, f.()} end,
+        max_concurrency: Application.get_env(:pr, :wrapped_concurrency, 4),
+        timeout: 30_000
+      )
       |> Map.new(fn {:ok, kv} -> kv end)
 
     active = MapSet.new(r.people, & &1.id)
