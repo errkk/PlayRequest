@@ -51,7 +51,7 @@ defmodule PR.MixProject do
       {:timex, "~> 3.5"},
       {:logger_json, "~> 5.1"},
       {:esbuild, "~> 0.2", runtime: Mix.env() == :dev},
-      {:dart_sass, "~> 0.4", runtime: Mix.env() == :dev},
+      {:dart_sass, "~> 0.8", runtime: Mix.env() == :dev},
       {:mix_test_watch, "~> 1.0", only: :dev, runtime: false},
       {:mock, "~> 0.3.6", only: :test},
       # mock pins meck 0.9, which does not compile on OTP 29
