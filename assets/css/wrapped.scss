@@ -1,0 +1,370 @@
+.wrapped {
+  box-sizing: border-box;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  h1,
+  h2,
+  h3 {
+    margin: 16px 0 8px;
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  ol,
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 0;
+
+    span:last-child {
+      margin-left: auto;
+      opacity: 0.8;
+    }
+  }
+}
+
+.wrapped__card {
+  border-radius: 24px;
+  padding: 28px;
+  background: linear-gradient(135deg, $blue, $darkerBlue);
+  box-shadow: 0 10px 30px $strongShad;
+  overflow-wrap: anywhere;
+
+  &--intro,
+  &--outro {
+    background: linear-gradient(135deg, $pink, $blue);
+    background-size: 200% 200%;
+    animation: gradient 12s ease infinite;
+  }
+  &--you {
+    background: linear-gradient(135deg, $tealDark, $blue);
+  }
+  &--pink {
+    background: linear-gradient(135deg, $pink, $darkerBlue);
+  }
+  &--blue {
+    background: linear-gradient(135deg, $darkerBlue, $blue);
+  }
+  &--memories {
+    background: linear-gradient(135deg, $darkGrey, $darkerBlue);
+
+    .wrapped__avatar {
+      filter: grayscale(1);
+    }
+  }
+  &--anthem {
+    text-align: center;
+    background: radial-gradient(circle at 50% 30%, $pink, $darkerBlue 75%);
+  }
+  &--dark {
+    background: $darkerBlue;
+    border: 1px solid $border;
+  }
+}
+
+.wrapped__kicker {
+  margin: 0 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 14px;
+  color: $teal;
+}
+
+.wrapped__huge {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(64px, 20vw, 140px);
+  line-height: 1;
+  margin: 0 0 16px;
+}
+
+.wrapped__muted {
+  opacity: 0.7;
+  font-size: 16px;
+}
+
+.wrapped__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wrapped__avatar {
+  width: $avatarSize;
+  height: $avatarSize;
+  border-radius: 100px;
+  flex: 0 0 $avatarSize;
+  background: $shad;
+}
+
+.wrapped__facts li {
+  display: block;
+}
+
+.wrapped__columns {
+  display: grid;
+  gap: 8px 24px;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+
+  li span:last-child {
+    white-space: nowrap;
+  }
+}
+
+.wrapped__tracks {
+  li {
+    align-items: flex-start;
+  }
+  img {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    flex: 0 0 56px;
+  }
+  div {
+    display: flex;
+    flex-direction: column;
+  }
+  span:last-child {
+    margin-left: 0;
+  }
+}
+
+.wrapped__heatmap {
+  display: grid;
+  grid-template-columns: 36px repeat(11, minmax(0, 1fr));
+  max-width: 640px;
+  gap: 3px;
+  margin-bottom: 16px;
+}
+
+.wrapped__heatmap-label {
+  font-size: 12px;
+  opacity: 0.7;
+  text-align: center;
+}
+
+.wrapped__heatmap-cell {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  background: $teal;
+}
+
+.wrapped__bars li {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr) auto;
+  gap: 10px;
+
+  span:last-child {
+    margin-left: 0;
+  }
+}
+
+.wrapped__bar {
+  height: 12px;
+  min-width: 4px;
+  border-radius: 6px;
+  background: $teal;
+}
+
+.wrapped__kicker {
+  font-family: "Space Grotesk", sans-serif;
+}
+
+// Giver -> receiver with arrows sized by --w (0..1)
+.wrapped__flow {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) 72px;
+  max-width: 640px;
+  margin: 0 auto;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+}
+
+.wrapped__person {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  text-align: center;
+  line-height: 1.1;
+
+  .wrapped__avatar {
+    width: 52px;
+    height: 52px;
+    flex-basis: 52px;
+    border: 2px solid $border;
+  }
+}
+
+.wrapped__arrows {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wrapped__arrow {
+  --size: calc(14px + var(--w) * 22px);
+  --thick: calc(2px + var(--w) * 8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.wrapped__arrow-count {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: calc(12px + var(--w) * 8px);
+
+  img {
+    width: var(--size);
+    height: var(--size);
+  }
+}
+
+.wrapped__arrow-line {
+  position: relative;
+  width: 100%;
+  height: var(--thick);
+  border-radius: var(--thick);
+  background: linear-gradient(90deg, transparentize($pink, 0.6), $pink);
+
+  // Arrow head
+  &::after {
+    content: "";
+    position: absolute;
+    right: calc(var(--thick) * -0.5);
+    top: 50%;
+    transform: translateY(-50%);
+    border-style: solid;
+    border-width: calc(var(--thick) + 5px) 0 calc(var(--thick) + 5px) calc(var(--thick) + 10px);
+    border-color: transparent transparent transparent $pink;
+  }
+}
+
+.wrapped__arrow--back {
+  flex-direction: column-reverse;
+
+  .wrapped__arrow-line {
+    background: linear-gradient(270deg, transparentize($teal, 0.6), $teal);
+
+    &::after {
+      right: auto;
+      left: calc(var(--thick) * -0.5);
+      border-width: calc(var(--thick) + 5px) calc(var(--thick) + 10px) calc(var(--thick) + 5px) 0;
+      border-color: transparent $teal transparent transparent;
+    }
+  }
+}
+
+.wrapped__venn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+
+  small {
+    font-size: 13px;
+    opacity: 0.8;
+  }
+}
+
+.wrapped__venn-circles {
+  position: relative;
+  width: 96px;
+  height: 56px;
+
+  span {
+    position: absolute;
+    top: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    mix-blend-mode: screen;
+  }
+  span:first-child {
+    left: 0;
+    background: transparentize($pink, 0.3);
+  }
+  span:nth-child(2) {
+    right: 0;
+    background: transparentize($teal, 0.3);
+  }
+  strong {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 20px;
+    color: $white;
+  }
+}
+
+// Spicy cards, hidden until tapped
+.wrapped__spicy {
+  margin: 16px 0;
+  border: 1px dashed $border;
+  border-radius: 16px;
+  padding: 12px 16px;
+
+  summary {
+    cursor: pointer;
+    font-family: "Space Grotesk", sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+
+    span {
+      font-family: "Source Sans Pro", sans-serif;
+      font-weight: 400;
+      font-size: 14px;
+      opacity: 0.7;
+      margin-left: 8px;
+    }
+  }
+
+  &[open] summary span {
+    display: none;
+  }
+}
+
+.wrapped__anthem-art {
+  display: block;
+  width: min(260px, 70%);
+  aspect-ratio: 1;
+  margin: 12px auto 20px;
+  border-radius: 12px;
+  box-shadow: 0 20px 50px $strongShad;
+  transform: rotate(-3deg);
+}
+
+.wrapped__anthem-name {
+  font-size: clamp(32px, 8vw, 52px);
+  line-height: 1.05;
+  margin: 0;
+}
+
+.wrapped__anthem-artist {
+  margin: 4px 0 16px;
+  font-size: 20px;
+  color: $teal;
+}

@@ -59,7 +59,9 @@ config :pr, :feature_flags,
   scale_play_button: System.get_env("FF_SCALE_PLAY_BUTTON", ""),
   show_super_like: System.get_env("FF_SUPER_LIKE", ""),
   show_burn: System.get_env("FF_BURN", ""),
-  show_provider_switcher: System.get_env("FF_PROVIDER_SWITCHER", "")
+  show_provider_switcher: System.get_env("FF_PROVIDER_SWITCHER", ""),
+  show_wrapped: System.get_env("FF_WRAPPED", ""),
+  show_wrapped_spicy: System.get_env("FF_WRAPPED_SPICY", "")
 
 config :sentry,
   dsn: System.get_env("SENTRY_DSN"),

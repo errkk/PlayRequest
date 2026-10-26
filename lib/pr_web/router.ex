@@ -47,6 +47,12 @@ defmodule PRWeb.Router do
     post("/track-unplayed/:id", HistoryController, :mark_unplayed)
   end
 
+  scope "/wrapped", PRWeb do
+    pipe_through([:browser, :auth])
+
+    get("/", WrappedController, :index)
+  end
+
   scope "/auth", PRWeb do
     pipe_through([:browser, :now_playing])
     get("/", AuthController, :index)

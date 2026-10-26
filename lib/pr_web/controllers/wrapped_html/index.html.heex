@@ -1,0 +1,269 @@
+<link
+  href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap"
+  rel="stylesheet"
+/>
+<div class="wrapped">
+  <section class="wrapped__card wrapped__card--intro">
+    <p class="wrapped__kicker">PlayRequest Wrapped</p>
+    <h1 class="wrapped__huge">{@wrapped.year}</h1>
+    <p>
+      <strong>{number(@wrapped.totals.tracks)}</strong>
+      tracks. <strong>{number(@wrapped.totals.hours)}</strong>
+      hours. <strong>{@wrapped.totals.people}</strong>
+      of you. <strong>{number(@wrapped.totals.love)}</strong>
+      hearts given.
+    </p>
+    <p :if={change(@wrapped.totals, @wrapped.last_year)} class="wrapped__muted">
+      {change(@wrapped.totals, @wrapped.last_year)} tracks on {@wrapped.year - 1}. {number(
+        @wrapped.ever.tracks
+      )} since it all began.
+    </p>
+  </section>
+
+  <section :if={@wrapped.you} class="wrapped__card wrapped__card--you">
+    <p class="wrapped__kicker">Your year</p>
+    <div class="wrapped__row">
+      <.avatar src={@wrapped.you.me.image} />
+      <h2>{@wrapped.you.me.name}</h2>
+    </div>
+    <ul class="wrapped__facts">
+      <li>
+        You queued <strong>{number(@wrapped.you.me.queued)}</strong> tracks
+        and got <strong>{number(@wrapped.you.me.love_rx)}</strong> hearts back.
+      </li>
+      <%= if top = @wrapped.top_artists[@wrapped.you.me.id] do %>
+        <li>Your top artist: <strong>{top.artist}</strong> ({top.plays} plays).</li>
+      <% end %>
+      <li :if={@wrapped.you.fan}>
+        Your biggest fan: <strong><%= @wrapped.you.fan.giver %></strong>,
+        with {@wrapped.you.fan.likes} hearts.
+      </li>
+      <li :if={@wrapped.you.twin}>
+        Your taste twin:
+        <strong>
+          {if @wrapped.you.twin.a_id == @wrapped.you.me.id,
+            do: @wrapped.you.twin.b,
+            else: @wrapped.you.twin.a}
+        </strong>
+        ({@wrapped.you.twin.shared} artists in common).
+      </li>
+      <li :if={@wrapped.you.me.pct_new}>
+        <strong>{@wrapped.you.me.pct_new}%</strong>
+        of your tracks had never been played here before.
+      </li>
+    </ul>
+  </section>
+
+  <section class="wrapped__card">
+    <p class="wrapped__kicker">When we listen</p>
+    <div class="wrapped__heatmap">
+      <span></span>
+      <span :for={h <- hours()} class="wrapped__heatmap-label">{h}</span>
+      <%= for {d, dow} <- days() do %>
+        <span class="wrapped__heatmap-label">{d}</span>
+        <span
+          :for={h <- hours()}
+          class="wrapped__heatmap-cell"
+          style={"opacity: #{max(heat(@wrapped.heatmap, dow, h), 0.05)}"}
+        >
+        </span>
+      <% end %>
+    </div>
+    <p :if={@wrapped.busiest_day}>
+      Busiest day: <strong><%= day(@wrapped.busiest_day.day) %></strong>, {@wrapped.busiest_day.tracks} tracks from {@wrapped.busiest_day.people} of you.
+    </p>
+  </section>
+
+  <section class="wrapped__card">
+    <p class="wrapped__kicker">Top DJs</p>
+    <div class="wrapped__columns">
+      <div>
+        <h3>Most queued</h3>
+        <ol>
+          <li :for={p <- top_by(@wrapped.people, & &1.queued)}>
+            <.avatar src={p.image} /> {p.name} <span>{number(p.queued)}</span>
+          </li>
+        </ol>
+      </div>
+      <div>
+        <h3>Most loved per track</h3>
+        <ol>
+          <li :for={p <- top_by(@wrapped.people, &love_per_track/1, 50)}>
+            <.avatar src={p.image} /> {p.name} <span>{love_per_track(p)}</span>
+          </li>
+        </ol>
+      </div>
+      <div>
+        <h3>Most generous</h3>
+        <ol>
+          <li :for={p <- generous(@wrapped.people)}>
+            <.avatar src={p.image} /> {p.name}
+            <span>{p.given} given, {p.love_rx} back</span>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrapped__card wrapped__card--pink">
+    <p class="wrapped__kicker">Music friends</p>
+    <div :if={@wrapped.pair}>
+      <h3>Pair of the year</h3>
+      <.flow pair={@wrapped.pair} max={max(@wrapped.pair.likes, @wrapped.pair.returned)} both />
+    </div>
+    <h3>Biggest fans</h3>
+    <.flow
+      :for={f <- @wrapped.biggest_fans}
+      pair={f}
+      max={@wrapped.biggest_fans |> Enum.map(& &1.likes) |> Enum.max()}
+    />
+    <details :if={@spicy && @wrapped.unreturned != []} class="wrapped__spicy">
+      <summary>Unrequited love <span>tap to reveal</span></summary>
+      <.flow
+        :for={f <- @wrapped.unreturned}
+        pair={f}
+        max={@wrapped.unreturned |> Enum.map(& &1.likes) |> Enum.max()}
+        both
+      />
+    </details>
+    <h3>Taste twins</h3>
+    <.twins :for={t <- @wrapped.twins} twins={t} />
+  </section>
+
+  <section
+    :if={@wrapped.old_pair || @wrapped.old_twins != []}
+    class="wrapped__card wrapped__card--memories"
+  >
+    <p class="wrapped__kicker">Gone but not forgotten</p>
+    <div :if={@wrapped.old_pair}>
+      <h3>The all-time pair</h3>
+      <.flow
+        pair={@wrapped.old_pair}
+        max={max(@wrapped.old_pair.likes, @wrapped.old_pair.returned)}
+        both
+      />
+    </div>
+    <h3 :if={@wrapped.old_twins != []}>All-time taste twins</h3>
+    <.twins :for={t <- @wrapped.old_twins} twins={t} />
+  </section>
+
+  <section class="wrapped__card">
+    <p class="wrapped__kicker">Songs of the year</p>
+    <ol class="wrapped__tracks">
+      <li :for={s <- @wrapped.songs}>
+        <img src={s.img} />
+        <div>
+          <strong>{s.name}</strong>
+          <span>{s.artist}</span>
+          <span class="wrapped__muted">
+            Queued by {s.queuers} different people, {s.plays} plays
+          </span>
+        </div>
+      </li>
+    </ol>
+    <h3>Most loved plays</h3>
+    <ol class="wrapped__tracks">
+      <li :for={s <- @wrapped.loved_plays}>
+        <img src={s.img} />
+        <div>
+          <strong>{s.name}</strong>
+          <span>{s.artist}</span>
+          <span class="wrapped__muted">
+            {s.queued_by}, {day(s.day)}. {s.supers} super, {s.likes} likes
+          </span>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <%= if anthem = List.first(@wrapped.anthems) do %>
+    <section class="wrapped__card wrapped__card--anthem">
+      <p class="wrapped__kicker">The all-time anthem</p>
+      <img src={anthem.img} class="wrapped__anthem-art" />
+      <h2 class="wrapped__anthem-name">{anthem.name}</h2>
+      <p class="wrapped__anthem-artist">{anthem.artist}</p>
+      <p>
+        Queued <strong>{anthem.plays} times</strong>
+        by <strong>{anthem.queuers} different people</strong>
+        since it all began.
+      </p>
+    </section>
+  <% end %>
+
+  <section class="wrapped__card wrapped__card--blue">
+    <p class="wrapped__kicker">Artists</p>
+    <h3>Everyone's favourites</h3>
+    <ol>
+      <li :for={a <- @wrapped.artists}>
+        <strong>{a.artist}</strong>
+        <span>{a.queuers} people, {a.plays} plays</span>
+      </li>
+    </ol>
+    <h3>Only you play this</h3>
+    <ul class="wrapped__facts">
+      <li :for={a <- @wrapped.owned_artists}>
+        <strong><%= a.artist %></strong>: all {a.plays} plays by {a.name}
+      </li>
+    </ul>
+  </section>
+
+  <section class="wrapped__card">
+    <p class="wrapped__kicker">Explorers</p>
+    <p :if={@wrapped.novelty_love[true] && @wrapped.novelty_love[false]}>
+      Songs never played here before got
+      <strong>{@wrapped.novelty_love[true].love_per_play}</strong>
+      hearts each. Songs we already knew got <strong><%= @wrapped.novelty_love[false].love_per_play %></strong>.
+    </p>
+    <div class="wrapped__columns">
+      <div>
+        <h3>Bravest</h3>
+        <ol>
+          <li :for={p <- explorers(@wrapped.people, :desc)}>
+            <.avatar src={p.image} /> {p.name} <span>{p.pct_new}% new</span>
+          </li>
+        </ol>
+      </div>
+      <div>
+        <h3>Comfort zone</h3>
+        <ol>
+          <li :for={p <- explorers(@wrapped.people, :asc)}>
+            <.avatar src={p.image} /> {p.name} <span>{p.pct_new}% new</span>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrapped__card wrapped__card--dark">
+    <p class="wrapped__kicker">Quiet days</p>
+    <p>When the office empties, the mixes come out.</p>
+    <ul class="wrapped__bars">
+      <li :for={b <- @wrapped.quiet_days}>
+        <span>{bucket(b.bucket)}</span>
+        <span class="wrapped__bar" style={"width: #{min(b.pct_soundcloud * 10, 100)}%"}></span>
+        <span>{b.pct_soundcloud}% SoundCloud</span>
+      </li>
+    </ul>
+    <h3 :if={@wrapped.solo_regulars != []}>Holding the fort</h3>
+    <ul class="wrapped__facts">
+      <li :for={s <- @wrapped.solo_regulars}>
+        <strong><%= s.name %></strong>: {s.solo_days} solo days, {s.fridays} of them Fridays
+      </li>
+    </ul>
+  </section>
+
+  <section class="wrapped__card wrapped__card--outro">
+    <p class="wrapped__kicker">And finally</p>
+    <p :if={@wrapped.heavy_rotation}>
+      <strong>{@wrapped.heavy_rotation.name}</strong>
+      by {@wrapped.heavy_rotation.artist} was played
+      <strong>{@wrapped.heavy_rotation.plays} times</strong>
+      in three weeks.
+    </p>
+    <p :if={@wrapped.longest}>
+      The longest thing we played: <strong><%= @wrapped.longest.name %></strong>, {duration(
+        @wrapped.longest.duration
+      )}, thanks to {@wrapped.longest.queued_by}.
+    </p>
+  </section>
+</div>
