@@ -13,12 +13,12 @@ defmodule PRWeb.WrappedControllerTest do
     |> get(~p"/wrapped")
   end
 
-  test "redirects when the flag is off and user isn't trusted", %{conn: conn} do
+  test "redirects when the flag is off", %{conn: conn} do
     assert redirected_to(get_wrapped(conn, insert(:user))) == ~p"/"
   end
 
-  test "trusted users see it with the flag off", %{conn: conn} do
-    assert html_response(get_wrapped(conn, insert(:user, is_trusted: true)), 200) =~ "Wrapped"
+  test "redirects trusted users when the flag is off", %{conn: conn} do
+    assert redirected_to(get_wrapped(conn, insert(:user, is_trusted: true))) == ~p"/"
   end
 
   test "everyone sees it with the flag on, spicy cards stay hidden", %{conn: conn, flags: flags} do

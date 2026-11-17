@@ -9,7 +9,7 @@ defmodule PRWeb.WrappedController do
   def index(%{assigns: %{current_user: %User{} = user}} = conn, _params) do
     flags = feature_flags(user)
 
-    if flags.show_wrapped or user.is_trusted do
+    if flags.show_wrapped do
       render(conn, :index,
         page_title: "Wrapped",
         wrapped: Wrapped.all(Date.utc_today().year, user.id),

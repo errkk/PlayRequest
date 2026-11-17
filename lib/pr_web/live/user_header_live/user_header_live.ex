@@ -36,7 +36,7 @@ defmodule PRWeb.UserHeaderLive do
         points={@points}
         super_likes={@super_likes}
         show_super_like={@show_super_like}
-        show_wrapped={@show_wrapped or @current_user.is_trusted == true}
+        show_wrapped={@show_wrapped}
       />
       <div class="playback-controls">
         <div
