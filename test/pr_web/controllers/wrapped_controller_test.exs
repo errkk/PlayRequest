@@ -13,12 +13,12 @@ defmodule PRWeb.WrappedControllerTest do
     |> get(~p"/wrapped")
   end
 
-  test "redirects when the flag is off and user isn't trusted", %{conn: conn} do
+  test "redirects when the flag is off", %{conn: conn} do
     assert redirected_to(get_wrapped(conn, insert(:user))) == ~p"/"
   end
 
-  test "trusted users see it with the flag off", %{conn: conn} do
-    assert html_response(get_wrapped(conn, insert(:user, is_trusted: true)), 200) =~ "Wrapped"
+  test "redirects trusted users when the flag is off", %{conn: conn} do
+    assert redirected_to(get_wrapped(conn, insert(:user, is_trusted: true))) == ~p"/"
   end
 
   test "everyone sees it with the flag on, spicy cards stay hidden", %{conn: conn, flags: flags} do
@@ -27,5 +27,28 @@ defmodule PRWeb.WrappedControllerTest do
 
     assert html =~ "Top DJs"
     refute html =~ "Unrequited"
+  end
+
+  test "users with the flag see it with the env flag off", %{conn: conn} do
+    insert(:point)
+    html = html_response(get_wrapped(conn, insert(:user, feature_flags: ["show_wrapped"])), 200)
+
+    assert html =~ "Top DJs"
+    refute html =~ "Unrequited"
+  end
+
+  test "users with the spicy flag see spicy cards", %{conn: conn} do
+    insert(:point)
+    user = insert(:user, feature_flags: ["show_wrapped", "show_wrapped_spicy"])
+
+    assert html_response(get_wrapped(conn, user), 200) =~ "Unrequited"
+  end
+
+  test "trusted users don't see spicy cards without the flag", %{conn: conn} do
+    insert(:point)
+
+    user = insert(:user, is_trusted: true, feature_flags: ["show_wrapped"])
+
+    refute html_response(get_wrapped(conn, user), 200) =~ "Unrequited"
   end
 end

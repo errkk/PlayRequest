@@ -36,7 +36,7 @@ defmodule PRWeb.UserHeaderLive do
         points={@points}
         super_likes={@super_likes}
         show_super_like={@show_super_like}
-        show_wrapped={@show_wrapped or @current_user.is_trusted == true}
+        show_wrapped={@show_wrapped}
       />
       <div class="playback-controls">
         <div
@@ -138,6 +138,8 @@ defmodule PRWeb.UserHeaderLive do
 
     %{likes: likes, super_likes: super_likes} = Scoring.count_likes_received(%User{id: user_id})
 
+    socket = assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)
+
     socket =
       socket
       |> assign(
@@ -151,10 +153,10 @@ defmodule PRWeb.UserHeaderLive do
       )
       # Empty map to append on join/leave
       |> assign(:users, %{})
-      |> assign(feature_flags())
+      |> assign(feature_flags(socket.assigns.current_user))
       |> handle_joins(Presence.list(@presence))
 
-    {:ok, assign_new(socket, :current_user, fn -> Auth.get_user!(user_id) end)}
+    {:ok, socket}
   end
 
   def mount(_, _, socket) do

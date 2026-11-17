@@ -47,7 +47,7 @@ defmodule PRWeb.PlaybackLive do
         can_super_like: can_super_like?(%User{id: user_id}),
         can_burn: can_burn?(%User{id: user_id})
       )
-      |> assign(feature_flags())
+      |> assign(feature_flags(socket.assigns.current_user))
 
     {:ok, socket}
   end
