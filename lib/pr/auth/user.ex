@@ -16,6 +16,7 @@ defmodule PR.Auth.User do
     field(:last_name, :string)
     field(:token, :string)
     field(:is_trusted, :boolean)
+    field(:merged_into_id, :integer)
 
     field(:points_received, :integer, virtual: true)
 

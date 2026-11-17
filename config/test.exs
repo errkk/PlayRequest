@@ -2,7 +2,9 @@ import Config
 
 config :pr,
   allowed_user_domains: "example.com",
-  sleep: 0
+  sleep: 0,
+  # The sandbox shares one connection, so run Wrapped queries one at a time
+  wrapped_concurrency: 1
 
 # Configure your database
 config :pr, PR.Repo,

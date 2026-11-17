@@ -3,22 +3,25 @@
     <li class="nav__item">
       <.link class="link" href={~p"/history"}>History</.link>
     </li>
+    <li :if={@show_wrapped} class="nav__item">
+      <.link class="link" href={~p"/wrapped"}>Wrapped</.link>
+    </li>
     <%= if @current_user.is_trusted do %>
       <li class="nav__item">
         <.link class="link" href={~p"/setup"}>Setup</.link>
       </li>
     <% end %>
     <li class="nav__item">
-      <.link class="link" href={~p"/auth/delete"}>Logout <%= @current_user.first_name %></.link>
+      <.link class="link" href={~p"/auth/delete"}>Logout {@current_user.first_name}</.link>
     </li>
   </ul>
   <div class="user">
     <img src={@current_user.image} class="profile-image" />
     <span class="user__hearts">
-      <%= @points %> <.heart />
+      {@points} <.heart />
     </span>
     <span :if={@show_super_like} class="user__hearts">
-      <%= @super_likes %> <.fire />
+      {@super_likes} <.fire />
     </span>
   </div>
 </nav>
