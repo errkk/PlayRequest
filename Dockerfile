@@ -1,5 +1,5 @@
 # Remmber to bump .github worflow as well
-FROM elixir:1.18.3-alpine AS build
+FROM elixir:1.20.4-otp-29-alpine AS build
 RUN apk update \
   && apk add --virtual build-dependencies \
   build-base
@@ -49,7 +49,7 @@ COPY rel rel
 RUN mix sentry.package_source_code
 RUN mix release
 
-FROM alpine:3.18 AS app
+FROM alpine:3.24 AS app
 RUN apk update \
   && apk add --virtual build-dependencies \
   build-base
@@ -59,7 +59,7 @@ ARG APP_REVISION
 ENV APP_REVISION $APP_REVISION
 
 # install runtime dependencies
-RUN apk add --no-cache libstdc++ openssl ncurses-libs bash
+RUN apk add --no-cache libstdc++ openssl ncurses-libs bash lksctp-tools
 
 ENV USER="elixir"
 ENV LANG en_GB.UTF-8

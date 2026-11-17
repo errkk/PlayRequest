@@ -14,12 +14,11 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      # Pinned to just before an error, TODO: upgrade
-      image: elixir:1.18.3-alpine
+      image: elixir:1.20.4-otp-29-alpine
 
     services:
       postgres:
-        image: postgres:14
+        image: postgres:16
         env:
           POSTGRES_USER: pr_user
           POSTGRES_PASSWORD: 1234
@@ -39,7 +38,7 @@ jobs:
           apk add --virtual build-dependencies build-base
           apk add bash nodejs npm inotify-tools openssl
 
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
 
       - name: Install Dependencies
         run: |
@@ -91,7 +90,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
 
       - name: Publish to Registry
         uses: elgohr/Publish-Docker-Github-Action@master
