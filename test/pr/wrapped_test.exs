@@ -57,6 +57,13 @@ defmodule PR.WrappedTest do
     assert Enum.sort([g, r]) == Enum.sort([alice.id, bob.id])
   end
 
+  test "heavy rotation says who queued it in the window", %{bob: bob} do
+    play(bob, %{artist: "ABBA", external_id: "s1", inserted_at: ~N[2026-01-05 10:00:00]})
+
+    assert %{plays: 2, queued_by: "Alice S (1), Bob J (1)"} =
+             Wrapped.heavy_rotation(Wrapped.range(@year))
+  end
+
   test "songs ranked by distinct queuers and novelty split" do
     range = Wrapped.range(@year)
 

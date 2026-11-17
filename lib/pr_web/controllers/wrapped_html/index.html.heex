@@ -258,7 +258,7 @@
       <strong>{@wrapped.heavy_rotation.name}</strong>
       by {@wrapped.heavy_rotation.artist} was played
       <strong>{@wrapped.heavy_rotation.plays} times</strong>
-      in three weeks.
+      in three weeks, queued by {@wrapped.heavy_rotation.queued_by}.
     </p>
     <p :if={@wrapped.longest}>
       The longest thing we played: <strong><%= @wrapped.longest.name %></strong>, {duration(

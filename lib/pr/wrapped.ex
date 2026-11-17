@@ -316,16 +316,30 @@ defmodule PR.Wrapped do
   def heavy_rotation(range) do
     """
     , w as (
-      select id, count(*) over (
+      select id, provider, external_id, inserted_at, count(*) over (
         partition by provider, external_id order by inserted_at
         range between interval '21 days' preceding and current row
       ) as n
       from tr
+    ),
+    top as (
+      select yr.name, yr.artist, yr.img, w.provider, w.external_id, w.inserted_at, w.n
+      from yr join w using (id)
+      order by w.n desc, w.inserted_at limit 1
+    ),
+    who as (
+      select p.name, count(*) as n
+      from top
+      join tr on tr.provider = top.provider and tr.external_id = top.external_id
+        and tr.inserted_at > top.inserted_at - interval '21 days'
+        and tr.inserted_at <= top.inserted_at
+      join people p on p.id = tr.user_id
+      group by p.id, p.name
     )
-    select yr.name, yr.artist, max(yr.img) as img, max(w.n)::int as plays
-    from yr join w using (id)
-    group by yr.provider, yr.external_id, yr.name, yr.artist
-    order by plays desc limit 1
+    select top.name, top.artist, top.img, top.n::int as plays,
+           (select string_agg(name || ' (' || n || ')', ', ' order by n desc, name) from who)
+             as queued_by
+    from top
     """
     |> query(range)
     |> List.first()
