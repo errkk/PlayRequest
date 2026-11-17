@@ -20,9 +20,11 @@ defmodule PRWeb.Shared do
     first_name <> " " <> String.first(last_name)
   end
 
-  def feature_flags() do
+  def feature_flags(user \\ nil) do
+    user_flags = (user && user.feature_flags) || []
+
     Application.get_env(:pr, :feature_flags)
-    |> Map.new(fn {k, v} -> {k, v == "true"} end)
+    |> Map.new(fn {k, v} -> {k, v == "true" or Atom.to_string(k) in user_flags} end)
   end
 
   def it_me?(%Track{user_id: user_id}, %User{id: id}) when id == user_id, do: true

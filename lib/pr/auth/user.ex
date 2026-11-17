@@ -17,6 +17,7 @@ defmodule PR.Auth.User do
     field(:token, :string)
     field(:is_trusted, :boolean)
     field(:merged_into_id, :integer)
+    field(:feature_flags, {:array, :string}, default: [])
 
     field(:points_received, :integer, virtual: true)
 
@@ -28,7 +29,7 @@ defmodule PR.Auth.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:first_name, :last_name, :display_name, :token, :image, :email, :is_trusted])
+    |> cast(attrs, [:first_name, :last_name, :display_name, :token, :image, :email, :is_trusted, :feature_flags])
     |> validate_required([:token, :email])
     |> unique_constraint(:email)
     |> validate_email_domain()

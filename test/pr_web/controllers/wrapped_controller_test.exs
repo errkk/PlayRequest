@@ -28,4 +28,25 @@ defmodule PRWeb.WrappedControllerTest do
     assert html =~ "Top DJs"
     refute html =~ "Unrequited"
   end
+
+  test "users with the flag see it with the env flag off", %{conn: conn} do
+    insert(:point)
+    html = html_response(get_wrapped(conn, insert(:user, feature_flags: ["show_wrapped"])), 200)
+
+    assert html =~ "Top DJs"
+    refute html =~ "Unrequited"
+  end
+
+  test "users with the spicy flag see spicy cards", %{conn: conn} do
+    insert(:point)
+    user = insert(:user, feature_flags: ["show_wrapped", "show_wrapped_spicy"])
+
+    assert html_response(get_wrapped(conn, user), 200) =~ "Unrequited"
+  end
+
+  test "trusted users don't see spicy cards without the flag", %{conn: conn} do
+    insert(:point)
+
+    refute html_response(get_wrapped(conn, insert(:user, is_trusted: true)), 200) =~ "Unrequited"
+  end
 end
