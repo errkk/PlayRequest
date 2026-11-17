@@ -35,7 +35,6 @@ defmodule PRWeb do
   def helpers do
     quote do
       unquote(html_helpers())
-      unquote(verified_routes())
     end
   end
 
@@ -74,7 +73,6 @@ defmodule PRWeb do
     quote do
       use Phoenix.LiveComponent
 
-      unquote(verified_routes())
       unquote(html_helpers())
     end
   end
@@ -89,7 +87,6 @@ defmodule PRWeb do
 
       # Include general helpers for rendering HTML
       unquote(html_helpers())
-      unquote(verified_routes())
     end
   end
 
