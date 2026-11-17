@@ -47,6 +47,8 @@ defmodule PRWeb.WrappedControllerTest do
   test "trusted users don't see spicy cards without the flag", %{conn: conn} do
     insert(:point)
 
-    refute html_response(get_wrapped(conn, insert(:user, is_trusted: true)), 200) =~ "Unrequited"
+    user = insert(:user, is_trusted: true, feature_flags: ["show_wrapped"])
+
+    refute html_response(get_wrapped(conn, user), 200) =~ "Unrequited"
   end
 end
